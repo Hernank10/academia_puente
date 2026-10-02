@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Silogismo y pregunta en ciencia ficción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(20, 40, 70, 0.8) 0%, transparent 60%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #d0dbe8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #4a7a9c;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #8bc4e0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 20px rgba(80, 160, 220, 0.2);
+        }
+        .header h1 span {
+            background: #3a6a8c;
+            color: #e0f0ff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            border: 1px solid #5a8aaa;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #7a9ab0;
+            background: rgba(60, 120, 180, 0.15);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #4a7a9c;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #141c26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #8bb0c8;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #1a2a3a; color: #c0dcee; }
+        .block-nav button.active {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border-color: #4a8aaa;
+            box-shadow: 0 0 20px rgba(60, 140, 220, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 500px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a4a5c;
+        }
+        .card-front {
+            background: #121c26;
+            background-image: linear-gradient(145deg, #0e1820 0%, #1a2a36 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 3px solid #3a7a9c;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #4a8aaa;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6a9ab0;
+            background: #1a2a3a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            border: 1px solid #3a5a6a;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #8bc4e0;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #9ab8d0;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #5a7a8a;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #2a4a5c;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #0e1820;
+            background-image: linear-gradient(160deg, #0c1620 0%, #16222e 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #4a8aaa;
+            border-bottom: 1px solid #3a6a8c;
+        }
+        .card-back .definicion {
+            background: rgba(60, 140, 220, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .sintaxis {
+            background: rgba(60, 180, 120, 0.10);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #5a8a7a;
+            margin-bottom: 0.3rem;
+            color: #a0c8b8;
+            font-family: monospace;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(60, 140, 220, 0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #4a8aaa;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #8bc4e0;
+        }
+        .card-back .ejercicio {
+            background: #1a2a3a;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #b0c8d8;
+            border: 1px solid #2a4a5c;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2a4a5c;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #0a141c;
+            color: #d0dbe8;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #4a8aaa;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #3a7a9c; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #6abe6a; }
+        .card-back .feedback-msg.incorrecto { color: #d46a6a; }
+        .card-back .respuesta-correcta {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5a7a8a;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #121c26;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #8bc4e0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6a9ab0;
+        }
+        .quiz-pregunta {
+            background: #0c1620;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #1a2a3a;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: #c0dcee;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #0e1820;
+            border: 1px solid #2a4a5c;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #b0c8d8;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #1a2a3a; }
+        .quiz-opciones button.correct {
+            background: #1a5a3a;
+            border-color: #3a8a5a;
+            color: #b0e8c0;
+        }
+        .quiz-opciones button.incorrect {
+            background: #5a2a2a;
+            border-color: #8a4a4a;
+            color: #e8b0b0;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #1a2a3a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            color: #b0c8d8;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #2a5a7a;
+            border: none;
+            color: #e0f0ff;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #3a7a9c; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5a7a8a;
+            border-top: 1px solid #1a2a3a;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>🧠 Silogismo y pregunta <span>100 técnicas</span></h1>
+        <div class="sub">ciencia ficción · teoría · sintaxis · ejemplos</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>silogismos y preguntas en ciencia ficción</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">Escribe tu respuesta en cada tarjeta y verifica · Explora el arte del razonamiento</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS DE SILOGISMO Y PREGUNTA EN CIENCIA FICCIÓN
+    // Cada técnica: nombre, definición/teoría, fórmula morfosintáctica,
+    // ejemplo, ejercicio y respuesta.
+    // Distribuidas en 4 bloques: Narrativo, Descriptivo, Argumentativo, Expositivo.
+    // ================================================================
+    const TECNICAS = [];
+
+    // =================== BLOQUE 1: SILOGISMOS Y PREGUNTAS NARRATIVAS (25) ===================
+    const narrativos = [
+        { nombre: "Silogismo hipotético narrativo", definicion: "Si ocurre A en el cosmos, entonces ocurre B.", sintaxis: "Si [premisa mayor] en el [cosmos], entonces [premisa menor]; luego [conclusión].", ejemplo: "Si los viajeros del tiempo existen, entonces el pasado puede ser alterado; luego la historia es mutable.", ejercicio: "¿Qué tipo de silogismo usa una premisa condicional en el espacio?", respuesta: "silogismo hipotético narrativo" },
+        { nombre: "Silogismo disyuntivo narrativo", definicion: "Ocurre A o B en el espacio; no A, luego B.", sintaxis: "O [A] o [B] en el [cosmos]; no [A]; luego [B].", ejemplo: "O el universo es infinito o es finito; no es infinito; luego es finito.", ejercicio: "¿Qué tipo de silogismo presenta dos opciones en el cosmos?", respuesta: "silogismo disyuntivo narrativo" },
+        { nombre: "Silogismo categórico narrativo", definicion: "Todos los A son B; C es A; luego C es B.", sintaxis: "Todos los [A] son [B] en el [cosmos]; [C] es [A]; luego [C] es [B].", ejemplo: "Todos los agujeros negros son densos; el objeto X es un agujero negro; luego es denso.", ejercicio: "¿Qué tipo de silogismo usa categorías en el espacio?", respuesta: "silogismo categórico narrativo" },
+        { nombre: "Pregunta silogística narrativa", definicion: "Interroga sobre la validez de un razonamiento en el cosmos.", sintaxis: "Si [A] entonces [B]; ¿no es [C] [A]? ¿luego [B]?", ejemplo: "Si la vida necesita agua, y este planeta tiene agua, ¿no debería tener vida?", ejercicio: "¿Qué tipo de pregunta usa un razonamiento silogístico en el espacio?", respuesta: "pregunta silogística narrativa" },
+        { nombre: "Silogismo de autoridad narrativo", definicion: "Apela a una autoridad para validar el razonamiento.", sintaxis: "Según [autoridad], [A] es [B] en el [cosmos]; [C] es [A]; luego [C] es [B].", ejemplo: "Según Einstein, el tiempo es relativo; el viaje interestelar afecta el tiempo; luego el tiempo se dilata.", ejercicio: "¿Qué tipo de silogismo apela a una autoridad en el espacio?", respuesta: "silogismo de autoridad narrativo" },
+        { nombre: "Silogismo de analogía narrativo", definicion: "Compara dos situaciones para inferir una conclusión.", sintaxis: "Como [A] es a [B] en el [cosmos], [C] es a [D]; luego [C] es [D].", ejemplo: "Como la Tierra es a la vida, Marte es a la posibilidad; luego Marte puede albergar vida.", ejercicio: "¿Qué tipo de silogismo usa una analogía en el espacio?", respuesta: "silogismo de analogía narrativo" },
+        { nombre: "Silogismo de ejemplificación narrativo", definicion: "Usa un ejemplo para construir un razonamiento.", sintaxis: "Si [ejemplo] demuestra [A], entonces [B] es [C] en el [cosmos]; luego [B] es [C].", ejemplo: "Si el rover encontró agua en Marte, entonces el agua es común en el sistema solar; luego la vida puede ser común.", ejercicio: "¿Qué tipo de silogismo usa ejemplos en el espacio?", respuesta: "silogismo de ejemplificación narrativo" },
+        { nombre: "Silogismo de causa-efecto narrativo", definicion: "Establece una relación causal en el cosmos.", sintaxis: "Si [A] causa [B] en el [cosmos], y [C] es [A], entonces [C] causa [B].", ejemplo: "Si la gravedad causa la formación de estrellas, y esta nube tiene gravedad, entonces formará estrellas.", ejercicio: "¿Qué tipo de silogismo establece causalidad en el espacio?", respuesta: "silogismo de causa-efecto narrativo" },
+        { nombre: "Silogismo de consecuencia narrativo", definicion: "Deduce consecuencias lógicas en el cosmos.", sintaxis: "Si [A] entonces [B]; [B] implica [C]; luego [C] ocurre en el [cosmos].", ejemplo: "Si el universo se expande, entonces las galaxias se alejan; si se alejan, entonces el universo es infinito.", ejercicio: "¿Qué tipo de silogismo deduce consecuencias en el espacio?", respuesta: "silogismo de consecuencia narrativo" },
+        { nombre: "Silogismo de contradicción narrativo", definicion: "Usa una contradicción para llegar a una conclusión.", sintaxis: "Si [A] y no [A] son ambos posibles en el [cosmos], entonces [B] es necesario.", ejemplo: "Si el viaje en el tiempo es posible y no es posible, entonces la paradoja del abuelo es inevitable.", ejercicio: "¿Qué tipo de silogismo usa contradicción en el espacio?", respuesta: "silogismo de contradicción narrativo" },
+        { nombre: "Silogismo de exclusión narrativo", definicion: "Excluye opciones para llegar a una conclusión.", sintaxis: "O [A], o [B], o [C] en el [cosmos]; no [A], no [B]; luego [C].", ejemplo: "O el universo es eterno, o tuvo un principio, o es cíclico; no es eterno, no tuvo un principio; luego es cíclico.", ejercicio: "¿Qué tipo de silogismo excluye opciones en el espacio?", respuesta: "silogismo de exclusión narrativo" },
+        { nombre: "Silogismo de inclusión narrativo", definicion: "Incluye elementos para llegar a una conclusión.", sintaxis: "Si [A] incluye [B], y [B] incluye [C], entonces [A] incluye [C] en el [cosmos].", ejemplo: "Si la Vía Láctea incluye el sistema solar, y el sistema solar incluye la Tierra, entonces la Vía Láctea incluye la Tierra.", ejercicio: "¿Qué tipo de silogismo usa inclusión en el espacio?", respuesta: "silogismo de inclusión narrativo" },
+        { nombre: "Silogismo de posibilidad narrativo", definicion: "Plantea posibilidades en el cosmos.", sintaxis: "Si [A] es posible en el [cosmos], y [B] es posible, entonces [C] es posible.", ejemplo: "Si la vida es posible en otros planetas, y la tecnología es posible, entonces el contacto es posible.", ejercicio: "¿Qué tipo de silogismo plantea posibilidades en el espacio?", respuesta: "silogismo de posibilidad narrativo" },
+        { nombre: "Silogismo de necesidad narrativo", definicion: "Establece necesidades en el cosmos.", sintaxis: "Si [A] necesita [B] en el [cosmos], y [C] necesita [A], entonces [C] necesita [B].", ejemplo: "Si la vida necesita agua, y la colonia necesita vida, entonces la colonia necesita agua.", ejercicio: "¿Qué tipo de silogismo establece necesidades en el espacio?", respuesta: "silogismo de necesidad narrativo" },
+        { nombre: "Silogismo de temporalidad narrativo", definicion: "Razona sobre el tiempo en el cosmos.", sintaxis: "Si [A] ocurre antes que [B] en el [cosmos], y [B] antes que [C], entonces [A] antes que [C].", ejemplo: "Si el Big Bang ocurrió antes que las estrellas, y las estrellas antes que los planetas, entonces el Big Bang antes que los planetas.", ejercicio: "¿Qué tipo de silogismo usa temporalidad en el espacio?", respuesta: "silogismo de temporalidad narrativo" },
+        { nombre: "Silogismo de espacialidad narrativo", definicion: "Razona sobre el espacio en el cosmos.", sintaxis: "Si [A] está cerca de [B] en el [cosmos], y [B] cerca de [C], entonces [A] cerca de [C].", ejemplo: "Si la Tierra está cerca del Sol, y el Sol cerca del centro de la galaxia, entonces la Tierra cerca del centro.", ejercicio: "¿Qué tipo de silogismo usa espacialidad en el espacio?", respuesta: "silogismo de espacialidad narrativo" },
+        { nombre: "Silogismo de identidad narrativo", definicion: "Razona sobre la identidad en el cosmos.", sintaxis: "Si [A] es idéntico a [B] en el [cosmos], y [B] es [C], entonces [A] es [C].", ejemplo: "Si el robot es idéntico a su clon, y el clon tiene conciencia, entonces el robot tiene conciencia.", ejercicio: "¿Qué tipo de silogismo usa identidad en el espacio?", respuesta: "silogismo de identidad narrativo" },
+        { nombre: "Silogismo de diferencia narrativo", definicion: "Razona sobre diferencias en el cosmos.", sintaxis: "Si [A] difiere de [B] en el [cosmos], y [B] es [C], entonces [A] no es [C].", ejemplo: "Si el planeta A difiere del planeta B, y el planeta B es habitable, entonces el planeta A no es habitable.", ejercicio: "¿Qué tipo de silogismo usa diferencias en el espacio?", respuesta: "silogismo de diferencia narrativo" },
+        { nombre: "Silogismo de cantidad narrativo", definicion: "Razona sobre cantidades en el cosmos.", sintaxis: "Si [A] es mayor que [B] en el [cosmos], y [B] mayor que [C], entonces [A] mayor que [C].", ejemplo: "Si la Vía Láctea es mayor que Andrómeda, y Andrómeda mayor que la Nube de Magallanes, entonces la Vía Láctea es mayor que la Nube.", ejercicio: "¿Qué tipo de silogismo usa cantidades en el espacio?", respuesta: "silogismo de cantidad narrativo" },
+        { nombre: "Silogismo de cualidad narrativo", definicion: "Razona sobre cualidades en el cosmos.", sintaxis: "Si [A] tiene cualidad [B] en el [cosmos], y [C] tiene cualidad [B], entonces [C] es [A].", ejemplo: "Si las estrellas brillan, y este objeto brilla, entonces este objeto es una estrella.", ejercicio: "¿Qué tipo de silogismo usa cualidades en el espacio?", respuesta: "silogismo de cualidad narrativo" },
+        { nombre: "Silogismo de relación narrativo", definicion: "Razona sobre relaciones en el cosmos.", sintaxis: "Si [A] se relaciona con [B] en el [cosmos], y [B] con [C], entonces [A] se relaciona con [C].", ejemplo: "Si la gravedad relaciona la masa y el espacio, y el espacio relaciona el tiempo, entonces la gravedad relaciona masa y tiempo.", ejercicio: "¿Qué tipo de silogismo usa relaciones en el espacio?", respuesta: "silogismo de relación narrativo" },
+        { nombre: "Silogismo de función narrativo", definicion: "Razona sobre funciones en el cosmos.", sintaxis: "Si [A] tiene función [B] en el [cosmos], y [C] tiene función [B], entonces [C] es [A].", ejemplo: "Si los agujeros negros absorben materia, y este objeto absorbe materia, entonces este objeto es un agujero negro.", ejercicio: "¿Qué tipo de silogismo usa funciones en el espacio?", respuesta: "silogismo de función narrativo" },
+        { nombre: "Silogismo de finalidad narrativo", definicion: "Razona sobre fines en el cosmos.", sintaxis: "Si [A] tiene finalidad [B] en el [cosmos], y [C] tiene finalidad [B], entonces [C] es [A].", ejemplo: "Si las naves espaciales exploran, y esta nave explora, entonces esta nave es una nave espacial.", ejercicio: "¿Qué tipo de silogismo usa finalidad en el espacio?", respuesta: "silogismo de finalidad narrativo" },
+        { nombre: "Silogismo de causa común narrativo", definicion: "Dos efectos tienen una causa común en el cosmos.", sintaxis: "Si [A] y [B] ocurren juntos en el [cosmos], y [C] causa [A], entonces [C] causa [B].", ejemplo: "Si la expansión y el enfriamiento ocurren juntos, y el Big Bang causa la expansión, entonces el Big Bang causa el enfriamiento.", ejercicio: "¿Qué tipo de silogismo usa causa común en el espacio?", respuesta: "silogismo de causa común narrativo" },
+        { nombre: "Silogismo de efecto común narrativo", definicion: "Dos causas tienen un efecto común en el cosmos.", sintaxis: "Si [A] y [B] causan [C] en el [cosmos], y [D] causa [C], entonces [D] es [A] o [B].", ejemplo: "Si la gravedad y la masa causan curvatura, y la energía causa curvatura, entonces la energía es gravedad o masa.", ejercicio: "¿Qué tipo de silogismo usa efecto común en el espacio?", respuesta: "silogismo de efecto común narrativo" },
+        { nombre: "Silogismo de transitividad narrativo", definicion: "Razona sobre transitividad en el cosmos.", sintaxis: "Si [A] implica [B] en el [cosmos], y [B] implica [C], entonces [A] implica [C].", ejemplo: "Si la vida implica conciencia, y la conciencia implica libertad, entonces la vida implica libertad.", ejercicio: "¿Qué tipo de silogismo usa transitividad en el espacio?", respuesta: "silogismo de transitividad narrativo" },
+    ];
+    narrativos.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "narrativo", ...t }));
+
+    // =================== BLOQUE 2: SILOGISMOS Y PREGUNTAS DESCRIPTIVAS (25) ===================
+    const descriptivos = [
+        { nombre: "Silogismo visual descriptivo", definicion: "Razona sobre la apariencia en el cosmos.", sintaxis: "Si [A] parece [B] en el [cosmos], y [C] parece [B], entonces [C] es [A].", ejemplo: "Si la estrella parece un punto brillante, y este objeto parece un punto brillante, entonces este objeto es una estrella.", ejercicio: "¿Qué tipo de silogismo usa la apariencia en el espacio?", respuesta: "silogismo visual descriptivo" },
+        { nombre: "Silogismo sensorial descriptivo", definicion: "Razona sobre percepciones en el cosmos.", sintaxis: "Si [A] se siente [B] en el [cosmos], y [C] se siente [B], entonces [C] es [A].", ejemplo: "Si el vacío se siente frío, y esta región se siente fría, entonces esta región es el vacío.", ejercicio: "¿Qué tipo de silogismo usa percepciones en el espacio?", respuesta: "silogismo sensorial descriptivo" },
+        { nombre: "Silogismo auditivo descriptivo", definicion: "Razona sobre sonidos en el cosmos.", sintaxis: "Si [A] suena [B] en el [cosmos], y [C] suena [B], entonces [C] es [A].", ejemplo: "Si el silencio suena a vacío, y esta región suena a vacío, entonces esta región es el silencio.", ejercicio: "¿Qué tipo de silogismo usa sonidos en el espacio?", respuesta: "silogismo auditivo descriptivo" },
+        { nombre: "Silogismo táctil descriptivo", definicion: "Razona sobre texturas en el cosmos.", sintaxis: "Si [A] se toca [B] en el [cosmos], y [C] se toca [B], entonces [C] es [A].", ejemplo: "Si el asteroide se toca rugoso, y este objeto se toca rugoso, entonces este objeto es un asteroide.", ejercicio: "¿Qué tipo de silogismo usa texturas en el espacio?", respuesta: "silogismo táctil descriptivo" },
+        { nombre: "Silogismo olfativo descriptivo", definicion: "Razona sobre olores en el cosmos.", sintaxis: "Si [A] huele [B] en el [cosmos], y [C] huele [B], entonces [C] es [A].", ejemplo: "Si el polvo estelar huele a metal, y esta muestra huele a metal, entonces esta muestra es polvo estelar.", ejercicio: "¿Qué tipo de silogismo usa olores en el espacio?", respuesta: "silogismo olfativo descriptivo" },
+        { nombre: "Silogismo gustativo descriptivo", definicion: "Razona sobre sabores en el cosmos.", sintaxis: "Si [A] sabe [B] en el [cosmos], y [C] sabe [B], entonces [C] es [A].", ejemplo: "Si el agua espacial sabe a hielo, y esta muestra sabe a hielo, entonces esta muestra es agua espacial.", ejercicio: "¿Qué tipo de silogismo usa sabores en el espacio?", respuesta: "silogismo gustativo descriptivo" },
+        { nombre: "Silogismo cromático descriptivo", definicion: "Razona sobre colores en el cosmos.", sintaxis: "Si [A] es de color [B] en el [cosmos], y [C] es de color [B], entonces [C] es [A].", ejemplo: "Si la nebulosa es roja, y este objeto es rojo, entonces este objeto es una nebulosa.", ejercicio: "¿Qué tipo de silogismo usa colores en el espacio?", respuesta: "silogismo cromático descriptivo" },
+        { nombre: "Silogismo formal descriptivo", definicion: "Razona sobre la forma en el cosmos.", sintaxis: "Si [A] tiene forma [B] en el [cosmos], y [C] tiene forma [B], entonces [C] es [A].", ejemplo: "Si el planeta es esférico, y este objeto es esférico, entonces este objeto es un planeta.", ejercicio: "¿Qué tipo de silogismo usa la forma en el espacio?", respuesta: "silogismo formal descriptivo" },
+        { nombre: "Silogismo de tamaño descriptivo", definicion: "Razona sobre el tamaño en el cosmos.", sintaxis: "Si [A] tiene tamaño [B] en el [cosmos], y [C] tiene tamaño [B], entonces [C] es [A].", ejemplo: "Si la estrella es grande, y este objeto es grande, entonces este objeto es una estrella.", ejercicio: "¿Qué tipo de silogismo usa el tamaño en el espacio?", respuesta: "silogismo de tamaño descriptivo" },
+        { nombre: "Silogismo de distancia descriptivo", definicion: "Razona sobre la distancia en el cosmos.", sintaxis: "Si [A] está a distancia [B] en el [cosmos], y [C] está a distancia [B], entonces [C] es [A].", ejemplo: "Si el cometa está a 10 UA, y este objeto está a 10 UA, entonces este objeto es un cometa.", ejercicio: "¿Qué tipo de silogismo usa la distancia en el espacio?", respuesta: "silogismo de distancia descriptivo" },
+        { nombre: "Silogismo de movimiento descriptivo", definicion: "Razona sobre el movimiento en el cosmos.", sintaxis: "Si [A] se mueve como [B] en el [cosmos], y [C] se mueve como [B], entonces [C] es [A].", ejemplo: "Si el asteroide se mueve lentamente, y este objeto se mueve lentamente, entonces este objeto es un asteroide.", ejercicio: "¿Qué tipo de silogismo usa el movimiento en el espacio?", respuesta: "silogismo de movimiento descriptivo" },
+        { nombre: "Silogismo de textura descriptivo", definicion: "Razona sobre texturas en el cosmos.", sintaxis: "Si [A] tiene textura [B] en el [cosmos], y [C] tiene textura [B], entonces [C] es [A].", ejemplo: "Si la superficie lunar es polvorienta, y esta superficie es polvorienta, entonces es lunar.", ejercicio: "¿Qué tipo de silogismo usa texturas en el espacio?", respuesta: "silogismo de textura descriptivo" },
+        { nombre: "Silogismo de temperatura descriptivo", definicion: "Razona sobre la temperatura en el cosmos.", sintaxis: "Si [A] tiene temperatura [B] en el [cosmos], y [C] tiene temperatura [B], entonces [C] es [A].", ejemplo: "Si el espacio profundo es frío, y esta región es fría, entonces esta región es espacio profundo.", ejercicio: "¿Qué tipo de silogismo usa la temperatura en el espacio?", respuesta: "silogismo de temperatura descriptivo" },
+        { nombre: "Silogismo de luminosidad descriptivo", definicion: "Razona sobre el brillo en el cosmos.", sintaxis: "Si [A] brilla como [B] en el [cosmos], y [C] brilla como [B], entonces [C] es [A].", ejemplo: "Si la estrella brilla intensamente, y este objeto brilla intensamente, entonces este objeto es una estrella.", ejercicio: "¿Qué tipo de silogismo usa la luminosidad en el espacio?", respuesta: "silogismo de luminosidad descriptivo" },
+        { nombre: "Silogismo de densidad descriptivo", definicion: "Razona sobre la densidad en el cosmos.", sintaxis: "Si [A] tiene densidad [B] en el [cosmos], y [C] tiene densidad [B], entonces [C] es [A].", ejemplo: "Si el agujero negro es denso, y este objeto es denso, entonces este objeto es un agujero negro.", ejercicio: "¿Qué tipo de silogismo usa la densidad en el espacio?", respuesta: "silogismo de densidad descriptivo" },
+        { nombre: "Silogismo de composición descriptivo", definicion: "Razona sobre la composición en el cosmos.", sintaxis: "Si [A] está compuesto de [B] en el [cosmos], y [C] está compuesto de [B], entonces [C] es [A].", ejemplo: "Si la estrella está compuesta de hidrógeno, y este objeto está compuesto de hidrógeno, entonces este objeto es una estrella.", ejercicio: "¿Qué tipo de silogismo usa la composición en el espacio?", respuesta: "silogismo de composición descriptivo" },
+        { nombre: "Silogismo de estructura descriptivo", definicion: "Razona sobre la estructura en el cosmos.", sintaxis: "Si [A] tiene estructura [B] en el [cosmos], y [C] tiene estructura [B], entonces [C] es [A].", ejemplo: "Si la galaxia tiene estructura espiral, y este objeto tiene estructura espiral, entonces es una galaxia.", ejercicio: "¿Qué tipo de silogismo usa la estructura en el espacio?", respuesta: "silogismo de estructura descriptivo" },
+        { nombre: "Silogismo de origen descriptivo", definicion: "Razona sobre el origen en el cosmos.", sintaxis: "Si [A] proviene de [B] en el [cosmos], y [C] proviene de [B], entonces [C] es [A].", ejemplo: "Si el cometa proviene de la nube de Oort, y este objeto proviene de allí, entonces es un cometa.", ejercicio: "¿Qué tipo de silogismo usa el origen en el espacio?", respuesta: "silogismo de origen descriptivo" },
+        { nombre: "Silogismo de evolución descriptivo", definicion: "Razona sobre la evolución en el cosmos.", sintaxis: "Si [A] evoluciona a [B] en el [cosmos], y [C] evoluciona a [B], entonces [C] es [A].", ejemplo: "Si la estrella evoluciona a enana blanca, y este objeto evoluciona a enana blanca, entonces es una estrella.", ejercicio: "¿Qué tipo de silogismo usa la evolución en el espacio?", respuesta: "silogismo de evolución descriptivo" },
+        { nombre: "Silogismo de comparación descriptivo", definicion: "Razona sobre comparaciones en el cosmos.", sintaxis: "Si [A] es similar a [B] en el [cosmos], y [C] es similar a [B], entonces [C] es [A].", ejemplo: "Si la Tierra es similar a Venus, y este planeta es similar a Venus, entonces es similar a la Tierra.", ejercicio: "¿Qué tipo de silogismo usa comparaciones en el espacio?", respuesta: "silogismo de comparación descriptivo" },
+        { nombre: "Silogismo de contraste descriptivo", definicion: "Razona sobre contrastes en el cosmos.", sintaxis: "Si [A] contrasta con [B] en el [cosmos], y [C] contrasta con [B], entonces [C] es [A].", ejemplo: "Si la Tierra contrasta con Marte, y este planeta contrasta con Marte, entonces es similar a la Tierra.", ejercicio: "¿Qué tipo de silogismo usa contrastes en el espacio?", respuesta: "silogismo de contraste descriptivo" },
+        { nombre: "Silogismo de semejanza descriptivo", definicion: "Razona sobre semejanzas en el cosmos.", sintaxis: "Si [A] se parece a [B] en el [cosmos], y [C] se parece a [B], entonces [C] es [A].", ejemplo: "Si el exoplaneta se parece a la Tierra, y este planeta se parece a la Tierra, entonces es un exoplaneta.", ejercicio: "¿Qué tipo de silogismo usa semejanzas en el espacio?", respuesta: "silogismo de semejanza descriptivo" },
+        { nombre: "Silogismo de jerarquía descriptivo", definicion: "Razona sobre jerarquías en el cosmos.", sintaxis: "Si [A] está por encima de [B] en el [cosmos], y [C] está por encima de [B], entonces [C] está por encima de [A].", ejemplo: "Si la galaxia está por encima del sistema solar, y este objeto está por encima del sistema solar, entonces es una galaxia.", ejercicio: "¿Qué tipo de silogismo usa jerarquías en el espacio?", respuesta: "silogismo de jerarquía descriptivo" },
+        { nombre: "Silogismo de clasificación descriptivo", definicion: "Razona sobre clasificaciones en el cosmos.", sintaxis: "Si [A] pertenece a la clase [B] en el [cosmos], y [C] pertenece a la clase [B], entonces [C] es [A].", ejemplo: "Si el cometa pertenece a la clase de cuerpos helados, y este objeto pertenece a esa clase, entonces es un cometa.", ejercicio: "¿Qué tipo de silogismo usa clasificaciones en el espacio?", respuesta: "silogismo de clasificación descriptivo" },
+        { nombre: "Silogismo de identidad descriptivo", definicion: "Razona sobre identidad en el cosmos.", sintaxis: "Si [A] es idéntico a [B] en el [cosmos], y [C] es idéntico a [B], entonces [C] es [A].", ejemplo: "Si el clon es idéntico al original, y este ser es idéntico al original, entonces es un clon.", ejercicio: "¿Qué tipo de silogismo usa identidad en el espacio?", respuesta: "silogismo de identidad descriptivo" },
+    ];
+    descriptivos.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "descriptivo", ...t }));
+
+    // =================== BLOQUE 3: SILOGISMOS Y PREGUNTAS ARGUMENTATIVAS (25) ===================
+    const argumentativos = [
+        { nombre: "Silogismo de tesis argumentativo", definicion: "Presenta una tesis y la defiende con silogismo.", sintaxis: "Si [tesis] es válida en el [cosmos], y [evidencia] la apoya, entonces [tesis] es cierta.", ejemplo: "Si la colonización de Marte es viable, y la tecnología lo permite, entonces es posible.", ejercicio: "¿Qué tipo de silogismo defiende una tesis en el espacio?", respuesta: "silogismo de tesis argumentativo" },
+        { nombre: "Silogismo de autoridad argumentativo", definicion: "Apela a una autoridad para validar el argumento.", sintaxis: "Según [autoridad], [A] es [B] en el [cosmos]; luego [A] es [B].", ejemplo: "Según Hawking, los agujeros negros emiten radiación; luego emiten radiación.", ejercicio: "¿Qué tipo de silogismo apela a autoridad en el espacio?", respuesta: "silogismo de autoridad argumentativo" },
+        { nombre: "Silogismo de analogía argumentativo", definicion: "Usa una analogía para argumentar en el cosmos.", sintaxis: "Como [A] es [B] en el [cosmos], [C] es [D]; luego [C] es [D].", ejemplo: "Como la Tierra es un planeta habitable, Próxima b es similar; luego Próxima b puede ser habitable.", ejercicio: "¿Qué tipo de silogismo usa analogía en el espacio?", respuesta: "silogismo de analogía argumentativo" },
+        { nombre: "Silogismo de ejemplificación argumentativo", definicion: "Usa ejemplos para argumentar en el cosmos.", sintaxis: "Si [ejemplo] demuestra [A] en el [cosmos], entonces [B] es [A].", ejemplo: "Si el rover encontró agua en Marte, entonces el agua es común en el sistema solar.", ejercicio: "¿Qué tipo de silogismo usa ejemplos en el espacio?", respuesta: "silogismo de ejemplificación argumentativo" },
+        { nombre: "Silogismo de contraargumento argumentativo", definicion: "Refuta una objeción con un silogismo.", sintaxis: "Si [objeción] es falsa en el [cosmos], y [evidencia] lo demuestra, entonces [tesis] es válida.", ejemplo: "Si la objeción 'la exploración es muy costosa' es falsa, y los beneficios superan los costos, entonces la exploración vale la pena.", ejercicio: "¿Qué tipo de silogismo refuta una objeción en el espacio?", respuesta: "silogismo de contraargumento argumentativo" },
+        { nombre: "Silogismo de concesión argumentativo", definicion: "Concede un punto para luego refutarlo.", sintaxis: "Si [concesión] es cierta en el [cosmos], pero [razón] la refuta, entonces [tesis] es válida.", ejemplo: "Si es cierto que la exploración es costosa, pero la inversión en tecnología lo justifica, entonces vale la pena.", ejercicio: "¿Qué tipo de silogismo concede para refutar en el espacio?", respuesta: "silogismo de concesión argumentativo" },
+        { nombre: "Silogismo de refutación argumentativo", definicion: "Niega directamente un argumento con silogismo.", sintaxis: "Si [argumento] es falso en el [cosmos], y [evidencia] lo demuestra, entonces [tesis] es falsa.", ejemplo: "Si el argumento 'el espacio es un vacío absoluto' es falso, y la materia oscura existe, entonces el espacio no es vacío.", ejercicio: "¿Qué tipo de silogismo refuta directamente en el espacio?", respuesta: "silogismo de refutación argumentativo" },
+        { nombre: "Silogismo de dubitación argumentativo", definicion: "Expresa duda para ganar credibilidad.", sintaxis: "Si [A] es dudoso en el [cosmos], y [B] es probable, entonces [B] es más probable.", ejemplo: "Si la existencia de alienígenas es dudosa, pero la probabilidad es alta, entonces es probable que existan.", ejercicio: "¿Qué tipo de silogismo expresa duda en el espacio?", respuesta: "silogismo de dubitación argumentativo" },
+        { nombre: "Silogismo de pathos argumentativo", definicion: "Apela a las emociones en el razonamiento.", sintaxis: "Si [A] causa [emoción] en el [cosmos], y [B] causa [emoción], entonces [B] es [A].", ejemplo: "Si la exploración espacial causa esperanza, y la colonización de Marte causa esperanza, entonces la colonización es exploración.", ejercicio: "¿Qué tipo de silogismo apela a las emociones en el espacio?", respuesta: "silogismo de pathos argumentativo" },
+        { nombre: "Silogismo de ethos argumentativo", definicion: "Apela a la ética en el razonamiento.", sintaxis: "Si [A] es ético en el [cosmos], y [B] es ético, entonces [B] es [A].", ejemplo: "Si proteger la vida es ético, y explorar el espacio protege la vida, entonces la exploración es ética.", ejercicio: "¿Qué tipo de silogismo apela a la ética en el espacio?", respuesta: "silogismo de ethos argumentativo" },
+        { nombre: "Silogismo de logos argumentativo", definicion: "Apela a la razón en el razonamiento.", sintaxis: "Si [A] es lógico en el [cosmos], y [B] es lógico, entonces [B] es [A].", ejemplo: "Si la ciencia es lógica, y la exploración espacial es científica, entonces la exploración es lógica.", ejercicio: "¿Qué tipo de silogismo apela a la razón en el espacio?", respuesta: "silogismo de logos argumentativo" },
+        { nombre: "Silogismo de paralelismo argumentativo", definicion: "Usa estructuras paralelas en el razonamiento.", sintaxis: "Si [A] implica [B] en el [cosmos], y [C] implica [B], entonces [A] y [C] son equivalentes.", ejemplo: "Si la tecnología implica progreso, y la exploración implica progreso, entonces tecnología y exploración son equivalentes.", ejercicio: "¿Qué tipo de silogismo usa paralelismo en el espacio?", respuesta: "silogismo de paralelismo argumentativo" },
+        { nombre: "Silogismo de entimema argumentativo", definicion: "Usa razonamiento abreviado en el cosmos.", sintaxis: "Si [A] es [B] en el [cosmos], entonces [C] es [B] (premisa implícita).", ejemplo: "Si la vida necesita agua, y este planeta tiene agua, entonces tiene vida (implícito: el agua da vida).", ejercicio: "¿Qué tipo de silogismo usa razonamiento abreviado en el espacio?", respuesta: "silogismo de entimema argumentativo" },
+        { nombre: "Silogismo de silogismo argumentativo", definicion: "Usa un silogismo completo en el razonamiento.", sintaxis: "Todos los [A] son [B] en el [cosmos]; [C] es [A]; luego [C] es [B].", ejemplo: "Todos los planetas orbitan estrellas; Próxima b es un planeta; luego orbita una estrella.", ejercicio: "¿Qué tipo de silogismo usa un silogismo completo en el espacio?", respuesta: "silogismo de silogismo argumentativo" },
+        { nombre: "Silogismo de inducción argumentativo", definicion: "Usa razonamiento inductivo en el cosmos.", sintaxis: "Si [A] es [B] en varios casos en el [cosmos], entonces [A] es [B] en general.", ejemplo: "Si varios exoplanetas son rocosos, entonces la mayoría de los exoplanetas son rocosos.", ejercicio: "¿Qué tipo de silogismo usa inducción en el espacio?", respuesta: "silogismo de inducción argumentativo" },
+        { nombre: "Silogismo de deducción argumentativo", definicion: "Usa razonamiento deductivo en el cosmos.", sintaxis: "Si [A] es [B] en general en el [cosmos], y [C] es [A], entonces [C] es [B].", ejemplo: "Si todos los planetas son esféricos, y este es un planeta, entonces es esférico.", ejercicio: "¿Qué tipo de silogismo usa deducción en el espacio?", respuesta: "silogismo de deducción argumentativo" },
+        { nombre: "Silogismo de antítesis argumentativo", definicion: "Contrapone dos ideas en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], pero [C] es [D], entonces [B] y [D] son opuestos.", ejemplo: "Si la exploración es progreso, pero la guerra es retroceso, entonces progreso y retroceso son opuestos.", ejercicio: "¿Qué tipo de silogismo usa antítesis en el espacio?", respuesta: "silogismo de antítesis argumentativo" },
+        { nombre: "Silogismo de paradoja argumentativo", definicion: "Usa una contradicción lógica en el razonamiento.", sintaxis: "Si [A] y no [A] son posibles en el [cosmos], entonces [B] es necesario.", ejemplo: "Si el viaje en el tiempo es posible y no es posible, entonces la paradoja del abuelo es inevitable.", ejercicio: "¿Qué tipo de silogismo usa paradoja en el espacio?", respuesta: "silogismo de paradoja argumentativo" },
+        { nombre: "Silogismo de ironía argumentativo", definicion: "Usa ironía en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], pero es [C], entonces [B] es irónico.", ejemplo: "Si la exploración espacial es costosa, pero necesaria, entonces la necesidad es irónica.", ejercicio: "¿Qué tipo de silogismo usa ironía en el espacio?", respuesta: "silogismo de ironía argumentativo" },
+        { nombre: "Silogismo de sarcasmo argumentativo", definicion: "Usa sarcasmo en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], pero es [C], entonces [B] es sarcástico.", ejemplo: "Si la humanidad se cree el centro del cosmos, pero es insignificante, entonces la creencia es sarcástica.", ejercicio: "¿Qué tipo de silogismo usa sarcasmo en el espacio?", respuesta: "silogismo de sarcasmo argumentativo" },
+        { nombre: "Silogismo de disfemismo argumentativo", definicion: "Usa palabras duras en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], y [B] es [C], entonces [A] es [C] con disfemismo.", ejemplo: "Si la contaminación espacial es un problema, y es una locura, entonces es una locura contaminar.", ejercicio: "¿Qué tipo de silogismo usa disfemismo en el espacio?", respuesta: "silogismo de disfemismo argumentativo" },
+        { nombre: "Silogismo de eufemismo argumentativo", definicion: "Usa palabras suaves en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], y [B] es [C], entonces [A] es [C] con eufemismo.", ejemplo: "Si la exploración espacial es un desafío, y es una aventura, entonces es una aventura explorar.", ejercicio: "¿Qué tipo de silogismo usa eufemismo en el espacio?", respuesta: "silogismo de eufemismo argumentativo" },
+        { nombre: "Silogismo de generalización argumentativo", definicion: "Generaliza una idea en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], entonces todos los [A] son [B].", ejemplo: "Si un exoplaneta es habitable, entonces todos los exoplanetas pueden ser habitables.", ejercicio: "¿Qué tipo de silogismo generaliza en el espacio?", respuesta: "silogismo de generalización argumentativo" },
+        { nombre: "Silogismo de precisión argumentativo", definicion: "Busca precisión en el razonamiento.", sintaxis: "Si [A] es exactamente [B] en el [cosmos], y [C] es [B], entonces [C] es [A] con precisión.", ejemplo: "Si la velocidad de la luz es exactamente 299,792,458 m/s, y esta señal viaja a esa velocidad, entonces es luz.", ejercicio: "¿Qué tipo de silogismo busca precisión en el espacio?", respuesta: "silogismo de precisión argumentativo" },
+        { nombre: "Silogismo de matización argumentativo", definicion: "Matiza una idea en el razonamiento.", sintaxis: "Si [A] es [B] en el [cosmos], pero [C] es [B] con matices, entonces [A] y [C] son similares.", ejemplo: "Si la vida en la Tierra es compleja, y la vida en otros planetas podría ser simple, entonces la vida varía.", ejercicio: "¿Qué tipo de silogismo matiza en el espacio?", respuesta: "silogismo de matización argumentativo" },
+    ];
+    argumentativos.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "argumentativo", ...t }));
+
+    // =================== BLOQUE 4: SILOGISMOS Y PREGUNTAS EXPOSITIVAS (25) ===================
+    const expositivos = [
+        { nombre: "Silogismo de definición expositivo", definicion: "Define un concepto mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] es [A], entonces [C] es [B] por definición.", ejemplo: "Si un agujero negro es una región de espacio con gravedad extrema, y este objeto es una región con gravedad extrema, entonces es un agujero negro.", ejercicio: "¿Qué tipo de silogismo define en el espacio?", respuesta: "silogismo de definición expositivo" },
+        { nombre: "Silogismo de clasificación expositivo", definicion: "Clasifica elementos mediante silogismo.", sintaxis: "Si [A] pertenece a la clase [B] en el [cosmos], y [C] pertenece a la clase [B], entonces [C] es [A] por clasificación.", ejemplo: "Si los planetas rocosos pertenecen a la clase de cuerpos terrestres, y Marte es rocoso, entonces Marte es terrestre.", ejercicio: "¿Qué tipo de silogismo clasifica en el espacio?", respuesta: "silogismo de clasificación expositivo" },
+        { nombre: "Silogismo de comparación expositivo", definicion: "Compara elementos mediante silogismo.", sintaxis: "Si [A] es similar a [B] en el [cosmos], y [C] es similar a [B], entonces [C] es similar a [A].", ejemplo: "Si la Tierra es similar a Venus en tamaño, y este planeta es similar a Venus, entonces es similar a la Tierra.", ejercicio: "¿Qué tipo de silogismo compara en el espacio?", respuesta: "silogismo de comparación expositivo" },
+        { nombre: "Silogismo de causalidad expositivo", definicion: "Explica causas mediante silogismo.", sintaxis: "Si [A] causa [B] en el [cosmos], y [C] causa [B], entonces [C] es [A] por causalidad.", ejemplo: "Si la gravedad causa la formación de planetas, y la masa causa la formación de planetas, entonces la masa es gravedad.", ejercicio: "¿Qué tipo de silogismo explica causas en el espacio?", respuesta: "silogismo de causalidad expositivo" },
+        { nombre: "Silogismo de efecto expositivo", definicion: "Explica efectos mediante silogismo.", sintaxis: "Si [A] produce [B] en el [cosmos], y [C] produce [B], entonces [C] es [A] por efecto.", ejemplo: "Si la radiación produce ionización, y la luz ultravioleta produce ionización, entonces la luz ultravioleta es radiación.", ejercicio: "¿Qué tipo de silogismo explica efectos en el espacio?", respuesta: "silogismo de efecto expositivo" },
+        { nombre: "Silogismo de análisis expositivo", definicion: "Analiza un todo en partes mediante silogismo.", sintaxis: "Si [A] se compone de [B] en el [cosmos], y [C] se compone de [B], entonces [C] es [A] por análisis.", ejemplo: "Si el sistema solar se compone de planetas, y este sistema se compone de planetas, entonces es un sistema solar.", ejercicio: "¿Qué tipo de silogismo analiza en el espacio?", respuesta: "silogismo de análisis expositivo" },
+        { nombre: "Silogismo de síntesis expositivo", definicion: "Sintetiza partes en un todo mediante silogismo.", sintaxis: "Si [A] y [B] forman [C] en el [cosmos], y [D] y [E] forman [F], entonces [F] es [C] por síntesis.", ejemplo: "Si el hidrógeno y el helio forman estrellas, y este gas forma estrellas, entonces es hidrógeno y helio.", ejercicio: "¿Qué tipo de silogismo sintetiza en el espacio?", respuesta: "silogismo de síntesis expositivo" },
+        { nombre: "Silogismo de ejemplificación expositivo", definicion: "Usa ejemplos para explicar mediante silogismo.", sintaxis: "Si [ejemplo] demuestra [A] en el [cosmos], entonces [B] es [A] por ejemplificación.", ejemplo: "Si el rover en Marte demuestra que hay agua, entonces el agua es común en el sistema solar.", ejercicio: "¿Qué tipo de silogismo usa ejemplos en el espacio?", respuesta: "silogismo de ejemplificación expositivo" },
+        { nombre: "Silogismo de paráfrasis expositivo", definicion: "Reformula una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] es [B] con otras palabras, entonces [C] es [A] por paráfrasis.", ejemplo: "Si la expansión del universo significa que las galaxias se alejan, y este fenómeno es que se separan, entonces es expansión.", ejercicio: "¿Qué tipo de silogismo reformula en el espacio?", respuesta: "silogismo de paráfrasis expositivo" },
+        { nombre: "Silogismo de resumen expositivo", definicion: "Resume una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] resume [B], entonces [C] es [A] por resumen.", ejemplo: "Si el Big Bang inició el universo, y el origen del universo fue una explosión, entonces el Big Bang fue una explosión.", ejercicio: "¿Qué tipo de silogismo resume en el espacio?", respuesta: "silogismo de resumen expositivo" },
+        { nombre: "Silogismo de glosa expositivo", definicion: "Comenta una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] comenta [B], entonces [C] es [A] por glosa.", ejemplo: "Si la materia oscura es invisible, y esto es un comentario, entonces la materia oscura es invisible.", ejercicio: "¿Qué tipo de silogismo comenta en el espacio?", respuesta: "silogismo de glosa expositivo" },
+        { nombre: "Silogismo de transición expositivo", definicion: "Conecta ideas mediante silogismo.", sintaxis: "Si [A] implica [B] en el [cosmos], y [C] implica [B], entonces [A] y [C] están conectados.", ejemplo: "Si la gravedad implica curvatura, y la masa implica curvatura, entonces gravedad y masa están conectadas.", ejercicio: "¿Qué tipo de silogismo conecta en el espacio?", respuesta: "silogismo de transición expositivo" },
+        { nombre: "Silogismo de recapitulación expositivo", definicion: "Recapitula lo dicho mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] recapitula [B], entonces [C] es [A] por recapitulación.", ejemplo: "Si el universo es infinito, y esto es un resumen, entonces el universo es infinito.", ejercicio: "¿Qué tipo de silogismo recapitula en el espacio?", respuesta: "silogismo de recapitulación expositivo" },
+        { nombre: "Silogismo de conclusión expositivo", definicion: "Concluye una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] concluye [B], entonces [C] es [A] por conclusión.", ejemplo: "Si la vida es posible en otros planetas, y esto es una conclusión, entonces la vida es posible.", ejercicio: "¿Qué tipo de silogismo concluye en el espacio?", respuesta: "silogismo de conclusión expositivo" },
+        { nombre: "Silogismo de recomendación expositivo", definicion: "Recomienda una acción mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] recomienda [B], entonces [C] es [A] por recomendación.", ejemplo: "Si la exploración espacial es beneficiosa, y esto es una recomendación, entonces la exploración es beneficiosa.", ejercicio: "¿Qué tipo de silogismo recomienda en el espacio?", respuesta: "silogismo de recomendación expositivo" },
+        { nombre: "Silogismo de advertencia expositivo", definicion: "Advierte sobre algo mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] advierte [B], entonces [C] es [A] por advertencia.", ejemplo: "Si la contaminación espacial es peligrosa, y esto es una advertencia, entonces la contaminación es peligrosa.", ejercicio: "¿Qué tipo de silogismo advierte en el espacio?", respuesta: "silogismo de advertencia expositivo" },
+        { nombre: "Silogismo de corrección expositivo", definicion: "Corrige un error mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] corrige [B], entonces [C] es [A] por corrección.", ejemplo: "Si la Tierra es redonda, y esto corrige una creencia, entonces la Tierra es redonda.", ejercicio: "¿Qué tipo de silogismo corrige en el espacio?", respuesta: "silogismo de corrección expositivo" },
+        { nombre: "Silogismo de hipótesis expositivo", definicion: "Plantea una hipótesis mediante silogismo.", sintaxis: "Si [A] es posible en el [cosmos], y [B] es posible, entonces [C] es posible por hipótesis.", ejemplo: "Si la vida es posible en otros planetas, y la tecnología es posible, entonces el contacto es posible.", ejercicio: "¿Qué tipo de silogismo plantea hipótesis en el espacio?", respuesta: "silogismo de hipótesis expositivo" },
+        { nombre: "Silogismo de atenuación expositivo", definicion: "Atenúa una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], pero [C] atenúa [B], entonces [C] es [A] por atenuación.", ejemplo: "Si el universo es vasto, y esto es una atenuación, entonces el universo es vasto pero no infinito.", ejercicio: "¿Qué tipo de silogismo atenúa en el espacio?", respuesta: "silogismo de atenuación expositivo" },
+        { nombre: "Silogismo de énfasis expositivo", definicion: "Enfatiza una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] enfatiza [B], entonces [C] es [A] por énfasis.", ejemplo: "Si la exploración espacial es crucial, y esto es un énfasis, entonces es crucial.", ejercicio: "¿Qué tipo de silogismo enfatiza en el espacio?", respuesta: "silogismo de énfasis expositivo" },
+        { nombre: "Silogismo de generalización expositivo", definicion: "Generaliza una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] generaliza [B], entonces [C] es [A] por generalización.", ejemplo: "Si un exoplaneta es habitable, entonces todos los exoplanetas pueden ser habitables.", ejercicio: "¿Qué tipo de silogismo generaliza en el espacio?", respuesta: "silogismo de generalización expositivo" },
+        { nombre: "Silogismo de precisión expositivo", definicion: "Busca precisión mediante silogismo.", sintaxis: "Si [A] es exactamente [B] en el [cosmos], y [C] precisa [B], entonces [C] es [A] por precisión.", ejemplo: "Si la velocidad de la luz es exactamente 299,792,458 m/s, y esto es una precisión, entonces es luz.", ejercicio: "¿Qué tipo de silogismo busca precisión en el espacio?", respuesta: "silogismo de precisión expositivo" },
+        { nombre: "Silogismo de matización expositivo", definicion: "Matiza una idea mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] matiza [B], entonces [C] es [A] por matización.", ejemplo: "Si la vida en la Tierra es compleja, y otros planetas pueden tener vida simple, entonces la vida varía.", ejercicio: "¿Qué tipo de silogismo matiza en el espacio?", respuesta: "silogismo de matización expositivo" },
+        { nombre: "Silogismo de conclusión positiva expositivo", definicion: "Concluye con optimismo mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] concluye positivamente, entonces [C] es [A] con optimismo.", ejemplo: "Si el futuro de la humanidad está en el espacio, y esto es optimista, entonces el futuro es brillante.", ejercicio: "¿Qué tipo de silogismo concluye con optimismo en el espacio?", respuesta: "silogismo de conclusión positiva expositivo" },
+        { nombre: "Silogismo de verdad universal expositivo", definicion: "Expresa una verdad eterna mediante silogismo.", sintaxis: "Si [A] es [B] en el [cosmos], y [C] expresa una verdad universal, entonces [C] es [A] por verdad universal.", ejemplo: "Si el cosmos es el espejo del alma, y esto es una verdad universal, entonces el cosmos refleja el alma.", ejercicio: "¿Qué tipo de silogismo expresa una verdad universal en el espacio?", respuesta: "silogismo de verdad universal expositivo" },
+    ];
+    expositivos.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "expositivo", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Silogismos narrativos', 'Silogismos descriptivos', 'Silogismos argumentativos', 'Silogismos expositivos'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.definicion}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejemplo y ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#8bc4e0;margin-bottom:0.2rem;">🧠 ${t.nombre}</div>
+                            <div class="definicion"><strong>📘 Teoría:</strong> ${t.definicion}</div>
+                            <div class="sintaxis"><strong>📐 Fórmula:</strong> ${t.sintaxis}</div>
+                            <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#2a5a7a;color:#e0f0ff;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

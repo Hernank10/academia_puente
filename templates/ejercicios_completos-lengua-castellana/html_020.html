@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Procesos lectores (Solé) · concurso docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f1ebe0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(250, 246, 238, 0.4) 0%, transparent 30%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2e3a;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid #1F4E5F;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #1F4E5F;
+            letter-spacing: -0.02em;
+        }
+        .header h1 span {
+            background: #B45309;
+            color: #faf6ee;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #3d5a68;
+            background: rgba(31, 78, 95, 0.08);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #1F4E5F;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #faf6ee;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #e2dad0; }
+        .block-nav button.active {
+            background: #1F4E5F;
+            color: #faf6ee;
+            border-color: #1F4E5F;
+            box-shadow: 0 2px 6px rgba(31, 78, 95, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 380px;
+            cursor: pointer;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .card-front {
+            background: #faf6ee;
+            background-image: linear-gradient(145deg, #fdfaf5 0%, #f5efe6 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #B45309;
+            opacity: 0.25;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #7f6b58;
+            background: #e8dfd2;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1F4E5F;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #2c4755;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #a3907c;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #d6cdbc;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #f5efe6;
+            background-image: linear-gradient(160deg, #faf6ee 0%, #eee7dc 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #B45309;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(31, 78, 95, 0.04);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #1F4E5F;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #1F4E5F;
+        }
+        .card-back .ejercicio {
+            background: #e8dfd2;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #2f404b;
+        }
+        .card-back .respuesta {
+            background: #1F4E5F;
+            color: #faf6ee;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.3rem;
+            align-self: flex-start;
+            border: 1px solid #1F4E5F;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #7f6b58;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #faf6ee;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.02);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #1F4E5F;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #5f7785;
+        }
+        .quiz-pregunta {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #f5efe6;
+            border: 1px solid #d6cdbc;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #e2dad0; }
+        .quiz-opciones button.correct {
+            background: #5C7A5C;
+            border-color: #5C7A5C;
+            color: white;
+        }
+        .quiz-opciones button.incorrect {
+            background: #A8453A;
+            border-color: #A8453A;
+            color: white;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #e8dfd2;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #1F4E5F;
+            border: none;
+            color: #faf6ee;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #12343f; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7f6b58;
+            border-top: 1px solid #d6cdbc;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+        .badge-sole {
+            background: #B45309;
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>📖 Procesos lectores <span>100 técnicas</span></h1>
+        <div class="sub">Isabel Solé · concurso docente</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>estrategias de lectura (Solé)</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">100 técnicas · Antes, durante y después de la lectura · predicción, monitoreo, resumen</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS basadas en los procesos lectores de Isabel Solé
+    // Organizadas en 5 bloques: Antes de leer, Durante (monitoreo),
+    // Después (resumen), Estrategias metacognitivas, y Evaluación.
+    // ================================================================
+    const TECNICAS = [];
+
+    // Bloque 1: Antes de la lectura (20)
+    const b1 = [
+        { nombre: "Activación de conocimientos previos", teoria: "Recordar lo que ya se sabe sobre el tema.", ejemplo: "Antes de leer sobre dinosaurios, pensar en lo que sabemos.", ejercicio: "¿Qué estrategia es '¿qué sé del tema?'", respuesta: "activación de conocimientos previos" },
+        { nombre: "Predicción por título", teoria: "Anticipar el contenido a partir del título.", ejemplo: "El título 'El misterio del lago' sugiere aventura.", ejercicio: "¿Qué estrategia usa el título para anticipar?", respuesta: "predicción" },
+        { nombre: "Hojear el texto", teoria: "Explorar subtítulos, imágenes y gráficos.", ejemplo: "Mirar las imágenes de un artículo.", ejercicio: "¿Qué técnica es 'hojear'?", respuesta: "muestreo" },
+        { nombre: "Formular preguntas", teoria: "Hacerse preguntas antes de leer.", ejemplo: "¿Quién? ¿Qué? ¿Dónde? ¿Cuándo? ¿Por qué?", ejercicio: "¿Qué estrategia genera preguntas?", respuesta: "formulación de preguntas" },
+        { nombre: "Establecer propósito", teoria: "Definir para qué se lee (informarse, disfrutar, estudiar).", ejemplo: "Leer para preparar un examen.", ejercicio: "¿Qué define el propósito de lectura?", respuesta: "intención del lector" },
+        { nombre: "Identificar tipo de texto", teoria: "Reconocer si es narrativo, expositivo, etc.", ejemplo: "Un cuento es narrativo; un artículo es expositivo.", ejercicio: "¿Qué estrategia clasifica el texto?", respuesta: "identificación de género" },
+        { nombre: "Predecir estructura", teoria: "Anticipar cómo se organizará el texto.", ejemplo: "Un texto expositivo tendrá introducción, desarrollo y conclusión.", ejercicio: "¿Qué se predice sobre la organización?", respuesta: "estructura" },
+        { nombre: "Vincular con experiencias", teoria: "Relacionar el tema con vivencias personales.", ejemplo: "Leer sobre viajes y recordar un viaje propio.", ejercicio: "¿Qué estrategia conecta texto y vida?", respuesta: "vinculación experiencial" },
+        { nombre: "Imágenes mentales", teoria: "Crear imágenes de lo que se leerá.", ejemplo: "Imaginar un castillo al leer 'El castillo encantado'.", ejercicio: "¿Qué estrategia crea imágenes previas?", respuesta: "visualización" },
+        { nombre: "Subrayar palabras clave", teoria: "Identificar términos importantes antes de leer.", ejemplo: "Buscar palabras desconocidas en un texto.", ejercicio: "¿Qué técnica prepara el vocabulario?", respuesta: "subrayado léxico" },
+        { nombre: "Leer el primer párrafo", teoria: "Obtener una idea general del tema.", ejemplo: "Leer la introducción de un ensayo.", ejercicio: "¿Qué parte del texto se lee primero?", respuesta: "introducción" },
+        { nombre: "Leer el último párrafo", teoria: "Anticipar la conclusión.", ejemplo: "Leer el final de un artículo para saber a dónde va.", ejercicio: "¿Qué estrategia lee la conclusión antes?", respuesta: "lectura del final" },
+        { nombre: "Contextualizar el texto", teoria: "Saber quién lo escribió y cuándo.", ejemplo: "Un texto histórico requiere contexto.", ejercicio: "¿Qué elemento ayuda a comprender el texto?", respuesta: "contexto" },
+        { nombre: "Revisar el índice", teoria: "En libros, el índice da una visión general.", ejemplo: "Mirar el índice de un manual.", ejercicio: "¿Qué recurso organiza el contenido?", respuesta: "índice" },
+        { nombre: "Deducir el tema", teoria: "A partir del título y subtítulos, inferir el asunto principal.", ejemplo: "Subtítulo 'Cambio climático' → tema: calentamiento global.", ejercicio: "¿Qué habilidad deduce el tema?", respuesta: "inferencia" },
+        { nombre: "Mapa conceptual previo", teoria: "Dibujar lo que se sabe del tema.", ejemplo: "Mapa mental de 'reciclaje'.", ejercicio: "¿Qué organizador gráfico se usa antes de leer?", respuesta: "mapa conceptual" },
+        { nombre: "Preguntas guía", teoria: "El docente formula preguntas orientadoras.", ejemplo: "¿Qué aprenderás hoy?", ejercicio: "¿Qué recurso didáctico usa preguntas?", respuesta: "preguntas guía" },
+        { nombre: "Anticipación de vocabulario", teoria: "Buscar significado de palabras difíciles.", ejemplo: "Buscar 'biodiversidad' en el diccionario.", ejercicio: "¿Qué estrategia prepara el léxico?", respuesta: "anticipación léxica" },
+        { nombre: "Establecer metas parciales", teoria: "Dividir la lectura en partes.", ejemplo: "Leer 5 páginas y hacer una pausa.", ejercicio: "¿Qué técnica fracciona la lectura?", respuesta: "metas parciales" },
+        { nombre: "Motivación personal", teoria: "Generar interés por el tema.", ejemplo: "Pensar por qué es importante el tema.", ejercicio: "¿Qué factor afecta la disposición a leer?", respuesta: "motivación" },
+    ];
+    b1.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "antes", ...t }));
+
+    // Bloque 2: Durante la lectura (monitoreo) (20)
+    const b2 = [
+        { nombre: "Monitoreo de comprensión", teoria: "Verificar si se está entendiendo mientras se lee.", ejemplo: "Preguntarse '¿esto tiene sentido?'", ejercicio: "¿Qué estrategia verifica la comprensión?", respuesta: "monitoreo" },
+        { nombre: "Parafrasear", teoria: "Decir con otras palabras lo leído.", ejemplo: "El texto dice 'El sol calienta' → 'El sol emite calor'.", ejercicio: "¿Qué técnica reformula lo leído?", respuesta: "paráfrasis" },
+        { nombre: "Subrayar ideas clave", teoria: "Marcar las ideas más importantes.", ejemplo: "Subrayar la tesis de un ensayo.", ejercicio: "¿Qué técnica identifica ideas principales?", respuesta: "subrayado" },
+        { nombre: "Tomar notas", teoria: "Escribir resúmenes o ideas en los márgenes.", ejemplo: "Anotar dudas o comentarios.", ejercicio: "¿Qué estrategia registra información?", respuesta: "toma de notas" },
+        { nombre: "Formular preguntas durante la lectura", teoria: "Preguntarse sobre lo que se lee.", ejemplo: "¿Por qué el personaje hace eso?", ejercicio: "¿Qué técnica genera preguntas en el proceso?", respuesta: "cuestionamiento" },
+        { nombre: "Hacer inferencias", teoria: "Deducir información no explícita.", ejemplo: "Si dice 'llevaba paraguas', inferir que llueve.", ejercicio: "¿Qué estrategia deduce lo implícito?", respuesta: "inferencia" },
+        { nombre: "Relacionar con conocimientos previos", teoria: "Conectar lo leído con lo que ya se sabe.", ejemplo: "Relacionar un concepto con otro visto antes.", ejercicio: "¿Qué técnica conecta saberes?", respuesta: "activación de conocimientos" },
+        { nombre: "Visualizar", teoria: "Crear imágenes mentales de lo que se describe.", ejemplo: "Imaginar el paisaje descrito.", ejercicio: "¿Qué estrategia usa la imaginación?", respuesta: "visualización" },
+        { nombre: "Releer", teoria: "Volver a leer un fragmento que no se entendió.", ejemplo: "Releer un párrafo complicado.", ejercicio: "¿Qué técnica recurre a la relectura?", respuesta: "releer" },
+        { nombre: "Identificar estructura textual", teoria: "Reconocer si es causa-efecto, problema-solución, etc.", ejemplo: "Un texto que muestra un problema y su solución.", ejercicio: "¿Qué estrategia analiza la organización?", respuesta: "análisis estructural" },
+        { nombre: "Buscar pistas contextuales", teoria: "Usar el contexto para entender palabras desconocidas.", ejemplo: "Si dice 'El concierto fue estupendo', deducir que 'estupendo' es positivo.", ejercicio: "¿Qué estrategia usa el contexto?", respuesta: "claves contextuales" },
+        { nombre: "Detectar contradicciones", teoria: "Identificar si hay partes que no concuerdan.", ejemplo: "Si un personaje muere y luego aparece.", ejercicio: "¿Qué estrategia identifica inconsistencias?", respuesta: "detección de contradicciones" },
+        { nombre: "Autocorrección", teoria: "Corregir la interpretación si no tiene sentido.", ejemplo: "Si 'el perro voló' no es literal, buscar sentido metafórico.", ejercicio: "¿Qué estrategia corrige el error?", respuesta: "autocorrección" },
+        { nombre: "Uso de marcadores textuales", teoria: "Atender a conectores como 'porque', 'sin embargo'.", ejemplo: "'Sin embargo' indica contraste.", ejercicio: "¿Qué elemento lingüístico ayuda a seguir el texto?", respuesta: "marcadores" },
+        { nombre: "Lectura en voz alta (auto)", teoria: "Leer en voz alta para mejorar la comprensión.", ejemplo: "Leer un poema en voz alta.", ejercicio: "¿Qué técnica usa la vocalización?", respuesta: "lectura oral" },
+        { nombre: "Resumir por párrafos", teoria: "Sintetizar cada párrafo en una oración.", ejemplo: "Párrafo sobre el agua → 'El agua es esencial'.", ejercicio: "¿Qué estrategia resume parcialmente?", respuesta: "resumen parcial" },
+        { nombre: "Pausas reflexivas", teoria: "Detenerse a pensar sobre lo leído.", ejemplo: "Hacer una pausa después de cada página.", ejercicio: "¿Qué técnica incorpora pausas?", respuesta: "reflexión" },
+        { nombre: "Anotar dudas", teoria: "Escribir preguntas que surgen al leer.", ejemplo: "¿Qué significa esta palabra?", ejercicio: "¿Qué estrategia registra interrogantes?", respuesta: "anotación de dudas" },
+        { nombre: "Relacionar título y contenido", teoria: "Verificar si el título corresponde al texto.", ejemplo: "¿El título describe bien el contenido?", ejercicio: "¿Qué técnica evalúa la coherencia?", respuesta: "verificación de título" },
+        { nombre: "Lectura selectiva", teoria: "Saltar partes que no son relevantes para el propósito.", ejemplo: "Si buscas información específica, leer solo esa sección.", ejercicio: "¿Qué técnica es 'leer solo lo necesario'?", respuesta: "lectura selectiva" },
+    ];
+    b2.forEach((t, i) => TECNICAS.push({ id: i+21, bloque: 2, categoria: "durante", ...t }));
+
+    // Bloque 3: Después de la lectura (resumen) (20)
+    const b3 = [
+        { nombre: "Resumen global", teoria: "Sintetizar las ideas principales del texto completo.", ejemplo: "Escribir un resumen de 5 líneas de un artículo.", ejercicio: "¿Qué estrategia condensa el texto?", respuesta: "resumen" },
+        { nombre: "Idea principal", teoria: "Identificar la idea más importante de todo el texto.", ejemplo: "La idea principal de un cuento es su moraleja.", ejercicio: "¿Qué técnica extrae la esencia?", respuesta: "identificación de idea principal" },
+        { nombre: "Preguntas de comprensión", teoria: "Responder preguntas sobre el texto.", ejemplo: "¿Qué ocurrió al final?", ejercicio: "¿Qué estrategia evalúa la comprensión?", respuesta: "preguntas de comprensión" },
+        { nombre: "Mapa conceptual", teoria: "Organizar gráficamente las ideas del texto.", ejemplo: "Un mapa con el tema central y sus ramificaciones.", ejercicio: "¿Qué organizador gráfico se usa después?", respuesta: "mapa conceptual" },
+        { nombre: "Cuadro comparativo", teoria: "Comparar personajes, ideas o conceptos.", ejemplo: "Comparar dos teorías.", ejercicio: "¿Qué técnica usa comparaciones?", respuesta: "cuadro comparativo" },
+        { nombre: "Secuencia de eventos", teoria: "Ordenar cronológicamente lo ocurrido.", ejemplo: "Línea de tiempo de un relato histórico.", ejercicio: "¿Qué estrategia ordena los hechos?", respuesta: "secuencia" },
+        { nombre: "Relación causa-efecto", teoria: "Identificar causas y consecuencias.", ejemplo: "El calentamiento (causa) → deshielo (efecto).", ejercicio: "¿Qué estrategia analiza relaciones?", respuesta: "causa-efecto" },
+        { nombre: "Opinión personal", teoria: "Expresar acuerdo o desacuerdo con el texto.", ejemplo: "¿Estás de acuerdo con la tesis?", ejercicio: "¿Qué estrategia valora el texto?", respuesta: "opinión crítica" },
+        { nombre: "Evaluación crítica", teoria: "Juzgar la validez, objetividad y pertinencia.", ejemplo: "¿El autor es confiable?", ejercicio: "¿Qué técnica evalúa la calidad?", respuesta: "evaluación crítica" },
+        { nombre: "Aplicación práctica", teoria: "Usar lo aprendido en la vida real.", ejemplo: "Aplicar una estrategia de estudio.", ejercicio: "¿Qué estrategia transfiere el conocimiento?", respuesta: "aplicación" },
+        { nombre: "Elaboración de preguntas", teoria: "Formular preguntas sobre el texto para profundizar.", ejemplo: "¿Qué pasaría si...?", ejercicio: "¿Qué técnica genera interrogantes?", respuesta: "formulación de preguntas" },
+        { nombre: "Dibujo o ilustración", teoria: "Representar visualmente el contenido.", ejemplo: "Dibujar el escenario de una historia.", ejercicio: "¿Qué estrategia usa el dibujo?", respuesta: "ilustración" },
+        { nombre: "Representación teatral", teoria: "Actuar una escena o diálogo.", ejemplo: "Representar un fragmento de una obra.", ejercicio: "¿Qué técnica dramatiza el texto?", respuesta: "dramatización" },
+        { nombre: "Escritura creativa", teoria: "Reescribir el final o cambiar el punto de vista.", ejemplo: "Escribir un final alternativo.", ejercicio: "¿Qué estrategia recrea el texto?", respuesta: "reescritura" },
+        { nombre: "Debate", teoria: "Discutir ideas del texto con otros.", ejemplo: "Debatir sobre un tema controvertido.", ejercicio: "¿Qué técnica fomenta la discusión?", respuesta: "debate" },
+        { nombre: "Resumen oral", teoria: "Contar con palabras propias lo leído.", ejemplo: "Explicar a un compañero el texto.", ejercicio: "¿Qué estrategia usa la oralidad?", respuesta: "resumen oral" },
+        { nombre: "Ficha de lectura", teoria: "Registrar datos del texto y comentarios.", ejemplo: "Ficha con autor, título, tema y opinión.", ejercicio: "¿Qué formato organiza la información?", respuesta: "ficha de lectura" },
+        { nombre: "Conexión intertextual", teoria: "Relacionar el texto con otros leídos.", ejemplo: "Este cuento me recuerda a otro.", ejercicio: "¿Qué estrategia establece vínculos?", respuesta: "intertextualidad" },
+        { nombre: "Reflexión metacognitiva", teoria: "Pensar sobre el propio proceso de lectura.", ejemplo: "¿Qué aprendí? ¿Qué me costó?", ejercicio: "¿Qué estrategia evalúa el proceso?", respuesta: "metacognición" },
+        { nombre: "Evaluación del propósito", teoria: "Verificar si se cumplió el propósito inicial.", ejemplo: "¿Logré informarme sobre el tema?", ejercicio: "¿Qué estrategia revisa la meta?", respuesta: "evaluación de propósito" },
+    ];
+    b3.forEach((t, i) => TECNICAS.push({ id: i+41, bloque: 3, categoria: "después", ...t }));
+
+    // Bloque 4: Estrategias metacognitivas (20)
+    const b4 = [
+        { nombre: "Planificación de la lectura", teoria: "Definir cómo se va a leer (tiempo, estrategias).", ejemplo: "Decidir leer 30 minutos diarios.", ejercicio: "¿Qué estrategia organiza el acto de leer?", respuesta: "planificación" },
+        { nombre: "Autoevaluación", teoria: "Valorar el propio desempeño lector.", ejemplo: "¿Leí con atención? ¿Entendí todo?", ejercicio: "¿Qué técnica evalúa el proceso?", respuesta: "autoevaluación" },
+        { nombre: "Regulación", teoria: "Ajustar la estrategia si no funciona.", ejemplo: "Si no entiendo, cambio de técnica.", ejercicio: "¿Qué estrategia modifica el enfoque?", respuesta: "regulación" },
+        { nombre: "Conciencia del error", teoria: "Reconocer cuándo no se está comprendiendo.", ejemplo: "Darse cuenta de que se perdió el hilo.", ejercicio: "¿Qué habilidad metacognitiva detecta fallos?", respuesta: "conciencia del error" },
+        { nombre: "Flexibilidad estratégica", teoria: "Cambiar de estrategia según el texto o propósito.", ejemplo: "Usar subrayado para un texto complejo.", ejercicio: "¿Qué estrategia se adapta al contexto?", respuesta: "flexibilidad" },
+        { nombre: "Preguntas metacognitivas", teoria: "Preguntarse sobre el proceso: ¿cómo leí?", ejemplo: "¿Fui eficiente?", ejercicio: "¿Qué tipo de preguntas son sobre el proceso?", respuesta: "metacognitivas" },
+        { nombre: "Diario de lectura", teoria: "Escribir reflexiones sobre lo leído y cómo se leyó.", ejemplo: "Registrar dificultades y aciertos.", ejercicio: "¿Qué herramienta registra el proceso?", respuesta: "diario de lectura" },
+        { nombre: "Conocimiento de estrategias", teoria: "Saber qué estrategias existen y cuándo usarlas.", ejemplo: "Conocer el subrayado, el resumen, etc.", ejercicio: "¿Qué tipo de conocimiento es saber estrategias?", respuesta: "declarativo" },
+        { nombre: "Conocimiento procedimental", teoria: "Saber cómo se aplica cada estrategia.", ejemplo: "Saber cómo se hace un resumen.", ejercicio: "¿Qué conocimiento es 'saber hacer'?", respuesta: "procedimental" },
+        { nombre: "Conocimiento condicional", teoria: "Saber cuándo y por qué usar cada estrategia.", ejemplo: "Usar resumen para textos largos.", ejercicio: "¿Qué conocimiento es 'cuándo y por qué'?", respuesta: "condicional" },
+        { nombre: "Control de la atención", teoria: "Mantener el foco en la lectura.", ejemplo: "Evitar distracciones.", ejercicio: "¿Qué habilidad mantiene la concentración?", respuesta: "control atencional" },
+        { nombre: "Gestión del tiempo", teoria: "Distribuir el tiempo de lectura eficientemente.", ejemplo: "Leer en bloques de 20 minutos.", ejercicio: "¿Qué estrategia organiza el tiempo?", respuesta: "gestión temporal" },
+        { nombre: "Motivación intrínseca", teoria: "Leer por interés personal, no por obligación.", ejemplo: "Leer un tema que gusta.", ejercicio: "¿Qué tipo de motivación es interna?", respuesta: "intrínseca" },
+        { nombre: "Motivación extrínseca", teoria: "Leer por recompensa externa (notas, premios).", ejemplo: "Leer para aprobar un examen.", ejercicio: "¿Qué motivación viene de fuera?", respuesta: "extrínseca" },
+        { nombre: "Perseverancia", teoria: "No rendirse ante textos difíciles.", ejemplo: "Seguir intentando entender.", ejercicio: "¿Qué cualidad permite seguir leyendo?", respuesta: "perseverancia" },
+        { nombre: "Autoeficacia", teoria: "Confiar en la propia capacidad de comprensión.", ejemplo: "Creer que se puede entender.", ejercicio: "¿Qué creencia influye en la lectura?", respuesta: "autoeficacia" },
+        { nombre: "Atribución causal", teoria: "Atribuir el éxito o fracaso a factores controlables.", ejemplo: "Atribuir a la estrategia, no a la inteligencia.", ejercicio: "¿Qué atribución es más positiva?", respuesta: "esfuerzo y estrategia" },
+        { nombre: "Autorregulación emocional", teoria: "Manejar la ansiedad o frustración al leer.", ejemplo: "Respirar hondo si el texto es difícil.", ejercicio: "¿Qué estrategia maneja emociones?", respuesta: "autorregulación" },
+        { nombre: "Metacognición y transferencia", teoria: "Aplicar lo aprendido sobre leer a otras áreas.", ejemplo: "Usar estrategias de lectura en matemáticas.", ejercicio: "¿Qué estrategia transfiere conocimientos?", respuesta: "transferencia" },
+        { nombre: "Reflexión crítica sobre el proceso", teoria: "Evaluar críticamente la propia lectura.", ejemplo: "¿Leí con profundidad o superficialmente?", ejercicio: "¿Qué habilidad reflexiona sobre el proceso?", respuesta: "reflexión crítica" },
+    ];
+    b4.forEach((t, i) => TECNICAS.push({ id: i+61, bloque: 4, categoria: "metacognición", ...t }));
+
+    // Bloque 5: Evaluación y aplicación (20)
+    const b5 = [
+        { nombre: "Evaluación de la comprensión", teoria: "Medir el nivel de entendimiento.", ejemplo: "Preguntas de selección múltiple.", ejercicio: "¿Qué instrumento evalúa comprensión?", respuesta: "prueba objetiva" },
+        { nombre: "Rúbrica de lectura", teoria: "Criterios para evaluar la lectura.", ejemplo: "Niveles: literal, inferencial, crítico.", ejercicio: "¿Qué herramienta usa criterios?", respuesta: "rúbrica" },
+        { nombre: "Portafolio de lectura", teoria: "Recopilar evidencias de lectura.", ejemplo: "Resúmenes, mapas, reflexiones.", ejercicio: "¿Qué estrategia acumula trabajos?", respuesta: "portafolio" },
+        { nombre: "Lectura compartida", teoria: "Leer en parejas o grupos.", ejemplo: "Lectura en voz alta con un compañero.", ejercicio: "¿Qué técnica es social?", respuesta: "lectura compartida" },
+        { nombre: "Lectura guiada", teoria: "El docente guía la lectura con preguntas.", ejemplo: "El maestro detiene la lectura y pregunta.", ejercicio: "¿Qué estrategia usa mediación docente?", respuesta: "lectura guiada" },
+        { nombre: "Círculo de lectura", teoria: "Grupo que lee y comenta el mismo texto.", ejemplo: "Club de lectura.", ejercicio: "¿Qué técnica usa discusión grupal?", respuesta: "círculo de lectura" },
+        { nombre: "Lectura en voz alta (docente)", teoria: "El maestro lee para modelar.", ejemplo: "Leer un cuento con entonación.", ejercicio: "¿Qué técnica modela la lectura?", respuesta: "lectura en voz alta" },
+        { nombre: "Lectura silenciosa", teoria: "Leer sin voz para concentrarse.", ejemplo: "Leer un texto largo en silencio.", ejercicio: "¿Qué técnica es individual?", respuesta: "lectura silenciosa" },
+        { nombre: "Lectura rápida", teoria: "Leer para obtener información general.", ejemplo: "Hojear un periódico.", ejercicio: "¿Qué técnica es superficial?", respuesta: "lectura rápida" },
+        { nombre: "Lectura detallada", teoria: "Leer con atención para entender profundamente.", ejemplo: "Leer un contrato.", ejercicio: "¿Qué técnica es profunda?", respuesta: "lectura detallada" },
+        { nombre: "Uso de diccionario", teoria: "Buscar palabras desconocidas.", ejemplo: "Consultar el significado de 'efímero'.", ejercicio: "¿Qué herramienta auxiliar se usa?", respuesta: "diccionario" },
+        { nombre: "Uso de enciclopedia", teoria: "Consultar para ampliar información.", ejemplo: "Buscar datos históricos.", ejercicio: "¿Qué recurso amplía el conocimiento?", respuesta: "enciclopedia" },
+        { nombre: "Uso de internet", teoria: "Buscar información complementaria.", ejemplo: "Buscar un concepto en línea.", ejercicio: "¿Qué medio digital apoya la lectura?", respuesta: "internet" },
+        { nombre: "Lectura de imágenes", teoria: "Interpretar gráficos, mapas, fotos.", ejemplo: "Analizar una infografía.", ejercicio: "¿Qué tipo de texto es visual?", respuesta: "icónico" },
+        { nombre: "Lectura de datos", teoria: "Interpretar tablas y estadísticas.", ejemplo: "Leer una gráfica de barras.", ejercicio: "¿Qué formato presenta datos?", respuesta: "tabla" },
+        { nombre: "Lectura crítica de medios", teoria: "Analizar noticias y publicidad.", ejemplo: "Detectar fake news.", ejercicio: "¿Qué estrategia cuestiona los medios?", respuesta: "lectura crítica" },
+        { nombre: "Lectura literaria", teoria: "Disfrutar y analizar textos literarios.", ejemplo: "Leer un poema.", ejercicio: "¿Qué tipo de lectura es estética?", respuesta: "literaria" },
+        { nombre: "Lectura académica", teoria: "Leer textos especializados para estudiar.", ejemplo: "Leer un artículo científico.", ejercicio: "¿Qué tipo de lectura es formal?", respuesta: "académica" },
+        { nombre: "Lectura recreativa", teoria: "Leer por placer.", ejemplo: "Leer una novela.", ejercicio: "¿Qué tipo de lectura es por gusto?", respuesta: "recreativa" },
+        { nombre: "Lectura funcional", teoria: "Leer para hacer algo (instrucciones, recetas).", ejemplo: "Leer un manual de instrucciones.", ejercicio: "¿Qué tipo de lectura es práctica?", respuesta: "funcional" },
+    ];
+    b5.forEach((t, i) => TECNICAS.push({ id: i+81, bloque: 5, categoria: "evaluación", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Antes de leer', 'Durante (monitoreo)', 'Después (resumen)', 'Metacognición', 'Evaluación y aplicación'];
+
+    for (let i = 1; i <= 5; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.teoria}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#1F4E5F;margin-bottom:0.2rem;">📖 ${t.nombre}</div>
+                            <div class="ejemplo"><strong>Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#1F4E5F;color:white;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

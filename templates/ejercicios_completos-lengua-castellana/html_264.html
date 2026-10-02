@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Tiempos Verbales</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">tiempos verbales · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Estructura: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una oración que ejemplifique esta técnica:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Ayer estudié toda la tarde.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS DE TIEMPOS VERBALES
+        //  Usos, conjugaciones, matices y contrastes en español
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'presente', label: 'Presente' },
+            { id: 'pretéritos', label: 'Pretéritos' },
+            { id: 'futuros', label: 'Futuros' },
+            { id: 'condicionales', label: 'Condicionales' },
+            { id: 'subjuntivo', label: 'Subjuntivo' },
+            { id: 'perfectos', label: 'Tiempos Perfectos' },
+            { id: 'imperativos', label: 'Imperativo' },
+            { id: 'voz_pasiva', label: 'Voz Pasiva' },
+            { id: 'perifrasis', label: 'Perífrasis Verbales' },
+            { id: 'contrastes', label: 'Contrastes y Usos' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: PRESENTE (1–10)
+        // ============================================================
+        const b1 = [
+            ['Presente de indicativo: acciones habituales', 'Presente (hablar, comer, vivir)',
+                'El presente de indicativo se usa para acciones que ocurren habitualmente o son verdades generales. Indica una acción que se repite en el tiempo.',
+                'Todos los días estudio español por la mañana.',
+                'estudio (presente, 1ª persona singular) — acción habitual',
+                '¿Qué tiempo verbal se usa para acciones habituales?', ['Presente', 'Pretérito', 'Futuro', 'Condicional'],
+                0, 'Escribe una oración con un verbo en presente que exprese una acción habitual.'
+            ],
+            ['Presente de indicativo: acciones actuales', 'Presente + ahora / en este momento',
+                'El presente también se usa para acciones que están ocurriendo en el momento del habla.',
+                'Ahora mismo estoy escribiendo un correo.',
+                'estoy escribiendo (presente + gerundio) — acción actual',
+                '¿Qué tiempo expresa una acción que ocurre en este momento?', ['Presente', 'Pretérito', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración en presente que exprese una acción actual.'
+            ],
+            ['Presente de indicativo: verdades generales', 'Presente + hechos universales',
+                'El presente se usa para expresar hechos que son siempre verdaderos, como leyes de la naturaleza.',
+                'El agua hierve a 100 grados centígrados.',
+                'hierve (presente, 3ª persona) — verdad universal',
+                '¿Qué tiempo se usa para verdades científicas o universales?', ['Presente', 'Pretérito', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración en presente que exprese una verdad universal.'
+            ],
+            ['Presente de indicativo: con valor de futuro', 'Presente + mañana / la semana que viene',
+                'En español, el presente se usa a menudo para hablar de acciones futuras cercanas, especialmente con marcadores temporales.',
+                'Mañana viajo a Barcelona.',
+                'viajo (presente) + mañana (marcador futuro) — valor de futuro',
+                '¿Qué tiempo puede expresar futuro próximo sin usar el futuro gramatical?', ['Presente', 'Pretérito',
+                    'Condicional', 'Subjuntivo'
+                ], 0, 'Escribe una oración en presente con valor de futuro.'
+            ],
+            ['Presente de indicativo: con valor de pasado (presente histórico)', 'Presente + evento pasado relevante',
+                'El presente histórico se usa para narrar eventos pasados con un efecto de inmediatez y viveza.',
+                'En 1492, Colón descubre América.',
+                'descubre (presente) — presente histórico',
+                '¿Cómo se llama el uso del presente para narrar eventos pasados?', ['Presente histórico',
+                    'Presente habitual', 'Presente futuro', 'Presente actual'
+                ], 0, 'Escribe una oración con presente histórico.'
+            ],
+            ['Presente de subjuntivo: expresión de deseo', 'Presente subjuntivo: quiero que + verbo en subjuntivo',
+                'El presente de subjuntivo se usa para expresar deseos, con verbos como «querer», «desear», «esperar».',
+                'Quiero que vengas a la fiesta.',
+                'vengas (presente subjuntivo, 2ª persona) — expresión de deseo',
+                '¿Qué modo verbal se usa para expresar deseos después de «quiero que»?', ['Subjuntivo', 'Indicativo',
+                    'Imperativo', 'Infinitivo'
+                ], 0, 'Escribe una oración con «quiero que» + presente de subjuntivo.'
+            ],
+            ['Presente de subjuntivo: expresión de duda', 'Presente subjuntivo: dudo que + verbo en subjuntivo',
+                'El presente de subjuntivo se usa con verbos de duda como «dudar», «no creer», «no pensar».',
+                'Dudo que sea cierto.',
+                'sea (presente subjuntivo, 3ª persona) — expresión de duda',
+                '¿Qué tiempo sigue a «dudo que» en una oración de duda?', ['Presente subjuntivo', 'Presente indicativo',
+                    'Futuro', 'Condicional'
+                ], 0, 'Escribe una oración con «dudo que» + presente de subjuntivo.'
+            ],
+            ['Presente de subjuntivo: expresión de emoción', 'Presente subjuntivo: me alegra que + verbo en subjuntivo',
+                'El presente de subjuntivo se usa con verbos de emoción como «alegrarse», «temer», «sorprender».',
+                'Me alegra que estés bien.',
+                'estés (presente subjuntivo, 2ª persona) — expresión de emoción',
+                '¿Qué modo sigue a «me alegra que»?', ['Subjuntivo', 'Indicativo', 'Imperativo', 'Infinitivo'],
+                0, 'Escribe una oración con «me alegra que» + presente de subjuntivo.'
+            ],
+            ['Presente de subjuntivo: expresión de influencia', 'Presente subjuntivo: te pido que + verbo en subjuntivo',
+                'El presente de subjuntivo se usa con verbos de influencia como «pedir», «exigir», «recomendar».',
+                'Te pido que me ayudes.',
+                'ayudes (presente subjuntivo, 2ª persona) — expresión de influencia',
+                '¿Qué modo sigue a verbos de influencia como «pedir»?', ['Subjuntivo', 'Indicativo', 'Imperativo',
+                    'Infinitivo'
+                ], 0, 'Escribe una oración con «te pido que» + presente de subjuntivo.'
+            ],
+            ['Presente de subjuntivo: en oraciones de relativo con antecedente indefinido',
+                'Presente subjuntivo: busco algo que + verbo en subjuntivo',
+                'Cuando el antecedente es indefinido o desconocido, la oración de relativo va en subjuntivo.',
+                'Busco un libro que tenga ilustraciones.',
+                'tenga (presente subjuntivo, 3ª persona) — antecedente indefinido',
+                '¿Qué modo se usa en oraciones de relativo con antecedente indefinido?', ['Subjuntivo', 'Indicativo',
+                    'Imperativo', 'Infinitivo'
+                ], 0, 'Escribe una oración de relativo con «busco algo que» + presente subjuntivo.'
+            ]
+        ];
+        b1.forEach(d => addLesson('presente', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: PRETÉRITOS (11–20)
+        // ============================================================
+        const b2 = [
+            ['Pretérito perfecto simple: acciones pasadas puntuales', 'Pretérito: hablé, comí, viví',
+                'El pretérito perfecto simple se usa para acciones pasadas que han finalizado en un momento concreto.',
+                'Ayer compré un libro nuevo.',
+                'compré (pretérito, 1ª persona) — acción pasada puntual',
+                '¿Qué tiempo se usa para acciones pasadas puntuales y finalizadas?', ['Pretérito perfecto simple',
+                    'Pretérito imperfecto', 'Pretérito pluscuamperfecto', 'Pretérito anterior'
+                ], 0, 'Escribe una oración en pretérito perfecto simple para una acción pasada puntual.'
+            ],
+            ['Pretérito perfecto simple: acciones en un período cerrado', 'Pretérito + ayer / el año pasado',
+                'El pretérito se usa para acciones en un período de tiempo que ya ha terminado.',
+                'El año pasado visité París.',
+                'visité (pretérito) + el año pasado (período cerrado)',
+                '¿Qué período de tiempo indica el uso del pretérito perfecto simple?', ['Un período cerrado',
+                    'Un período abierto', 'Un período futuro', 'Un período habitual'
+                ], 0, 'Escribe una oración en pretérito con un período de tiempo cerrado.'
+            ],
+            ['Pretérito imperfecto: acciones pasadas habituales', 'Imperfecto: hablaba, comía, vivía',
+                'El pretérito imperfecto se usa para acciones habituales o repetidas en el pasado.',
+                'Cuando era niño, jugaba en el parque todos los días.',
+                'jugaba (imperfecto, 1ª persona) — acción habitual en el pasado',
+                '¿Qué tiempo se usa para acciones habituales en el pasado?', ['Pretérito imperfecto',
+                    'Pretérito perfecto simple', 'Pretérito pluscuamperfecto', 'Pretérito anterior'
+                ], 0, 'Escribe una oración en pretérito imperfecto que exprese una acción habitual en el pasado.'
+            ],
+            ['Pretérito imperfecto: descripciones en el pasado', 'Imperfecto + descripciones',
+                'El imperfecto se usa para describir el estado de personas, lugares o situaciones en el pasado.',
+                'La casa era grande y las paredes estaban pintadas de blanco.',
+                'era (imperfecto) + estaban pintadas (imperfecto + participio) — descripción',
+                '¿Qué tiempo se usa para describir en el pasado?', ['Pretérito imperfecto', 'Pretérito perfecto simple',
+                    'Pretérito pluscuamperfecto', 'Presente'
+                ], 0, 'Escribe una descripción en pretérito imperfecto.'
+            ],
+            ['Pretérito imperfecto: acciones interrumpidas', 'Imperfecto + cuando + pretérito',
+                'El imperfecto describe una acción en desarrollo que es interrumpida por otra acción puntual (pretérito).',
+                'Caminaba por la calle cuando empezó a llover.',
+                'caminaba (imperfecto, acción en desarrollo) + empezó (pretérito, interrupción)',
+                '¿Qué tiempo describe la acción en desarrollo que es interrumpida?', ['Pretérito imperfecto',
+                    'Pretérito perfecto simple', 'Pretérito pluscuamperfecto', 'Presente'
+                ], 0, 'Escribe una oración con imperfecto + cuando + pretérito.'
+            ],
+            ['Pretérito perfecto compuesto: pasado con relevancia en el presente', 'Pretérito perfecto compuesto: he + participio',
+                'El pretérito perfecto compuesto se usa para acciones pasadas que tienen relevancia o conexión con el presente.',
+                'He perdido las llaves (y no las encuentro).',
+                'He perdido (pretérito perfecto compuesto, 1ª persona) — relevancia presente',
+                '¿Qué tiempo expresa una acción pasada con relevancia en el presente?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito pluscuamperfecto', 'Pretérito anterior'
+                ], 0, 'Escribe una oración en pretérito perfecto compuesto con relevancia presente.'
+            ],
+            ['Pretérito perfecto compuesto: acciones en un período no cerrado', 'Pretérito perfecto compuesto + hoy / esta semana',
+                'Se usa con marcadores temporales que indican un período que aún no ha terminado.',
+                'Esta semana he hecho mucho ejercicio.',
+                'he hecho (pretérito perfecto compuesto) + esta semana (período no cerrado)',
+                '¿Qué tiempo se usa con «hoy» o «esta semana» para acciones pasadas?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito imperfecto', 'Pluscuamperfecto'
+                ], 0, 'Escribe una oración en pretérito perfecto compuesto con «hoy».'
+            ],
+            ['Pretérito perfecto compuesto: acciones recientes', 'Pretérito perfecto compuesto + ahora / recientemente',
+                'Se usa para acciones que acaban de ocurrir o son muy recientes.',
+                'Recientemente he terminado el proyecto.',
+                'he terminado (pretérito perfecto compuesto) — acción reciente',
+                '¿Qué tiempo se usa para acciones muy recientes?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito imperfecto', 'Futuro perfecto'
+                ], 0, 'Escribe una oración en pretérito perfecto compuesto para una acción reciente.'
+            ],
+            ['Pretérito pluscuamperfecto: pasado anterior a otro pasado', 'Pluscuamperfecto: había + participio',
+                'El pluscuamperfecto se usa para una acción pasada que ocurrió antes de otra acción pasada.',
+                'Cuando llegué, él ya había comido.',
+                'había comido (pluscuamperfecto) + llegué (pretérito) — anterioridad',
+                '¿Qué tiempo indica una acción pasada anterior a otra acción pasada?', ['Pretérito pluscuamperfecto',
+                    'Pretérito perfecto compuesto', 'Pretérito perfecto simple', 'Pretérito imperfecto'
+                ], 0, 'Escribe una oración con pluscuamperfecto + pretérito.'
+            ],
+            ['Pretérito anterior: acción inmediatamente anterior', 'Pretérito anterior: hube + participio',
+                'El pretérito anterior expresa una acción pasada que ocurre inmediatamente antes de otra. Es poco usado en el habla coloquial.',
+                'En cuanto hube llegado, llamé a mi madre.',
+                'hube llegado (pretérito anterior) + llamé (pretérito)',
+                '¿Qué tiempo expresa una acción pasada inmediatamente anterior a otra?', ['Pretérito anterior',
+                    'Pretérito pluscuamperfecto', 'Pretérito perfecto compuesto', 'Pretérito perfecto simple'
+                ], 0, 'Escribe una oración en pretérito anterior (formal).'
+            ]
+        ];
+        b2.forEach(d => addLesson('pretéritos', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: FUTUROS (21–30)
+        // ============================================================
+        const b3 = [
+            ['Futuro simple: acciones futuras', 'Futuro simple: hablaré, comeré, viviré',
+                'El futuro simple se usa para acciones que ocurrirán en el futuro.',
+                'Mañana estudiaré toda la tarde.',
+                'estudiaré (futuro simple, 1ª persona) — acción futura',
+                '¿Qué tiempo se usa para acciones futuras?', ['Futuro simple', 'Presente', 'Condicional', 'Imperativo'],
+                0, 'Escribe una oración en futuro simple para una acción futura.'
+            ],
+            ['Futuro simple: predicciones', 'Futuro simple + probablemente / posiblemente',
+                'El futuro simple se usa para hacer predicciones sobre el futuro.',
+                'El año que viene probablemente viajaré a Argentina.',
+                'viajaré (futuro simple) — predicción',
+                '¿Qué tiempo se usa para hacer predicciones?', ['Futuro simple', 'Presente', 'Condicional', 'Pretérito'],
+                0, 'Escribe una oración en futuro simple que sea una predicción.'
+            ],
+            ['Futuro simple: suposiciones en el presente', 'Futuro simple + suposición',
+                'El futuro simple también se usa para expresar suposiciones o conjeturas sobre el presente.',
+                '¿Quién llamará a esta hora? (Será Juan)',
+                'llamará (futuro simple) — suposición sobre el presente',
+                '¿Qué tiempo expresa una suposición sobre el presente?', ['Futuro simple', 'Presente', 'Condicional',
+                    'Pretérito'
+                ], 0, 'Escribe una oración en futuro simple que exprese una suposición.'
+            ],
+            ['Futuro simple: promesas o intenciones', 'Futuro simple + promesa',
+                'El futuro simple se usa para hacer promesas o expresar intenciones.',
+                'Te prometo que te llamaré mañana.',
+                'llamaré (futuro simple) — promesa',
+                '¿Qué tiempo se usa para hacer promesas?', ['Futuro simple', 'Presente', 'Condicional', 'Imperativo'],
+                0, 'Escribe una oración en futuro simple que sea una promesa.'
+            ],
+            ['Futuro compuesto (perfecto): acciones futuras completadas', 'Futuro compuesto: habré + participio',
+                'El futuro compuesto se usa para acciones que se habrán completado en un momento futuro.',
+                'Para las 6, ya habré terminado el trabajo.',
+                'habré terminado (futuro compuesto) — acción completada en el futuro',
+                '¿Qué tiempo expresa una acción futura que ya estará completada?', ['Futuro compuesto',
+                    'Futuro simple', 'Condicional compuesto', 'Pluscuamperfecto'
+                ], 0, 'Escribe una oración en futuro compuesto.'
+            ],
+            ['Futuro compuesto: suposiciones sobre el pasado', 'Futuro compuesto + suposición',
+                'El futuro compuesto se usa para hacer suposiciones sobre acciones pasadas.',
+                'No han llegado, se habrán perdido.',
+                'se habrán perdido (futuro compuesto) — suposición sobre el pasado',
+                '¿Qué tiempo expresa una suposición sobre una acción pasada?', ['Futuro compuesto', 'Futuro simple',
+                    'Condicional compuesto', 'Pluscuamperfecto'
+                ], 0, 'Escribe una oración en futuro compuesto para expresar una suposición.'
+            ],
+            ['Perífrasis «ir a + infinitivo»: futuro inmediato', 'Ir a + infinitivo',
+                'La perífrasis «ir a + infinitivo» expresa una acción futura cercana o intención inmediata.',
+                'Voy a llamar a mi madre ahora mismo.',
+                'Voy a llamar (ir + a + infinitivo) — futuro inmediato',
+                '¿Qué perífrasis expresa un futuro inmediato?', ['Ir a + infinitivo', 'Estar + gerundio',
+                    'Tener que + infinitivo', 'Deber + infinitivo'
+                ], 0, 'Escribe una oración con «ir a + infinitivo» para un futuro inmediato.'
+            ],
+            ['Perífrasis «estar a punto de + infinitivo»: inminencia', 'Estar a punto de + infinitivo',
+                'Expresa que una acción está a punto de ocurrir en el momento presente.',
+                'Estamos a punto de salir.',
+                'Estamos a punto de salir (estar a punto de + infinitivo) — inminencia',
+                '¿Qué perífrasis expresa que una acción está a punto de ocurrir?', ['Estar a punto de + infinitivo',
+                    'Ir a + infinitivo', 'Tener que + infinitivo', 'Deber + infinitivo'
+                ], 0, 'Escribe una oración con «estar a punto de + infinitivo».'
+            ],
+            ['Perífrasis «estar + gerundio»: futuro próximo', 'Estar + gerundio',
+                'El gerundio con «estar» puede expresar una acción futura cercana cuando se combina con un marcador temporal.',
+                'Mañana estoy viajando a Madrid.',
+                'estoy viajando (estar + gerundio) — futuro próximo',
+                '¿Qué perífrasis con gerundio puede expresar futuro?', ['Estar + gerundio', 'Ir a + infinitivo',
+                    'Acabar de + infinitivo', 'Andar + gerundio'
+                ], 0, 'Escribe una oración con «estar + gerundio» para un futuro próximo.'
+            ],
+            ['Futuro en oraciones subordinadas con "cuando"', 'Cuando + presente subjuntivo',
+                'En oraciones subordinadas de tiempo con «cuando» que se refieren al futuro, el verbo va en presente de subjuntivo.',
+                'Cuando llegues, llámame.',
+                'llegues (presente subjuntivo) — futuro en subordinada temporal',
+                '¿Qué tiempo se usa en oraciones con «cuando» para referirse al futuro?', ['Presente subjuntivo',
+                    'Futuro simple', 'Presente indicativo', 'Condicional'
+                ], 0, 'Escribe una oración con «cuando» + presente de subjuntivo para el futuro.'
+            ]
+        ];
+        b3.forEach(d => addLesson('futuros', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: CONDICIONALES (31–40)
+        // ============================================================
+        const b4 = [
+            ['Condicional simple: cortesía', 'Condicional: hablaría, comería, viviría',
+                'El condicional se usa para expresar cortesía en preguntas y peticiones.',
+                '¿Podría ayudarme con esto?',
+                'Podría (condicional de poder) — cortesía',
+                '¿Qué tiempo se usa para preguntar con cortesía?', ['Condicional', 'Presente', 'Futuro', 'Imperativo'],
+                0, 'Escribe una pregunta cortés en condicional.'
+            ],
+            ['Condicional simple: hipótesis en el presente', 'Condicional + si + imperfecto subjuntivo',
+                'El condicional se usa para expresar una acción hipotética en el presente o futuro.',
+                'Si tuviera dinero, viajaría por el mundo.',
+                'viajaría (condicional) — hipótesis presente',
+                '¿Qué tiempo se usa para hipótesis en el presente con «si»?', ['Condicional', 'Futuro', 'Presente',
+                    'Pretérito'
+                ], 0, 'Escribe una oración con «si» + imperfecto subjuntivo + condicional.'
+            ],
+            ['Condicional simple: consejo', 'Condicional + consejo',
+                'El condicional se usa para dar consejos de manera suave y educada.',
+                'Yo que tú, estudiaría más.',
+                'estudiaría (condicional) — consejo',
+                '¿Qué tiempo se usa para dar consejos de manera suave?', ['Condicional', 'Imperativo', 'Presente',
+                    'Futuro'
+                ], 0, 'Escribe un consejo en condicional.'
+            ],
+            ['Condicional simple: suposiciones', 'Condicional + suposición',
+                'El condicional expresa suposiciones sobre el presente o el futuro.',
+                'Serían las tres cuando llegó.',
+                'Serían (condicional) — suposición sobre el pasado',
+                '¿Qué tiempo expresa una suposición sobre el pasado?', ['Condicional', 'Futuro', 'Presente', 'Pretérito'],
+                0, 'Escribe una oración en condicional que exprese una suposición.'
+            ],
+            ['Condicional simple: acciones futuras desde el pasado', 'Condicional + en el pasado',
+                'El condicional se usa para hablar de acciones futuras desde una perspectiva pasada (futuro del pasado).',
+                'Me dijo que vendría al día siguiente.',
+                'vendría (condicional) — futuro desde el pasado',
+                '¿Qué tiempo expresa un futuro desde el pasado?', ['Condicional', 'Futuro', 'Presente', 'Pretérito'],
+                0, 'Escribe una oración en condicional que exprese un futuro desde el pasado.'
+            ],
+            ['Condicional compuesto: hipótesis en el pasado', 'Condicional compuesto: habría + participio',
+                'El condicional compuesto se usa para expresar una acción hipotética en el pasado.',
+                'Si hubiera estudiado, habría aprobado.',
+                'habría aprobado (condicional compuesto) — hipótesis pasada',
+                '¿Qué tiempo se usa para hipótesis en el pasado con «si»?', ['Condicional compuesto', 'Condicional simple',
+                    'Pluscuamperfecto', 'Pretérito'
+                ], 0, 'Escribe una oración con «si» + pluscuamperfecto subjuntivo + condicional compuesto.'
+            ],
+            ['Condicional compuesto: suposiciones sobre el pasado', 'Condicional compuesto + suposición',
+                'El condicional compuesto expresa suposiciones sobre acciones pasadas.',
+                'No llamó, se habría olvidado.',
+                'se habría olvidado (condicional compuesto) — suposición pasada',
+                '¿Qué tiempo expresa una suposición sobre una acción pasada?', ['Condicional compuesto',
+                    'Futuro compuesto', 'Pluscuamperfecto', 'Pretérito'
+                ], 0, 'Escribe una oración en condicional compuesto con suposición.'
+            ],
+            ['Condicional compuesto: acción no realizada en el pasado', 'Condicional compuesto + pero',
+                'El condicional compuesto se usa para acciones que no ocurrieron en el pasado.',
+                'Habría ido, pero no tenía tiempo.',
+                'Habría ido (condicional compuesto) — acción no realizada en el pasado',
+                '¿Qué tiempo expresa una acción que no ocurrió en el pasado?', ['Condicional compuesto',
+                    'Condicional simple', 'Pluscuamperfecto', 'Pretérito'
+                ], 0, 'Escribe una oración en condicional compuesto con «pero» para una acción no realizada.'
+            ],
+            ['Condicional compuesto: futuro perfecto desde el pasado', 'Condicional compuesto + futuro desde el pasado',
+                'El condicional compuesto expresa una acción que se habría completado en el futuro desde una perspectiva pasada.',
+                'Me dijo que para entonces ya habría terminado.',
+                'habría terminado (condicional compuesto) — futuro perfecto desde el pasado',
+                '¿Qué tiempo expresa un futuro perfecto desde el pasado?', ['Condicional compuesto', 'Futuro compuesto',
+                    'Pluscuamperfecto', 'Pretérito'
+                ], 0, 'Escribe una oración en condicional compuesto para un futuro perfecto desde el pasado.'
+            ],
+            ['Condicional en oraciones subordinadas con "como si"', 'Como si + imperfecto subjuntivo',
+                'La conjunción «como si» requiere el imperfecto de subjuntivo en la subordinada, pero la oración principal puede ir en condicional para expresar una acción hipotética.',
+                'Actúa como si no supiera nada.',
+                'supiera (imperfecto subjuntivo) — comparación hipotética',
+                '¿Qué tiempo sigue a «como si» en una comparación hipotética?', ['Imperfecto subjuntivo',
+                    'Presente subjuntivo', 'Pretérito perfecto subjuntivo', 'Condicional'
+                ], 0, 'Escribe una oración con «como si» + imperfecto subjuntivo.'
+            ]
+        ];
+        b4.forEach(d => addLesson('condicionales', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: SUBJUNTIVO (41–50)
+        // ============================================================
+        const b5 = [
+            ['Presente subjuntivo: deseo y voluntad', 'Presente subjuntivo + ojalá / quiero que',
+                'El presente de subjuntivo se usa con expresiones de deseo y voluntad.',
+                'Ojalá venga a la fiesta.',
+                'venga (presente subjuntivo) — deseo',
+                '¿Qué tiempo sigue a «ojalá» para expresar un deseo?', ['Presente subjuntivo', 'Presente indicativo',
+                    'Futuro', 'Condicional'
+                ], 0, 'Escribe una oración con «ojalá» + presente subjuntivo.'
+            ],
+            ['Presente subjuntivo: duda y negación', 'Presente subjuntivo + no creo que / dudo que',
+                'El presente de subjuntivo se usa con verbos que expresan duda o negación.',
+                'No creo que sea verdad.',
+                'sea (presente subjuntivo) — duda',
+                '¿Qué tiempo sigue a «no creo que»?', ['Presente subjuntivo', 'Presente indicativo', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración con «no creo que» + presente subjuntivo.'
+            ],
+            ['Presente subjuntivo: emoción y sentimiento', 'Presente subjuntivo + me alegra que / temo que',
+                'El presente de subjuntivo se usa con verbos que expresan emociones o sentimientos.',
+                'Temo que llegue tarde.',
+                'llegue (presente subjuntivo) — temor',
+                '¿Qué tiempo sigue a «temo que»?', ['Presente subjuntivo', 'Presente indicativo', 'Futuro', 'Condicional'],
+                0, 'Escribe una oración con «temo que» + presente subjuntivo.'
+            ],
+            ['Presente subjuntivo: influencia y mandato', 'Presente subjuntivo + te recomiendo que / exijo que',
+                'El presente de subjuntivo se usa con verbos de influencia, recomendación o mandato.',
+                'Te recomiendo que estudies más.',
+                'estudies (presente subjuntivo) — recomendación',
+                '¿Qué tiempo sigue a «te recomiendo que»?', ['Presente subjuntivo', 'Presente indicativo', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración con «te recomiendo que» + presente subjuntivo.'
+            ],
+            ['Imperfecto subjuntivo: hipótesis presente', 'Imperfecto subjuntivo + si + condicional',
+                'El imperfecto de subjuntivo se usa en oraciones condicionales con «si» para expresar una hipótesis presente.',
+                'Si viniera, me alegraría mucho.',
+                'viniera (imperfecto subjuntivo) — hipótesis presente',
+                '¿Qué tiempo sigue a «si» en una hipótesis presente?', ['Imperfecto subjuntivo', 'Presente subjuntivo',
+                    'Pretérito perfecto subjuntivo', 'Condicional'
+                ], 0, 'Escribe una oración con «si» + imperfecto subjuntivo + condicional.'
+            ],
+            ['Imperfecto subjuntivo: cortesía', 'Imperfecto subjuntivo + quisiera / pudiera',
+                'El imperfecto de subjuntivo se usa para expresar cortesía, especialmente con los verbos «querer» y «poder».',
+                'Quisiera pedirte un favor.',
+                'Quisiera (imperfecto subjuntivo de querer) — cortesía',
+                '¿Qué tiempo se usa para expresar cortesía con «quisiera»?', ['Imperfecto subjuntivo',
+                    'Presente subjuntivo', 'Condicional', 'Presente indicativo'
+                ], 0, 'Escribe una oración con «quisiera» para una petición cortés.'
+            ],
+            ['Imperfecto subjuntivo: como si', 'Como si + imperfecto subjuntivo',
+                'La conjunción «como si» siempre va seguida de imperfecto de subjuntivo.',
+                'Habla como si fuera el dueño.',
+                'fuera (imperfecto subjuntivo) — comparación hipotética',
+                '¿Qué tiempo sigue a «como si»?', ['Imperfecto subjuntivo', 'Presente subjuntivo',
+                    'Pretérito perfecto subjuntivo', 'Condicional'
+                ], 0, 'Escribe una oración con «como si» + imperfecto subjuntivo.'
+            ],
+            ['Pluscuamperfecto subjuntivo: hipótesis pasada', 'Pluscuamperfecto subjuntivo + si + condicional compuesto',
+                'El pluscuamperfecto de subjuntivo se usa en oraciones condicionales con «si» para expresar una hipótesis pasada.',
+                'Si hubiera estudiado, habría aprobado.',
+                'hubiera estudiado (pluscuamperfecto subjuntivo) — hipótesis pasada',
+                '¿Qué tiempo sigue a «si» en una hipótesis pasada?', ['Pluscuamperfecto subjuntivo',
+                    'Imperfecto subjuntivo', 'Pretérito perfecto subjuntivo', 'Condicional compuesto'
+                ], 0, 'Escribe una oración con «si» + pluscuamperfecto subjuntivo + condicional compuesto.'
+            ],
+            ['Pretérito perfecto subjuntivo: duda sobre acciones recientes', 'Pretérito perfecto subjuntivo + no creo que',
+                'El pretérito perfecto de subjuntivo se usa con verbos de duda para acciones pasadas recientes.',
+                'No creo que haya llegado todavía.',
+                'haya llegado (pretérito perfecto subjuntivo) — duda sobre acción reciente',
+                '¿Qué tiempo sigue a «no creo que» para una acción pasada reciente?', ['Pretérito perfecto subjuntivo',
+                    'Presente subjuntivo', 'Imperfecto subjuntivo', 'Pluscuamperfecto subjuntivo'
+                ], 0, 'Escribe una oración con «no creo que» + pretérito perfecto subjuntivo.'
+            ],
+            ['Futuro subjuntivo: condiciones futuras (arcaico)', 'Futuro subjuntivo + si (arcáico)',
+                'El futuro de subjuntivo es un tiempo arcaico que se usa en contextos legales o literarios para expresar condiciones futuras.',
+                'Si viniere, avísame.',
+                'viniere (futuro subjuntivo) — condición futura (arcaico)',
+                '¿En qué contextos se usa el futuro de subjuntivo?', ['Contextos legales o literarios',
+                    'Habla coloquial', 'Correos electrónicos', 'Redes sociales'
+                ], 0, 'Escribe una oración con futuro de subjuntivo (arcaico).'
+            ]
+        ];
+        b5.forEach(d => addLesson('subjuntivo', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: TIEMPOS PERFECTOS (51–60)
+        // ============================================================
+        const b6 = [
+            ['Pretérito perfecto compuesto: presente perfecto', 'Haber + participio',
+                'El pretérito perfecto compuesto indica acciones pasadas en un período no cerrado, con relevancia presente.',
+                'He visitado París tres veces.',
+                'He visitado (pretérito perfecto compuesto) — experiencia',
+                '¿Qué tiempo se usa para acciones pasadas en un período no cerrado?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito pluscuamperfecto', 'Futuro perfecto'
+                ], 0, 'Escribe una oración en pretérito perfecto compuesto para una experiencia.'
+            ],
+            ['Pretérito pluscuamperfecto: pasado anterior', 'Había + participio',
+                'El pluscuamperfecto indica una acción pasada anterior a otra acción pasada.',
+                'Cuando llegué, ya habían salido.',
+                'habían salido (pluscuamperfecto) — anterioridad en el pasado',
+                '¿Qué tiempo indica una acción pasada anterior a otra pasada?', ['Pretérito pluscuamperfecto',
+                    'Pretérito perfecto compuesto', 'Pretérito perfecto simple', 'Futuro perfecto'
+                ], 0, 'Escribe una oración con pluscuamperfecto + pretérito.'
+            ],
+            ['Futuro perfecto: acción completada en el futuro', 'Habré + participio',
+                'El futuro perfecto indica una acción que se habrá completado en un momento futuro.',
+                'Para el viernes, ya habré terminado.',
+                'habré terminado (futuro perfecto) — acción completada en el futuro',
+                '¿Qué tiempo indica una acción completada en el futuro?', ['Futuro perfecto', 'Futuro simple',
+                    'Condicional perfecto', 'Pluscuamperfecto'
+                ], 0, 'Escribe una oración en futuro perfecto.'
+            ],
+            ['Condicional perfecto: hipótesis pasada', 'Habría + participio',
+                'El condicional perfecto indica una acción hipotética en el pasado.',
+                'Habría venido, pero estaba ocupado.',
+                'habría venido (condicional perfecto) — hipótesis pasada',
+                '¿Qué tiempo indica una acción hipotética en el pasado?', ['Condicional perfecto', 'Condicional simple',
+                    'Pluscuamperfecto', 'Futuro perfecto'
+                ], 0, 'Escribe una oración en condicional perfecto con «pero».'
+            ],
+            ['Pretérito anterior: acción inmediatamente anterior', 'Hube + participio',
+                'El pretérito anterior indica una acción inmediatamente anterior a otra acción en el pasado.',
+                'En cuanto hube llegado, lo llamé.',
+                'hube llegado (pretérito anterior) — acción inmediatamente anterior',
+                '¿Qué tiempo indica una acción inmediatamente anterior en el pasado?', ['Pretérito anterior',
+                    'Pretérito pluscuamperfecto', 'Pretérito perfecto compuesto', 'Futuro perfecto'
+                ], 0, 'Escribe una oración con pretérito anterior.'
+            ],
+            ['Perfecto de subjuntivo: duda pasada reciente', 'Haya + participio',
+                'El pretérito perfecto de subjuntivo expresa una acción pasada reciente sobre la que se tiene duda o emoción.',
+                'Dudo que haya llegado a tiempo.',
+                'haya llegado (pretérito perfecto subjuntivo) — duda pasada reciente',
+                '¿Qué tiempo sigue a «dudo que» para una acción pasada reciente?', ['Pretérito perfecto subjuntivo',
+                    'Presente subjuntivo', 'Imperfecto subjuntivo', 'Pluscuamperfecto subjuntivo'
+                ], 0, 'Escribe una oración con «dudo que» + pretérito perfecto subjuntivo.'
+            ],
+            ['Pluscuamperfecto subjuntivo: hipótesis pasada', 'Hubiera + participio',
+                'El pluscuamperfecto de subjuntivo expresa una acción hipotética en el pasado.',
+                'Si hubiera estudiado, habría aprobado.',
+                'hubiera estudiado (pluscuamperfecto subjuntivo) — hipótesis pasada',
+                '¿Qué tiempo sigue a «si» para una hipótesis pasada?', ['Pluscuamperfecto subjuntivo',
+                    'Pretérito perfecto subjuntivo', 'Imperfecto subjuntivo', 'Presente subjuntivo'
+                ], 0, 'Escribe una oración con «si» + pluscuamperfecto subjuntivo + condicional compuesto.'
+            ],
+            ['Perfecto de subjuntivo en valor de futuro anterior', 'Haya + participio + cuando',
+                'El pretérito perfecto de subjuntivo puede expresar una acción futura anterior en subordinadas temporales.',
+                'Cuando haya terminado, te llamo.',
+                'haya terminado (pretérito perfecto subjuntivo) — futuro anterior',
+                '¿Qué tiempo se usa en subordinadas temporales para un futuro anterior?', ['Pretérito perfecto subjuntivo',
+                    'Futuro perfecto', 'Presente subjuntivo', 'Condicional perfecto'
+                ], 0, 'Escribe una oración con «cuando» + pretérito perfecto subjuntivo.'
+            ],
+            ['Futuro perfecto de subjuntivo (arcaico)', 'Hubiere + participio',
+                'El futuro perfecto de subjuntivo es un tiempo arcaico que expresa una acción futura completada bajo una condición.',
+                'Quien hubiere cometido el delito, será castigado.',
+                'hubiere cometido (futuro perfecto subjuntivo) — arcaico',
+                '¿En qué tipo de textos se encuentra el futuro perfecto de subjuntivo?', ['Textos legales o literarios',
+                    'Habla coloquial', 'Correos electrónicos', 'Redes sociales'
+                ], 0, 'Escribe una oración con futuro perfecto de subjuntivo (arcaico).'
+            ],
+            ['Uso de perfectos con marcadores temporales', 'Perfectos + ya / todavía / aún',
+                'Los tiempos perfectos se usan frecuentemente con adverbios como «ya», «todavía», «aún» y «nunca».',
+                '¿Ya has comido? / Todavía no he llegado.',
+                'has comido (pretérito perfecto compuesto) + todavía no he llegado (negación)',
+                '¿Qué adverbio se usa con perfectos para indicar que algo no ha ocurrido?', ['Todavía', 'Ya', 'Nunca',
+                    'Siempre'
+                ], 0, 'Escribe una oración en pretérito perfecto compuesto con «todavía».'
+            ]
+        ];
+        b6.forEach(d => addLesson('perfectos', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: IMPERATIVO (61–70)
+        // ============================================================
+        const b7 = [
+            ['Imperativo afirmativo: tú', 'Imperativo: habla, come, vive',
+                'El imperativo afirmativo para la segunda persona del singular (tú) se usa para dar órdenes, instrucciones o consejos de forma directa.',
+                'Habla más alto, por favor.',
+                'Habla (imperativo afirmativo, 2ª persona) — orden',
+                '¿Qué modo se usa para dar órdenes directas a una persona?', ['Imperativo', 'Subjuntivo', 'Indicativo',
+                    'Infinitivo'
+                ], 0, 'Escribe una orden en imperativo afirmativo para «tú».'
+            ],
+            ['Imperativo afirmativo: usted', 'Imperativo: hable, coma, viva',
+                'El imperativo para «usted» se forma con la tercera persona del singular del presente de subjuntivo.',
+                'Hable más alto, por favor.',
+                'Hable (imperativo para usted) — orden formal',
+                '¿Cómo se forma el imperativo para «usted»?', ['Con la 3ª persona singular del presente subjuntivo',
+                    'Con la 2ª persona singular del presente indicativo', 'Con el infinitivo', 'Con el gerundio'
+                ], 0, 'Escribe una orden formal en imperativo para «usted».'
+            ],
+            ['Imperativo afirmativo: vosotros', 'Imperativo: hablad, comed, vivid',
+                'El imperativo para la segunda persona del plural (vosotros) se forma añadiendo -d al infinitivo (verbos de 1ª conjugación) o cambiando la vocal final.',
+                'Comed más verduras.',
+                'Comed (imperativo vosotros) — orden a un grupo',
+                '¿Cómo se forma el imperativo para «vosotros» en verbos de 1ª conjugación?', ['Infinitivo + d',
+                    'Infinitivo sin -r', 'Presente subjuntivo', 'Presente indicativo'
+                ], 0, 'Escribe una orden en imperativo para «vosotros».'
+            ],
+            ['Imperativo afirmativo: ustedes', 'Imperativo: hablen, coman, vivan',
+                'El imperativo para «ustedes» se forma con la tercera persona del plural del presente de subjuntivo.',
+                'Hablen más alto, por favor.',
+                'Hablen (imperativo ustedes) — orden formal a un grupo',
+                '¿Cómo se forma el imperativo para «ustedes»?', ['Con la 3ª persona plural del presente subjuntivo',
+                    'Con la 2ª persona plural del presente indicativo', 'Con el infinitivo', 'Con el gerundio'
+                ], 0, 'Escribe una orden formal en imperativo para «ustedes».'
+            ],
+            ['Imperativo negativo: tú', 'No + present subjuntivo (tú)',
+                'El imperativo negativo para «tú» se forma con «no» + el presente de subjuntivo.',
+                'No hables tan alto.',
+                'No hables (imperativo negativo tú) — prohibición',
+                '¿Cómo se forma el imperativo negativo para «tú»?', ['No + presente subjuntivo', 'No + infinitivo',
+                    'No + gerundio', 'No + presente indicativo'
+                ], 0, 'Escribe una prohibición en imperativo negativo para «tú».'
+            ],
+            ['Imperativo negativo: usted', 'No + presente subjuntivo (usted)',
+                'El imperativo negativo para «usted» se forma con «no» + el presente de subjuntivo.',
+                'No hable tan alto, por favor.',
+                'No hable (imperativo negativo usted) — prohibición formal',
+                '¿Cómo se forma el imperativo negativo para «usted»?', ['No + presente subjuntivo', 'No + infinitivo',
+                    'No + gerundio', 'No + presente indicativo'
+                ], 0, 'Escribe una prohibición formal en imperativo negativo para «usted».'
+            ],
+            ['Imperativo negativo: vosotros', 'No + presente subjuntivo (vosotros)',
+                'El imperativo negativo para «vosotros» se forma con «no» + el presente de subjuntivo.',
+                'No habléis tan alto.',
+                'No habléis (imperativo negativo vosotros) — prohibición a un grupo',
+                '¿Cómo se forma el imperativo negativo para «vosotros»?', ['No + presente subjuntivo', 'No + infinitivo',
+                    'No + gerundio', 'No + presente indicativo'
+                ], 0, 'Escribe una prohibición en imperativo negativo para «vosotros».'
+            ],
+            ['Imperativo negativo: ustedes', 'No + presente subjuntivo (ustedes)',
+                'El imperativo negativo para «ustedes» se forma con «no» + el presente de subjuntivo.',
+                'No hablen tan alto, por favor.',
+                'No hablen (imperativo negativo ustedes) — prohibición formal a un grupo',
+                '¿Cómo se forma el imperativo negativo para «ustedes»?', ['No + presente subjuntivo', 'No + infinitivo',
+                    'No + gerundio', 'No + presente indicativo'
+                ], 0, 'Escribe una prohibición formal en imperativo negativo para «ustedes».'
+            ],
+            ['Imperativo con pronombres: reflexivos', 'Imperativo + te / se',
+                'En imperativo, los pronombres reflexivos se colocan después del verbo y se unen a él.',
+                'Cállate, por favor.',
+                'Cállate (calla + te) — imperativo con pronombre reflexivo',
+                '¿Dónde se colocan los pronombres reflexivos en imperativo afirmativo?', ['Después del verbo unidos a él',
+                    'Antes del verbo', 'Al final de la frase', 'Separados del verbo'
+                ], 0, 'Escribe una orden con un verbo reflexivo en imperativo afirmativo.'
+            ],
+            ['Imperativo con pronombres: de objeto directo e indirecto', 'Imperativo + lo / le / me',
+                'Los pronombres de objeto directo e indirecto se colocan después del verbo en imperativo afirmativo y se unen a él.',
+                'Dámelo, por favor.',
+                'Dámelo (da + me + lo) — imperativo con pronombres OI + OD',
+                '¿Dónde se colocan los pronombres de objeto en imperativo afirmativo?', ['Después del verbo unidos a él',
+                    'Antes del verbo', 'Al final de la frase', 'Separados del verbo'
+                ], 0, 'Escribe una orden con pronombres de objeto en imperativo afirmativo.'
+            ]
+        ];
+        b7.forEach(d => addLesson('imperativos', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: VOZ PASIVA (71–80)
+        // ============================================================
+        const b8 = [
+            ['Voz pasiva con ser: presente', 'Ser + participio (presente)',
+                'La voz pasiva se forma con el verbo «ser» conjugado y el participio del verbo principal. En presente, «ser» se conjuga en presente.',
+                'La carta es escrita por María.',
+                'es escrita (ser en presente + participio) — voz pasiva',
+                '¿Qué verbo auxiliar se usa para formar la voz pasiva?', ['Ser', 'Estar', 'Haber', 'Tener'],
+                0, 'Escribe una oración en voz pasiva en presente.'
+            ],
+            ['Voz pasiva con ser: pretérito', 'Ser + participio (pretérito)',
+                'En voz pasiva en pretérito, el verbo «ser» se conjuga en pretérito.',
+                'La carta fue escrita por María ayer.',
+                'fue escrita (ser en pretérito + participio) — pasiva en pretérito',
+                '¿Cómo se forma la voz pasiva en pretérito?', ['Ser en pretérito + participio', 'Ser en presente + participio',
+                    'Estar + participio', 'Haber + participio'
+                ], 0, 'Escribe una oración en voz pasiva en pretérito.'
+            ],
+            ['Voz pasiva con ser: futuro', 'Ser + participio (futuro)',
+                'En voz pasiva en futuro, el verbo «ser» se conjuga en futuro.',
+                'La carta será escrita por María mañana.',
+                'será escrita (ser en futuro + participio) — pasiva en futuro',
+                '¿Cómo se forma la voz pasiva en futuro?', ['Ser en futuro + participio', 'Ser en presente + participio',
+                    'Estar + participio', 'Haber + participio'
+                ], 0, 'Escribe una oración en voz pasiva en futuro.'
+            ],
+            ['Voz pasiva con ser: condicional', 'Ser + participio (condicional)',
+                'En voz pasiva en condicional, el verbo «ser» se conjuga en condicional.',
+                'La carta sería escrita por María si tuviera tiempo.',
+                'sería escrita (ser en condicional + participio) — pasiva en condicional',
+                '¿Cómo se forma la voz pasiva en condicional?', ['Ser en condicional + participio',
+                    'Ser en presente + participio', 'Estar + participio', 'Haber + participio'
+                ], 0, 'Escribe una oración en voz pasiva en condicional.'
+            ],
+            ['Voz pasiva con ser: perfectos', 'Haber sido + participio',
+                'Los tiempos perfectos de la voz pasiva se forman con «haber sido» + el participio del verbo principal.',
+                'La carta ha sido escrita por María.',
+                'ha sido escrita (haber + sido + participio) — pasiva en pretérito perfecto compuesto',
+                '¿Cómo se forma la voz pasiva en pretérito perfecto compuesto?', ['Haber sido + participio',
+                    'Ser en presente + participio', 'Estar + participio', 'Haber + participio'
+                ], 0, 'Escribe una oración en voz pasiva en pretérito perfecto compuesto.'
+            ],
+            ['Voz pasiva con estar: resultado', 'Estar + participio (resultado)',
+                'La voz pasiva con «estar» expresa el resultado de una acción, no la acción en sí.',
+                'La carta está escrita.',
+                'está escrita (estar + participio) — resultado',
+                '¿Qué diferencia hay entre «ser escrito» y «estar escrito»?', ['Ser: acción / Estar: resultado',
+                    'Ser: resultado / Estar: acción', 'No hay diferencia', 'Ser es formal y estar es informal'
+                ], 0, 'Escribe una oración con «estar» + participio para expresar un resultado.'
+            ],
+            ['Voz pasiva con se (pasiva refleja)', 'Se + verbo en 3ª persona (pasiva refleja)',
+                'La pasiva refleja se forma con el pronombre «se» y el verbo en tercera persona. No especifica el agente.',
+                'Se venden coches usados.',
+                'Se venden (pasiva refleja) — acción sin agente',
+                '¿Qué pronombre se usa en la pasiva refleja?', ['Se', 'Lo', 'La', 'Le'], 0,
+                'Escribe una oración en pasiva refleja con «se».'
+            ],
+            ['Pasiva refleja con verbos intransitivos', 'Se + verbo intransitivo',
+                'La pasiva refleja también se usa con verbos intransitivos para expresar un cambio de estado.',
+                'Se abrió la puerta.',
+                'Se abrió (pasiva refleja con intransitivo) — cambio de estado',
+                '¿Qué tipo de verbos pueden usarse en pasiva refleja?', ['Transitivos e intransitivos',
+                    'Solo transitivos', 'Solo intransitivos', 'Solo verbos de movimiento'
+                ], 0, 'Escribe una oración en pasiva refleja con un verbo intransitivo.'
+            ],
+            ['Pasiva refleja con pronombres de OI', 'Se + verbo + OI (pasiva refleja)',
+                'En la pasiva refleja, el objeto indirecto se mantiene y el verbo concuerda con el sujeto.',
+                'Se les dio un premio a los ganadores.',
+                'Se les dio (pasiva refleja con OI) — acción sin agente',
+                '¿Qué pronombre de objeto indirecto se usa en la pasiva refleja?', ['Le / Les', 'Lo / Los', 'La / Las',
+                    'Me / Te'
+                ], 0, 'Escribe una oración en pasiva refleja con objeto indirecto.'
+            ],
+            ['Uso de la pasiva para enfatizar el objeto', 'Voz pasiva + complemento agente',
+                'La voz pasiva se usa para enfatizar el objeto de la acción y puede incluir un complemento agente introducido por «por».',
+                'El Quijote fue escrito por Cervantes.',
+                'El Quijote (objeto) + fue escrito (pasiva) + por Cervantes (agente)',
+                '¿Cómo se introduce el agente en la voz pasiva?', ['Por', 'De', 'Con', 'Para'], 0,
+                'Escribe una oración en voz pasiva con complemento agente.'
+            ]
+        ];
+        b8.forEach(d => addLesson('voz_pasiva', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: PERÍFRASIS VERBALES (81–90)
+        // ============================================================
+        const b9 = [
+            ['Perífrasis de infinitivo: ir a + infinitivo (futuro)', 'Ir a + infinitivo',
+                'La perífrasis «ir a + infinitivo» expresa una acción futura cercana o intención.',
+                'Voy a estudiar ahora.',
+                'Voy a estudiar (ir a + infinitivo) — futuro cercano',
+                '¿Qué perífrasis expresa una acción futura cercana?', ['Ir a + infinitivo', 'Estar + gerundio',
+                    'Tener que + infinitivo', 'Acabar de + infinitivo'
+                ], 0, 'Escribe una oración con «ir a + infinitivo».'
+            ],
+            ['Perífrasis de infinitivo: tener que + infinitivo (obligación)', 'Tener que + infinitivo',
+                'La perífrasis «tener que + infinitivo» expresa una obligación o necesidad.',
+                'Tengo que estudiar para el examen.',
+                'Tengo que estudiar (tener que + infinitivo) — obligación',
+                '¿Qué perífrasis expresa obligación?', ['Tener que + infinitivo', 'Ir a + infinitivo',
+                    'Estar + gerundio', 'Acabar de + infinitivo'
+                ], 0, 'Escribe una oración con «tener que + infinitivo».'
+            ],
+            ['Perífrasis de infinitivo: deber + infinitivo (obligación moral)', 'Deber + infinitivo',
+                'La perífrasis «deber + infinitivo» expresa una obligación moral o recomendación.',
+                'Debes estudiar más.',
+                'Debes estudiar (deber + infinitivo) — obligación moral',
+                '¿Qué perífrasis expresa una obligación moral?', ['Deber + infinitivo', 'Tener que + infinitivo',
+                    'Ir a + infinitivo', 'Estar + gerundio'
+                ], 0, 'Escribe una oración con «deber + infinitivo».'
+            ],
+            ['Perífrasis de infinitivo: poder + infinitivo (posibilidad)', 'Poder + infinitivo',
+                'La perífrasis «poder + infinitivo» expresa posibilidad, permiso o capacidad.',
+                'Puedes llamarme cuando quieras.',
+                'Puedes llamar (poder + infinitivo) — posibilidad',
+                '¿Qué perífrasis expresa posibilidad?', ['Poder + infinitivo', 'Tener que + infinitivo',
+                    'Ir a + infinitivo', 'Acabar de + infinitivo'
+                ], 0, 'Escribe una oración con «poder + infinitivo».'
+            ],
+            ['Perífrasis de infinitivo: acabar de + infinitivo (acción reciente)', 'Acabar de + infinitivo',
+                'La perífrasis «acabar de + infinitivo» expresa una acción que acaba de ocurrir.',
+                'Acabo de llegar a casa.',
+                'Acabo de llegar (acabar de + infinitivo) — acción reciente',
+                '¿Qué perífrasis expresa una acción reciente?', ['Acabar de + infinitivo', 'Ir a + infinitivo',
+                    'Tener que + infinitivo', 'Deber + infinitivo'
+                ], 0, 'Escribe una oración con «acabar de + infinitivo».'
+            ],
+            ['Perífrasis de gerundio: estar + gerundio (acción en desarrollo)', 'Estar + gerundio',
+                'La perífrasis «estar + gerundio» expresa una acción en desarrollo en el momento del habla.',
+                'Estoy estudiando ahora mismo.',
+                'Estoy estudiando (estar + gerundio) — acción en desarrollo',
+                '¿Qué perífrasis expresa una acción en desarrollo?', ['Estar + gerundio', 'Ir a + infinitivo',
+                    'Tener que + infinitivo', 'Acabar de + infinitivo'
+                ], 0, 'Escribe una oración con «estar + gerundio».'
+            ],
+            ['Perífrasis de gerundio: seguir + gerundio (continuidad)', 'Seguir + gerundio',
+                'La perífrasis «seguir + gerundio» expresa que una acción continúa en el tiempo.',
+                'Sigo estudiando español.',
+                'Sigo estudiando (seguir + gerundio) — continuidad',
+                '¿Qué perífrasis expresa que una acción continúa?', ['Seguir + gerundio', 'Estar + gerundio',
+                    'Ir a + infinitivo', 'Tener que + infinitivo'
+                ], 0, 'Escribe una oración con «seguir + gerundio».'
+            ],
+            ['Perífrasis de participio: llevar + participio (tiempo acumulado)', 'Llevar + participio',
+                'La perífrasis «llevar + participio» expresa el tiempo que se lleva haciendo algo.',
+                'Llevo estudiando tres horas.',
+                'Llevo estudiando (llevar + gerundio) — tiempo acumulado',
+                '¿Qué perífrasis expresa el tiempo que se lleva haciendo algo?', ['Llevar + gerundio',
+                    'Estar + gerundio', 'Seguir + gerundio', 'Ir a + infinitivo'
+                ], 0, 'Escribe una oración con «llevar + gerundio».'
+            ],
+            ['Perífrasis de participio: quedar + participio (resultado)', 'Quedar + participio',
+                'La perífrasis «quedar + participio» expresa el resultado de una acción.',
+                'El trabajo queda terminado.',
+                'queda terminado (quedar + participio) — resultado',
+                '¿Qué perífrasis expresa el resultado de una acción?', ['Quedar + participio', 'Estar + participio',
+                    'Ser + participio', 'Tener + participio'
+                ], 0, 'Escribe una oración con «quedar + participio».'
+            ],
+            ['Perífrasis de participio: tener + participio (acción completada)', 'Tener + participio',
+                'La perífrasis «tener + participio» expresa una acción completada, a menudo con énfasis en el resultado.',
+                'Tengo hechos todos los deberes.',
+                'Tengo hechos (tener + participio) — acción completada',
+                '¿Qué perífrasis expresa una acción completada?', ['Tener + participio', 'Estar + participio',
+                    'Ser + participio', 'Quedar + participio'
+                ], 0, 'Escribe una oración con «tener + participio».'
+            ]
+        ];
+        b9.forEach(d => addLesson('perifrasis', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: CONTRASTES Y USOS (91–100)
+        // ============================================================
+        const b10 = [
+            ['Pretérito vs imperfecto', 'Pretérito (puntual) / Imperfecto (habitual/descriptivo)',
+                'El pretérito se usa para acciones puntuales completadas; el imperfecto para acciones habituales o descripciones.',
+                'Ayer llovió mucho. (pretérito) / Cuando era niño, llovía a menudo. (imperfecto)',
+                'llovió (pretérito, puntual) / llovía (imperfecto, habitual)',
+                '¿Qué tiempo se usa para acciones puntuales completadas?', ['Pretérito', 'Imperfecto', 'Presente',
+                    'Futuro'
+                ], 0, 'Escribe dos oraciones: una en pretérito y otra en imperfecto, contrastando sus usos.'
+            ],
+            ['Indicativo vs subjuntivo en sustantivas', 'Indicativo (hechos) / Subjuntivo (duda, deseo)',
+                'En oraciones sustantivas, se usa indicativo para hechos y subjuntivo para duda, deseo o emoción.',
+                'Creo que viene. (indicativo) / No creo que venga. (subjuntivo)',
+                'viene (indicativo, hecho) / venga (subjuntivo, duda)',
+                '¿Qué modo sigue a «no creo que»?', ['Subjuntivo', 'Indicativo', 'Imperativo', 'Infinitivo'],
+                0, 'Escribe una oración con «creo que» + indicativo y otra con «no creo que» + subjuntivo.'
+            ],
+            ['Indicativo vs subjuntivo en adjetivas', 'Indicativo (real) / Subjuntivo (hipotético)',
+                'En oraciones de relativo, se usa indicativo para antecedentes reales y subjuntivo para indefinidos o hipotéticos.',
+                'El libro que está aquí es mío. (indicativo) / Busco un libro que esté aquí. (subjuntivo)',
+                'está (indicativo, real) / esté (subjuntivo, hipotético)',
+                '¿Qué modo se usa en una relativa con antecedente indefinido?', ['Subjuntivo', 'Indicativo',
+                    'Imperativo', 'Infinitivo'
+                ], 0, 'Escribe dos oraciones de relativo: una con indicativo y otra con subjuntivo.'
+            ],
+            ['Indicativo vs subjuntivo en temporales', 'Indicativo (pasado/presente) / Subjuntivo (futuro)',
+                'En oraciones temporales, se usa indicativo para acciones pasadas o presentes, y subjuntivo para acciones futuras.',
+                'Cuando llegó, comimos. (pasado) / Cuando llegue, comeremos. (futuro)',
+                'llegó (indicativo, pasado) / llegue (subjuntivo, futuro)',
+                '¿Qué modo se usa en oraciones temporales con «cuando» para el futuro?', ['Subjuntivo', 'Indicativo',
+                    'Imperativo', 'Infinitivo'
+                ], 0, 'Escribe una oración temporal con «cuando» en pasado y otra en futuro.'
+            ],
+            ['Ser vs estar: usos básicos', 'Ser (esencia) / Estar (estado)',
+                '«Ser» se usa para características permanentes o esencia; «estar» para estados temporales o ubicación.',
+                'Ella es alta. (ser) / Ella está cansada. (estar)',
+                'es (ser, permanente) / está (estar, temporal)',
+                '¿Qué verbo se usa para características permanentes?', ['Ser', 'Estar', 'Tener', 'Haber'],
+                0, 'Escribe dos oraciones: una con «ser» y otra con «estar».'
+            ],
+            ['Ser vs estar con adjetivos', 'Ser (cualidad inherente) / Estar (estado transitorio)',
+                'Algunos adjetivos cambian de significado según se usen con «ser» o «estar».',
+                'Es listo (inteligente) / Está listo (preparado).',
+                'listo con ser (cualidad) / listo con estar (estado)',
+                '¿Qué diferencia hay entre «es listo» y «está listo»?', ['Cualidad / Estado transitorio',
+                    'Estado transitorio / Cualidad', 'No hay diferencia', 'Significan lo mismo'
+                ], 0, 'Escribe dos oraciones con el mismo adjetivo, una con «ser» y otra con «estar».'
+            ],
+            ['Pretérito perfecto simple vs compuesto', 'Simple (pasado cerrado) / Compuesto (pasado relevante)',
+                'El pretérito perfecto simple se usa para acciones pasadas en un período cerrado; el compuesto para acciones pasadas con relevancia presente.',
+                'Ayer llegué tarde. (simple) / Hoy he llegado tarde. (compuesto)',
+                'llegué (simple, ayer) / he llegado (compuesto, hoy)',
+                '¿Qué tiempo se usa para acciones pasadas con relevancia presente?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito imperfecto', 'Pretérito pluscuamperfecto'
+                ], 0, 'Escribe dos oraciones: una en pretérito simple y otra en compuesto, contrastando sus usos.'
+            ],
+            ['Futuro vs condicional', 'Futuro (certeza) / Condicional (hipótesis/cortesía)',
+                'El futuro expresa certeza o predicción; el condicional expresa hipótesis o cortesía.',
+                'Mañana viajaré. (futuro) / Viajaría si pudiera. (condicional)',
+                'viajaré (futuro, certeza) / viajaría (condicional, hipótesis)',
+                '¿Qué tiempo expresa una hipótesis?', ['Condicional', 'Futuro', 'Presente', 'Pretérito'],
+                0, 'Escribe una oración en futuro y otra en condicional, contrastando sus usos.'
+            ],
+            ['Subjuntivo: presente vs imperfecto', 'Presente (deseo actual) / Imperfecto (deseo pasado o hipótesis)',
+                'El presente de subjuntivo se usa para deseos actuales o futuros; el imperfecto para deseos pasados o hipótesis.',
+                'Ojalá venga hoy. (presente) / Ojalá viniera ayer. (imperfecto)',
+                'venga (presente, actual) / viniera (imperfecto, pasado/hipótesis)',
+                '¿Qué tiempo se usa con «ojalá» para un deseo pasado?', ['Imperfecto subjuntivo', 'Presente subjuntivo',
+                    'Pluscuamperfecto subjuntivo', 'Pretérito perfecto subjuntivo'
+                ], 0, 'Escribe dos oraciones con «ojalá»: una en presente subjuntivo y otra en imperfecto subjuntivo.'
+            ],
+            ['Revisión general: selección del tiempo verbal adecuado', 'Contexto + tiempo adecuado',
+                'La elección del tiempo verbal depende del contexto: pasado, presente, futuro, modalidad (real/hipotético), y marcadores temporales.',
+                'Según el contexto, se elige el tiempo más adecuado para expresar el significado deseado.',
+                'Depende del contexto (marcador temporal y modalidad)',
+                '¿Qué factor es clave para elegir el tiempo verbal correcto?', ['El contexto y los marcadores temporales',
+                    'Solo el sujeto', 'Solo el verbo', 'El género del hablante'
+                ], 0, 'Escribe tres oraciones en diferentes tiempos verbales para describir una misma situación desde distintos enfoques.'
+            ]
+        ];
+        b10.forEach(d => addLesson('contrastes', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Estructura: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Tiempos Verbales');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Tiempos Verbales cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

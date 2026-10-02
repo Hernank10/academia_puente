@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Flota Etimológica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📜 FLOTA ETIMOLÓGICA<small>100 TÉCNICAS · GRECOLATINAS</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="radix" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Radix <span class="badge-personaje bg-dorado">Raíces</span></a>
+        <a class="nav-link" data-section="praefix" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Praefix <span class="badge-personaje bg-azul">Prefijos</span></a>
+        <a class="nav-link" data-section="suffixa" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Suffixa <span class="badge-personaje bg-verde">Sufijos</span></a>
+        <a class="nav-link" data-section="composita" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Composita <span class="badge-personaje bg-purpura">Compuestos</span></a>
+        <a class="nav-link" data-section="scripta" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Scripta <span class="badge-personaje bg-rojo">Ortografía</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📜</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Raíces, Prefijos, Sufijos</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Etimología grecolatina</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la etimología:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Radix</strong> – Raíces griegas y latinas fundamentales.</li>
+                    <li><strong style="color:var(--neon-azul);">Praefix</strong> – Prefijos grecolatinos.</li>
+                    <li><strong style="color:var(--neon-verde);">Suffixa</strong> – Sufijos grecolatinos.</li>
+                    <li><strong style="color:var(--neon-purpura);">Composita</strong> – Compuestos grecolatinos.</li>
+                    <li><strong style="color:var(--neon-rojo);">Scripta</strong> – Reglas ortográficas de origen grecolatino.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-radix" class="section-content" style="display:none;"></div>
+        <div id="section-praefix" class="section-content" style="display:none;"></div>
+        <div id="section-suffixa" class="section-content" style="display:none;"></div>
+        <div id="section-composita" class="section-content" style="display:none;"></div>
+        <div id="section-scripta" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    radix: {
+        nombre: "Radix", color: "dorado", icono: "bi-robot",
+        especialidad: "Raíces griegas y latinas fundamentales",
+        tecnicas: [
+            { titulo: "Raíz latina: 'aud-' (oír)", teoria: "La raíz latina 'aud-' significa 'oír'. Forma palabras relacionadas con el sentido auditivo.", ejemplo: "'audición' (acción de oír), 'auditorio' (lugar donde se oye), 'audífono' (instrumento para oír).", ejercicio: "Escribe 3 palabras con la raíz 'aud-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'bell-' (guerra)", teoria: "La raíz latina 'bell-' significa 'guerra'. Aparece en palabras relacionadas con conflictos bélicos.", ejemplo: "'belicoso' (guerrero), 'bellum' (guerra en latín), 'rebelde' (el que se levanta contra la guerra).", ejercicio: "Escribe 3 palabras con la raíz 'bell-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'corp-' (cuerpo)", teoria: "La raíz latina 'corp-' significa 'cuerpo'. Da origen a muchas palabras relacionadas con el cuerpo físico.", ejemplo: "'corporal' (relativo al cuerpo), 'corporación' (cuerpo de personas), 'corporalidad' (calidad de cuerpo).", ejercicio: "Escribe 3 palabras con la raíz 'corp-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'dict-' (decir)", teoria: "La raíz latina 'dict-' significa 'decir'. Aparece en palabras relacionadas con el habla y la palabra.", ejemplo: "'dictado' (texto que se dice), 'diccionario' (libro de palabras), 'bendecir' (decir bien).", ejercicio: "Escribe 3 palabras con la raíz 'dict-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'fac-' (hacer)", teoria: "La raíz latina 'fac-' significa 'hacer'. Es una de las raíces más productivas del español.", ejemplo: "'fácil' (que se puede hacer), 'facultad' (capacidad para hacer), 'fabricar' (hacer algo).", ejercicio: "Escribe 3 palabras con la raíz 'fac-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'fer-' (llevar)", teoria: "La raíz latina 'fer-' significa 'llevar'. Aparece en palabras de movimiento o transferencia.", ejemplo: "'transferir' (llevar de un lugar a otro), 'oferta' (llevar hacia), 'referir' (llevar de vuelta).", ejercicio: "Escribe 3 palabras con la raíz 'fer-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'fid-' (fe)", teoria: "La raíz latina 'fid-' significa 'fe' o 'confianza'.", ejemplo: "'fidelidad' (cualidad de fiel), 'confianza' (fe en alguien), 'infiel' (sin fe).", ejercicio: "Escribe 3 palabras con la raíz 'fid-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'flor-' (flor)", teoria: "La raíz latina 'flor-' significa 'flor'. Se usa en botánica y en metáforas.", ejemplo: "'florecer' (dar flores), 'florido' (lleno de flores), 'flora' (conjunto de plantas).", ejercicio: "Escribe 3 palabras con la raíz 'flor-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'grad-' (paso)", teoria: "La raíz latina 'grad-' significa 'paso' o 'grado'.", ejemplo: "'gradual' (paso a paso), 'grado' (paso en una escala), 'progreso' (avance).", ejercicio: "Escribe 3 palabras con la raíz 'grad-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'jur-' (derecho)", teoria: "La raíz latina 'jur-' significa 'derecho' o 'justicia'.", ejemplo: "'jurista' (experto en derecho), 'jurídico' (relativo al derecho), 'juramento' (acto de justicia).", ejercicio: "Escribe 3 palabras con la raíz 'jur-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'leg-' (ley)", teoria: "La raíz latina 'leg-' significa 'ley' o 'leer'.", ejemplo: "'legal' (relativo a la ley), 'legislador' (el que hace leyes), 'legible' (que se puede leer).", ejercicio: "Escribe 3 palabras con la raíz 'leg-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'luc-' (luz)", teoria: "La raíz latina 'luc-' significa 'luz'.", ejemplo: "'lúcido' (que tiene luz), 'lucero' (estrella brillante), 'translúcido' (que deja pasar la luz).", ejercicio: "Escribe 3 palabras con la raíz 'luc-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'man-' (mano)", teoria: "La raíz latina 'man-' significa 'mano'.", ejemplo: "'manual' (que se hace con las manos), 'manuscrito' (escrito a mano), 'maniobra' (trabajo con las manos).", ejercicio: "Escribe 3 palabras con la raíz 'man-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'mort-' (muerte)", teoria: "La raíz latina 'mort-' significa 'muerte'.", ejemplo: "'mortal' (que muere), 'inmortal' (que no muere), 'mortífero' (que causa muerte).", ejercicio: "Escribe 3 palabras con la raíz 'mort-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'nav-' (nave)", teoria: "La raíz latina 'nav-' significa 'nave' o 'barco'.", ejemplo: "'navío' (barco), 'navegante' (que navega), 'naval' (relativo a la nave).", ejercicio: "Escribe 3 palabras con la raíz 'nav-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'pan-' (pan)", teoria: "La raíz latina 'pan-' significa 'pan'.", ejemplo: "'panadería' (lugar donde se hace pan), 'empanar' (cubrir con pan), 'panificado' (hecho pan).", ejercicio: "Escribe 3 palabras con la raíz 'pan-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'port-' (llevar)", teoria: "La raíz latina 'port-' significa 'llevar' o 'transportar'.", ejemplo: "'transportar' (llevar de un lado a otro), 'portador' (el que lleva), 'portátil' (que se puede llevar).", ejercicio: "Escribe 3 palabras con la raíz 'port-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'scrib-' (escribir)", teoria: "La raíz latina 'scrib-' significa 'escribir'.", ejemplo: "'escribir' (grabar con signos), 'escritura' (acción de escribir), 'inscribir' (grabar en algo).", ejercicio: "Escribe 3 palabras con la raíz 'scrib-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'vid-' (ver)", teoria: "La raíz latina 'vid-' significa 'ver'.", ejemplo: "'visión' (acción de ver), 'visible' (que se puede ver), 'prever' (ver antes).", ejercicio: "Escribe 3 palabras con la raíz 'vid-'.", reto: "Crea 3 oraciones con palabras de esta raíz." },
+            { titulo: "Raíz latina: 'viv-' (vivir)", teoria: "La raíz latina 'viv-' significa 'vivir'.", ejemplo: "'vivo' (que tiene vida), 'vivir' (tener vida), 'revivir' (volver a vivir).", ejercicio: "Escribe 3 palabras con la raíz 'viv-'.", reto: "Crea 3 oraciones con palabras de esta raíz." }
+        ]
+    },
+    praefix: {
+        nombre: "Praefix", color: "azul", icono: "bi-robot",
+        especialidad: "Prefijos grecolatinos",
+        tecnicas: [
+            { titulo: "Prefijo 'anti-' (contra)", teoria: "El prefijo 'anti-' indica oposición o contrariedad. Proviene del griego 'antí'.", ejemplo: "'anticonstitucional' (contra la constitución), 'antídoto' (contra el veneno), 'antihéroe' (opuesto al héroe).", ejercicio: "Escribe 3 palabras con 'anti-'.", reto: "Crea 3 oraciones con prefijo anti-." },
+            { titulo: "Prefijo 'bio-' (vida)", teoria: "El prefijo 'bio-' indica vida o ser vivo. Proviene del griego 'bios'.", ejemplo: "'biología' (estudio de la vida), 'biodegradable' (que se descompone naturalmente), 'biopsia' (examen de tejido vivo).", ejercicio: "Escribe 3 palabras con 'bio-'.", reto: "Crea 3 oraciones con prefijo bio-." },
+            { titulo: "Prefijo 'co-' (con, juntos)", teoria: "El prefijo 'co-' indica unión o compañía. Proviene del latín 'cum'.", ejemplo: "'cooperar' (trabajar juntos), 'colectivo' (que se hace en grupo), 'cohabitar' (vivir juntos).", ejercicio: "Escribe 3 palabras con 'co-'.", reto: "Crea 3 oraciones con prefijo co-." },
+            { titulo: "Prefijo 'contra-' (frente a)", teoria: "El prefijo 'contra-' indica oposición o enfrentamiento. Del latín 'contra'.", ejemplo: "'contradecir' (decir lo contrario), 'contraportada' (parte de atrás), 'contraataque' (ataque en respuesta).", ejercicio: "Escribe 3 palabras con 'contra-'.", reto: "Crea 3 oraciones con prefijo contra-." },
+            { titulo: "Prefijo 'des-' (negación)", teoria: "El prefijo 'des-' indica negación, inversión o privación. Del latín 'dis-'.", ejemplo: "'deshacer' (deshacer lo hecho), 'desconocer' (no conocer), 'desconfiar' (no confiar).", ejercicio: "Escribe 3 palabras con 'des-'.", reto: "Crea 3 oraciones con prefijo des-." },
+            { titulo: "Prefijo 'dis-' (separación)", teoria: "El prefijo 'dis-' indica separación o dispersión. Del latín 'dis-'.", ejemplo: "'dispersar' (separar), 'distinguir' (separar diferencias), 'disolver' (separar en partes).", ejercicio: "Escribe 3 palabras con 'dis-'.", reto: "Crea 3 oraciones con prefijo dis-." },
+            { titulo: "Prefijo 'ex-' (fuera de)", teoria: "El prefijo 'ex-' indica fuera, más allá o privación. Del latín 'ex'.", ejemplo: "'excluir' (dejar fuera), 'exportar' (llevar fuera), 'expresar' (sacar fuera).", ejercicio: "Escribe 3 palabras con 'ex-'.", reto: "Crea 3 oraciones con prefijo ex-." },
+            { titulo: "Prefijo 'extra-' (fuera de)", teoria: "El prefijo 'extra-' indica fuera de o más allá de. Del latín 'extra'.", ejemplo: "'extraordinario' (fuera de lo común), 'extraterrestre' (fuera de la Tierra), 'extraditar' (entregar a otro país).", ejercicio: "Escribe 3 palabras con 'extra-'.", reto: "Crea 3 oraciones con prefijo extra-." },
+            { titulo: "Prefijo 'geo-' (tierra)", teoria: "El prefijo 'geo-' indica tierra o planeta. Del griego 'gea'.", ejemplo: "'geografía' (descripción de la Tierra), 'geología' (estudio de la Tierra), 'geometría' (medida de la Tierra).", ejercicio: "Escribe 3 palabras con 'geo-'.", reto: "Crea 3 oraciones con prefijo geo-." },
+            { titulo: "Prefijo 'hiper-' (superior, exceso)", teoria: "El prefijo 'hiper-' indica superioridad o exceso. Del griego 'hyper'.", ejemplo: "'hiperactivo' (excesivamente activo), 'hipertensión' (presión arterial alta), 'hipermercado' (gran mercado).", ejercicio: "Escribe 3 palabras con 'hiper-'.", reto: "Crea 3 oraciones con prefijo hiper-." },
+            { titulo: "Prefijo 'in-' (negación)", teoria: "El prefijo 'in-' indica negación o falta. Del latín 'in-'.", ejemplo: "'increíble' (no creíble), 'invisible' (no visible), 'inútil' (no útil).", ejercicio: "Escribe 3 palabras con 'in-'.", reto: "Crea 3 oraciones con prefijo in-." },
+            { titulo: "Prefijo 'inter-' (entre)", teoria: "El prefijo 'inter-' indica entre o en medio. Del latín 'inter'.", ejemplo: "'internacional' (entre naciones), 'interactuar' (actuar entre), 'interrumpir' (cortar entre).", ejercicio: "Escribe 3 palabras con 'inter-'.", reto: "Crea 3 oraciones con prefijo inter-." },
+            { titulo: "Prefijo 'macro-' (grande)", teoria: "El prefijo 'macro-' indica grande. Del griego 'makros'.", ejemplo: "'macroeconomía' (economía a gran escala), 'macroestructura' (estructura grande), 'macrobiota' (grandes seres vivos).", ejercicio: "Escribe 3 palabras con 'macro-'.", reto: "Crea 3 oraciones con prefijo macro-." },
+            { titulo: "Prefijo 'micro-' (pequeño)", teoria: "El prefijo 'micro-' indica pequeño. Del griego 'mikros'.", ejemplo: "'microscopio' (para ver lo pequeño), 'microondas' (ondas muy pequeñas), 'microbio' (ser pequeño).", ejercicio: "Escribe 3 palabras con 'micro-'.", reto: "Crea 3 oraciones con prefijo micro-." },
+            { titulo: "Prefijo 'mono-' (uno)", teoria: "El prefijo 'mono-' indica uno, solo. Del griego 'monos'.", ejemplo: "'monótono' (un solo tono), 'monopolio' (un solo vendedor), 'monólogo' (habla una sola persona).", ejercicio: "Escribe 3 palabras con 'mono-'.", reto: "Crea 3 oraciones con prefijo mono-." },
+            { titulo: "Prefijo 'poli-' (varios)", teoria: "El prefijo 'poli-' indica varios, muchos. Del griego 'polys'.", ejemplo: "'político' (de la ciudad-estado), 'políglota' (varias lenguas), 'policromía' (varios colores).", ejercicio: "Escribe 3 palabras con 'poli-'.", reto: "Crea 3 oraciones con prefijo poli-." },
+            { titulo: "Prefijo 'pre-' (antes)", teoria: "El prefijo 'pre-' indica anterioridad. Del latín 'prae'.", ejemplo: "'predecir' (decir antes), 'prevenir' (venir antes), 'prever' (ver antes).", ejercicio: "Escribe 3 palabras con 'pre-'.", reto: "Crea 3 oraciones con prefijo pre-." },
+            { titulo: "Prefijo 're-' (repetición)", teoria: "El prefijo 're-' indica repetición o vuelta atrás. Del latín 're-'.", ejemplo: "'rehacer' (hacer de nuevo), 'regresar' (volver atrás), 'repetir' (decir de nuevo).", ejercicio: "Escribe 3 palabras con 're-'.", reto: "Crea 3 oraciones con prefijo re-." },
+            { titulo: "Prefijo 'sub-' (debajo)", teoria: "El prefijo 'sub-' indica debajo o inferior. Del latín 'sub'.", ejemplo: "'submarino' (debajo del mar), 'subterráneo' (debajo de la tierra), 'subliminal' (debajo del umbral).", ejercicio: "Escribe 3 palabras con 'sub-'.", reto: "Crea 3 oraciones con prefijo sub-." },
+            { titulo: "Prefijo 'tele-' (lejos)", teoria: "El prefijo 'tele-' indica distancia. Del griego 'tele'.", ejemplo: "'teléfono' (sonido desde lejos), 'televisión' (visión desde lejos), 'teletransporte' (transporte a distancia).", ejercicio: "Escribe 3 palabras con 'tele-'.", reto: "Crea 3 oraciones con prefijo tele-." }
+        ]
+    },
+    suffixa: {
+        nombre: "Suffixa", color: "verde", icono: "bi-robot",
+        especialidad: "Sufijos grecolatinos",
+        tecnicas: [
+            { titulo: "Sufijo '-ción' (acción)", teoria: "El sufijo '-ción' forma sustantivos de acción a partir de verbos. Del latín '-tio'.", ejemplo: "'construcción' (acción de construir), 'educación' (acción de educar), 'navegación' (acción de navegar).", ejercicio: "Escribe 3 palabras con '-ción'.", reto: "Crea 3 oraciones con sufijo -ción." },
+            { titulo: "Sufijo '-dad' (cualidad)", teoria: "El sufijo '-dad' forma sustantivos abstractos a partir de adjetivos. Del latín '-tas'.", ejemplo: "'bondad' (cualidad de bueno), 'honestidad' (cualidad de honesto), 'facilidad' (cualidad de fácil).", ejercicio: "Escribe 3 palabras con '-dad'.", reto: "Crea 3 oraciones con sufijo -dad." },
+            { titulo: "Sufijo '-eza' (cualidad)", teoria: "El sufijo '-eza' forma sustantivos abstractos a partir de adjetivos. Del latín '-itia'.", ejemplo: "'belleza' (cualidad de bello), 'fortaleza' (cualidad de fuerte), 'grandeza' (cualidad de grande).", ejercicio: "Escribe 3 palabras con '-eza'.", reto: "Crea 3 oraciones con sufijo -eza." },
+            { titulo: "Sufijo '-grafía' (escritura)", teoria: "El sufijo '-grafía' indica escritura o representación. Del griego '-graphia'.", ejemplo: "'geografía' (escritura de la Tierra), 'biografía' (escritura de la vida), 'caligrafía' (escritura bella).", ejercicio: "Escribe 3 palabras con '-grafía'.", reto: "Crea 3 oraciones con sufijo -grafía." },
+            { titulo: "Sufijo '-ismo' (doctrina)", teoria: "El sufijo '-ismo' forma sustantivos de doctrinas o movimientos. Del latín '-ismus'.", ejemplo: "'capitalismo' (doctrina económica), 'socialismo' (doctrina social), 'realismo' (doctrina artística).", ejercicio: "Escribe 3 palabras con '-ismo'.", reto: "Crea 3 oraciones con sufijo -ismo." },
+            { titulo: "Sufijo '-ista' (seguidor)", teoria: "El sufijo '-ista' indica seguidor de una doctrina o profesión. Del latín '-ista'.", ejemplo: "'capitalista' (seguidor del capitalismo), 'artista' (seguidor del arte), 'dentista' (profesión de dientes).", ejercicio: "Escribe 3 palabras con '-ista'.", reto: "Crea 3 oraciones con sufijo -ista." },
+            { titulo: "Sufijo '-itis' (inflamación)", teoria: "El sufijo '-itis' indica inflamación. Del griego '-itis'.", ejemplo: "'bronquitis' (inflamación de bronquios), 'amigdalitis' (inflamación de amígdalas), 'conjuntivitis' (inflamación del ojo).", ejercicio: "Escribe 3 palabras con '-itis'.", reto: "Crea 3 oraciones con sufijo -itis." },
+            { titulo: "Sufijo '-logía' (estudio)", teoria: "El sufijo '-logía' indica estudio o ciencia. Del griego '-logia'.", ejemplo: "'biología' (estudio de la vida), 'psicología' (estudio de la mente), 'geología' (estudio de la Tierra).", ejercicio: "Escribe 3 palabras con '-logía'.", reto: "Crea 3 oraciones con sufijo -logía." },
+            { titulo: "Sufijo '-mento' (resultado)", teoria: "El sufijo '-mento' forma sustantivos de resultado o acción. Del latín '-mentum'.", ejemplo: "'movimiento' (resultado de moverse), 'armamento' (resultado de armar), 'fundamento' (resultado de fundar).", ejercicio: "Escribe 3 palabras con '-mento'.", reto: "Crea 3 oraciones con sufijo -mento." },
+            { titulo: "Sufijo '-or' (agente)", teoria: "El sufijo '-or' indica agente o instrumento. Del latín '-or'.", ejemplo: "'actor' (el que actúa), 'escritor' (el que escribe), 'motor' (instrumento de movimiento).", ejercicio: "Escribe 3 palabras con '-or'.", reto: "Crea 3 oraciones con sufijo -or." },
+            { titulo: "Sufijo '-oso' (abundancia)", teoria: "El sufijo '-oso' indica abundancia o cualidad. Del latín '-osus'.", ejemplo: "'peligroso' (que tiene peligro), 'hermoso' (que tiene hermosura), 'cuidadoso' (que tiene cuidado).", ejercicio: "Escribe 3 palabras con '-oso'.", reto: "Crea 3 oraciones con sufijo -oso." },
+            { titulo: "Sufijo '-ura' (cualidad)", teoria: "El sufijo '-ura' forma sustantivos abstractos a partir de adjetivos. Del latín '-ura'.", ejemplo: "'altura' (cualidad de alto), 'dulzura' (cualidad de dulce), 'amargura' (cualidad de amargo).", ejercicio: "Escribe 3 palabras con '-ura'.", reto: "Crea 3 oraciones con sufijo -ura." },
+            { titulo: "Sufijo '-ción' vs '-sión'", teoria: "Ambos forman sustantivos de acción. '-ción' va con verbos terminados en -ar, '-sión' con verbos terminados en -der, -tir, -dir.", ejemplo: "'construcción' (de construir), 'división' (de dividir), 'expresión' (de expresar).", ejercicio: "Escribe 3 palabras con '-sión'.", reto: "Crea 3 oraciones con sufijo -sión." },
+            { titulo: "Sufijo '-ble' (posibilidad)", teoria: "El sufijo '-ble' indica posibilidad pasiva. Del latín '-bilis'.", ejemplo: "'amable' (que puede ser amado), 'visible' (que puede ser visto), 'legible' (que puede ser leído).", ejercicio: "Escribe 3 palabras con '-ble'.", reto: "Crea 3 oraciones con sufijo -ble." },
+            { titulo: "Sufijo '-dor' (agente)", teoria: "El sufijo '-dor' indica agente o instrumento. Del latín '-tor'.", ejemplo: "'trabajador' (el que trabaja), 'computadora' (instrumento de cómputo), 'lavadora' (instrumento de lavar).", ejercicio: "Escribe 3 palabras con '-dor'.", reto: "Crea 3 oraciones con sufijo -dor." },
+            { titulo: "Sufijo '-ero' (relación)", teoria: "El sufijo '-ero' indica relación, oficio o lugar. Del latín '-arius'.", ejemplo: "'panadero' (el que hace pan), 'cartero' (el que lleva cartas), 'basurero' (lugar de basura).", ejercicio: "Escribe 3 palabras con '-ero'.", reto: "Crea 3 oraciones con sufijo -ero." },
+            { titulo: "Sufijo '-ción' de verbos en -ecer", teoria: "Los verbos terminados en -ecer forman su sustantivo con -cimiento (no -ción).", ejemplo: "'conocimiento' (de conocer), 'agradecimiento' (de agradecer), 'nacimiento' (de nacer).", ejercicio: "Escribe 3 palabras con '-cimiento'.", reto: "Crea 3 oraciones con sufijo -cimiento." },
+            { titulo: "Sufijo '-ez' (cualidad)", teoria: "El sufijo '-ez' forma sustantivos abstractos a partir de adjetivos. Del latín '-ities'.", ejemplo: "'sencillez' (cualidad de sencillo), 'pureza' (cualidad de puro), 'madurez' (cualidad de maduro).", ejercicio: "Escribe 3 palabras con '-ez'.", reto: "Crea 3 oraciones con sufijo -ez." },
+            { titulo: "Sufijo '-ón' (aumentativo)", teoria: "El sufijo '-ón' indica aumento o intensidad. Del latín '-one'.", ejemplo: "'cajón' (caja grande), 'camión' (coche grande), 'pelotón' (pelota grande).", ejercicio: "Escribe 3 palabras con '-ón'.", reto: "Crea 3 oraciones con sufijo -ón." },
+            { titulo: "Sufijo '-mente' (modo)", teoria: "El sufijo '-mente' forma adverbios de modo. Del latín '-mentis'.", ejemplo: "'rápidamente' (de manera rápida), 'fácilmente' (de manera fácil), 'lentamente' (de manera lenta).", ejercicio: "Escribe 3 palabras con '-mente'.", reto: "Crea 3 oraciones con sufijo -mente." }
+        ]
+    },
+    composita: {
+        nombre: "Composita", color: "purpura", icono: "bi-robot",
+        especialidad: "Compuestos grecolatinos",
+        tecnicas: [
+            { titulo: "Compuestos con 'bio-' + raíz", teoria: "Los compuestos con 'bio-' (vida) y una raíz griega o latina indican algo relacionado con la vida.", ejemplo: "'biología' (estudio de la vida), 'biografía' (escritura de la vida), 'biopsia' (examen de tejido vivo).", ejercicio: "Escribe 3 compuestos con 'bio-'.", reto: "Crea 3 oraciones con compuestos de bio-." },
+            { titulo: "Compuestos con 'geo-' + raíz", teoria: "Los compuestos con 'geo-' (tierra) indican algo relacionado con la Tierra.", ejemplo: "'geografía' (escritura de la Tierra), 'geología' (estudio de la Tierra), 'geometría' (medida de la Tierra).", ejercicio: "Escribe 3 compuestos con 'geo-'.", reto: "Crea 3 oraciones con compuestos de geo-." },
+            { titulo: "Compuestos con 'tele-' + raíz", teoria: "Los compuestos con 'tele-' (lejos) indican algo a distancia.", ejemplo: "'teléfono' (sonido a distancia), 'televisión' (visión a distancia), 'telecomunicación' (comunicación a distancia).", ejercicio: "Escribe 3 compuestos con 'tele-'.", reto: "Crea 3 oraciones con compuestos de tele-." },
+            { titulo: "Compuestos con 'micro-' + raíz", teoria: "Los compuestos con 'micro-' (pequeño) indican algo de tamaño reducido.", ejemplo: "'microscopio' (instrumento para ver lo pequeño), 'microondas' (ondas pequeñas), 'microbio' (ser pequeño).", ejercicio: "Escribe 3 compuestos con 'micro-'.", reto: "Crea 3 oraciones con compuestos de micro-." },
+            { titulo: "Compuestos con 'macro-' + raíz", teoria: "Los compuestos con 'macro-' (grande) indican algo de gran tamaño.", ejemplo: "'macroeconomía' (economía a gran escala), 'macroestructura' (estructura grande), 'macrobiota' (grandes seres vivos).", ejercicio: "Escribe 3 compuestos con 'macro-'.", reto: "Crea 3 oraciones con compuestos de macro-." },
+            { titulo: "Compuestos con 'poli-' + raíz", teoria: "Los compuestos con 'poli-' (varios) indican pluralidad.", ejemplo: "'político' (de la ciudad-estado), 'políglota' (varias lenguas), 'policromía' (varios colores).", ejercicio: "Escribe 3 compuestos con 'poli-'.", reto: "Crea 3 oraciones con compuestos de poli-." },
+            { titulo: "Compuestos con 'mono-' + raíz", teoria: "Los compuestos con 'mono-' (uno) indican unidad.", ejemplo: "'monótono' (un solo tono), 'monopolio' (un solo vendedor), 'monólogo' (una sola persona habla).", ejercicio: "Escribe 3 compuestos con 'mono-'.", reto: "Crea 3 oraciones con compuestos de mono-." },
+            { titulo: "Compuestos con 'bi-' + raíz", teoria: "Los compuestos con 'bi-' (dos) indican dualidad.", ejemplo: "'bilingüe' (dos lenguas), 'bicolor' (dos colores), 'bimestral' (cada dos meses).", ejercicio: "Escribe 3 compuestos con 'bi-'.", reto: "Crea 3 oraciones con compuestos de bi-." },
+            { titulo: "Compuestos con 'tri-' + raíz", teoria: "Los compuestos con 'tri-' (tres) indican triple.", ejemplo: "'trilingüe' (tres lenguas), 'tricolor' (tres colores), 'trimestral' (cada tres meses).", ejercicio: "Escribe 3 compuestos con 'tri-'.", reto: "Crea 3 oraciones con compuestos de tri-." },
+            { titulo: "Compuestos con 'cuadri-' + raíz", teoria: "Los compuestos con 'cuadri-' (cuatro) indican cuádruple.", ejemplo: "'cuadrilingüe' (cuatro lenguas), 'cuadricolor' (cuatro colores), 'cuadrimotor' (cuatro motores).", ejercicio: "Escribe 3 compuestos con 'cuadri-'.", reto: "Crea 3 oraciones con compuestos de cuadri-." },
+            { titulo: "Compuestos con 'ante-' + raíz", teoria: "Los compuestos con 'ante-' (antes) indican anterioridad.", ejemplo: "'anteponer' (poner antes), 'anteayer' (el día antes de ayer), 'antecedente' (que va antes).", ejercicio: "Escribe 3 compuestos con 'ante-'.", reto: "Crea 3 oraciones con compuestos de ante-." },
+            { titulo: "Compuestos con 'post-' + raíz", teoria: "Los compuestos con 'post-' (después) indican posterioridad.", ejemplo: "'posguerra' (después de la guerra), 'posmoderno' (después de lo moderno), 'posgrado' (después del grado).", ejercicio: "Escribe 3 compuestos con 'post-'.", reto: "Crea 3 oraciones con compuestos de post-." },
+            { titulo: "Compuestos con 'ex-' + raíz", teoria: "Los compuestos con 'ex-' (fuera) indican exterioridad.", ejemplo: "'excluir' (dejar fuera), 'exportar' (llevar fuera), 'expulsar' (echar fuera).", ejercicio: "Escribe 3 compuestos con 'ex-'.", reto: "Crea 3 oraciones con compuestos de ex-." },
+            { titulo: "Compuestos con 'inter-' + raíz", teoria: "Los compuestos con 'inter-' (entre) indican relación mutua.", ejemplo: "'internacional' (entre naciones), 'intercambiar' (cambiar entre), 'interrumpir' (cortar entre).", ejercicio: "Escribe 3 compuestos con 'inter-'.", reto: "Crea 3 oraciones con compuestos de inter-." },
+            { titulo: "Compuestos con 'sub-' + raíz", teoria: "Los compuestos con 'sub-' (debajo) indican inferioridad.", ejemplo: "'submarino' (debajo del mar), 'subterráneo' (debajo de la tierra), 'subliminal' (debajo del umbral).", ejercicio: "Escribe 3 compuestos con 'sub-'.", reto: "Crea 3 oraciones con compuestos de sub-." },
+            { titulo: "Compuestos con 'super-' + raíz", teoria: "Los compuestos con 'super-' (sobre) indican superioridad.", ejemplo: "'supermercado' (sobre el mercado), 'superhéroe' (sobre el héroe), 'superintendente' (sobre la intendencia).", ejercicio: "Escribe 3 compuestos con 'super-'.", reto: "Crea 3 oraciones con compuestos de super-." },
+            { titulo: "Compuestos con 'trans-' + raíz", teoria: "Los compuestos con 'trans-' (a través) indican cruce o cambio.", ejemplo: "'transportar' (llevar a través), 'transparente' (que se ve a través), 'transcender' (ir más allá).", ejercicio: "Escribe 3 compuestos con 'trans-'.", reto: "Crea 3 oraciones con compuestos de trans-." },
+            { titulo: "Compuestos con 'ultra-' + raíz", teoria: "Los compuestos con 'ultra-' (más allá) indican extremo.", ejemplo: "'ultramar' (más allá del mar), 'ultravioleta' (más allá del violeta), 'ultrasonido' (más allá del sonido).", ejercicio: "Escribe 3 compuestos con 'ultra-'.", reto: "Crea 3 oraciones con compuestos de ultra-." },
+            { titulo: "Compuestos con 'infra-' + raíz", teoria: "Los compuestos con 'infra-' (debajo) indican inferioridad.", ejemplo: "'infraestructura' (estructura inferior), 'infrarrojo' (debajo del rojo), 'infrasonido' (debajo del sonido).", ejercicio: "Escribe 3 compuestos con 'infra-'.", reto: "Crea 3 oraciones con compuestos de infra-." },
+            { titulo: "Compuestos con 'circun-' + raíz", teoria: "Los compuestos con 'circun-' (alrededor) indican alrededor.", ejemplo: "'circunnavegar' (navegar alrededor), 'circunferencia' (línea alrededor), 'circunstancia' (lo que está alrededor).", ejercicio: "Escribe 3 compuestos con 'circun-'.", reto: "Crea 3 oraciones con compuestos de circun-." }
+        ]
+    },
+    scripta: {
+        nombre: "Scripta", color: "rojo", icono: "bi-robot",
+        especialidad: "Reglas ortográficas de origen grecolatino",
+        tecnicas: [
+            { titulo: "Uso de la B (origen latino)", teoria: "Se escribe B en palabras que vienen del latín con 'b' y en verbos terminados en -bir (excepto hervir, servir, vivir).", ejemplo: "'escribir' (del latín 'scribere'), 'recibir' (del latín 'recipere').", ejercicio: "Escribe 5 palabras con B de origen latino.", reto: "Crea 5 oraciones con B." },
+            { titulo: "Uso de la V (origen latino)", teoria: "Se escribe V en palabras que vienen del latín con 'v' y en adjetivos terminados en -ava, -ave, -evo, -eve, -ivo, -iva.", ejemplo: "'nueve' (del latín 'novem'), 'activo' (del latín 'activus').", ejercicio: "Escribe 5 palabras con V de origen latino.", reto: "Crea 5 oraciones con V." },
+            { titulo: "Uso de la G (origen griego/latino)", teoria: "La G se escribe en palabras de origen griego o latino que contienen 'g' delante de 'e' o 'i' en verbos terminados en -ger, -gir.", ejemplo: "'coger' (del latín 'colligere'), 'proteger' (del latín 'protegere').", ejercicio: "Escribe 5 palabras con G.", reto: "Crea 5 oraciones con G." },
+            { titulo: "Uso de la J (origen griego/latino)", teoria: "La J se escribe en palabras de origen griego o latino que tienen 'j' delante de 'e' o 'i' (excepto -ger, -gir).", ejemplo: "'jirafa' (del árabe 'zurafa'), 'juego' (del latín 'jocus').", ejercicio: "Escribe 5 palabras con J.", reto: "Crea 5 oraciones con J." },
+            { titulo: "Uso de la C (origen latino)", teoria: "La C se escribe en palabras que vienen del latín con 'c' y en verbos terminados en -cer, -cir.", ejemplo: "'conocer' (del latín 'cognoscere'), 'producir' (del latín 'producere').", ejercicio: "Escribe 5 palabras con C.", reto: "Crea 5 oraciones con C." },
+            { titulo: "Uso de la Z (origen griego/latino)", teoria: "La Z se escribe en palabras de origen griego o latino con 'z' y en sustantivos con -anza, -azgo.", ejemplo: "'esperanza' (del latín 'sperantia'), 'liderazgo' (del latín 'lider').", ejercicio: "Escribe 5 palabras con Z.", reto: "Crea 5 oraciones con Z." },
+            { titulo: "Uso de la S (origen latino)", teoria: "La S se escribe en palabras de origen latino con 's' y en adjetivos con -oso, -osa.", ejemplo: "'peligroso' (del latín 'periculosus'), 'hermosa' (del latín 'formosa').", ejercicio: "Escribe 5 palabras con S.", reto: "Crea 5 oraciones con S." },
+            { titulo: "Uso de la X (origen griego/latino)", teoria: "La X se escribe en palabras de origen griego o latino que comienzan con 'ex-' + consonante.", ejemplo: "'explicar' (del latín 'explicare'), 'extraño' (del latín 'extraneus').", ejercicio: "Escribe 5 palabras con X.", reto: "Crea 5 oraciones con X." },
+            { titulo: "Uso de la H (origen latino/griego)", teoria: "La H se escribe en palabras que vienen del latín o griego con 'h' (aspiración) y en los verbos 'haber', 'hacer'.", ejemplo: "'hombre' (del latín 'homo'), 'hacer' (del latín 'facere').", ejercicio: "Escribe 5 palabras con H.", reto: "Crea 5 oraciones con H." },
+            { titulo: "Uso de la LL (origen latino)", teoria: "La LL se escribe en palabras que provienen del latín con 'li-', 'le-', etc., y en aquellas que no se escriben con Y.", ejemplo: "'llave' (del latín 'clavis'), 'lluvia' (del latín 'pluvia').", ejercicio: "Escribe 5 palabras con LL.", reto: "Crea 5 oraciones con LL." },
+            { titulo: "Uso de la Y (origen griego)", teoria: "La Y se escribe en palabras de origen griego que contienen 'y' y al final de palabra cuando no es vocal.", ejemplo: "'hay' (del latín 'habeo'), 'muy' (del latín 'multum').", ejercicio: "Escribe 5 palabras con Y.", reto: "Crea 5 oraciones con Y." },
+            { titulo: "Uso de la Ñ (origen latino)", teoria: "La Ñ se escribe en palabras que provienen del latín con 'ni-', 'ne-', 'na-', etc., y en aquellas con el sonido nasal palatal.", ejemplo: "'niño' (del latín 'ninus'), 'leña' (del latín 'ligna').", ejercicio: "Escribe 5 palabras con Ñ.", reto: "Crea 5 oraciones con Ñ." },
+            { titulo: "Acentuación de palabras compuestas grecolatinas", teoria: "Las palabras compuestas grecolatinas mantienen la tilde de sus componentes y tienen una única sílaba tónica.", ejemplo: "'cántaro' + 'camisa' = 'cantarocamisa' (la tilde en 'cántaro').", ejercicio: "Acentúa 5 compuestos grecolatinos.", reto: "Crea 5 oraciones con compuestos acentuados." },
+            { titulo: "Reglas de escritura de prefijos grecolatinos", teoria: "Los prefijos grecolatinos se escriben siempre pegados a la raíz (aunque antes se separaban con guion).", ejemplo: "'prefijo' (pre- + fijo), 'subdirector' (sub- + director).", ejercicio: "Escribe 5 palabras con prefijos bien escritos.", reto: "Crea 5 oraciones con prefijos." },
+            { titulo: "Reglas de escritura de sufijos grecolatinos", teoria: "Los sufijos grecolatinos se escriben pegados a la raíz. Algunos sufijos tienen variantes ortográficas.", ejemplo: "'bondad' (-dad), 'sencillez' (-ez), 'fortaleza' (-eza).", ejercicio: "Escribe 5 palabras con sufijos.", reto: "Crea 5 oraciones con sufijos." },
+            { titulo: "Reglas de escritura de compuestos con 's' y 'x'", teoria: "Los compuestos con 's' y 'x' siguen las reglas generales: la 'x' se usa en palabras que comienzan con 'ex-' + consonante.", ejemplo: "'exportar' (ex + portar), 'extender' (ex + tender).", ejercicio: "Escribe 5 compuestos con 's' y 'x'.", reto: "Crea 5 oraciones con ellos." },
+            { titulo: "Reglas de escritura de compuestos con 'b' y 'v'", teoria: "Los compuestos con 'b' y 'v' siguen las reglas generales: la 'b' en palabras de origen latino con 'b'.", ejemplo: "'beber' (del latín 'bibere'), 'vivir' (del latín 'vivere').", ejercicio: "Escribe 5 compuestos con 'b' y 'v'.", reto: "Crea 5 oraciones con ellos." },
+            { titulo: "Reglas de escritura de compuestos con 'c' y 'z'", teoria: "Los compuestos con 'c' y 'z' siguen las reglas generales: la 'c' en verbos terminados en -cer, -cir.", ejemplo: "'conocer' (del latín 'cognoscere'), 'cocinar' (del latín 'coquere').", ejercicio: "Escribe 5 compuestos con 'c' y 'z'.", reto: "Crea 5 oraciones con ellos." },
+            { titulo: "Reglas de escritura de compuestos con 'g' y 'j'", teoria: "Los compuestos con 'g' y 'j' siguen las reglas generales: la 'g' en verbos terminados en -ger, -gir.", ejemplo: "'coger' (del latín 'colligere'), 'proteger' (del latín 'protegere').", ejercicio: "Escribe 5 compuestos con 'g' y 'j'.", reto: "Crea 5 oraciones con ellos." },
+            { titulo: "Reglas de escritura de compuestos con 'h'", teoria: "Los compuestos con 'h' siguen las reglas generales: la 'h' en palabras que comienzan con 'hie-', 'hue-', etc.", ejemplo: "'hierro' (del latín 'ferrum'), 'hueso' (del latín 'os').", ejercicio: "Escribe 5 compuestos con 'h'.", reto: "Crea 5 oraciones con ellos." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+// Navegación
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['radix','praefix','suffixa','composita','scripta'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+// Lector de voz
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+// Renderizar una amazona
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_etimologica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

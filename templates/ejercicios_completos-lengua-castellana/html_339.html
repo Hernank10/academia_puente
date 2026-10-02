@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧬 Flota Sintáctica Generativa · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🧬 FLOTA SINTÁCTICA GENERATIVA<small>100 TÉCNICAS · GRAMÁTICA UNIVERSAL</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="estructuraprofunda" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Estructura profunda <span class="badge-personaje bg-dorado">D-structure</span></a>
+        <a class="nav-link" data-section="transformaciones" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Transformaciones <span class="badge-personaje bg-azul">Movimiento</span></a>
+        <a class="nav-link" data-section="sintaxisx" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Teoría X-barra <span class="badge-personaje bg-verde">Estructura</span></a>
+        <a class="nav-link" data-section="casos" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Teoría del Caso <span class="badge-personaje bg-purpura">Reginiento</span></a>
+        <a class="nav-link" data-section="lugar" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Lugar y referencia <span class="badge-personaje bg-rojo">Vinculación</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🧬</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Sintaxis generativa</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Sintaxis generativa transformacional</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la sintaxis generativa:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Estructura profunda</strong> – D-structure, reglas de reescritura, sintagmas, estructuras básicas.</li>
+                    <li><strong style="color:var(--neon-azul);">Transformaciones</strong> – Movimiento, pasivización, interrogación, negación, subida.</li>
+                    <li><strong style="color:var(--neon-verde);">Teoría X-barra</strong> – Estructura jerárquica, proyecciones, especificadores, complementos.</li>
+                    <li><strong style="color:var(--neon-purpura);">Teoría del Caso</strong> – Rección, asignación de caso, caso abstracto, caso morfológico.</li>
+                    <li><strong style="color:var(--neon-rojo);">Lugar y referencia</strong> – Binding, coindexación, pronombres, anáforas, rección y ligamiento.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-estructuraprofunda" class="section-content" style="display:none;"></div>
+        <div id="section-transformaciones" class="section-content" style="display:none;"></div>
+        <div id="section-sintaxisx" class="section-content" style="display:none;"></div>
+        <div id="section-casos" class="section-content" style="display:none;"></div>
+        <div id="section-lugar" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    estructuraprofunda: {
+        nombre: "Estructura profunda", color: "dorado", icono: "bi-robot",
+        especialidad: "D-structure, reglas de reescritura, sintagmas, estructuras básicas",
+        tecnicas: [
+            { titulo: "La estructura profunda (D-structure)", teoria: "La estructura profunda es la representación abstracta de la oración que contiene la información semántica básica. Es la estructura subyacente que se transforma en estructura superficial.", recurso: "D-structure", ejemplo: "La oración 'Juan come una manzana' tiene una estructura profunda que luego se transforma en 'Una manzana es comida por Juan'.", ejercicio: "Identifica la estructura profunda de una oración activa.", reto: "Transforma una oración activa en pasiva." },
+            { titulo: "Estructura superficial (S-structure)", teoria: "La estructura superficial es la forma final de la oración después de aplicar todas las transformaciones. Es lo que realmente se escucha o lee.", recurso: "S-structure", ejemplo: "La estructura superficial de 'Juan come una manzana' es la misma que la profunda en este caso.", ejercicio: "Compara la estructura profunda y superficial de una oración pasiva.", reto: "Analiza la estructura superficial de una oración con movimiento." },
+            { titulo: "Reglas de reescritura", teoria: "Las reglas de reescritura generan la estructura profunda a partir de un símbolo inicial (O).", recurso: "Reglas de reescritura", ejemplo: "O → SN + SV; SN → (Det) + N; SV → V + SN.", ejercicio: "Aplica las reglas de reescritura a una oración simple.", reto: "Escribe las reglas de reescritura para una oración compleja." },
+            { titulo: "El sintagma nominal (SN)", teoria: "El SN es un constituyente que tiene como núcleo un sustantivo o pronombre y puede llevar determinantes y adjetivos.", recurso: "Sintagma nominal", ejemplo: "'El perro' es un SN con el núcleo 'perro'.", ejercicio: "Identifica el SN en 5 oraciones.", reto: "Escribe una oración con un SN complejo." },
+            { titulo: "El sintagma verbal (SV)", teoria: "El SV es un constituyente que tiene como núcleo un verbo y puede llevar complementos (SN, SPrep, SAdv).", recurso: "Sintagma verbal", ejemplo: "'Come una manzana' es un SV con el núcleo 'come'.", ejercicio: "Identifica el SV en 5 oraciones.", reto: "Escribe una oración con un SV complejo." },
+            { titulo: "El sintagma preposicional (SPrep)", teoria: "El SPrep es un constituyente que tiene como núcleo una preposición y un complemento (SN).", recurso: "Sintagma preposicional", ejemplo: "'Con el perro' es un SPrep.", ejercicio: "Identifica el SPrep en 5 oraciones.", reto: "Escribe una oración con 3 SPrep." },
+            { titulo: "El sintagma adjetival (SAdj)", teoria: "El SAdj es un constituyente que tiene como núcleo un adjetivo.", recurso: "Sintagma adjetival", ejemplo: "'Muy alto' es un SAdj con el núcleo 'alto'.", ejercicio: "Identifica el SAdj en 5 oraciones.", reto: "Escribe una oración con un SAdj." },
+            { titulo: "El sintagma adverbial (SAdv)", teoria: "El SAdv es un constituyente que tiene como núcleo un adverbio.", recurso: "Sintagma adverbial", ejemplo: "'Muy cerca' es un SAdv con el núcleo 'cerca'.", ejercicio: "Identifica el SAdv en 5 oraciones.", reto: "Escribe una oración con un SAdv." },
+            { titulo: "El núcleo del sintagma", teoria: "El núcleo es la categoría léxica que da nombre al sintagma (N para SN, V para SV, P para SPrep, A para SAdj, Adv para SAdv).", recurso: "Núcleo", ejemplo: "En 'el perro', 'perro' es el núcleo.", ejercicio: "Identifica el núcleo de 5 sintagmas.", reto: "Escribe 5 sintagmas con diferentes núcleos." },
+            { titulo: "La estructura jerárquica", teoria: "La estructura de la oración es jerárquica: la oración contiene SN y SV, y estos contienen otros constituyentes.", recurso: "Estructura jerárquica", ejemplo: "O → SN + SV; SN → Det + N.", ejercicio: "Dibuja un árbol sintáctico de una oración simple.", reto: "Dibuja un árbol sintáctico de una oración compuesta." },
+            { titulo: "La recursividad", teoria: "La recursividad permite que un sintagma contenga otro del mismo tipo, generando estructuras infinitas.", recurso: "Recursividad", ejemplo: "Un SPrep puede contener otro SPrep: 'la casa en la colina con el tejado rojo'.", ejercicio: "Escribe una oración con recursividad.", reto: "Analiza la recursividad en una oración compleja." },
+            { titulo: "La constituencia", teoria: "La constituencia es la propiedad de los grupos de palabras que funcionan como una unidad en la oración.", recurso: "Constituencia", ejemplo: "'El perro' es un constituyente porque puede moverse como unidad.", ejercicio: "Prueba la constituencia de 5 grupos de palabras.", reto: "Identifica los constituyentes de una oración." },
+            { titulo: "La ambigüedad estructural", teoria: "La ambigüedad estructural ocurre cuando una oración tiene dos estructuras sintácticas posibles, lo que genera dos interpretaciones.", recurso: "Ambigüedad estructural", ejemplo: "'El hombre vio a la mujer con el telescopio' puede significar que el hombre usó el telescopio o que la mujer tenía el telescopio.", ejercicio: "Analiza una oración ambigua.", reto: "Escribe 3 oraciones con ambigüedad estructural." },
+            { titulo: "El principio de proyección", teoria: "El principio de proyección establece que la estructura de la oración se proyecta a partir de los rasgos de los elementos léxicos (núcleos).", recurso: "Principio de proyección", ejemplo: "El verbo 'dar' proyecta dos argumentos: el que da y lo que se da.", ejercicio: "Aplica el principio de proyección a un verbo.", reto: "Analiza la proyección de un verbo con 3 argumentos." },
+            { titulo: "El principio de dependencia", teoria: "El principio de dependencia establece que los constituyentes de la oración están relacionados por relaciones de dependencia jerárquica.", recurso: "Principio de dependencia", ejemplo: "El sujeto depende del verbo, el complemento depende del verbo.", ejercicio: "Identifica las relaciones de dependencia en una oración.", reto: "Dibuja un árbol con dependencias." },
+            { titulo: "La selección categorial", teoria: "La selección categorial es la restricción que impone un núcleo sobre la categoría de sus complementos.", recurso: "Selección categorial", ejemplo: "El verbo 'creer' selecciona una oración como complemento: 'Creo que...'.", ejercicio: "Analiza la selección categorial de 3 verbos.", reto: "Escribe oraciones con diferentes tipos de selección categorial." },
+            { titulo: "La selección semántica", teoria: "La selección semántica es la restricción que impone un núcleo sobre el significado de sus argumentos.", recurso: "Selección semántica", ejemplo: "El verbo 'comer' selecciona un sujeto animado y un objeto concreto.", ejercicio: "Analiza la selección semántica de 3 verbos.", reto: "Escribe oraciones con selección semántica." },
+            { titulo: "El principio de economía", teoria: "El principio de economía establece que la gramática utiliza el mínimo número de operaciones posibles.", recurso: "Principio de economía", ejemplo: "Las transformaciones deben ser lo más simples posible.", ejercicio: "Aplica el principio de economía a una transformación.", reto: "Analiza la economía en una oración." },
+            { titulo: "La gramática universal", teoria: "La gramática universal es el conjunto de principios innatos que subyacen a todas las lenguas humanas.", recurso: "Gramática universal", ejemplo: "El principio de estructura jerárquica es parte de la gramática universal.", ejercicio: "Investiga el concepto de gramática universal.", reto: "Escribe un ensayo sobre la gramática universal." },
+            { titulo: "La adquisición del lenguaje", teoria: "La teoría generativa explica la adquisición del lenguaje como un proceso de fijación de parámetros de la gramática universal.", recurso: "Adquisición del lenguaje", ejemplo: "Los niños adquieren el lenguaje a partir de la exposición a la estructura superficial.", ejercicio: "Investiga la adquisición del lenguaje desde la perspectiva generativa.", reto: "Escribe un texto sobre la adquisición." }
+        ]
+    },
+    transformaciones: {
+        nombre: "Transformaciones", color: "azul", icono: "bi-robot",
+        especialidad: "Movimiento, pasivización, interrogación, negación, subida",
+        tecnicas: [
+            { titulo: "La transformación pasiva", teoria: "La transformación pasiva convierte una oración activa en pasiva, moviendo el objeto a la posición de sujeto.", recurso: "Pasivización", ejemplo: "'Juan come una manzana' → 'Una manzana es comida por Juan'.", ejercicio: "Transforma 5 oraciones activas a pasivas.", reto: "Transforma una oración con dos complementos." },
+            { titulo: "La transformación interrogativa", teoria: "La transformación interrogativa convierte una oración declarativa en interrogativa, moviendo el auxiliar al inicio.", recurso: "Interrogación", ejemplo: "'Juan come' → '¿Come Juan?'", ejercicio: "Transforma 5 oraciones declarativas a interrogativas.", reto: "Transforma una oración con una pregunta WH." },
+            { titulo: "La transformación negativa", teoria: "La transformación negativa añade 'no' al verbo y, en algunos casos, mueve el verbo auxiliar.", recurso: "Negación", ejemplo: "'Juan come' → 'Juan no come'.", ejercicio: "Transforma 5 oraciones afirmativas a negativas.", reto: "Transforma una oración con negación doble." },
+            { titulo: "La transformación de subida (raising)", teoria: "La transformación de subida mueve un constituyente de una posición subordinada a una posición superior.", recurso: "Raising", ejemplo: "'Parece que Juan viene' → 'Juan parece venir'.", ejercicio: "Identifica un caso de raising en una oración.", reto: "Escribe una oración con raising." },
+            { titulo: "La transformación de extraposición", teoria: "La extraposición mueve un constituyente a la derecha de la oración para aligerar la posición del sujeto.", recurso: "Extraposición", ejemplo: "'Que Juan venga es bueno' → 'Es bueno que Juan venga'.", ejercicio: "Transforma 3 oraciones con extraposición.", reto: "Escribe una oración con extraposición." },
+            { titulo: "La transformación de topicalización", teoria: "La topicalización mueve un constituyente al inicio de la oración para darle énfasis.", recurro: "Topicalización", ejemplo: "'Juan come manzanas' → 'Manzanas, come Juan'.", ejercicio: "Transforma 3 oraciones con topicalización.", reto: "Escribe una oración con topicalización." },
+            { titulo: "La transformación de inversión", teoria: "La inversión cambia el orden de los constituyentes, generalmente para preguntas o énfasis.", recurso: "Inversión", ejemplo: "'Juan come' → 'Come Juan'.", ejercicio: "Transforma 3 oraciones con inversión.", reto: "Escribe una oración con inversión." },
+            { titulo: "La transformación de subida de sujeto", teoria: "La subida de sujeto mueve el sujeto de una cláusula subordinada a la cláusula principal.", recurso: "Subida de sujeto", ejemplo: "'Parece que Juan viene' → 'Juan parece venir'.", ejercicio: "Identifica un caso de subida de sujeto.", reto: "Escribe una oración con subida de sujeto." },
+            { titulo: "La transformación de subida de objeto", teoria: "La subida de objeto mueve el objeto de una cláusula subordinada a la cláusula principal.", recurso: "Subida de objeto", ejemplo: "'Creo que Juan es inteligente' → 'Creo a Juan inteligente' (en algunas lenguas).", ejercicio: "Identifica un caso de subida de objeto.", reto: "Escribe una oración con subida de objeto." },
+            { titulo: "La transformación de clivado", teoria: "El clivado (cleft) es una transformación que enfatiza un constituyente mediante una estructura 'ser + SN + que'.", recurso: "Clivado", ejemplo: "'Juan come manzanas' → 'Es Juan quien come manzanas'.", ejercicio: "Transforma 3 oraciones con clivado.", reto: "Escribe una oración con clivado." },
+            { titulo: "La transformación de pseudoclivado", teoria: "El pseudoclivado es una estructura 'lo que + SV + ser + SN' que enfatiza un constituyente.", recurso: "Pseudoclivado", ejemplo: "'Juan come manzanas' → 'Lo que come Juan son manzanas'.", ejercicio: "Transforma 3 oraciones con pseudoclivado.", reto: "Escribe una oración con pseudoclivado." },
+            { titulo: "La transformación de movimiento WH", teoria: "El movimiento WH mueve un constituyente interrogativo (qué, quién, dónde) al inicio de la oración.", recurso: "Movimiento WH", ejemplo: "'Juan come qué' → '¿Qué come Juan?'", ejercicio: "Transforma 3 oraciones con movimiento WH.", reto: "Escribe una oración con movimiento WH." },
+            { titulo: "La transformación de relativización", teoria: "La relativización convierte una oración en una cláusula de relativo que modifica a un nombre.", recurso: "Relativización", ejemplo: "'El hombre + Juan ve al hombre' → 'El hombre al que Juan ve'.", ejercicio: "Transforma 3 oraciones con relativización.", reto: "Escribe una oración con una cláusula de relativo." },
+            { titulo: "La transformación de elipsis", teoria: "La elipsis omite elementos de la oración que pueden ser recuperados por el contexto.", recurso: "Elipsis", ejemplo: "'Juan come manzanas y Pedro come peras' → 'Juan come manzanas y Pedro, peras'.", ejercicio: "Transforma 3 oraciones con elipsis.", reto: "Escribe una oración con elipsis." },
+            { titulo: "La transformación de dislocación", teoria: "La dislocación mueve un constituyente al principio o al final de la oración, a menudo con un pronombre de reanudación.", recurso: "Dislocación", ejemplo: "'Juan, él come manzanas' (dislocación izquierda).", ejercicio: "Transforma 3 oraciones con dislocación.", reto: "Escribe una oración con dislocación." },
+            { titulo: "La transformación de escalamiento", teoria: "El escalamiento es un movimiento gradual de un constituyente hacia la posición de foco.", recurso: "Escalamiento", ejemplo: "La topicalización es un tipo de escalamiento.", ejercicio: "Analiza el escalamiento en una oración.", reto: "Escribe una oración con escalamiento." },
+            { titulo: "El principio de conservación de estructura", teoria: "El principio de conservación de estructura establece que las transformaciones no alteran la estructura jerárquica básica.", recurso: "Conservación de estructura", ejemplo: "La pasivización conserva la estructura jerárquica de la oración.", ejercicio: "Aplica el principio a una transformación.", reto: "Analiza la conservación de estructura." },
+            { titulo: "La condición de subyacencia", teoria: "La condición de subyacencia limita el movimiento de un constituyente a una distancia máxima.", recurso: "Subyacencia", ejemplo: "El movimiento WH está limitado por la subyacencia.", ejercicio: "Analiza la subyacencia en una oración.", reto: "Escribe una oración con movimiento y subyacencia." },
+            { titulo: "La isla sintáctica", teoria: "Las islas sintácticas son estructuras de las que no se puede extraer un constituyente mediante movimiento.", recurro: "Isla sintáctica", ejemplo: "'El hombre que vio a María' → no se puede mover 'María' de la isla de relativo.", ejercicio: "Identifica una isla sintáctica en una oración.", reto: "Escribe una oración con una isla sintáctica." },
+            { titulo: "La cadena de movimiento", teoria: "La cadena de movimiento es la secuencia de posiciones que ocupa un constituyente durante el movimiento.", recurso: "Cadena de movimiento", ejemplo: "En '¿Qué come Juan?', 'qué' se mueve desde la posición de objeto a la posición inicial.", ejercicio: "Analiza la cadena de movimiento en una oración.", reto: "Escribe una oración con cadena de movimiento." }
+        ]
+    },
+    sintaxisx: {
+        nombre: "Sintaxis X-barra", color: "verde", icono: "bi-robot",
+        especialidad: "Estructura jerárquica, proyecciones, especificadores, complementos",
+        tecnicas: [
+            { titulo: "La teoría X-barra (X')", teoria: "La teoría X-barra propone una estructura universal para todos los sintagmas: X'' (o XP), X' (X-barra), X (núcleo).", recurso: "X-barra", ejemplo: "SN → (Espec) + N' → N' → N + (Complemento).", ejercicio: "Dibuja un árbol X-barra para un SN.", reto: "Dibuja un árbol X-barra para un SV." },
+            { titulo: "El esquema X-barra", teoria: "El esquema X-barra es: XP → (Especificador) + X'; X' → X + (Complemento).", recurso: "Esquema X-barra", ejemplo: "En 'el libro de Juan', 'el' es el especificador, 'libro' es el núcleo, 'de Juan' es el complemento.", ejercicio: "Aplica el esquema X-barra a un SN.", reto: "Aplica el esquema X-barra a un SPrep." },
+            { titulo: "El especificador", teoria: "El especificador es un constituyente que ocupa la posición de XP y tiene una relación de especificación con el núcleo.", recurso: "Especificador", ejemplo: "En 'el libro', 'el' es el especificador.", ejercicio: "Identifica el especificador en 5 sintagmas.", reto: "Escribe un sintagma con especificador." },
+            { titulo: "El complemento", teoria: "El complemento es un constituyente que ocupa la posición de X' y está subcategorizado por el núcleo.", recurso: "Complemento", ejemplo: "En 'libro de Juan', 'de Juan' es el complemento.", ejercicio: "Identifica el complemento en 5 sintagmas.", reto: "Escribe un sintagma con complemento." },
+            { titulo: "El adjunto", teoria: "El adjunto es un constituyente opcional que se añade al sintagma, a menudo en posición de X'", recurso: "Adjunto", ejemplo: "En 'libro de Juan de historia', 'de historia' es un adjunto.", ejercicio: "Identifica el adjunto en 5 sintagmas.", reto: "Escribe un sintagma con adjunto." },
+            { titulo: "La proyección máxima (XP)", teoria: "La proyección máxima (XP) es el nivel más alto del sintagma, que incluye el especificador y X'", recurso: "Proyección máxima", ejemplo: "SN, SV, SPrep, SAdj, SAdv son proyecciones máximas.", ejercicio: "Identifica la proyección máxima de 5 sintagmas.", reto: "Escribe una oración con diferentes proyecciones máximas." },
+            { titulo: "La proyección intermedia (X')", teoria: "La proyección intermedia (X') es el nivel entre el núcleo y la proyección máxima.", recurso: "Proyección intermedia", ejemplo: "En 'el libro de Juan', 'libro de Juan' es N'", ejercicio: "Identifica la proyección intermedia de 5 sintagmas.", reto: "Escribe una oración con proyección intermedia." },
+            { titulo: "El núcleo léxico (X)", teoria: "El núcleo léxico (X) es la categoría básica que da nombre al sintagma (N, V, P, A, Adv).", recurso: "Núcleo léxico", ejemplo: "En 'el libro', 'libro' es el núcleo léxico.", ejercicio: "Identifica el núcleo léxico de 5 sintagmas.", reto: "Escribe 5 sintagmas con diferentes núcleos léxicos." },
+            { titulo: "La proyección de la oración (O)", teoria: "La oración se proyecta como un SN o un SV según la teoría X-barra, con la categoría funcional INFL.", recurso: "Proyección de la oración", ejemplo: "O → SN + SV; SV → V + SN.", ejercicio: "Dibuja un árbol X-barra para una oración.", reto: "Escribe una oración compleja y dibuja su árbol." },
+            { titulo: "La categoría funcional INFL", teoria: "INFL (Inflection) es la categoría funcional que contiene la información de tiempo, modo y concordancia.", recurso: "INFL", ejemplo: "INFL puede contener el tiempo presente o pasado.", ejercicio: "Identifica INFL en una oración.", reto: "Escribe una oración con INFL." },
+            { titulo: "La categoría funcional COMP", teoria: "COMP (Complementizer) es la categoría funcional que introduce oraciones subordinadas.", recurso: "COMP", ejemplo: "En 'que', 'si', 'para que' son complementizadores.", ejercicio: "Identifica COMP en una oración subordinada.", reto: "Escribe una oración con COMP." },
+            { titulo: "La estructura de la oración en X-barra", teoria: "La estructura de la oración en X-barra es: O → SN + SV; SN → Det + N'; SV → V + SN.", recurso: "Estructura de la oración", ejemplo: "O → SN + SV; SN → Det + N; SV → V + SN.", ejercicio: "Dibuja un árbol X-barra de una oración simple.", reto: "Escribe una oración compuesta." },
+            { titulo: "El movimiento en X-barra", teoria: "El movimiento en X-barra se explica mediante el movimiento de un constituyente a una posición de especificador.", recurso: "Movimiento en X-barra", ejemplo: "El sujeto se mueve a la posición de especificador de la oración.", ejercicio: "Analiza el movimiento en una oración pasiva.", reto: "Escribe una oración con movimiento en X-barra." },
+            { titulo: "La recursividad en X-barra", teoria: "La recursividad en X-barra permite que un sintagma contenga otro sintagma del mismo tipo.", recurso: "Recursividad en X-barra", ejemplo: "SN → Det + N' → N' → N + SPrep.", ejercicio: "Analiza la recursividad en un SN complejo.", reto: "Escribe un SN con recursividad." },
+            { titulo: "El principio de proyección extendida", teoria: "El principio de proyección extendida establece que toda oración debe tener un sujeto.", recurso: "Proyección extendida", ejemplo: "Las oraciones impersonales tienen un sujeto expletivo.", ejercicio: "Analiza el principio de proyección extendida.", reto: "Escribe una oración con sujeto expletivo." },
+            { titulo: "La hipótesis del sujeto interno", teoria: "La hipótesis del sujeto interno propone que el sujeto se genera en la posición de especificador del SV.", recurso: "Sujeto interno", ejemplo: "El sujeto se genera en la posición de especificador del SV y luego se mueve.", ejercicio: "Analiza el sujeto interno en una oración.", reto: "Escribe una oración con sujeto interno." },
+            { titulo: "La estructura de los sintagmas en X-barra", teoria: "Los sintagmas en X-barra tienen una estructura jerárquica que incluye núcleo, complementos y adjuntos.", recurso: "Estructura de sintagmas", ejemplo: "SN → Det + N' → N' → N + SPrep.", ejercicio: "Analiza la estructura de 3 sintagmas.", reto: "Escribe un texto con diferentes sintagmas." },
+            { titulo: "La ambigüedad en X-barra", teoria: "La ambigüedad en X-barra se resuelve mediante diferentes estructuras jerárquicas.", recurso: "Ambigüedad en X-barra", ejemplo: "'La mujer con el telescopio' tiene dos estructuras posibles.", ejercicio: "Analiza la ambigüedad en 2 oraciones.", reto: "Escribe 2 oraciones con ambigüedad estructural." },
+            { titulo: "El principio de economía en X-barra", teoria: "El principio de economía en X-barra limita el número de proyecciones posibles.", recurso: "Economía en X-barra", ejemplo: "Las proyecciones deben ser lo más simples posibles.", ejercicio: "Aplica el principio de economía a una estructura.", reto: "Analiza la economía en una oración." },
+            { titulo: "El legado de la teoría X-barra", teoria: "La teoría X-barra ha sido fundamental para la sintaxis generativa y ha influido en todas las teorías posteriores.", recurso: "Legado X-barra", ejemplo: "La teoría X-barra es la base de la sintaxis generativa.", ejercicio: "Investiga la historia de la teoría X-barra.", reto: "Escribe un ensayo sobre X-barra." }
+        ]
+    },
+    casos: {
+        nombre: "Teoría del Caso", color: "purpura", icono: "bi-robot",
+        especialidad: "Rección, asignación de caso, caso abstracto, caso morfológico",
+        tecnicas: [
+            { titulo: "El caso abstracto", teoria: "El caso abstracto es una propiedad de los SN que se asigna en la estructura sintáctica, independientemente de la morfología.", recurso: "Caso abstracto", ejemplo: "El sujeto recibe caso nominativo; el objeto recibe caso acusativo.", ejercicio: "Analiza el caso abstracto en una oración.", reto: "Escribe una oración con diferentes casos abstractos." },
+            { titulo: "El caso morfológico", teoria: "El caso morfológico es la manifestación fonológica del caso abstracto (por ejemplo, el español tiene pocos casos morfológicos).", recurso: "Caso morfológico", ejemplo: "En latín, el caso nominativo se marca con -us, -a, etc.", ejercicio: "Investiga el caso morfológico en español.", reto: "Escribe un texto sobre el caso morfológico." },
+            { titulo: "La rección (government)", teoria: "La rección es la relación entre un núcleo y su complemento. El núcleo asigna caso a su complemento.", recurso: "Rección", ejemplo: "Un verbo asigna caso acusativo a su complemento directo.", ejercicio: "Analiza la rección en 3 oraciones.", reto: "Escribe una oración con rección." },
+            { titulo: "La asignación de caso", teoria: "La asignación de caso es el proceso por el cual un núcleo asigna caso a un SN en su dominio de rección.", recurso: "Asignación de caso", ejemplo: "El verbo asigna caso acusativo al objeto; la preposición asigna caso oblicuo.", ejercicio: "Analiza la asignación de caso en 3 oraciones.", reto: "Escribe una oración con asignación de caso." },
+            { titulo: "El caso nominativo", teoria: "El caso nominativo se asigna al sujeto de la oración, generalmente por INFL.", recurso: "Caso nominativo", ejemplo: "'Juan' en 'Juan come' recibe caso nominativo.", ejercicio: "Analiza el caso nominativo en 3 oraciones.", reto: "Escribe una oración con sujeto nominativo." },
+            { titulo: "El caso acusativo", teoria: "El caso acusativo se asigna al objeto directo, generalmente por el verbo.", recurso: "Caso acusativo", ejemplo: "'manzana' en 'Juan come una manzana' recibe caso acusativo.", ejercicio: "Analiza el caso acusativo en 3 oraciones.", reto: "Escribe una oración con objeto acusativo." },
+            { titulo: "El caso dativo", teoria: "El caso dativo se asigna al objeto indirecto, generalmente por el verbo o la preposición.", recurso: "Caso dativo", ejemplo: "'Juan' en 'Juan da un libro a María' recibe caso dativo.", ejercicio: "Analiza el caso dativo en 3 oraciones.", reto: "Escribe una oración con objeto dativo." },
+            { titulo: "El caso genitivo", teoria: "El caso genitivo se asigna al complemento del nombre, generalmente por la preposición 'de'.", recurso: "Caso genitivo", ejemplo: "'Juan' en 'el libro de Juan' recibe caso genitivo.", ejercicio: "Analiza el caso genitivo en 3 oraciones.", reto: "Escribe una oración con caso genitivo." },
+            { titulo: "El caso oblicuo", teoria: "El caso oblicuo se asigna al complemento de una preposición.", recurso: "Caso oblicuo", ejemplo: "'Juan' en 'con Juan' recibe caso oblicuo.", ejercicio: "Analiza el caso oblicuo en 3 oraciones.", reto: "Escribe una oración con caso oblicuo." },
+            { titulo: "El filtro de caso", teoria: "El filtro de caso establece que todo SN fonológicamente realizado debe recibir caso.", recurso: "Filtro de caso", ejemplo: "Una oración como 'el hombre que viene' tiene todos sus SN con caso.", ejercicio: "Analiza el filtro de caso en 3 oraciones.", reto: "Escribe una oración con SN sin caso." },
+            { titulo: "El principio de la relación de caso", teoria: "El principio de la relación de caso establece que el caso se asigna bajo rección.", recurso: "Relación de caso", ejemplo: "Un SN debe estar regido por un núcleo para recibir caso.", ejercicio: "Analiza la relación de caso en 3 oraciones.", reto: "Escribe una oración con relación de caso." },
+            { titulo: "La asignación de caso en pasivas", teoria: "En las pasivas, el objeto recibe caso nominativo y el agente recibe caso oblicuo (por).", recurso: "Caso en pasivas", ejemplo: "'Manzana' en 'Una manzana es comida por Juan' recibe caso nominativo.", ejercicio: "Analiza el caso en 3 pasivas.", reto: "Escribe una oración pasiva con caso." },
+            { titulo: "La asignación de caso en infinitivos", teoria: "En los infinitivos, el sujeto puede recibir caso acusativo o estar en caso nominativo si está en una cláusula subordinada.", recurso: "Caso en infinitivos", ejemplo: "'Juan' en 'Veo a Juan' recibe caso acusativo.", ejercicio: "Analiza el caso en 3 oraciones con infinitivos.", reto: "Escribe una oración con infinitivo y caso." },
+            { titulo: "La asignación de caso en expletivos", teoria: "Los expletivos ('se') pueden recibir caso por parte de INFL o no necesitar caso.", recurso: "Caso en expletivos", ejemplo: "'Se habla' no tiene un sujeto con caso.", ejercicio: "Analiza el caso en 3 oraciones con 'se'.", reto: "Escribe una oración con 'se'." },
+            { titulo: "La teoría del caso y el movimiento", teoria: "El movimiento de un SN está motivado por la necesidad de recibir caso.", recurso: "Caso y movimiento", ejemplo: "El sujeto se mueve a la posición de especificador de INFL para recibir caso nominativo.", ejercicio: "Analiza el movimiento y el caso en 3 oraciones.", reto: "Escribe una oración con movimiento por caso." },
+            { titulo: "El caso en las lenguas ergativas", teoria: "En las lenguas ergativas, el caso del sujeto del verbo intransitivo es el mismo que el del objeto del verbo transitivo.", recurso: "Caso ergativo", ejemplo: "En vasco, el sujeto intransitivo y el objeto transitivo reciben caso absolutivo.", ejercicio: "Investiga el caso ergativo.", reto: "Escribe un texto sobre el caso ergativo." },
+            { titulo: "El caso en las lenguas acusativas", teoria: "En las lenguas acusativas (como el español), el sujeto recibe caso nominativo y el objeto, acusativo.", recurso: "Caso acusativo", ejemplo: "El español es una lengua acusativa.", ejercicio: "Analiza el caso en una lengua acusativa.", reto: "Escribe un texto sobre las lenguas acusativas." },
+            { titulo: "El caso y la concordancia", teoria: "La concordancia de número y persona en el verbo refleja el caso del sujeto.", recurso: "Caso y concordancia", ejemplo: "La concordancia en español es un reflejo del caso nominativo.", ejercicio: "Analiza la concordancia y el caso en 3 oraciones.", reto: "Escribe una oración con concordancia." },
+            { titulo: "El caso y la anáfora", teoria: "El caso influye en la interpretación de los pronombres anafóricos.", recurso: "Caso y anáfora", ejemplo: "Los pronombres de caso nominativo y acusativo tienen diferentes propiedades.", ejercicio: "Analiza el caso en las anáforas.", reto: "Escribe una oración con anáfora y caso." },
+            { titulo: "El caso y la reflexividad", teoria: "El caso influye en la interpretación de los pronombres reflexivos.", recurso: "Caso y reflexividad", ejemplo: "'Se' es un pronombre reflexivo de caso acusativo.", ejercicio: "Analiza el caso en los reflexivos.", reto: "Escribe una oración con reflexivo y caso." }
+        ]
+    },
+    lugar: {
+        nombre: "Lugar y referencia", color: "rojo", icono: "bi-robot",
+        especialidad: "Binding, coindexación, pronombres, anáforas, rección y ligamiento",
+        tecnicas: [
+            { titulo: "La teoría del ligamiento (Binding Theory)", teoria: "La teoría del ligamiento establece las condiciones para la interpretación de los pronombres y las anáforas.", recurso: "Ligamiento", ejemplo: "Un pronombre (él) no puede ligar a su antecedente en su dominio de ligamiento.", ejercicio: "Analiza el ligamiento en 3 oraciones.", reto: "Escribe una oración con ligamiento." },
+            { titulo: "La coindexación", teoria: "La coindexación es la asignación de un índice a dos elementos que se refieren al mismo referente.", recurso: "Coindexación", ejemplo: "Juan; se ve a sí mismo;", ejercicio: "Analiza la coindexación en 3 oraciones.", reto: "Escribe una oración con coindexación." },
+            { titulo: "Los pronombres", teoria: "Los pronombres (él, ella, ellos) son expresiones referenciales que pueden tener un antecedente en la oración.", recurso: "Pronombres", ejemplo: "'Juan dijo que él vendría' → 'él' puede referirse a Juan o a otra persona.", ejercicio: "Analiza los pronombres en 3 oraciones.", reto: "Escribe una oración con pronombres." },
+            { titulo: "Las anáforas", teoria: "Las anáforas (se, sí mismo) son pronombres que necesitan un antecedente dentro de su dominio de ligamiento.", recurso: "Anáforas", ejemplo: "'Juan; se ve a sí mismo;' → 'sí mismo' se refiere a Juan.", ejercicio: "Analiza las anáforas en 3 oraciones.", reto: "Escribe una oración con anáfora." },
+            { titulo: "Las expresiones referenciales (R-expressions)", teoria: "Las expresiones referenciales (nombres propios, SN) son libres y no pueden ser ligadas por un pronombre en su dominio.", recurso: "Expresiones referenciales", ejemplo: "'Juan; dijo que él; vendría' → 'Juan' es una R-expression.", ejercicio: "Analiza las R-expressions en 3 oraciones.", reto: "Escribe una oración con R-expression." },
+            { titulo: "El dominio de ligamiento", teoria: "El dominio de ligamiento es la oración mínima que contiene el elemento que se está ligando.", recurso: "Dominio de ligamiento", ejemplo: "En 'Juan; dijo que él; vendría', el dominio de ligamiento de 'él' es la oración subordinada.", ejercicio: "Analiza el dominio de ligamiento en 3 oraciones.", reto: "Escribe una oración con dominio de ligamiento." },
+            { titulo: "El principio A de ligamiento", teoria: "El principio A establece que las anáforas deben estar ligadas en su dominio de ligamiento.", recurso: "Principio A", ejemplo: "'Juan; se ve a sí mismo;' (correcto).", ejercicio: "Analiza el principio A en 3 oraciones.", reto: "Escribe una oración que cumpla con el principio A." },
+            { titulo: "El principio B de ligamiento", teoria: "El principio B establece que los pronombres no pueden estar ligados en su dominio de ligamiento.", recurso: "Principio B", ejemplo: "'Juan; dijo que él; vendría' → 'él' no puede referirse a Juan en el mismo dominio.", ejercicio: "Analiza el principio B en 3 oraciones.", reto: "Escribe una oración que cumpla con el principio B." },
+            { titulo: "El principio C de ligamiento", teoria: "El principio C establece que las expresiones referenciales (R-expressions) no pueden estar ligadas.", recurso: "Principio C", ejemplo: "'Él; dijo que Juan; vendría' → 'Juan' no puede ser ligado por 'él'.", ejercicio: "Analiza el principio C en 3 oraciones.", reto: "Escribe una oración que cumpla con el principio C." },
+            { titulo: "La referencia (referentiality)", teoria: "La referencia es la relación entre una expresión lingüística y el elemento del mundo al que se refiere.", recurso: "Referencia", ejemplo: "'Juan' se refiere a una persona específica.", ejercicio: "Analiza la referencia en 3 oraciones.", reto: "Escribe una oración con referencia." },
+            { titulo: "La deíxis", teoria: "La deíxis es la referencia a elementos del contexto (yo, tú, aquí, ahora).", recurso: "Deíxis", ejemplo: "'Yo' se refiere al hablante.", ejercicio: "Analiza la deíxis en 3 oraciones.", reto: "Escribe una oración con deíxis." },
+            { titulo: "La anáfora deíctica", teoria: "La anáfora deíctica es una referencia que depende del contexto (él, ella, aquel).", recurso: "Anáfora deíctica", ejemplo: "'Él' puede referirse a una persona presente en el contexto.", ejercicio: "Analiza la anáfora deíctica en 3 oraciones.", reto: "Escribe una oración con anáfora deíctica." },
+            { titulo: "La co-referencia", teoria: "La co-referencia es la relación entre dos expresiones que se refieren al mismo elemento.", recurso: "Co-referencia", ejemplo: "'Juan' y 'él' pueden ser co-referentes.", ejercicio: "Analiza la co-referencia en 3 oraciones.", reto: "Escribe una oración con co-referencia." },
+            { titulo: "La rección (government) y el ligamiento", teoria: "La rección es la relación entre un núcleo y su complemento, que influye en el ligamiento.", recurso: "Rección y ligamiento", ejemplo: "Un verbo rege a su complemento, limitando el ligamiento.", ejercicio: "Analiza la rección y el ligamiento en 3 oraciones.", reto: "Escribe una oración con rección y ligamiento." },
+            { titulo: "El principio de la rección", teoria: "El principio de la rección establece que un núcleo rege a su complemento.", recurso: "Principio de rección", ejemplo: "El verbo rege al objeto; la preposición rege a su complemento.", ejercicio: "Analiza la rección en 3 oraciones.", reto: "Escribe una oración con rección." },
+            { titulo: "La teoría del ligamiento y el movimiento", teoria: "El movimiento de un SN puede afectar las condiciones de ligamiento.", recurso: "Ligamiento y movimiento", ejemplo: "El movimiento del sujeto puede crear nuevas relaciones de ligamiento.", ejercicio: "Analiza el ligamiento y el movimiento en 3 oraciones.", reto: "Escribe una oración con ligamiento y movimiento." },
+            { titulo: "El ligamiento en las oraciones complejas", teoria: "El ligamiento en las oraciones complejas está sujeto a las mismas condiciones que en las simples.", recurso: "Ligamiento en oraciones complejas", ejemplo: "En 'Juan; cree que él; vendrá', 'él' no puede referirse a Juan.", ejercicio: "Analiza el ligamiento en 3 oraciones complejas.", reto: "Escribe una oración compleja con ligamiento." },
+            { titulo: "El ligamiento y la opacidad", teoria: "La opacidad es una condición que impide el ligamiento a través de ciertos dominios.", recurso: "Opacidad", ejemplo: "La opacidad en las cláusulas subordinadas limita el ligamiento.", ejercicio: "Analiza la opacidad en 3 oraciones.", reto: "Escribe una oración con opacidad." },
+            { titulo: "El ligamiento y los cuantificadores", teoria: "Los cuantificadores (cada, todos) pueden afectar el ligamiento de los pronombres.", recurso: "Ligamiento y cuantificadores", ejemplo: "'Cada hombre; cree que él; es listo' → 'él' puede ser ligado por 'cada hombre' o no.", ejercicio: "Analiza el ligamiento con cuantificadores.", reto: "Escribe una oración con cuantificadores y ligamiento." },
+            { titulo: "El legado de la teoría del ligamiento", teoria: "La teoría del ligamiento ha sido fundamental para la semántica y la sintaxis generativa.", recurso: "Legado del ligamiento", ejemplo: "La teoría del ligamiento ha influido en la gramática universal.", ejercicio: "Investiga la historia de la teoría del ligamiento.", reto: "Escribe un ensayo sobre el ligamiento." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['estructuraprofunda','transformaciones','sintaxisx','casos','lugar'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_sintactica_generativa_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

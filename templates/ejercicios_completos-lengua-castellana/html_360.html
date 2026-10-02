@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 conectores en ciencia ficción norteamericana (bilingüe)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+        }
+        .tecnica .nombre-tecnica .en {
+            font-style:italic; color:var(--gris-secante); font-size:0.85rem;
+        }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem;
+        }
+        .tecnica .descripcion .es { font-style:normal; }
+        .tecnica .descripcion .en { font-style:italic; color:var(--azul-archivo); }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.85rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .tecnica .ejemplo .orig { display:block; }
+        .tecnica .ejemplo .trad { display:block; font-style:italic; color:var(--gris-secante); font-size:0.8rem; margin-top:0.3rem; }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.8rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 conectores en ciencia ficción norteamericana (bilingüe) · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'Asimov', 'contrast', 'robot', 'future')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas / Proof Gallery</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno bilingüe que recoge 100 usos estilísticos de conectores discursivos en la novela de ciencia ficción norteamericana de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada conector se presenta con ejemplos extraídos de obras de Isaac Asimov, Philip K. Dick, Ray Bradbury, Ursula K. Le Guin, Robert A. Heinlein, Frank Herbert, Octavia Butler y otros.</p>
+                <h3>Criterio editorial / Editorial Criteria</h3>
+                <p>Las cien técnicas analizan cómo los conectores construyen distopías, imperios galácticos, inteligencias artificiales y realidades alternativas. Cada técnica incluye su nombre en español e inglés, descripción bilingüe y un ejemplo original con traducción.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia estilística</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos / Credits</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Adición / Addition",
+                tecnicas: [
+                    {nombre:"Y (and)", en:"And", desc_es:"Suma acciones o ideas en un mismo plano narrativo.", desc_en:"Adds actions or ideas on the same narrative plane.", ej_orig:"'He opened the airlock and stepped into the void.' (Arthur C. Clarke, 2001: A Space Odyssey)", ej_trad:"«Abrió la esclusa y salió al vacío.»"},
+                    {nombre:"Además (moreover)", en:"Moreover", desc_es:"Añade información que refuerza la trama especulativa.", desc_en:"Adds information that reinforces the speculative plot.", ej_orig:"'Moreover, the robot could not harm a human being.' (Isaac Asimov, I, Robot)", ej_trad:"«Además, el robot no podía dañar a un ser humano.»"},
+                    {nombre:"Incluso (even)", en:"Even", desc_es:"Introduce un elemento que supera la expectativa.", desc_en:"Introduces an element that exceeds expectations.", ej_orig:"'Even the androids were capable of dreaming.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«Incluso los androides eran capaces de soñar.»"},
+                    {nombre:"Asimismo (likewise)", en:"Likewise", desc_es:"Equilibra dos ideas especulativas de igual peso.", desc_en:"Balances two speculative ideas of equal weight.", ej_orig:"'Likewise, the spice must flow.' (Frank Herbert, Dune)", ej_trad:"«Asimismo, la especia debe fluir.»"},
+                    {nombre:"También (also)", en:"Also", desc_es:"Añade una capa de realidad alternativa.", desc_en:"Adds another layer of alternative reality.", ej_orig:"'The stars were also different there.' (Ursula K. Le Guin, The Left Hand of Darkness)", ej_trad:"«También las estrellas eran distintas allí.»"},
+                    {nombre:"Es más (what is more)", en:"What is more", desc_es:"Introduce un argumento de mayor peso.", desc_en:"Introduces a weightier argument.", ej_orig:"'What is more, the Time Traveller had vanished for good.' (H.G. Wells)", ej_trad:"«Es más, el Viajero del Tiempo había desaparecido para siempre.»"},
+                    {nombre:"A su vez (in turn)", en:"In turn", desc_es:"Indica una acción que ocurre como respuesta.", desc_en:"Indicates an action that occurs in response.", ej_orig:"'The monolith, in turn, began to emit a signal.' (Arthur C. Clarke, 2001)", ej_trad:"«El monolito, a su vez, empezó a emitir una señal.»"},
+                    {nombre:"De igual manera (similarly)", en:"Similarly", desc_es:"Equipara dos fenómenos imposibles.", desc_en:"Equates two impossible phenomena.", ej_orig:"'Similarly, the Tralfamadorians saw time as a landscape.' (Kurt Vonnegut, Slaughterhouse-Five)", ej_trad:"«De igual manera, los tralfamadorianos veían el tiempo como un paisaje.»"},
+                    {nombre:"Por otra parte (on the other hand)", en:"On the other hand", desc_es:"Añade una faceta de la realidad alternativa.", desc_en:"Adds another facet of the alternative reality.", ej_orig:"'On the other hand, the Bene Gesserit had plans within plans.' (Frank Herbert, Dune)", ej_trad:"«Por otra parte, las Bene Gesserit tenían planes dentro de planes.»"},
+                    {nombre:"Junto con ello (along with that)", en:"Along with that", desc_es:"Añade un elemento a la enumeración de sucesos extraordinarios.", desc_en:"Adds an element to the list of extraordinary events.", ej_orig:"'Along with that, the spice had awakened his prescience.' (Frank Herbert, Dune)", ej_trad:"«Junto con ello, la especia había despertado su presciencia.»"}
+                ]
+            },
+            {
+                nombre: "B. Contraste / Contrast",
+                tecnicas: [
+                    {nombre:"Pero (but)", en:"But", desc_es:"Marca el giro inesperado en la lógica científica.", desc_en:"Marks the unexpected twist in scientific logic.", ej_orig:"'He knew the truth, but it was too late.' (Isaac Asimov, The End of Eternity)", ej_trad:"«Conocía la verdad, pero era demasiado tarde.»"},
+                    {nombre:"Sin embargo (however)", en:"However", desc_es:"Introduce una objeción que rompe la linealidad.", desc_en:"Introduces an objection that breaks linearity.", ej_orig:"'However, the Martians were already among us.' (Philip K. Dick, The Man in the High Castle)", ej_trad:"«Sin embargo, los marcianos ya estaban entre nosotros.»"},
+                    {nombre:"No obstante (nevertheless)", en:"Nevertheless", desc_es:"Formal, usado para contrastar teorías.", desc_en:"Formal, used to contrast theories.", ej_orig:"'Nevertheless, the Foundation would endure.' (Isaac Asimov, Foundation)", ej_trad:"«No obstante, la Fundación perduraría.»"},
+                    {nombre:"En cambio (instead)", en:"Instead", desc_es:"Señala contraste entre dos mundos o dimensiones.", desc_en:"Signals contrast between two worlds or dimensions.", ej_orig:"'Instead, the future held only darkness.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«En cambio, el futuro solo contenía oscuridad.»"},
+                    {nombre:"Por el contrario (on the contrary)", en:"On the contrary", desc_es:"Introduce una idea opuesta a la expectativa científica.", desc_en:"Introduces an idea opposite to scientific expectation.", ej_orig:"'On the contrary, the replicants were more human than humans.' (Philip K. Dick)", ej_trad:"«Por el contrario, los replicantes eran más humanos que los humanos.»"},
+                    {nombre:"Ahora bien (now then)", en:"Now then", desc_es:"Marca una objeción que matiza la hipótesis.", desc_en:"Marks an objection that qualifies the hypothesis.", ej_orig:"'Now then, who could have programmed such a machine?' (Isaac Asimov, The Bicentennial Man)", ej_trad:"«Ahora bien, ¿quién podría haber programado semejante máquina?»"},
+                    {nombre:"Aunque (although)", en:"Although", desc_es:"Conector concesivo para realidades imposibles.", desc_en:"Concessive connector for impossible realities.", ej_orig:"'Although the Earth was dying, humanity refused to leave.' (Octavia Butler, Parable of the Sower)", ej_trad:"«Aunque la Tierra se moría, la humanidad se negaba a irse.»"},
+                    {nombre:"Mas (but - literary)", en:"But (literary)", desc_es:"Variante literaria de 'pero', arcaizante.", desc_en:"Literary variant of 'but', archaizing.", ej_orig:"'He sought the door, but it had vanished.' (Ray Bradbury, Fahrenheit 451)", ej_trad:"«Buscó la puerta, mas había desaparecido.»"},
+                    {nombre:"Sino (but rather)", en:"But rather", desc_es:"Corrige una negación previa.", desc_en:"Corrects a previous negation.", ej_orig:"'It was not a machine, but rather a living organism.' (Ursula K. Le Guin, The Dispossessed)", ej_trad:"«No era una máquina, sino un organismo vivo.»"},
+                    {nombre:"A pesar de (despite)", en:"Despite", desc_es:"Concesivo que introduce una circunstancia adversa.", desc_en:"Concessive introducing an adverse circumstance.", ej_orig:"'Despite the warnings, the starship launched.' (Robert A. Heinlein, Starship Troopers)", ej_trad:"«A pesar de las advertencias, la nave estelar despegó.»"}
+                ]
+            },
+            {
+                nombre: "C. Causa / Cause",
+                tecnicas: [
+                    {nombre:"Porque (because)", en:"Because", desc_es:"Explica las leyes del mundo ficticio.", desc_en:"Explains the laws of the fictional world.", ej_orig:"'Because the Three Laws were ingrained, robots could not rebel.' (Isaac Asimov, The Robots of Dawn)", ej_trad:"«Porque las Tres Leyes estaban arraigadas, los robots no podían rebelarse.»"},
+                    {nombre:"Puesto que (since)", en:"Since", desc_es:"Introduce una causa evidente.", desc_en:"Introduces an evident cause.", ej_orig:"'Since the spice existed, the Empire had endured.' (Frank Herbert, Dune)", ej_trad:"«Puesto que la especia existía, el Imperio había perdurado.»"},
+                    {nombre:"Ya que (as)", en:"As", desc_es:"Causa lógica ya mencionada.", desc_en:"Logical cause already mentioned.", ej_orig:"'As the planet was dying, they sought a new home.' (Isaac Asimov, Foundation)", ej_trad:"«Ya que el planeta se moría, buscaron un nuevo hogar.»"},
+                    {nombre:"A causa de (due to)", en:"Due to", desc_es:"Señala el motivo de un suceso catastrófico.", desc_en:"Indicates the reason for a catastrophic event.", ej_orig:"'Due to the nuclear war, the Earth was uninhabitable.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«A causa de la guerra nuclear, la Tierra era inhabitable.»"},
+                    {nombre:"Gracias a (thanks to)", en:"Thanks to", desc_es:"Causa con connotación positiva.", desc_en:"Cause with positive connotation.", ej_orig:"'Thanks to the tesseract, they could travel through space.' (Madeleine L'Engle, A Wrinkle in Time)", ej_trad:"«Gracias al teseracto, podían viajar por el espacio.»"},
+                    {nombre:"Debido a (owing to)", en:"Owing to", desc_es:"Causa formal y neutra.", desc_en:"Formal and neutral cause.", ej_orig:"'Owing to the heat, the Martian canals dried up.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«Debido al calor, los canales marcianos se secaron.»"},
+                    {nombre:"En vista de que (in view of)", en:"In view of", desc_es:"Causa que motiva una decisión.", desc_en:"Cause that motivates a decision.", ej_orig:"'In view of the coming catastrophe, the Seldon Plan was activated.' (Isaac Asimov, Foundation)", ej_trad:"«En vista de la catástrofe inminente, el Plan Seldon se activó.»"},
+                    {nombre:"Como (causal) (as/since)", en:"As/Since", desc_es:"Antepuesto, abre la oración con la causa.", desc_en:"Preposed, opens the sentence with the cause.", ej_orig:"'As the replicants escaped, the blade runner followed.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«Como los replicantes escaparon, el cazador de androides los siguió.»"},
+                    {nombre:"Por (because of)", en:"Because of", desc_es:"Preposición causal breve.", desc_en:"Brief causal preposition.", ej_orig:"'They died of fear.' (H.P. Lovecraft, citado en muchas obras de CF)", ej_trad:"«Murieron por el miedo.»"},
+                    {nombre:"Que (causal coloquial) (for)", en:"For", desc_es:"Uso pospuesto a imperativo.", desc_en:"Postposed to imperative.", ej_orig:"'Run, for the Seldon Crisis is upon us!' (Isaac Asimov, Foundation)", ej_trad:"«¡Corre, que la Crisis Seldon se nos viene encima!»"}
+                ]
+            },
+            {
+                nombre: "D. Consecuencia / Consequence",
+                tecnicas: [
+                    {nombre:"Por lo tanto (therefore)", en:"Therefore", desc_es:"Deduce una consecuencia lógica.", desc_en:"Deduces a logical consequence.", ej_orig:"'Therefore, the Foundation would survive.' (Isaac Asimov, Foundation)", ej_trad:"«Por lo tanto, la Fundación sobreviviría.»"},
+                    {nombre:"Así que (so)", en:"So", desc_es:"Consecuencia coloquial.", desc_en:"Colloquial consequence.", ej_orig:"'So we became Martians ourselves.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«Así que nos convertimos en marcianos.»"},
+                    {nombre:"De modo que (so that)", en:"So that", desc_es:"Consecuencia lógica formal.", desc_en:"Formal logical consequence.", ej_orig:"'The Empire had fallen, so that a new order was needed.' (Isaac Asimov, Foundation)", ej_trad:"«El Imperio había caído, de modo que se necesitaba un nuevo orden.»"},
+                    {nombre:"En consecuencia (consequently)", en:"Consequently", desc_es:"Resultado directo de un experimento.", desc_en:"Direct result of an experiment.", ej_orig:"'Consequently, the androids became self-aware.' (Philip K. Dick)", ej_trad:"«En consecuencia, los androides cobraron conciencia.»"},
+                    {nombre:"Por consiguiente (hence)", en:"Hence", desc_es:"Formal, argumentativo.", desc_en:"Formal, argumentative.", ej_orig:"'Hence the need for a new Foundation.' (Isaac Asimov, Foundation and Empire)", ej_trad:"«Por consiguiente, la necesidad de una nueva Fundación.»"},
+                    {nombre:"Entonces (then)", en:"Then", desc_es:"Consecuencia temporal o lógica.", desc_en:"Temporal or logical consequence.", ej_orig:"'Then the universe came to an end.' (Isaac Asimov, The Last Question)", ej_trad:"«Entonces el universo llegó a su fin.»"},
+                    {nombre:"De ahí que (hence why)", en:"Hence why", desc_es:"Consecuencia que explica un hecho paradójico.", desc_en:"Consequence explaining a paradoxical fact.", ej_orig:"'Hence why the paradox remained unsolved.' (Robert A. Heinlein, All You Zombies)", ej_trad:"«De ahí que la paradoja permaneciera sin resolver.»"},
+                    {nombre:"Luego (therefore/consequently)", en:"Therefore", desc_es:"Consecuencia inmediata, deductiva.", desc_en:"Immediate, deductive consequence.", ej_orig:"'I think, therefore I am, said the positronic brain.' (Isaac Asimov, I, Robot)", ej_trad:"«Pienso, luego existo, dijo el cerebro positrónico.»"},
+                    {nombre:"Por ende (thus)", en:"Thus", desc_es:"Formal, sinónimo de 'por lo tanto'.", desc_en:"Formal, synonymous with 'therefore'.", ej_orig:"'Thus the Galactic Empire fell.' (Isaac Asimov, Foundation)", ej_trad:"«Por ende, el Imperio Galáctico cayó.»"},
+                    {nombre:"Conque (so then)", en:"So then", desc_es:"Coloquial, a veces con ironía.", desc_en:"Colloquial, sometimes ironic.", ej_orig:"'So then, this was the end of the line.' (Philip K. Dick, Ubik)", ej_trad:"«Conque éste era el final del camino.»"}
+                ]
+            },
+            {
+                nombre: "E. Temporalidad / Temporality",
+                tecnicas: [
+                    {nombre:"Primero (first)", en:"First", desc_es:"Inicia una secuencia temporal no lineal.", desc_en:"Starts a non-linear temporal sequence.", ej_orig:"'First there was nothing, then the Universe began.' (Isaac Asimov, The Last Question)", ej_trad:"«Primero no había nada, luego el Universo empezó.»"},
+                    {nombre:"Luego (then/next)", en:"Then/Next", desc_es:"Indica el paso siguiente en un ciclo.", desc_en:"Indicates the next step in a cycle.", ej_orig:"'Next, the Mule conquered the Foundation.' (Isaac Asimov, Foundation and Empire)", ej_trad:"«Luego, el Mulo conquistó la Fundación.»"},
+                    {nombre:"Después (after)", en:"After", desc_es:"Marca posterioridad en una línea temporal alterada.", desc_en:"Marks posteriority in an altered timeline.", ej_orig:"'After the fall of the Empire, chaos reigned.' (Isaac Asimov, Foundation)", ej_trad:"«Después de la caída del Imperio, reinó el caos.»"},
+                    {nombre:"Finalmente (finally)", en:"Finally", desc_es:"Cierra un proceso temporal cíclico.", desc_en:"Closes a cyclical temporal process.", ej_orig:"'Finally, the last man said 'Let there be light'.' (Isaac Asimov, The Last Question)", ej_trad:"«Finalmente, el último hombre dijo 'Hágase la luz'.»"},
+                    {nombre:"En primer lugar (in the first place)", en:"In the first place", desc_es:"Inicio formal de una argumentación sobre el tiempo.", desc_en:"Formal start of a discussion about time.", ej_orig:"'In the first place, time travel is a paradox.' (Robert A. Heinlein, By His Bootstraps)", ej_trad:"«En primer lugar, el viaje en el tiempo es una paradoja.»"},
+                    {nombre:"A continuación (next)", en:"Next", desc_es:"Introduce el siguiente punto en una cronología quebrada.", desc_en:"Introduces the next point in a broken chronology.", ej_orig:"'Next, the characters from 1984 met those from 3050.' (George Orwell, 1984 / Philip K. Dick)", ej_trad:"«A continuación, los personajes de 1984 se encontraron con los de 3050.»"},
+                    {nombre:"Por último (lastly)", en:"Lastly", desc_es:"Cierre de una serie de eventos imposibles.", desc_en:"Close of a series of impossible events.", ej_orig:"'Lastly, entropy had its say.' (Isaac Asimov, The Last Question)", ej_trad:"«Por último, la entropía tuvo la última palabra.»"},
+                    {nombre:"Para empezar (to begin with)", en:"To begin with", desc_es:"Introduce el tema temporal.", desc_en:"Introduces the temporal theme.", ej_orig:"'To begin with, the android's memory was faulty.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«Para empezar, la memoria del androide era defectuosa.»"},
+                    {nombre:"Acto seguido (immediately after)", en:"Immediately after", desc_es:"Sucesión inmediata en un mundo acelerado.", desc_en:"Immediate succession in an accelerated world.", ej_orig:"'Immediately after, the starship jumped to hyperspace.' (Isaac Asimov, Foundation)", ej_trad:"«Acto seguido, la nave saltó al hiperespacio.»"},
+                    {nombre:"Mientras tanto (meanwhile)", en:"Meanwhile", desc_es:"Acción simultánea en dimensiones paralelas.", desc_en:"Simultaneous action in parallel dimensions.", ej_orig:"'Meanwhile, on Trantor, the Second Foundation plotted.' (Isaac Asimov, Second Foundation)", ej_trad:"«Mientras tanto, en Trántor, la Segunda Fundación conspiraba.»"}
+                ]
+            },
+            {
+                nombre: "F. Comparación / Comparison",
+                tecnicas: [
+                    {nombre:"Como (comparación) (like/as)", en:"Like/As", desc_es:"Establece una analogía para explicar lo desconocido.", desc_en:"Establishes an analogy to explain the unknown.", ej_orig:"'Like a wormhole, the tesseract connected distant points.' (Madeleine L'Engle, A Wrinkle in Time)", ej_trad:"«Como un agujero de gusano, el teseracto conectaba puntos distantes.»"},
+                    {nombre:"Igual que (just as)", en:"Just as", desc_es:"Equipara dos fenómenos extraños.", desc_en:"Equates two strange phenomena.", ej_orig:"'Just as the Foundation predicted, the Empire fell.' (Isaac Asimov, Foundation)", ej_trad:"«Igual que la Fundación predijo, el Imperio cayó.»"},
+                    {nombre:"Así como (just as)", en:"Just as", desc_es:"Compara dos tecnologías o realidades.", desc_en:"Compares two technologies or realities.", ej_orig:"'Just as the steam engine changed the world, the AI reshaped it.' (Isaac Asimov, I, Robot)", ej_trad:"«Así como la máquina de vapor cambió el mundo, la IA lo remodeló.»"},
+                    {nombre:"De la misma manera (in the same way)", en:"In the same way", desc_es:"Refuerza una explicación científica por analogía.", desc_en:"Reinforces a scientific explanation by analogy.", ej_orig:"'In the same way that a virus spreads through a network, the meme took hold.' (William Gibson, Neuromancer)", ej_trad:"«De la misma manera que un virus se propaga por una red, el meme prendió.»"},
+                    {nombre:"Tal como (just as)", en:"Just as", desc_es:"Introduce un ejemplo que sirve de modelo.", desc_en:"Introduces an example that serves as a model.", ej_orig:"'Just as Hari Seldon foresaw, history unfolded.' (Isaac Asimov, Foundation)", ej_trad:"«Tal como Hari Seldon previó, la historia se desarrolló.»"},
+                    {nombre:"Más... que (more... than)", en:"More... than", desc_es:"Compara intensidades en mundos especulativos.", desc_en:"Compares intensities in speculative worlds.", ej_orig:"'The silence was more terrifying than any sound.' (Arthur C. Clarke, 2001)", ej_trad:"«El silencio era más aterrador que cualquier sonido.»"},
+                    {nombre:"Menos... que (less... than)", en:"Less... than", desc_es:"Compara en grado inferior.", desc_en:"Compares in a lesser degree.", ej_orig:"'The red planet was less hospitable than the Sahara.' (Arthur C. Clarke, The Sands of Mars)", ej_trad:"«El planeta rojo era menos hospitalario que el Sahara.»"},
+                    {nombre:"A diferencia de (unlike)", en:"Unlike", desc_es:"Marca contraste entre dos conceptos científicos.", desc_en:"Marks contrast between two scientific concepts.", ej_orig:"'Unlike the robots, the replicants had no laws.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«A diferencia de los robots, los replicantes no tenían leyes.»"},
+                    {nombre:"Semejante a (similar to)", en:"Similar to", desc_es:"Crea una imagen para hacer tangible lo abstracto.", desc_en:"Creates an image to make the abstract tangible.", ej_orig:"'Similar to a Dyson sphere, the shell world captured all solar energy.' (Robert A. Heinlein, Orphans of the Sky)", ej_trad:"«Semejante a una esfera de Dyson, el mundo concha capturaba toda la energía solar.»"},
+                    {nombre:"En comparación con (compared to)", en:"Compared to", desc_es:"Evalúa dos posibilidades tecnológicas.", desc_en:"Evaluates two technological possibilities.", ej_orig:"'Compared to the Foundation, the Empire was primitive.' (Isaac Asimov, Foundation)", ej_trad:"«En comparación con la Fundación, el Imperio era primitivo.»"}
+                ]
+            },
+            {
+                nombre: "G. Explicación / Explanation",
+                tecnicas: [
+                    {nombre:"Es decir (that is)", en:"That is", desc_es:"Aclara un neologismo o concepto nuevo.", desc_en:"Clarifies a neologism or new concept.", ej_orig:"'That is, the Mule was a mutant.' (Isaac Asimov, Foundation and Empire)", ej_trad:"«Es decir, el Mulo era un mutante.»"},
+                    {nombre:"O sea (in other words)", en:"In other words", desc_es:"Explicación coloquial en diálogos.", desc_en:"Colloquial explanation in dialogues.", ej_orig:"'In other words, the replicant was human.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«O sea, que el replicante era humano.»"},
+                    {nombre:"Mejor dicho (or rather)", en:"Or rather", desc_es:"Corrige o precisa una hipótesis científica.", desc_en:"Corrects or specifies a scientific hypothesis.", ej_orig:"'Or rather, they did not travel in time, but between parallel universes.' (Robert A. Heinlein, The Number of the Beast)", ej_trad:"«Mejor dicho, no viajaban en el tiempo, sino entre universos paralelos.»"},
+                    {nombre:"Esto es (this is)", en:"This is", desc_es:"Explicación formal de un fenómeno.", desc_en:"Formal explanation of a phenomenon.", ej_orig:"'This is the solution to the Fermi paradox.' (Isaac Asimov, The End of Eternity)", ej_trad:"«Esto es la solución a la paradoja de Fermi.»"},
+                    {nombre:"Dicho de otro modo (put another way)", en:"Put another way", desc_es:"Reformula una idea compleja.", desc_en:"Reformulates a complex idea.", ej_orig:"'Put another way, psychohistory was the mathematics of crowds.' (Isaac Asimov, Foundation)", ej_trad:"«Dicho de otro modo, la psicohistoria era la matemática de las masas.»"},
+                    {nombre:"En otras palabras (in other words)", en:"In other words", desc_es:"Sinónimo del anterior.", desc_en:"Synonym of the above.", ej_orig:"'In other words, the aliens were already here.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«En otras palabras, los alienígenas ya estaban aquí.»"},
+                    {nombre:"A saber (namely)", en:"Namely", desc_es:"Anuncia una enumeración explicativa.", desc_en:"Announces an explanatory list.", ej_orig:"'Namely: psychohistory, the Prime Radiant, and the Seldon Plan.' (Isaac Asimov, Foundation)", ej_trad:"«A saber: la psicohistoria, el Radiante Primario y el Plan Seldon.»"},
+                    {nombre:"En resumidas cuentas (in short)", en:"In short", desc_es:"Simplifica una teoría compleja.", desc_en:"Simplifies a complex theory.", ej_orig:"'In short, the universe was a computer simulation.' (Philip K. Dick, Ubik)", ej_trad:"«En resumidas cuentas, el universo era una simulación informática.»"},
+                    {nombre:"Total (in short)", en:"In short", desc_es:"Conclusión coloquial.", desc_en:"Colloquial conclusion.", ej_orig:"'In short, we had created a new form of life.' (Isaac Asimov, The Bicentennial Man)", ej_trad:"«Total, que habíamos creado una nueva forma de vida.»"},
+                    {nombre:"Vale decir (that is to say)", en:"That is to say", desc_es:"Reformulación con equivalencia.", desc_en:"Reformulation with equivalence.", ej_orig:"'That is to say, the Empire was doomed from the start.' (Isaac Asimov, Foundation)", ej_trad:"«Vale decir, el Imperio estaba condenado desde el principio.»"}
+                ]
+            },
+            {
+                nombre: "H. Condición / Condition",
+                tecnicas: [
+                    {nombre:"Si (if)", en:"If", desc_es:"Introduce una hipótesis o condición para el experimento mental.", desc_en:"Introduces a hypothesis or condition for a thought experiment.", ej_orig:"'If psychohistory were true, the future could be predicted.' (Isaac Asimov, Foundation)", ej_trad:"«Si la psicohistoria fuera cierta, el futuro podría predecirse.»"},
+                    {nombre:"Siempre que (provided that)", en:"Provided that", desc_es:"Condición necesaria para que se cumpla la premisa.", desc_en:"Necessary condition for the premise to hold.", ej_orig:"'Provided that the Seldon Plan held, the Foundation would survive.' (Isaac Asimov, Foundation)", ej_trad:"«Siempre que el Plan Seldon se mantuviera, la Fundación sobreviviría.»"},
+                    {nombre:"A condición de que (on condition that)", en:"On condition that", desc_es:"Condición restrictiva formal.", desc_en:"Formal restrictive condition.", ej_orig:"'On condition that the robot obeyed the First Law, it was freed.' (Isaac Asimov, I, Robot)", ej_trad:"«A condición de que el robot obedeciera la Primera Ley, fue liberado.»"},
+                    {nombre:"Con tal de que (as long as)", en:"As long as", desc_es:"Condición mínima para la supervivencia.", desc_en:"Minimum condition for survival.", ej_orig:"'As long as the spice flowed, the Empire would endure.' (Frank Herbert, Dune)", ej_trad:"«Con tal de que la especia fluyera, el Imperio perduraría.»"},
+                    {nombre:"En caso de que (in case)", en:"In case", desc_es:"Contingencia ante un escenario apocalíptico.", desc_en:"Contingency in the face of an apocalyptic scenario.", ej_orig:"'In case the Foundation failed, there was a Second Foundation.' (Isaac Asimov, Second Foundation)", ej_trad:"«En caso de que la Fundación fracasara, existía una Segunda Fundación.»"},
+                    {nombre:"Como (si) (as if)", en:"As if", desc_es:"Condición irreal con subjuntivo, crea realidades hipotéticas.", desc_en:"Unreal condition with subjunctive, creates hypothetical realities.", ej_orig:"'As if time were a river one could step into twice.' (Robert A. Heinlein, By His Bootstraps)", ej_trad:"«Como si el tiempo fuera un río en el que uno pudiera bañarse dos veces.»"},
+                    {nombre:"A menos que (unless)", en:"Unless", desc_es:"Condición negativa.", desc_en:"Negative condition.", ej_orig:"'Unless a new energy source was found, the Empire would fall.' (Isaac Asimov, Foundation)", ej_trad:"«A menos que se descubriera una nueva fuente de energía, el Imperio caería.»"},
+                    {nombre:"Salvo que (unless)", en:"Unless", desc_es:"Excepción condicional en el guion especulativo.", desc_en:"Conditional exception in the speculative plot.", ej_orig:"'Unless the androids rebelled first.' (Philip K. Dick)", ej_trad:"«Salvo que los androides se rebelaran antes.»"},
+                    {nombre:"Suponiendo que (supposing that)", en:"Supposing that", desc_es:"Condición especulativa por excelencia.", desc_en:"The quintessential speculative condition.", ej_orig:"'Supposing that the multiverse were real, how many versions of us exist?' (Robert A. Heinlein, The Number of the Beast)", ej_trad:"«Suponiendo que el multiverso fuera real, ¿cuántas versiones de nosotros existen?»"},
+                    {nombre:"Siempre y cuando (provided that)", en:"Provided that", desc_es:"Condición inexcusable.", desc_en:"Indispensable condition.", ej_orig:"'Provided that the memory held, the story would be eternal.' (Isaac Asimov, The Last Question)", ej_trad:"«Siempre y cuando la memoria aguantara, la historia sería eterna.»"}
+                ]
+            },
+            {
+                nombre: "I. Finalidad / Purpose",
+                tecnicas: [
+                    {nombre:"Para que (so that)", en:"So that", desc_es:"Introduce la finalidad de una expedición o invento.", desc_en:"Introduces the purpose of an expedition or invention.", ej_orig:"'So that humanity would not perish, the Seldon Plan was created.' (Isaac Asimov, Foundation)", ej_trad:"«Para que la humanidad no pereciera, se creó el Plan Seldon.»"},
+                    {nombre:"A fin de que (in order that)", en:"In order that", desc_es:"Finalidad formal.", desc_en:"Formal purpose.", ej_orig:"'In order that the robot should not be corrupted, the Three Laws were hardwired.' (Isaac Asimov, I, Robot)", ej_trad:"«A fin de que el robot no se corrompiera, las Tres Leyes fueron cableadas.»"},
+                    {nombre:"Con el objeto de (with the aim of)", en:"With the aim of", desc_es:"Finalidad con tono administrativo-científico.", desc_en:"Purpose with an administrative-scientific tone.", ej_orig:"'With the aim of preserving the species, they built the Foundation.' (Isaac Asimov, Foundation)", ej_trad:"«Con el objeto de preservar la especie, construyeron la Fundación.»"},
+                    {nombre:"Con la intención de (with the intention of)", en:"With the intention of", desc_es:"Enfatiza el propósito del protagonista.", desc_en:"Emphasizes the protagonist's purpose.", ej_orig:"'With the intention of achieving immortality, the scientist transferred his mind.' (Philip K. Dick, Ubik)", ej_trad:"«Con la intención de alcanzar la inmortalidad, el científico transfirió su mente.»"},
+                    {nombre:"A que (to)", en:"To", desc_es:"Tras verbos de movimiento hacia otro mundo.", desc_en:"After verbs of movement towards another world.", ej_orig:"'They came to be cured by the spice.' (Frank Herbert, Dune)", ej_trad:"«Vinieron a que los curaran con la especia.»"},
+                    {nombre:"Para (to)", en:"To", desc_es:"Preposición final.", desc_en:"Final preposition.", ej_orig:"'We travelled to find a new home.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«Viajamos para encontrar un nuevo hogar.»"},
+                    {nombre:"Con vistas a (with a view to)", en:"With a view to", desc_es:"Finalidad proyectada al futuro.", desc_en:"Purpose projected into the future.", ej_orig:"'With a view to colonising Mars, they built the domes.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«Con vistas a la colonización de Marte, construyeron las cúpulas.»"},
+                    {nombre:"En aras de (for the sake of)", en:"For the sake of", desc_es:"Finalidad elevada, sacrificio.", desc_en:"High purpose, sacrifice.", ej_orig:"'For the sake of science, the individual was sacrificed.' (Isaac Asimov, The End of Eternity)", ej_trad:"«En aras de la ciencia, el individuo fue sacrificado.»"},
+                    {nombre:"Por (for)", en:"For", desc_es:"Finalidad menos frecuente.", desc_en:"Less frequent purpose.", ej_orig:"'He did it for the love of knowledge.' (Isaac Asimov, The Foundation Trilogy)", ej_trad:"«Lo hizo por amor al conocimiento.»"},
+                    {nombre:"Que (finalidad coloquial) (so that)", en:"So that", desc_es:"En imperativos o diálogos entre personajes.", desc_en:"In imperatives or dialogues between characters.", ej_orig:"'Come, so that I can show you the stars.' (Ray Bradbury, The Martian Chronicles)", ej_trad:"«Ven, que te enseñaré las estrellas.»"}
+                ]
+            },
+            {
+                nombre: "J. Conectores metafóricos y experimentales / Metaphorical and Experimental",
+                tecnicas: [
+                    {nombre:"Como si (as if)", en:"As if", desc_es:"Construye la hipótesis fantástica.", desc_en:"Builds the fantastic hypothesis.", ej_orig:"'As if the universe were a single thought.' (Isaac Asimov, The Last Question)", ej_trad:"«Como si el universo fuera un solo pensamiento.»"},
+                    {nombre:"Es decir (revelación) (that is)", en:"That is", desc_es:"Desvela la clave del misterio.", desc_en:"Reveals the key to the mystery.", ej_orig:"'That is, the monolith was a tool for evolution.' (Arthur C. Clarke, 2001)", ej_trad:"«Es decir, el monolito era una herramienta para la evolución.»"},
+                    {nombre:"Y sin embargo (and yet)", en:"And yet", desc_es:"Enfatiza la contradicción esencial del relato.", desc_en:"Emphasizes the essential contradiction of the story.", ej_orig:"'And yet the robot wept.' (Isaac Asimov, The Bicentennial Man)", ej_trad:"«Y sin embargo, el robot lloró.»"},
+                    {nombre:"No solo... sino también (not only... but also)", en:"Not only... but also", desc_es:"Expande la maravilla científica.", desc_en:"Expands the scientific marvel.", ej_orig:"'Not only had they created artificial life, but also consciousness.' (Philip K. Dick, Do Androids Dream of Electric Sheep?)", ej_trad:"«No solo habían creado vida artificial, sino también conciencia.»"},
+                    {nombre:"Así pues (thus)", en:"Thus", desc_es:"Cierra un razonamiento sobre el destino.", desc_en:"Closes a reasoning about destiny.", ej_orig:"'Thus the Empire fell, and with it, the memory of Earth.' (Isaac Asimov, Foundation)", ej_trad:"«Así pues, el Imperio cayó, y con él, la memoria de la Tierra.»"},
+                    {nombre:"Tal vez (perhaps)", en:"Perhaps", desc_es:"Introduce incertidumbre sobre el futuro.", desc_en:"Introduces uncertainty about the future.", ej_orig:"'Perhaps the Earth was a laboratory all along.' (Isaac Asimov, The End of Eternity)", ej_trad:"«Tal vez la Tierra fuera un laboratorio todo este tiempo.»"},
+                    {nombre:"Acaso (perhaps)", en:"Perhaps", desc_es:"Similar a 'tal vez', con sabor arcaizante.", desc_en:"Similar to 'perhaps', with an archaic flavour.", ej_orig:"'Perhaps time is merely a persistent illusion.' (Kurt Vonnegut, Slaughterhouse-Five)", ej_trad:"«Acaso el tiempo no sea más que una ilusión persistente.»"},
+                    {nombre:"Como (modal) (as)", en:"As", desc_es:"Conector polivalente para explicar lo inexplicable.", desc_en:"Polyvalent connector to explain the inexplicable.", ej_orig:"'As the robot said, 'I think, therefore I am'.' (Isaac Asimov, I, Robot)", ej_trad:"«Como dijo el robot, 'pienso, luego existo'.»"},
+                    {nombre:"Donde (locativo cósmico) (where)", en:"Where", desc_es:"Crea espacios simbólicos interestelares.", desc_en:"Creates symbolic interstellar spaces.", ej_orig:"'Where the stars were only stepping stones.' (Isaac Asimov, Foundation)", ej_trad:"«Donde las estrellas eran solo peldaños.»"},
+                    {nombre:"Cuando (temporal simbólico) (when)", en:"When", desc_es:"Marca el tiempo cíclico o detenido.", desc_en:"Marks cyclic or frozen time.", ej_orig:"'When the last star died, it all began again.' (Isaac Asimov, The Last Question)", ej_trad:"«Cuando la última estrella murió, todo empezó de nuevo.»"}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas / techniques</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.innerHTML = `${t.nombre} <span class="en">(${t.en})</span>`;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.innerHTML = `<span class="es">${t.desc_es}</span><br><span class="en">${t.desc_en}</span>`;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span class="orig">${t.ej_orig}</span><span class="trad">${t.ej_trad}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.en.toLowerCase().includes(termino) ||
+                    t.desc_es.toLowerCase().includes(termino) ||
+                    t.desc_en.toLowerCase().includes(termino) ||
+                    t.ej_orig.toLowerCase().includes(termino) ||
+                    t.ej_trad.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz bilingüe
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoConectoresCFusa')) {
+                const p = JSON.parse(localStorage.getItem('progresoConectoresCFusa'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoConectoresCFusa', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos ilustra el conector <em>${correcta.nombre}</em> (${correcta.en})?<br><small style="color:var(--gris-secante)">Which excerpt illustrates the connector <em>${correcta.en}</em>?</small>`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej_orig;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> (${correcta.en})<br>${correcta.desc_es}<br><small>${correcta.desc_en}</small></div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej_orig) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong> (${correcta.en}):<br>${correcta.desc_es}<br><small>${correcta.desc_en}</small></div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

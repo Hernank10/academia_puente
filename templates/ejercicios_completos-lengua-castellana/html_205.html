@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Niveles de comprensión lectora · concurso docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f1ebe0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(250, 246, 238, 0.4) 0%, transparent 30%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2e3a;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid #1F4E5F;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #1F4E5F;
+            letter-spacing: -0.02em;
+        }
+        .header h1 span {
+            background: #B45309;
+            color: #faf6ee;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #3d5a68;
+            background: rgba(31, 78, 95, 0.08);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #1F4E5F;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #faf6ee;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #e2dad0; }
+        .block-nav button.active {
+            background: #1F4E5F;
+            color: #faf6ee;
+            border-color: #1F4E5F;
+            box-shadow: 0 2px 6px rgba(31, 78, 95, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 420px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .card-front {
+            background: #faf6ee;
+            background-image: linear-gradient(145deg, #fdfaf5 0%, #f5efe6 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #B45309;
+            opacity: 0.25;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #7f6b58;
+            background: #e8dfd2;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1F4E5F;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #2c4755;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #a3907c;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #d6cdbc;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #f5efe6;
+            background-image: linear-gradient(160deg, #faf6ee 0%, #eee7dc 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #B45309;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(31, 78, 95, 0.04);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #1F4E5F;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #1F4E5F;
+        }
+        .card-back .ejercicio {
+            background: #e8dfd2;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #2f404b;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #d6cdbc;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #1F4E5F;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #1F4E5F;
+            color: white;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #12343f; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #5C7A5C; }
+        .card-back .feedback-msg.incorrecto { color: #A8453A; }
+        .card-back .respuesta-correcta {
+            background: #1F4E5F;
+            color: #faf6ee;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #7f6b58;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #faf6ee;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.02);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #1F4E5F;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #5f7785;
+        }
+        .quiz-pregunta {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #f5efe6;
+            border: 1px solid #d6cdbc;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #e2dad0; }
+        .quiz-opciones button.correct {
+            background: #5C7A5C;
+            border-color: #5C7A5C;
+            color: white;
+        }
+        .quiz-opciones button.incorrect {
+            background: #A8453A;
+            border-color: #A8453A;
+            color: white;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #e8dfd2;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #1F4E5F;
+            border: none;
+            color: #faf6ee;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #12343f; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7f6b58;
+            border-top: 1px solid #d6cdbc;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+        .badge-nivel {
+            background: #B45309;
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>📚 Niveles de comprensión <span>100 técnicas</span></h1>
+        <div class="sub">literal · inferencial · crítico-intertextual · concurso docente</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>niveles de comprensión lectora</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">100 técnicas · Escribe tu respuesta en cada tarjeta y verifica · Aprende los niveles de comprensión</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS sobre Niveles de comprensión lectora
+    // Literal, Inferencial, Crítico-intertextual
+    // Cada tarjeta tiene ejercicio con respuesta verificable por el usuario
+    // ================================================================
+    const TECNICAS = [];
+
+    // Bloque 1: Nivel literal (25)
+    const b1 = [
+        { nombre: "Identificación de datos explícitos", teoria: "Reconocer información que aparece directamente en el texto.", ejemplo: "El texto dice 'el perro es negro' → dato literal.", ejercicio: "¿Qué nivel lee lo que está escrito?", respuesta: "literal" },
+        { nombre: "Reconocimiento de personajes", teoria: "Identificar quiénes participan en la historia.", ejemplo: "En 'Caperucita', los personajes son Caperucita y el lobo.", ejercicio: "¿Qué nivel identifica personajes?", respuesta: "literal" },
+        { nombre: "Secuencia de eventos", teoria: "Ordenar cronológicamente los hechos.", ejemplo: "Primero llegó, luego comió, después se fue.", ejercicio: "¿Qué nivel ordena eventos?", respuesta: "literal" },
+        { nombre: "Identificación del lugar", teoria: "Reconocer el espacio donde ocurre la acción.", ejemplo: "La historia ocurre en un bosque.", ejercicio: "¿Qué nivel reconoce el espacio?", respuesta: "literal" },
+        { nombre: "Identificación del tiempo", teoria: "Reconocer cuándo ocurre la acción.", ejemplo: "La historia ocurre en la noche.", ejercicio: "¿Qué nivel identifica el tiempo?", respuesta: "literal" },
+        { nombre: "Cita textual", teoria: "Extraer fragmentos exactos del texto.", ejemplo: "El autor dice: 'La luna brillaba'.", ejercicio: "¿Qué nivel usa citas textuales?", respuesta: "literal" },
+        { nombre: "Paráfrasis literal", teoria: "Repetir con otras palabras lo que dice el texto.", ejemplo: "'El sol calienta' → 'El sol emite calor'.", ejercicio: "¿Qué nivel reformula sin cambiar el sentido?", respuesta: "literal" },
+        { nombre: "Identificación del tema explícito", teoria: "Reconocer el tema que el texto menciona directamente.", ejemplo: "El tema es 'la amistad' porque lo dice.", ejercicio: "¿Qué nivel identifica el tema declarado?", respuesta: "literal" },
+        { nombre: "Reconocimiento de objetos", teoria: "Identificar objetos mencionados en el texto.", ejemplo: "Se menciona una mesa, una silla.", ejercicio: "¿Qué nivel reconoce objetos?", respuesta: "literal" },
+        { nombre: "Identificación de acciones", teoria: "Reconocer las acciones que realizan los personajes.", ejemplo: "El niño corre, salta y ríe.", ejercicio: "¿Qué nivel identifica acciones?", respuesta: "literal" },
+        { nombre: "Preguntas de respuesta directa", teoria: "Preguntas cuya respuesta está en el texto.", ejemplo: "¿Qué color es el auto? → El auto es rojo.", ejercicio: "¿Qué nivel responde preguntas directas?", respuesta: "literal" },
+        { nombre: "Identificación de características físicas", teoria: "Reconocer cómo es un personaje u objeto.", ejemplo: "El gigante es alto y fuerte.", ejercicio: "¿Qué nivel describe físicamente?", respuesta: "literal" },
+        { nombre: "Reconocimiento de números y fechas", teoria: "Identificar datos numéricos y temporales.", ejemplo: "El evento ocurrió en 2020.", ejercicio: "¿Qué nivel reconoce fechas?", respuesta: "literal" },
+        { nombre: "Identificación de diálogos", teoria: "Reconocer las conversaciones entre personajes.", ejemplo: "—Hola —dijo Juan.", ejercicio: "¿Qué nivel identifica diálogos?", respuesta: "literal" },
+        { nombre: "Reconocimiento de títulos y subtítulos", teoria: "Identificar los encabezados del texto.", ejemplo: "El título es 'El viaje'.", ejercicio: "¿Qué nivel identifica títulos?", respuesta: "literal" },
+        { nombre: "Identificación de ejemplos", teoria: "Reconocer ejemplos que da el autor.", ejemplo: "Por ejemplo, 'los perros son mamíferos'.", ejercicio: "¿Qué nivel reconoce ejemplos?", respuesta: "literal" },
+        { nombre: "Reconocimiento de definiciones", teoria: "Identificar definiciones explícitas.", ejemplo: "La 'fotosíntesis' es el proceso de las plantas.", ejercicio: "¿Qué nivel reconoce definiciones?", respuesta: "literal" },
+        { nombre: "Identificación de conectores", teoria: "Reconocer palabras como 'y', 'pero', 'porque'.", ejemplo: "'y' une ideas.", ejercicio: "¿Qué nivel identifica conectores?", respuesta: "literal" },
+        { nombre: "Reconocimiento de estructura", teoria: "Identificar partes del texto (introducción, desarrollo).", ejemplo: "El texto tiene tres párrafos.", ejercicio: "¿Qué nivel reconoce la estructura?", respuesta: "literal" },
+        { nombre: "Identificación de género textual", teoria: "Reconocer si es cuento, noticia, carta, etc.", ejemplo: "Es un cuento porque tiene personajes.", ejercicio: "¿Qué nivel identifica el género?", respuesta: "literal" },
+        { nombre: "Reconocimiento de marcas gráficas", teoria: "Identificar negritas, cursivas, comillas.", ejemplo: "Las comillas indican diálogo.", ejercicio: "¿Qué nivel reconoce marcas gráficas?", respuesta: "literal" },
+        { nombre: "Identificación de listas", teoria: "Reconocer enumeraciones.", ejemplo: "Los colores son: rojo, verde, azul.", ejercicio: "¿Qué nivel reconoce listas?", respuesta: "literal" },
+        { nombre: "Reconocimiento de comparaciones explícitas", teoria: "Identificar comparaciones con 'como'.", ejemplo: "Es alto como una torre.", ejercicio: "¿Qué nivel reconoce comparaciones literales?", respuesta: "literal" },
+        { nombre: "Identificación de causa explícita", teoria: "Reconocer causas que el texto menciona.", ejemplo: "Se mojó porque llovía.", ejercicio: "¿Qué nivel reconoce causas explícitas?", respuesta: "literal" },
+        { nombre: "Reconocimiento de efecto explícito", teoria: "Identificar consecuencias que el texto menciona.", ejemplo: "Llovió, por eso se mojó.", ejercicio: "¿Qué nivel reconoce efectos explícitos?", respuesta: "literal" },
+    ];
+    b1.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "literal", ...t }));
+
+    // Bloque 2: Nivel inferencial (25)
+    const b2 = [
+        { nombre: "Inferencia de causa-efecto", teoria: "Deducir causas o consecuencias no explícitas.", ejemplo: "Si dice 'llevaba paraguas', inferir que llovía.", ejercicio: "¿Qué nivel deduce causas ocultas?", respuesta: "inferencial" },
+        { nombre: "Inferencia de sentimientos", teoria: "Deducir emociones a partir de acciones o descripciones.", ejemplo: "Si tiembla y llora, inferir que tiene miedo.", ejercicio: "¿Qué nivel deduce emociones?", respuesta: "inferencial" },
+        { nombre: "Inferencia de intenciones", teoria: "Deducir el propósito de un personaje.", ejemplo: "Si un personaje se esconde, inferir que no quiere ser visto.", ejercicio: "¿Qué nivel deduce intenciones?", respuesta: "inferencial" },
+        { nombre: "Inferencia de relaciones", teoria: "Deducir vínculos entre personajes o ideas.", ejemplo: "Si dos personajes discuten, inferir que hay conflicto.", ejercicio: "¿Qué nivel deduce relaciones?", respuesta: "inferencial" },
+        { nombre: "Inferencia de contexto", teoria: "Deducir el contexto a partir de pistas.", ejemplo: "Si mencionan 'toga' y 'juez', inferir que es un tribunal.", ejercicio: "¿Qué nivel deduce el contexto?", respuesta: "inferencial" },
+        { nombre: "Inferencia de significado de palabras", teoria: "Deducir significado por contexto.", ejemplo: "Si dice 'El concierto fue estupendo', inferir que 'estupendo' es positivo.", ejercicio: "¿Qué nivel deduce significado por contexto?", respuesta: "inferencial" },
+        { nombre: "Predicción de acciones", teoria: "Anticipar lo que ocurrirá después.", ejemplo: "Si un personaje se acerca a un acantilado, predecir que puede caer.", ejercicio: "¿Qué nivel predice acciones?", respuesta: "inferencial" },
+        { nombre: "Inferencia del tema implícito", teoria: "Deducir el tema cuando no está declarado.", ejemplo: "Un texto sobre personas ayudando → tema implícito: solidaridad.", ejercicio: "¿Qué nivel deduce el tema oculto?", respuesta: "inferencial" },
+        { nombre: "Inferencia de la tesis", teoria: "Deducir la opinión del autor cuando no la dice.", ejemplo: "Un texto que critica la contaminación → tesis: hay que cuidar el ambiente.", ejercicio: "¿Qué nivel deduce la postura del autor?", respuesta: "inferencial" },
+        { nombre: "Inferencia de características psicológicas", teoria: "Deducir rasgos de personalidad.", ejemplo: "Si un personaje miente, inferir que es deshonesto.", ejercicio: "¿Qué nivel deduce rasgos de personalidad?", respuesta: "inferencial" },
+        { nombre: "Inferencia de valores", teoria: "Deducir valores que defiende el texto.", ejemplo: "Si el texto promueve la paz, inferir que valora la no violencia.", ejercicio: "¿Qué nivel deduce valores?", respuesta: "inferencial" },
+        { nombre: "Inferencia de relaciones espaciales", teoria: "Deducir ubicaciones a partir de descripciones.", ejemplo: "Si dice 'subió', inferir que está en un lugar elevado.", ejercicio: "¿Qué nivel deduce relaciones espaciales?", respuesta: "inferencial" },
+        { nombre: "Inferencia de relaciones temporales", teoria: "Deducir el orden de eventos no explícitos.", ejemplo: "Si dice 'después del desayuno', inferir que antes durmió.", ejercicio: "¿Qué nivel deduce relaciones temporales?", respuesta: "inferencial" },
+        { nombre: "Inferencia de implicaciones", teoria: "Deducir consecuencias lógicas.", ejemplo: "Si dice 'no estudió', inferir que puede reprobar.", ejercicio: "¿Qué nivel deduce implicaciones?", respuesta: "inferencial" },
+        { nombre: "Inferencia de motivos", teoria: "Deducir por qué un personaje actúa de cierta forma.", ejemplo: "Si un personaje corre, inferir que tiene prisa.", ejercicio: "¿Qué nivel deduce motivos?", respuesta: "inferencial" },
+        { nombre: "Inferencia de actitudes", teoria: "Deducir la disposición de un personaje.", ejemplo: "Si sonríe, inferir que está contento.", ejercicio: "¿Qué nivel deduce actitudes?", respuesta: "inferencial" },
+        { nombre: "Inferencia de conflictos", teoria: "Deducir conflictos no declarados.", ejemplo: "Si dos personajes no se hablan, inferir que hay conflicto.", ejercicio: "¿Qué nivel deduce conflictos?", respuesta: "inferencial" },
+        { nombre: "Inferencia de soluciones", teoria: "Deducir soluciones a problemas planteados.", ejemplo: "Si el problema es la sequía, inferir que la solución es regar.", ejercicio: "¿Qué nivel deduce soluciones?", respuesta: "inferencial" },
+        { nombre: "Inferencia de semejanzas y diferencias", teoria: "Deducir comparaciones no explícitas.", ejemplo: "Si dice 'Juan es un león', inferir que es valiente.", ejercicio: "¿Qué nivel deduce semejanzas?", respuesta: "inferencial" },
+        { nombre: "Inferencia de ironía", teoria: "Deducir que el autor dice lo contrario de lo que piensa.", ejemplo: "Si dice '¡qué buen día!' cuando llueve, inferir ironía.", ejercicio: "¿Qué nivel deduce ironía?", respuesta: "inferencial" },
+        { nombre: "Inferencia de metáforas", teoria: "Interpretar metáforas no literales.", ejemplo: "Tus ojos son estrellas → inferir que brillan.", ejercicio: "¿Qué nivel interpreta metáforas?", respuesta: "inferencial" },
+        { nombre: "Inferencia de propósito del autor", teoria: "Deducir la intención del escritor.", ejemplo: "Si es un texto persuasivo, inferir que quiere convencer.", ejercicio: "¿Qué nivel deduce el propósito del autor?", respuesta: "inferencial" },
+        { nombre: "Inferencia de público destinatario", teoria: "Deducir a quién va dirigido el texto.", ejemplo: "Si usa lenguaje infantil, inferir que es para niños.", ejercicio: "¿Qué nivel deduce el destinatario?", respuesta: "inferencial" },
+        { nombre: "Inferencia de género a partir de contenido", teoria: "Deducir el género textual por el contenido.", ejemplo: "Si habla de hechos reales, inferir que es noticia.", ejercicio: "¿Qué nivel deduce el género?", respuesta: "inferencial" },
+        { nombre: "Inferencia de valores culturales", teoria: "Deducir creencias o costumbres.", ejemplo: "Si celebra una fiesta tradicional, inferir costumbres.", ejercicio: "¿Qué nivel deduce valores culturales?", respuesta: "inferencial" },
+    ];
+    b2.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "inferencial", ...t }));
+
+    // Bloque 3: Nivel crítico-intertextual (25)
+    const b3 = [
+        { nombre: "Juicio de valor", teoria: "Emitir una opinión fundamentada sobre el texto.", ejemplo: "¿Estás de acuerdo con la tesis?", ejercicio: "¿Qué nivel emite juicios de valor?", respuesta: "crítico" },
+        { nombre: "Evaluación de credibilidad", teoria: "Juzgar si la fuente es confiable.", ejemplo: "¿El autor tiene autoridad en el tema?", ejercicio: "¿Qué nivel evalúa la credibilidad?", respuesta: "crítico" },
+        { nombre: "Detección de sesgos", teoria: "Identificar si el autor tiene una postura parcial.", ejemplo: "Si solo presenta un lado, detectar sesgo.", ejercicio: "¿Qué nivel detecta sesgos?", respuesta: "crítico" },
+        { nombre: "Comparación intertextual", teoria: "Relacionar el texto con otros textos.", ejemplo: "Este cuento es similar a otro que leí.", ejercicio: "¿Qué nivel establece relaciones intertextuales?", respuesta: "intertextual" },
+        { nombre: "Análisis de argumentos", teoria: "Evaluar la validez de los argumentos.", ejemplo: "¿Los argumentos son lógicos?", ejercicio: "¿Qué nivel analiza argumentos?", respuesta: "crítico" },
+        { nombre: "Identificación de falacias", teoria: "Reconocer errores en la argumentación.", ejemplo: "Generalización apresurada es una falacia.", ejercicio: "¿Qué nivel identifica falacias?", respuesta: "crítico" },
+        { nombre: "Aplicación a la realidad", teoria: "Relacionar el texto con la vida real.", ejemplo: "¿Cómo aplica esto a mi comunidad?", ejercicio: "¿Qué nivel aplica el texto?", respuesta: "crítico" },
+        { nombre: "Cuestionamiento de supuestos", teoria: "Cuestionar ideas que el texto da por sentado.", ejemplo: "¿Por qué asume que eso es verdad?", ejercicio: "¿Qué nivel cuestiona supuestos?", respuesta: "crítico" },
+        { nombre: "Evaluación de coherencia", teoria: "Juzgar si el texto es coherente.", ejemplo: "¿Hay contradicciones internas?", ejercicio: "¿Qué nivel evalúa la coherencia?", respuesta: "crítico" },
+        { nombre: "Análisis de contexto sociocultural", teoria: "Relacionar el texto con su contexto histórico/cultural.", ejemplo: "Este texto refleja la época colonial.", ejercicio: "¿Qué nivel analiza el contexto?", respuesta: "intertextual" },
+        { nombre: "Interpretación simbólica", teoria: "Interpretar símbolos y metáforas profundas.", ejemplo: "El río puede simbolizar la vida.", ejercicio: "¿Qué nivel interpreta símbolos?", respuesta: "intertextual" },
+        { nombre: "Reconocimiento de influencias", teoria: "Identificar influencias de otros autores.", ejemplo: "Este autor fue influenciado por García Márquez.", ejercicio: "¿Qué nivel reconoce influencias?", respuesta: "intertextual" },
+        { nombre: "Valoración estética", teoria: "Juzgar la calidad literaria o artística.", ejemplo: "¿El texto es bien escrito?", ejercicio: "¿Qué nivel valora la estética?", respuesta: "crítico" },
+        { nombre: "Identificación de ideología", teoria: "Reconocer la ideología subyacente.", ejemplo: "El texto defiende el capitalismo.", ejercicio: "¿Qué nivel identifica ideología?", respuesta: "crítico" },
+        { nombre: "Análisis de poder", teoria: "Identificar relaciones de poder en el texto.", ejemplo: "¿Quién tiene el poder en esta historia?", ejercicio: "¿Qué nivel analiza poder?", respuesta: "crítico" },
+        { nombre: "Propuesta alternativa", teoria: "Sugerir un final o enfoque diferente.", ejemplo: "¿Cómo cambiarías el final?", ejercicio: "¿Qué nivel propone alternativas?", respuesta: "crítico" },
+        { nombre: "Relación con otros géneros", teoria: "Relacionar el texto con otros géneros.", ejemplo: "Este cuento tiene elementos de poesía.", ejercicio: "¿Qué nivel relaciona géneros?", respuesta: "intertextual" },
+        { nombre: "Análisis de estereotipos", teoria: "Detectar estereotipos en el texto.", ejemplo: "¿El texto refuerza estereotipos de género?", ejercicio: "¿Qué nivel detecta estereotipos?", respuesta: "crítico" },
+        { nombre: "Evaluación de la objetividad", teoria: "Juzgar si el texto es objetivo o subjetivo.", ejemplo: "¿El autor es imparcial?", ejercicio: "¿Qué nivel evalúa la objetividad?", respuesta: "crítico" },
+        { nombre: "Identificación de intertextos", teoria: "Reconocer referencias a otros textos.", ejemplo: "Esta obra hace referencia a la Biblia.", ejercicio: "¿Qué nivel identifica intertextos?", respuesta: "intertextual" },
+        { nombre: "Análisis de la perspectiva", teoria: "Examinar desde qué punto de vista se narra.", ejemplo: "El narrador omnisciente tiene una perspectiva particular.", ejercicio: "¿Qué nivel analiza la perspectiva?", respuesta: "crítico" },
+        { nombre: "Relación con el lector", teoria: "Analizar cómo el texto afecta al lector.", ejemplo: "¿Qué emociones despierta?", ejercicio: "¿Qué nivel analiza la recepción?", respuesta: "crítico" },
+        { nombre: "Interpretación global", teoria: "Dar una interpretación personal del texto.", ejemplo: "Para mí, el texto habla de la soledad.", ejercicio: "¿Qué nivel da una interpretación global?", respuesta: "intertextual" },
+        { nombre: "Evaluación de la vigencia", teoria: "¿El texto sigue siendo relevante hoy?", ejemplo: "Este texto del siglo XIX aún es vigente.", ejercicio: "¿Qué nivel evalúa la vigencia?", respuesta: "crítico" },
+        { nombre: "Construcción de significado", teoria: "El lector construye su propio significado.", ejemplo: "Cada lector puede interpretar de manera diferente.", ejercicio: "¿Qué nivel construye significado?", respuesta: "intertextual" },
+    ];
+    b3.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "crítico-intertextual", ...t }));
+
+    // Bloque 4: Estrategias didácticas (25)
+    const b4 = [
+        { nombre: "Preguntas literales en clase", teoria: "Formular preguntas cuya respuesta está en el texto.", ejemplo: "¿Cómo se llama el personaje?", ejercicio: "¿Qué nivel se trabaja con preguntas directas?", respuesta: "literal" },
+        { nombre: "Preguntas inferenciales", teoria: "Preguntas que requieren deducción.", ejemplo: "¿Por qué el personaje actuó así?", ejercicio: "¿Qué nivel se trabaja con preguntas de inferencia?", respuesta: "inferencial" },
+        { nombre: "Preguntas críticas", teoria: "Preguntas que piden opinión y evaluación.", ejemplo: "¿Estás de acuerdo con el autor?", ejercicio: "¿Qué nivel se trabaja con preguntas críticas?", respuesta: "crítico" },
+        { nombre: "Rúbrica de niveles", teoria: "Evaluar la comprensión según los tres niveles.", ejemplo: "Literal: responde datos; inferencial: deduce; crítico: opina.", ejercicio: "¿Qué herramienta evalúa niveles?", respuesta: "rúbrica" },
+        { nombre: "Lectura en voz alta con pausas", teoria: "Detenerse para hacer preguntas de cada nivel.", ejemplo: "Hacer preguntas literales, inferenciales y críticas.", ejercicio: "¿Qué estrategia usa pausas para preguntar?", respuesta: "lectura guiada" },
+        { nombre: "Mapa de inferencias", teoria: "Registrar inferencias hechas durante la lectura.", ejemplo: "Escribir lo que se deduce.", ejercicio: "¿Qué nivel trabaja el mapa de inferencias?", respuesta: "inferencial" },
+        { nombre: "Diario de lectura", teoria: "Escribir reflexiones literales, inferenciales y críticas.", ejemplo: "Registrar datos, deducciones y opiniones.", ejercicio: "¿Qué estrategia abarca todos los niveles?", respuesta: "diario de lectura" },
+        { nombre: "Comparación de textos", teoria: "Leer dos textos y compararlos.", ejemplo: "Comparar dos noticias sobre el mismo hecho.", ejercicio: "¿Qué nivel se trabaja al comparar?", respuesta: "intertextual" },
+        { nombre: "Debate crítico", teoria: "Discutir el texto argumentando posturas.", ejemplo: "Debatir sobre la tesis del autor.", ejercicio: "¿Qué nivel se trabaja en el debate?", respuesta: "crítico" },
+        { nombre: "Subrayado selectivo", teoria: "Subrayar datos literales.", ejemplo: "Subrayar fechas, nombres, lugares.", ejercicio: "¿Qué nivel usa subrayado literal?", respuesta: "literal" },
+        { nombre: "Anotaciones marginales", teoria: "Escribir inferencias y preguntas al margen.", ejemplo: "¿Qué significa esto? ¿Por qué?", ejercicio: "¿Qué nivel usa anotaciones inferenciales?", respuesta: "inferencial" },
+        { nombre: "Resumen por niveles", teoria: "Hacer resumen literal, luego inferencial, luego crítico.", ejemplo: "1) Datos, 2) Deducciones, 3) Opinión.", ejercicio: "¿Qué estrategia organiza por niveles?", respuesta: "resumen escalonado" },
+        { nombre: "Círculo de lectura", teoria: "Grupo que discute el texto en diferentes niveles.", ejemplo: "Cada miembro enfoca un nivel.", ejercicio: "¿Qué estrategia usa discusión grupal?", respuesta: "círculo de lectura" },
+        { nombre: "Preguntas tipo prueba", teoria: "Diseñar preguntas para cada nivel.", ejemplo: "Literal: ¿qué? Inferencial: ¿por qué? Crítico: ¿qué opinas?", ejercicio: "¿Qué estrategia diseña evaluaciones?", respuesta: "diseño de ítems" },
+        { nombre: "Análisis de personajes", teoria: "Describir personajes literal, inferencial y críticamente.", ejemplo: "Literal: altura; inferencial: personalidad; crítico: ¿es un buen modelo?", ejercicio: "¿Qué estrategia analiza personajes en niveles?", respuesta: "análisis de personajes" },
+        { nombre: "Escritura creativa", teoria: "Reescribir un final alternativo.", ejemplo: "Cambiar el desenlace.", ejercicio: "¿Qué nivel se trabaja al reescribir?", respuesta: "crítico-intertextual" },
+        { nombre: "Visualización guiada", teoria: "Dibujar escenas literales e inferenciales.", ejemplo: "Dibujar el escenario y lo que se deduce.", ejercicio: "¿Qué estrategia usa dibujo para niveles?", respuesta: "visualización" },
+        { nombre: "Juego de roles", teoria: "Representar personajes y deducir intenciones.", ejemplo: "Actuar una escena.", ejercicio: "¿Qué nivel se trabaja en juego de roles?", respuesta: "inferencial" },
+        { nombre: "Ficha de lectura", teoria: "Registrar datos literales, inferencias y opiniones.", ejemplo: "Ficha con tres secciones.", ejercicio: "¿Qué estrategia organiza los tres niveles?", respuesta: "ficha de lectura" },
+        { nombre: "Prueba de cloze", teoria: "Completar espacios en blanco (literal).", ejemplo: "El ___ corre.", ejercicio: "¿Qué nivel trabaja la prueba cloze?", respuesta: "literal" },
+        { nombre: "Lectura compartida", teoria: "Leer en parejas y hacer preguntas.", ejemplo: "Un lector pregunta al otro.", ejercicio: "¿Qué estrategia usa preguntas entre pares?", respuesta: "lectura compartida" },
+        { nombre: "Mapa conceptual de niveles", teoria: "Organizar los niveles en un mapa.", ejemplo: "Literal → inferencial → crítico.", ejercicio: "¿Qué estrategia organiza los niveles?", respuesta: "mapa conceptual" },
+        { nombre: "Portafolio de comprensión", teoria: "Recopilar trabajos de los tres niveles.", ejemplo: "Resúmenes, inferencias, críticas.", ejercicio: "¿Qué estrategia acumula evidencias?", respuesta: "portafolio" },
+        { nombre: "Ruta de aprendizaje", teoria: "Progresar de literal a inferencial a crítico.", ejemplo: "Primero datos, luego deducciones, luego evaluación.", ejercicio: "¿Qué estrategia sigue una secuencia?", respuesta: "ruta de aprendizaje" },
+        { nombre: "Autoevaluación por niveles", teoria: "El estudiante evalúa su comprensión en cada nivel.", ejemplo: "¿Puedo responder datos? ¿Puedo inferir?", ejercicio: "¿Qué estrategia evalúa el propio aprendizaje?", respuesta: "autoevaluación" },
+    ];
+    b4.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "didáctica", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Nivel literal', 'Nivel inferencial', 'Nivel crítico-intertextual', 'Estrategias didácticas'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    // Función para verificar respuesta en cada tarjeta
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        // Comparación simple (normalizar)
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.teoria}</div>
+                            <div class="girar-indicador">↻ tocar para practicar</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#1F4E5F;margin-bottom:0.2rem;">📖 ${t.nombre}</div>
+                            <div class="ejemplo"><strong>Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#1F4E5F;color:white;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

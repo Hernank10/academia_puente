@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas de oraciones compuestas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados {
+            text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic;
+        }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas de oraciones compuestas · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'adversativa', 'subordinada', 'condicional', 'relativo')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de construcción de oraciones compuestas en la prosa literaria en lengua castellana de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto, devolviendo al oficio de escribir su dimensión física y artesanal.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas han sido seleccionadas a partir del análisis estilístico de autores como Gabriel García Márquez, Julio Cortázar, Juan Rulfo, Jorge Luis Borges, Roberto Bolaño, Javier Marías, Mario Vargas Llosa, Alejo Carpentier, Carmen Martín Gaite y muchos otros. Se organizan en diez familias que cubren coordinación, subordinación sustantiva, adjetiva y adverbial, yuxtaposición y construcciones híbridas.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia estilística</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Coordinación copulativa",
+                tecnicas: [
+                    {nombre:"Copulativa con 'y'", desc:"Une elementos de igual jerarquía, suma información.", ej:"Llegó a casa y encendió la luz."},
+                    {nombre:"Copulativa con 'ni'", desc:"Coordinación negativa que excluye ambos términos.", ej:"Ni come ni deja comer."},
+                    {nombre:"Copulativa con 'que' enfático", desc:"Uso arcaizante o literario de 'que' como nexo copulativo.", ej:"Dale que dale."},
+                    {nombre:"Asíndeton copulativo", desc:"Omisión de nexos en enumeración para velocidad.", ej:"Llegó, vio, venció."},
+                    {nombre:"Polisíndeton copulativo", desc:"Repetición de 'y' para crear ritmo pausado o solemnidad.", ej:"Y llegó y miró y calló."},
+                    {nombre:"Copulativa con 'tanto... como...'", desc:"Equipara dos elementos con estructura enfática.", ej:"Tanto Pedro como Juan estuvieron de acuerdo."},
+                    {nombre:"Copulativa con 'no solo... sino también...'", desc:"Añade un elemento inesperado o de mayor grado.", ej:"No solo llegó tarde, sino que además se fue temprano."},
+                    {nombre:"Copulativa con 'junto con'", desc:"Preposición que une con valor de compañía.", ej:"El presidente, junto con sus ministros, visitó la zona."},
+                    {nombre:"Copulativa con 'así como'", desc:"Añade un elemento con cierto matiz explicativo.", ej:"Estudiaron los clásicos, así como los modernos."},
+                    {nombre:"Copulativa con 'tanto más... cuanto que...'", desc:"Refuerza la unión con una gradación.", ej:"Tanto más lo respeto cuanto que siempre dice la verdad."}
+                ]
+            },
+            {
+                nombre: "B. Coordinación disyuntiva y distributiva",
+                tecnicas: [
+                    {nombre:"Disyuntiva con 'o'", desc:"Plantea alternativas excluyentes.", ej:"¿Vienes o te quedas?"},
+                    {nombre:"Disyuntiva con 'o bien... o bien...'", desc:"Presenta opciones de manera formal.", ej:"O bien aceptas, o bien renuncias."},
+                    {nombre:"Disyuntiva con 'ya... ya...'", desc:"Alternancia frecuente o poética.", ej:"Ya ríe, ya llora."},
+                    {nombre:"Distributiva con 'unos... otros...'", desc:"Reparte la acción entre varios sujetos.", ej:"Unos cantaban, otros bailaban."},
+                    {nombre:"Distributiva con 'tan pronto... como...'", desc:"Alternancia temporal.", ej:"Tan pronto ruge como susurra."},
+                    {nombre:"Disyuntiva explicativa con 'sea... sea...'", desc:"Presenta opciones equivalentes.", ej:"Sea por dinero, sea por amor, lo hizo."},
+                    {nombre:"Distributiva con 'aquí... allí...'", desc:"Divide espacialmente la acción.", ej:"Aquí se trabaja, allí se descansa."},
+                    {nombre:"Disyuntiva con 'o si no'", desc:"Opción con advertencia.", ej:"Pórtate bien, o si no te castigarán."},
+                    {nombre:"Distributiva con 'bien... bien...'", desc:"Alternativa culta.", ej:"Bien por carretera, bien por tren, llegarás."},
+                    {nombre:"Disyuntiva interrogativa indirecta", desc:"Plantea opción dentro de una subordinada.", ej:"No sé si reír o llorar."}
+                ]
+            },
+            {
+                nombre: "C. Coordinación adversativa",
+                tecnicas: [
+                    {nombre:"Adversativa con 'pero'", desc:"Expresa oposición o restricción.", ej:"Estudié mucho, pero no aprobé."},
+                    {nombre:"Adversativa con 'sino'", desc:"Corrige una negación anterior.", ej:"No es alto, sino bajito."},
+                    {nombre:"Adversativa con 'sin embargo'", desc:"Conector de oposición con pausa.", ej:"Estaba cansado; sin embargo, siguió trabajando."},
+                    {nombre:"Adversativa con 'no obstante'", desc:"Formal, similar a 'sin embargo'.", ej:"No había pistas; no obstante, el detective no se rindió."},
+                    {nombre:"Adversativa con 'mas'", desc:"Variante literaria de 'pero'.", ej:"Quiso hablar, mas la voz se le quebró."},
+                    {nombre:"Adversativa con 'aunque' concesivo", desc:"Aunque introduce una objeción que no impide la acción.", ej:"Aunque llueva, saldré."},
+                    {nombre:"Adversativa con 'excepto que'", desc:"Introduce una excepción.", ej:"Todos vinieron, excepto que Juan se retrasó."},
+                    {nombre:"Adversativa con 'sino que'", desc:"Niega y corrige una oración completa.", ej:"No es que no quiera, sino que no puedo."},
+                    {nombre:"Adversativa con 'antes bien'", desc:"Introduce una afirmación más precisa tras una negación.", ej:"No se rindió; antes bien, redobló esfuerzos."},
+                    {nombre:"Adversativa con 'con todo'", desc:"Concesión con matiz de 'a pesar de todo'.", ej:"Hacía frío; con todo, salió sin abrigo."}
+                ]
+            },
+            {
+                nombre: "D. Subordinadas sustantivas",
+                tecnicas: [
+                    {nombre:"Sustantiva con 'que' completivo", desc:"Funciona como sujeto, CD, etc.", ej:"Dijo que vendría."},
+                    {nombre:"Sustantiva con 'si' interrogativo indirecto", desc:"Pregunta indirecta total.", ej:"No sé si vendrá."},
+                    {nombre:"Sustantiva con pronombre interrogativo", desc:"Pregunta indirecta parcial.", ej:"Preguntó quién había llamado."},
+                    {nombre:"Sustantiva con infinitivo", desc:"Infinitivo que sustituye una oración subordinada.", ej:"Quiero descansar."},
+                    {nombre:"Sustantiva en función de sujeto antepuesto", desc:"La subordinada es el sujeto de la oración.", ej:"Que llegues tarde me preocupa."},
+                    {nombre:"Sustantiva con 'el hecho de que'", desc:"Nominaliza la subordinada con artículo.", ej:"El hecho de que no viniera molestó a todos."},
+                    {nombre:"Sustantiva con 'lo que' como complemento directo", desc:"Relativo sin antecedente expreso.", ej:"No entiendo lo que dices."},
+                    {nombre:"Sustantiva como término de preposición", desc:"Con preposición que introduce la subordinada.", ej:"Confío en que lo lograrás."},
+                    {nombre:"Sustantiva en aposición", desc:"Aclara o especifica un sustantivo.", ej:"La idea de que renuncies es descabellada."},
+                    {nombre:"Sustantiva con 'como si'", desc:"Equivale a 'que' con verbo en subjuntivo en contextos modales.", ej:"Parecía como si nunca hubiera pasado nada."}
+                ]
+            },
+            {
+                nombre: "E. Subordinadas adjetivas (de relativo)",
+                tecnicas: [
+                    {nombre:"Relativo explicativo entre comas", desc:"Añade información no restrictiva.", ej:"Los estudiantes, que habían estudiado mucho, aprobaron."},
+                    {nombre:"Relativo especificativo sin pausa", desc:"Restringe el significado del antecedente.", ej:"Los estudiantes que habían estudiado aprobaron."},
+                    {nombre:"Relativo con 'cuyo' posesivo", desc:"Indica posesión o pertenencia.", ej:"El autor cuyo libro leímos."},
+                    {nombre:"Relativo con 'el cual' / 'la cual'", desc:"Variante formal o para evitar ambigüedad.", ej:"La casa en la cual vivimos."},
+                    {nombre:"Relativo con 'donde' locativo", desc:"Sustituye a un complemento de lugar.", ej:"La ciudad donde nací."},
+                    {nombre:"Relativo con 'cuando' temporal", desc:"Sustituye a un antecedente de tiempo.", ej:"La época cuando todo era posible."},
+                    {nombre:"Relativo con 'como' modal", desc:"Sustituye a un antecedente de modo.", ej:"La manera como lo dijo."},
+                    {nombre:"Relativo libre (sin antecedente expreso)", desc:"La subordinada funciona como sujeto o CD.", ej:"Quien calla otorga."},
+                    {nombre:"Relativo con infinitivo concertado", desc:"Estructura 'con quien hablar' etc.", ej:"Busco un amigo con quien compartir."},
+                    {nombre:"Relativo con preposición + artículo + que", desc:"Forma culta de relativo.", ej:"El motivo por el que luchamos."}
+                ]
+            },
+            {
+                nombre: "F. Subordinadas adverbiales de tiempo, lugar y modo",
+                tecnicas: [
+                    {nombre:"Temporal con 'cuando'", desc:"Indica simultaneidad o anterioridad.", ej:"Cuando llegó, ya era tarde."},
+                    {nombre:"Temporal con 'mientras'", desc:"Acciones simultáneas.", ej:"Mientras tú dormías, yo trabajaba."},
+                    {nombre:"Temporal con 'en cuanto'", desc:"Inmediatez.", ej:"En cuanto amanezca, saldremos."},
+                    {nombre:"Temporal con 'tan pronto como'", desc:"Equivalente a 'en cuanto'.", ej:"Tan pronto como termine, te llamo."},
+                    {nombre:"Temporal con 'antes de que' + subjuntivo", desc:"Anterioridad con subjuntivo.", ej:"Llegó antes de que empezara la película."},
+                    {nombre:"Temporal con 'después de que'", desc:"Posterioridad.", ej:"Después de que se fue, todo cambió."},
+                    {nombre:"Lugar con 'donde'", desc:"Indica el lugar de la acción.", ej:"Lo encontrarás donde lo dejaste."},
+                    {nombre:"Lugar con 'por donde'", desc:"Movimiento a través de un lugar.", ej:"Entró por donde menos se esperaba."},
+                    {nombre:"Modal con 'como'", desc:"Indica el modo.", ej:"Hazlo como te expliqué."},
+                    {nombre:"Modal con 'según'", desc:"Modo o conformidad.", ej:"Según dicen, será un buen año."}
+                ]
+            },
+            {
+                nombre: "G. Subordinadas causales y finales",
+                tecnicas: [
+                    {nombre:"Causal con 'porque'", desc:"Expresa la causa real.", ej:"No fui porque estaba enfermo."},
+                    {nombre:"Causal con 'puesto que'", desc:"Causa conocida o evidente.", ej:"Puesto que nadie protestó, se aprobó."},
+                    {nombre:"Causal con 'ya que'", desc:"Causa lógica o ya mencionada.", ej:"Ya que insistes, iré."},
+                    {nombre:"Causal con 'como' antepuesto", desc:"Causa que abre la oración.", ej:"Como no llegaba, me fui."},
+                    {nombre:"Causal con 'por' + infinitivo", desc:"Causa con preposición.", ej:"Lo castigaron por llegar tarde."},
+                    {nombre:"Final con 'para que' + subjuntivo", desc:"Indica la finalidad.", ej:"Estudio para que mi madre se sienta orgullosa."},
+                    {nombre:"Final con 'a que' + subjuntivo", desc:"Tras verbos de movimiento.", ej:"Vine a que me arreglen el coche."},
+                    {nombre:"Final con 'con el fin de que'", desc:"Finalidad formal.", ej:"Se convocó la reunión con el fin de que todos opinaran."},
+                    {nombre:"Final con infinitivo (sin nexo)", desc:"Infinitivo que expresa finalidad.", ej:"Salí a comprar el pan."},
+                    {nombre:"Causal con 'de tanto' + infinitivo", desc:"Causa reiterada.", ej:"De tanto gritar, se quedó afónico."}
+                ]
+            },
+            {
+                nombre: "H. Subordinadas condicionales y concesivas",
+                tecnicas: [
+                    {nombre:"Condicional con 'si' + indicativo", desc:"Condición real o posible.", ej:"Si estudias, aprobarás."},
+                    {nombre:"Condicional con 'si' + subjuntivo", desc:"Condición irreal o hipotética.", ej:"Si tuviera dinero, viajaría."},
+                    {nombre:"Condicional con 'a condición de que'", desc:"Condición restrictiva formal.", ej:"Te ayudaré a condición de que seas sincero."},
+                    {nombre:"Condicional con 'siempre y cuando'", desc:"Condición necesaria.", ej:"Siempre y cuando termines a tiempo, no hay problema."},
+                    {nombre:"Concesiva con 'aunque' + indicativo", desc:"Objeción real.", ej:"Aunque llueve, salgo."},
+                    {nombre:"Concesiva con 'aunque' + subjuntivo", desc:"Objeción hipotética.", ej:"Aunque llueva, saldré."},
+                    {nombre:"Concesiva con 'por más que'", desc:"Refuerza la oposición.", ej:"Por más que insistas, no cederé."},
+                    {nombre:"Concesiva con 'a pesar de que'", desc:"Objeción que no impide la acción.", ej:"A pesar de que estaba enfermo, fue a trabajar."},
+                    {nombre:"Condicional con gerundio", desc:"Equivale a 'si' + verbo.", ej:"Estudiando, aprobarás."},
+                    {nombre:"Concesiva con 'así' + subjuntivo", desc:"Forma culta.", ej:"Así me lo juraran, no lo creería."}
+                ]
+            },
+            {
+                nombre: "I. Subordinadas consecutivas y comparativas",
+                tecnicas: [
+                    {nombre:"Consecutiva con 'tanto... que'", desc:"Expresa consecuencia intensa.", ej:"Gritó tanto que se quedó afónico."},
+                    {nombre:"Consecutiva con 'tan... que'", desc:"Consecuencia de una cualidad.", ej:"Es tan alto que no cabe por la puerta."},
+                    {nombre:"Consecutiva con 'tal... que'", desc:"Consecuencia de una cualidad nominal.", ej:"Tenía tal hambre que devoró dos platos."},
+                    {nombre:"Consecutiva con 'de modo que'", desc:"Consecuencia lógica.", ej:"Llovió, de modo que no salimos."},
+                    {nombre:"Consecutiva con 'así que'", desc:"Consecuencia coloquial.", ej:"No llegó el autobús, así que vine andando."},
+                    {nombre:"Comparativa de igualdad 'tan... como'", desc:"Equipara cualidades.", ej:"Es tan inteligente como su hermano."},
+                    {nombre:"Comparativa de superioridad 'más... que'", desc:"Compara en grado superior.", ej:"Habla más que un loro."},
+                    {nombre:"Comparativa de inferioridad 'menos... que'", desc:"Compara en grado inferior.", ej:"Es menos complicado de lo que parece."},
+                    {nombre:"Comparativa con 'igual que'", desc:"Equipara acciones.", ej:"Baila igual que su padre."},
+                    {nombre:"Consecutiva con 'por consiguiente'", desc:"Consecuencia formal.", ej:"No hay pruebas; por consiguiente, es inocente."}
+                ]
+            },
+            {
+                nombre: "J. Yuxtaposición y asíndeton complejo",
+                tecnicas: [
+                    {nombre:"Yuxtaposición adversativa sin nexo", desc:"Dos oraciones contrapuestas sin conector.", ej:"Estaba triste, sonreía."},
+                    {nombre:"Yuxtaposición causal implícita", desc:"La causa se sobreentiende.", ej:"No vino: estaba enfermo."},
+                    {nombre:"Serie yuxtapuesta con punto y coma", desc:"Coordinación sin nexos, con pausa larga.", ej:"Unos reían; otros lloraban."},
+                    {nombre:"Yuxtaposición explicativa con dos puntos", desc:"La segunda oración explica la primera.", ej:"Lo supe: se había ido."},
+                    {nombre:"Asíndeton en pasajes descriptivos", desc:"Omisión de conjunciones para acumular imágenes.", ej:"Abrió la puerta, entró, miró, suspiró."},
+                    {nombre:"Polisíndeton en enumeración de acciones", desc:"Conjunciones repetidas para efecto rítmico.", ej:"Y corre y salta y grita y cae."},
+                    {nombre:"Yuxtaposición consecutiva sin nexo", desc:"Consecuencia inmediata.", ej:"Llovió, cancelaron el partido."},
+                    {nombre:"Enumeración caótica de oraciones simples", desc:"Sucesión de oraciones sin conexión lógica clara.", ej:"Cantó el gallo, ladró el perro, pasó un coche."},
+                    {nombre:"Fragmentación con punto y aparte", desc:"Cada oración en su propio párrafo.", ej:"Llegó.\n\nMiró.\n\nSe fue."},
+                    {nombre:"Yuxtaposición con elipsis verbal", desc:"Se omite el verbo en la segunda oración.", ej:"Él pidió café; ella, té."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoOracionesCompuestas')) {
+                const p = JSON.parse(localStorage.getItem('progresoOracionesCompuestas'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoOracionesCompuestas', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea la técnica <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

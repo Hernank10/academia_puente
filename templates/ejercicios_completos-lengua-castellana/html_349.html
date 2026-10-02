@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌌 Imperio del Lenguaje – Centro de Control</title>
+    <!-- Bootstrap 5 + Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body {
+            background: #0b0e14;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            color: #e8e4dc;
+            padding-bottom: 4rem;
+        }
+        .bg-space {
+            background: linear-gradient(145deg, #0f131c 0%, #1a202b 100%);
+        }
+        .card-glass {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(245, 215, 66, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.6);
+        }
+        .card-glass .card-title {
+            color: #f5d742;
+            font-weight: 700;
+        }
+        .text-gold {
+            color: #f5d742;
+        }
+        .badge-fase {
+            background: #2a3344;
+            color: #f5d742;
+            font-weight: 500;
+            padding: 0.3rem 1rem;
+            border-radius: 30px;
+            border: 1px solid rgba(245, 215, 66, 0.2);
+        }
+        .btn-gold {
+            background: linear-gradient(145deg, #e8b82b, #c9921a);
+            border: none;
+            color: #0b0e14;
+            font-weight: 600;
+        }
+        .btn-gold:hover {
+            background: linear-gradient(145deg, #f5ca3a, #dba325);
+            color: #000;
+        }
+        .btn-outline-gold {
+            border: 1.5px solid #f5d742;
+            color: #f5d742;
+            background: transparent;
+        }
+        .btn-outline-gold:hover {
+            background: #f5d742;
+            color: #0b0e14;
+        }
+        .nav-tabs .nav-link {
+            color: #b0b8c5;
+            border: none;
+            border-radius: 30px;
+            padding: 0.5rem 1.2rem;
+            margin: 0 0.2rem;
+        }
+        .nav-tabs .nav-link.active {
+            background: #f5d742;
+            color: #0b0e14;
+            font-weight: 600;
+        }
+        .nav-tabs .nav-link:hover {
+            color: #f5d742;
+        }
+        .scroll-area {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .scroll-area::-webkit-scrollbar {
+            width: 5px;
+        }
+        .scroll-area::-webkit-scrollbar-track {
+            background: #1e2634;
+        }
+        .scroll-area::-webkit-scrollbar-thumb {
+            background: #f5d742;
+            border-radius: 10px;
+        }
+        .leccion-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #3d4555;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .leccion-item .badge-estado {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+        .leccion-item .badge-personaje {
+            background: #2a3344;
+            color: #b0b8c5;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+        .paso-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 0.6rem 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #3d4555;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .paso-item.completado {
+            border-left-color: #f5d742;
+            opacity: 0.7;
+        }
+        .paso-item.completado .paso-texto {
+            text-decoration: line-through;
+            color: #8a8f9a;
+        }
+        .form-check-input {
+            cursor: pointer;
+            border-color: #5a6377;
+        }
+        .form-check-input:checked {
+            background-color: #f5d742;
+            border-color: #f5d742;
+        }
+        .progress {
+            height: 8px;
+            background: #1e2634;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #f5d742, #e8b82b);
+            transition: width 0.4s;
+        }
+        .flashcard {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            border: 1px solid rgba(245, 215, 66, 0.1);
+        }
+        .flashcard:hover {
+            background: rgba(255, 215, 0, 0.08);
+            border-color: #f5d742;
+        }
+        .flashcard .card-front {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #f5d742;
+        }
+        .flashcard .card-back {
+            font-size: 1rem;
+            color: #d6d0c4;
+        }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid #3d4555;
+            color: #b0b8c5;
+            border-radius: 30px;
+            padding: 0.2rem 1rem;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .filter-btn.active {
+            background: #f5d742;
+            color: #0b0e14;
+            border-color: #f5d742;
+            font-weight: 600;
+        }
+        .filter-btn:hover {
+            border-color: #f5d742;
+            color: #f5d742;
+        }
+        .personaje-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+            border: 1px solid rgba(245, 215, 66, 0.1);
+            transition: 0.3s;
+        }
+        .personaje-card:hover {
+            background: rgba(255, 215, 0, 0.05);
+            border-color: #f5d742;
+        }
+        .personaje-card .nombre {
+            font-weight: 700;
+            color: #f5d742;
+        }
+        .personaje-card .planeta {
+            color: #b0b8c5;
+            font-size: 0.9rem;
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f5d742;
+        }
+        .stat-label {
+            color: #b0b8c5;
+            font-size: 0.9rem;
+        }
+        .herramienta-tag {
+            background: #1e2634;
+            color: #b0b8c5;
+            border-radius: 30px;
+            padding: 0.2rem 0.8rem;
+            font-size: 0.75rem;
+            display: inline-block;
+            margin: 0.1rem;
+        }
+        @media (max-width: 576px) {
+            .leccion-item, .paso-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .flashcard .card-front {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container py-3 py-md-4">
+    <!-- Encabezado -->
+    <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold text-gold">
+            <i class="bi bi-globe-americas"></i> Imperio del Lenguaje
+        </h1>
+        <p class="text-light-50 opacity-75">Centro de Control – 100 lecciones, 5 guardianas, 1 imperio</p>
+    </div>
+
+    <!-- Navegación en Tabs -->
+    <ul class="nav nav-tabs justify-content-center mb-4" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard" type="button" role="tab">
+                <i class="bi bi-speedometer2"></i> Dashboard
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="lecciones-tab" data-bs-toggle="tab" data-bs-target="#lecciones" type="button" role="tab">
+                <i class="bi bi-list-ul"></i> Lecciones
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="checklist-tab" data-bs-toggle="tab" data-bs-target="#checklist" type="button" role="tab">
+                <i class="bi bi-check2-square"></i> Checklist
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="repaso-tab" data-bs-toggle="tab" data-bs-target="#repaso" type="button" role="tab">
+                <i class="bi bi-brain"></i> Repaso
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="personajes-tab" data-bs-toggle="tab" data-bs-target="#personajes" type="button" role="tab">
+                <i class="bi bi-people"></i> Guardianas
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="herramientas-tab" data-bs-toggle="tab" data-bs-target="#herramientas" type="button" role="tab">
+                <i class="bi bi-tools"></i> Arsenal
+            </button>
+        </li>
+    </ul>
+
+    <!-- Contenido de los Tabs -->
+    <div class="tab-content" id="mainTabsContent">
+
+        <!-- ===== DASHBOARD ===== -->
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+            <div class="row g-3">
+                <!-- Estadísticas -->
+                <div class="col-md-3 col-6">
+                    <div class="card-glass p-3 text-center">
+                        <div class="stat-number" id="total-lecciones">100</div>
+                        <div class="stat-label">Lecciones totales</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card-glass p-3 text-center">
+                        <div class="stat-number" id="lecciones-grabadas">0</div>
+                        <div class="stat-label">Grabadas</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card-glass p-3 text-center">
+                        <div class="stat-number" id="lecciones-publicadas">0</div>
+                        <div class="stat-label">Publicadas</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="card-glass p-3 text-center">
+                        <div class="stat-number" id="checklist-progreso">0%</div>
+                        <div class="stat-label">Checklist completado</div>
+                    </div>
+                </div>
+                <!-- Progreso general -->
+                <div class="col-12 mt-2">
+                    <div class="card-glass p-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Progreso total del proyecto</span>
+                            <span id="progreso-general-texto">0%</span>
+                        </div>
+                        <div class="progress">
+                            <div id="progreso-general-barra" class="progress-bar" style="width:0%"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Últimas lecciones -->
+                <div class="col-12">
+                    <div class="card-glass p-3">
+                        <h5 class="text-gold"><i class="bi bi-clock-history"></i> Últimas lecciones</h5>
+                        <div id="ultimas-lecciones" class="mt-2">
+                            <p class="text-light-50 small">Carga las lecciones para ver el progreso.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LECCIONES ===== -->
+        <div class="tab-pane fade" id="lecciones" role="tabpanel">
+            <div class="card-glass p-3">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="badge-fase"><i class="bi bi-funnel"></i> Filtrar:</span>
+                    <button class="filter-btn active" data-filtro-leccion="todas">Todas</button>
+                    <button class="filter-btn" data-filtro-leccion="pendiente">⏳ Pendiente</button>
+                    <button class="filter-btn" data-filtro-leccion="grabado">🎬 Grabado</button>
+                    <button class="filter-btn" data-filtro-leccion="publicado">🚀 Publicado</button>
+                    <button class="filter-btn" data-filtro-leccion="venus">Venus</button>
+                    <button class="filter-btn" data-filtro-leccion="saturno">Saturno</button>
+                    <button class="filter-btn" data-filtro-leccion="marte">Marte</button>
+                    <button class="filter-btn" data-filtro-leccion="europa">Europa</button>
+                    <button class="filter-btn" data-filtro-leccion="ganimedes">Ganímedes</button>
+                    <button class="btn btn-sm btn-gold ms-auto" id="btn-generar-lecciones">Generar 100 lecciones</button>
+                </div>
+                <div id="lista-lecciones" class="scroll-area" style="max-height:65vh;">
+                    <!-- Las lecciones se inyectan con JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== CHECKLIST ===== -->
+        <div class="tab-pane fade" id="checklist" role="tabpanel">
+            <div class="card-glass p-3">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-3">
+                    <span class="badge-fase"><i class="bi bi-funnel"></i> Filtrar:</span>
+                    <button class="filter-btn active" data-filtro-checklist="todas">Todas</button>
+                    <button class="filter-btn" data-filtro-checklist="fase1">Fase 1</button>
+                    <button class="filter-btn" data-filtro-checklist="fase2">Fase 2</button>
+                    <button class="filter-btn" data-filtro-checklist="fase3">Fase 3</button>
+                    <button class="filter-btn" data-filtro-checklist="fase4">Fase 4</button>
+                    <button class="filter-btn" data-filtro-checklist="fase5">Fase 5</button>
+                    <button class="filter-btn" data-filtro-checklist="fase6">Fase 6</button>
+                    <button class="filter-btn" data-filtro-checklist="fase7">Fase 7</button>
+                    <button class="filter-btn" data-filtro-checklist="completados">✅ Completados</button>
+                    <button class="filter-btn" data-filtro-checklist="pendientes">⏳ Pendientes</button>
+                    <button class="btn btn-sm btn-gold ms-auto" id="btn-marcar-todos-checklist">Marcar todos</button>
+                    <button class="btn btn-sm btn-outline-danger" id="btn-reiniciar-checklist">Reiniciar</button>
+                </div>
+                <div id="lista-checklist" class="scroll-area" style="max-height:65vh;">
+                    <!-- Checklist inyectado con JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== REPASO (FLASHCARDS) ===== -->
+        <div class="tab-pane fade" id="repaso" role="tabpanel">
+            <div class="card-glass p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-gold"><i class="bi bi-shuffle"></i> Flashcards de conceptos clave</h5>
+                    <button class="btn btn-sm btn-gold" id="btn-siguiente-flashcard">Siguiente <i class="bi bi-arrow-right"></i></button>
+                </div>
+                <div id="flashcard-container" class="flashcard">
+                    <div class="card-front" id="flash-front">Haz clic para comenzar</div>
+                    <div class="card-back mt-3" id="flash-back">Presiona el botón o la tarjeta</div>
+                </div>
+                <div class="text-center mt-2">
+                    <span class="badge-fase" id="flash-progreso">1 / 20</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PERSONAJES (GUARDIANAS) ===== -->
+        <div class="tab-pane fade" id="personajes" role="tabpanel">
+            <div class="row g-3" id="lista-personajes">
+                <!-- Se inyecta con JS -->
+            </div>
+        </div>
+
+        <!-- ===== HERRAMIENTAS ===== -->
+        <div class="tab-pane fade" id="herramientas" role="tabpanel">
+            <div class="card-glass p-3">
+                <h5 class="text-gold"><i class="bi bi-tools"></i> Arsenal de producción</h5>
+                <div id="lista-herramientas" class="mt-2">
+                    <!-- Inyectado con JS -->
+                </div>
+            </div>
+        </div>
+
+    </div><!-- fin tab-content -->
+
+    <!-- Footer -->
+    <div class="text-center text-light-50 opacity-50 small mt-4">
+        <i class="bi bi-save"></i> Progreso guardado automáticamente en tu navegador.
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS COMPLETOS
+// ============================================================
+
+// 5 Guardianas
+const PERSONAJES = [
+    { id: 'venus', nombre: 'Aurora', planeta: 'Venus', descripcion: 'La estratega del amor y la guerra. Te enseñó la estructura.', color: '#f5d742', emoji: '🌺' },
+    { id: 'saturno', nombre: 'Serena', planeta: 'Saturno', descripcion: 'La fría estratega. Te forjó en la estructura y la precisión.', color: '#6ec6ff', emoji: '🪐' },
+    { id: 'marte', nombre: 'Ignia', planeta: 'Marte', descripcion: 'La guerrera de fuego. Te enseñó la persuasión y el debate.', color: '#ff6b35', emoji: '🔥' },
+    { id: 'europa', nombre: 'Aura', planeta: 'Europa (luna de Júpiter)', descripcion: 'La guardiana del océano oculto. Limpió tus impurezas lingüísticas.', color: '#4dd0e1', emoji: '🧊' },
+    { id: 'ganimedes', nombre: 'Lyra', planeta: 'Ganímedes (luna de Júpiter)', descripcion: 'La ancestral. Te entregó el legado y el imperio final.', color: '#b39ddb', emoji: '👑' }
+];
+
+// 24 pasos del checklist (producción)
+const PASOS_CHECKLIST = [
+    { id: 1, fase: 1, titulo: "Define tu nicho y arco narrativo", descripcion: "Elige el tema central y estructura 100 lecciones en bloques temáticos.", herramientas: "Google Docs, Miro" },
+    { id: 2, fase: 1, titulo: "Crea la Biblia de Marca del personaje", descripcion: "Nombre, arquetipo, edad, vestimenta, trasfondo, tono de voz.", herramientas: "Notion, papel" },
+    { id: 3, fase: 1, titulo: "Diseña el sistema de producción en lote", descripcion: "Plan de 5 lecciones por semana, plantillas de CapCut, carpetas.", herramientas: "CapCut, Google Drive" },
+    { id: 4, fase: 2, titulo: "Genera al personaje principal (imagen base)", descripcion: "Usa Leonardo AI/Midjourney con prompt detallado.", herramientas: "Leonardo AI, Midjourney" },
+    { id: 5, fase: 2, titulo: "Genera el fondo universal (plató)", descripcion: "Una imagen de fondo para todas las lecciones de este personaje.", herramientas: "Leonardo AI, Midjourney" },
+    { id: 6, fase: 2, titulo: "Genera el B-Roll (imágenes de apoyo)", descripcion: "3 imágenes por lección relacionadas con el concepto.", herramientas: "Leonardo AI, Midjourney" },
+    { id: 7, fase: 2, titulo: "Anima el B-Roll (movimiento)", descripcion: "Usa RunwayML/Pika para dar movimiento (3s cada uno).", herramientas: "RunwayML, Pika" },
+    { id: 8, fase: 3, titulo: "Escribe el guion de la lección", descripcion: "Hook + Desarrollo + Cierre + CTA. Incluye pausas y énfasis.", herramientas: "Google Docs" },
+    { id: 9, fase: 3, titulo: "Genera el audio con ElevenLabs", descripcion: "Selecciona voz, ajusta Stability, Clarity y Speed. Exporta MP3.", herramientas: "ElevenLabs, Murf.ai" },
+    { id: 10, fase: 3, titulo: "Limpia el audio (opcional)", descripcion: "Normaliza, reduce ruido, corta silencios en Audacity.", herramientas: "Audacity" },
+    { id: 11, fase: 4, titulo: "Anima el personaje en D-ID/HeyGen", descripcion: "Sube imagen sin fondo + audio. Activa Eye Gaze. Genera y descarga.", herramientas: "D-ID Studio, HeyGen" },
+    { id: 12, fase: 5, titulo: "Crea proyecto en CapCut", descripcion: "Resolución 1080x1920 (vertical) o 1920x1080 (horizontal). 60 FPS.", herramientas: "CapCut" },
+    { id: 13, fase: 5, titulo: "Importa todos los archivos", descripcion: "Fondo, avatar, B-Rolls, overlay, audios, música.", herramientas: "CapCut" },
+    { id: 14, fase: 5, titulo: "Arma la línea de tiempo (pistas)", descripcion: "Coloca fondo, avatar, B-Rolls, overlay, voz, ambiente y música.", herramientas: "CapCut" },
+    { id: 15, fase: 5, titulo: "Ajustes de color y efectos", descripcion: "Color grading, vignette para profundidad.", herramientas: "CapCut" },
+    { id: 16, fase: 5, titulo: "Crea y estiliza los subtítulos", descripcion: "Genera automáticos, revisa, elige fuente gruesa, animación 'Escribir'.", herramientas: "CapCut" },
+    { id: 17, fase: 5, titulo: "Añade efectos de sonido (opcional)", descripcion: "Whoosh en transiciones, golpes en momentos clave.", herramientas: "CapCut" },
+    { id: 18, fase: 5, titulo: "Exporta el video", descripcion: "Resolución 1080p, Bitrate alto, Códec H.264.", herramientas: "CapCut" },
+    { id: 19, fase: 6, titulo: "Genera imagen base para miniatura", descripcion: "Prompt de retrato del personaje, mirada intensa, iluminación dramática.", herramientas: "Leonardo AI, Midjourney" },
+    { id: 20, fase: 6, titulo: "Diseña la miniatura en Canva", descripcion: "Superpone rectángulo oscuro, número y título.", herramientas: "Canva" },
+    { id: 21, fase: 7, titulo: "Sube el video a las plataformas", descripcion: "YouTube Shorts, TikTok, Instagram Reels (vertical); YouTube (horizontal).", herramientas: "YouTube, TikTok, Instagram" },
+    { id: 22, fase: 7, titulo: "Optimiza título y descripción", descripcion: "Usa fórmulas de impacto, incluye hashtags y enlaces.", herramientas: "YouTube Studio" },
+    { id: 23, fase: 7, titulo: "Programa la publicación", descripcion: "Horario: 7 PM (hora local) o 12 PM sábados. Una lección al día.", herramientas: "Programador de YouTube" },
+    { id: 24, fase: 7, titulo: "Interactúa con la comunidad", descripcion: "Responde comentarios, haz preguntas, celebra hitos.", herramientas: "YouTube Comunidad, Instagram" }
+];
+
+// 100 Lecciones (generadas automáticamente con temáticas)
+const TEMAS_BLOQUES = [
+    { bloque: 1, temas: ["Origen del español", "Sustantivos", "Verbos", "Adjetivos", "Adverbios"] },
+    { bloque: 2, temas: ["Artículos", "Pronombres", "Preposiciones", "Conjunciones", "Estructura de la oración"] },
+    { bloque: 3, temas: ["Presente", "Pasado Perfecto", "Pasado Imperfecto", "Futuro", "Condicional"] },
+    { bloque: 4, temas: ["Modo Indicativo", "Modo Subjuntivo", "Modo Imperativo", "Subjuntivo vs Indicativo", "Imperativo + Pronombres"] },
+    { bloque: 5, temas: ["Voz Pasiva", "Verbos Irregulares Presente", "Verbos Irregulares Pasado", "Verbos Irregulares Futuro", "Verbos de Cambio"] },
+    { bloque: 6, temas: ["Complemento Directo", "Complemento Indirecto", "Complemento Circunstancial", "Atributo", "Complemento Agente"] },
+    { bloque: 7, temas: ["Oración Simple vs Compuesta", "Coordinadas", "Subordinadas Sustantivas", "Subordinadas Adjetivas", "Subordinadas Adverbiales"] },
+    { bloque: 8, temas: ["Acento prosódico", "Reglas generales de tilde", "Tilde diacrítica", "Monosílabos", "Interrogativos"] },
+    { bloque: 9, temas: ["Ahí, Hay, Ay", "Porque, Por qué, Porqué, Por que", "Sino vs Si no", "B vs V", "C, S, Z"] },
+    { bloque: 10, temas: ["Metáfora", "Símil", "Personificación", "Hipérbole", "Aliteración"] },
+    { bloque: 11, temas: ["Introducción", "Exposición", "Argumentación", "Refutación", "Conclusión"] },
+    { bloque: 12, temas: ["Lenguaje corporal", "Tono de voz", "Mirada", "Silencio", "Autenticidad"] },
+    { bloque: 13, temas: ["Estructura de la historia", "Personajes", "Conflicto", "Escenario", "Tema"] },
+    { bloque: 14, temas: ["Persuasión", "Ethos, Pathos, Logos", "Pregunta retórica", "Analogía", "Ironía"] },
+    { bloque: 15, temas: ["El Debate", "El Ataque", "La Defensa", "Lenguaje corporal en debate", "Negociación"] },
+    { bloque: 16, temas: ["Análisis sintáctico", "Oración compuesta", "Subordinadas adjetivas", "Subordinadas adverbiales", "Estilo sintáctico"] },
+    { bloque: 17, temas: ["Queísmo y Dequeísmo", "Muletillas", "Laísmo, Loísmo, Leísmo", "Gerundio", "Pleonasmos"] },
+    { bloque: 18, temas: ["Lenguaje inclusivo", "Anglicismos", "Lenguaje digital", "Redes sociales", "Futuro del idioma"] },
+    { bloque: 19, temas: ["Legado del lenguaje", "Escritura persuasiva", "Lectura crítica", "Estilo propio", "El Imperio del Lenguaje"] }
+];
+
+// Asignar personaje por bloque (ciclo de 5)
+const PERSONAJE_POR_BLOQUE = ['venus', 'saturno', 'marte', 'europa', 'ganimedes'];
+
+// Generar 100 lecciones
+function generarLecciones() {
+    const lecciones = [];
+    let contador = 0;
+    for (let i = 0; i < TEMAS_BLOQUES.length; i++) {
+        const bloque = TEMAS_BLOQUES[i];
+        const personajeId = PERSONAJE_POR_BLOQUE[i % PERSONAJE_POR_BLOQUE.length];
+        for (let j = 0; j < bloque.temas.length; j++) {
+            contador++;
+            lecciones.push({
+                id: contador,
+                titulo: bloque.temas[j],
+                bloque: i + 1,
+                personaje: personajeId,
+                concepto: `Concepto sobre ${bloque.temas[j].toLowerCase()}`,
+                estado: 'pendiente' // pendiente, grabado, publicado
+            });
+        }
+    }
+    return lecciones;
+}
+
+// ============================================================
+// ESTADO Y PERSISTENCIA
+// ============================================================
+
+const STORAGE_KEY_ESTADO = 'imperio_estado_completo';
+
+function obtenerEstado() {
+    const raw = localStorage.getItem(STORAGE_KEY_ESTADO);
+    if (raw) {
+        try {
+            return JSON.parse(raw);
+        } catch (e) {}
+    }
+    return null;
+}
+
+function guardarEstado(estado) {
+    localStorage.setItem(STORAGE_KEY_ESTADO, JSON.stringify(estado));
+}
+
+// Inicializar estado
+let estadoGlobal = obtenerEstado();
+if (!estadoGlobal) {
+    estadoGlobal = {
+        lecciones: generarLecciones(),
+        checklist: {}, // { id: true/false }
+        flashcardIndex: 0
+    };
+    // Inicializar checklist vacío
+    PASOS_CHECKLIST.forEach(p => {
+        estadoGlobal.checklist[p.id] = false;
+    });
+    guardarEstado(estadoGlobal);
+}
+
+// ============================================================
+// RENDERIZADO DE DASHBOARD
+// ============================================================
+
+function renderDashboard() {
+    const lecciones = estadoGlobal.lecciones;
+    const total = lecciones.length;
+    const grabadas = lecciones.filter(l => l.estado === 'grabado').length;
+    const publicadas = lecciones.filter(l => l.estado === 'publicado').length;
+    const completadosCheck = Object.values(estadoGlobal.checklist).filter(v => v === true).length;
+    const totalCheck = PASOS_CHECKLIST.length;
+    const pctCheck = Math.round((completadosCheck / totalCheck) * 100);
+
+    document.getElementById('lecciones-grabadas').textContent = grabadas;
+    document.getElementById('lecciones-publicadas').textContent = publicadas;
+    document.getElementById('checklist-progreso').textContent = pctCheck + '%';
+
+    // Progreso general (ponderado: 50% lecciones, 50% checklist)
+    const pctLecciones = Math.round(((grabadas + publicadas) / total) * 100);
+    const pctGeneral = Math.round((pctLecciones + pctCheck) / 2);
+    document.getElementById('progreso-general-texto').textContent = pctGeneral + '%';
+    document.getElementById('progreso-general-barra').style.width = pctGeneral + '%';
+
+    // Últimas 5 lecciones
+    const ultimas = lecciones.slice(-5).reverse();
+    const contenedor = document.getElementById('ultimas-lecciones');
+    if (ultimas.length === 0) {
+        contenedor.innerHTML = '<p class="text-light-50 small">No hay lecciones aún.</p>';
+    } else {
+        contenedor.innerHTML = ultimas.map(l => `
+            <div class="d-flex justify-content-between align-items-center border-bottom border-secondary border-opacity-10 py-1">
+                <span><strong>#${l.id}</strong> ${l.titulo}</span>
+                <span class="badge ${l.estado === 'pendiente' ? 'bg-secondary' : l.estado === 'grabado' ? 'bg-info' : 'bg-success'}">${l.estado}</span>
+            </div>
+        `).join('');
+    }
+}
+
+// ============================================================
+// RENDERIZADO DE LECCIONES
+// ============================================================
+
+let filtroLeccion = 'todas';
+
+function renderLecciones() {
+    const lecciones = estadoGlobal.lecciones;
+    const filtradas = lecciones.filter(l => {
+        if (filtroLeccion === 'todas') return true;
+        if (filtroLeccion === 'pendiente') return l.estado === 'pendiente';
+        if (filtroLeccion === 'grabado') return l.estado === 'grabado';
+        if (filtroLeccion === 'publicado') return l.estado === 'publicado';
+        // filtrar por personaje
+        return l.personaje === filtroLeccion;
+    });
+
+    const contenedor = document.getElementById('lista-lecciones');
+    if (filtradas.length === 0) {
+        contenedor.innerHTML = '<p class="text-light-50 text-center py-3">No hay lecciones en este filtro.</p>';
+        return;
+    }
+
+    let html = '';
+    filtradas.forEach(l => {
+        const personaje = PERSONAJES.find(p => p.id === l.personaje);
+        const emoji = personaje ? personaje.emoji : '🌌';
+        const color = personaje ? personaje.color : '#fff';
+        html += `
+            <div class="leccion-item" style="border-left-color: ${color};">
+                <span class="badge-fase">#${l.id}</span>
+                <span class="fw-semibold">${l.titulo}</span>
+                <span class="badge-personaje"><i class="bi bi-${personaje ? personaje.id : 'globe'}"></i> ${personaje ? personaje.nombre : 'Desconocido'}</span>
+                <span class="badge-estado ${l.estado === 'pendiente' ? 'bg-secondary' : l.estado === 'grabado' ? 'bg-info' : 'bg-success'}">${l.estado}</span>
+                <div class="ms-auto btn-group btn-group-sm">
+                    <button class="btn btn-outline-gold" onclick="cambiarEstadoLeccion(${l.id}, 'pendiente')">⏳</button>
+                    <button class="btn btn-outline-gold" onclick="cambiarEstadoLeccion(${l.id}, 'grabado')">🎬</button>
+                    <button class="btn btn-outline-gold" onclick="cambiarEstadoLeccion(${l.id}, 'publicado')">🚀</button>
+                </div>
+            </div>
+        `;
+    });
+    contenedor.innerHTML = html;
+
+    // Actualizar filtros visuales
+    document.querySelectorAll('[data-filtro-leccion]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filtroLeccion === filtroLeccion);
+    });
+}
+
+function cambiarEstadoLeccion(id, nuevoEstado) {
+    const leccion = estadoGlobal.lecciones.find(l => l.id === id);
+    if (leccion) {
+        leccion.estado = nuevoEstado;
+        guardarEstado(estadoGlobal);
+        renderLecciones();
+        renderDashboard();
+    }
+}
+
+// ============================================================
+// RENDERIZADO DE CHECKLIST
+// ============================================================
+
+let filtroChecklist = 'todas';
+
+function renderChecklist() {
+    const progreso = estadoGlobal.checklist;
+    let pasos = PASOS_CHECKLIST;
+
+    if (filtroChecklist === 'completados') {
+        pasos = pasos.filter(p => progreso[p.id] === true);
+    } else if (filtroChecklist === 'pendientes') {
+        pasos = pasos.filter(p => progreso[p.id] !== true);
+    } else if (filtroChecklist.startsWith('fase')) {
+        const numFase = parseInt(filtroChecklist.replace('fase', ''));
+        pasos = pasos.filter(p => p.fase === numFase);
+    }
+
+    const contenedor = document.getElementById('lista-checklist');
+    if (pasos.length === 0) {
+        contenedor.innerHTML = '<p class="text-light-50 text-center py-3">No hay pasos en este filtro.</p>';
+        return;
+    }
+
+    let html = '';
+    pasos.forEach(p => {
+        const completado = progreso[p.id] === true;
+        html += `
+            <div class="paso-item ${completado ? 'completado' : ''}">
+                <span class="badge-fase">#${p.id}</span>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="check-${p.id}" ${completado ? 'checked' : ''} onchange="toggleChecklist(${p.id})">
+                </div>
+                <div class="paso-texto">
+                    <strong>${p.titulo}</strong><br>
+                    <small class="text-light-50">${p.descripcion}</small>
+                </div>
+                <span class="badge-fase" style="font-size:0.7rem;"><i class="bi bi-tools"></i> ${p.herramientas}</span>
+            </div>
+        `;
+    });
+    contenedor.innerHTML = html;
+
+    // Actualizar filtros visuales
+    document.querySelectorAll('[data-filtro-checklist]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.filtroChecklist === filtroChecklist);
+    });
+}
+
+function toggleChecklist(id) {
+    estadoGlobal.checklist[id] = !estadoGlobal.checklist[id];
+    guardarEstado(estadoGlobal);
+    renderChecklist();
+    renderDashboard();
+}
+
+function marcarTodosChecklist() {
+    PASOS_CHECKLIST.forEach(p => {
+        estadoGlobal.checklist[p.id] = true;
+    });
+    guardarEstado(estadoGlobal);
+    renderChecklist();
+    renderDashboard();
+}
+
+function reiniciarChecklist() {
+    if (confirm('¿Eliminar todo el progreso del checklist?')) {
+        PASOS_CHECKLIST.forEach(p => {
+            estadoGlobal.checklist[p.id] = false;
+        });
+        guardarEstado(estadoGlobal);
+        renderChecklist();
+        renderDashboard();
+    }
+}
+
+// ============================================================
+// RENDERIZADO DE REPASO (FLASHCARDS)
+// ============================================================
+
+const CONCEPTOS_FLASH = [
+    { front: "Sustantivo", back: "Palabra que designa personas, animales, cosas, ideas o sentimientos." },
+    { front: "Verbo", back: "Palabra que expresa acción, estado o proceso." },
+    { front: "Adjetivo", back: "Palabra que califica o determina al sustantivo." },
+    { front: "Adverbio", back: "Modifica al verbo, al adjetivo o a otro adverbio." },
+    { front: "Preposición", back: "Palabra que relaciona elementos (a, ante, bajo, con...)." },
+    { front: "Conjunción", back: "Palabra que une oraciones o palabras (y, o, pero...)." },
+    { front: "Sujeto", back: "Quién realiza la acción o de quién se habla." },
+    { front: "Predicado", back: "Lo que se dice del sujeto (verbo + complementos)." },
+    { front: "Complemento Directo", back: "Recibe la acción del verbo (¿qué? ¿a quién?)." },
+    { front: "Complemento Indirecto", back: "Destinatario de la acción (¿a quién? ¿para quién?)." },
+    { front: "Complemento Circunstancial", back: "Circunstancias de la acción (lugar, tiempo, modo...)." },
+    { front: "Atributo", back: "Con ser/estar/parecer, describe al sujeto." },
+    { front: "Voz Pasiva", back: "El sujeto recibe la acción (ser + participio)." },
+    { front: "Oración Compuesta", back: "Dos o más verbos en la misma oración." },
+    { front: "Subordinada", back: "Oración que depende de otra para tener sentido." },
+    { front: "Metáfora", back: "Identificación de un término real con uno imaginario." },
+    { front: "Símil", back: "Comparación explícita con 'como' o 'cual'." },
+    { front: "Personificación", back: "Atribuir cualidades humanas a objetos." },
+    { front: "Hipérbole", back: "Exageración intencionada para enfatizar." },
+    { front: "Aliteración", back: "Repetición de sonidos para crear ritmo." }
+];
+
+let flashIndex = 0;
+let flashRevelado = false;
+
+function renderFlashcard() {
+    const container = document.getElementById('flashcard-container');
+    const front = document.getElementById('flash-front');
+    const back = document.getElementById('flash-back');
+    const progreso = document.getElementById('flash-progreso');
+
+    if (CONCEPTOS_FLASH.length === 0) {
+        front.textContent = "No hay conceptos";
+        back.textContent = "";
+        progreso.textContent = "0 / 0";
+        return;
+    }
+
+    const card = CONCEPTOS_FLASH[flashIndex];
+    if (!flashRevelado) {
+        front.textContent = card.front;
+        back.textContent = "👆 Haz clic para revelar";
+    } else {
+        front.textContent = card.front;
+        back.textContent = card.back;
+    }
+    progreso.textContent = `${flashIndex + 1} / ${CONCEPTOS_FLASH.length}`;
+}
+
+function siguienteFlashcard() {
+    flashIndex = (flashIndex + 1) % CONCEPTOS_FLASH.length;
+    flashRevelado = false;
+    renderFlashcard();
+}
+
+function toggleFlashcard() {
+    flashRevelado = !flashRevelado;
+    renderFlashcard();
+}
+
+// ============================================================
+// RENDERIZADO DE PERSONAJES
+// ============================================================
+
+function renderPersonajes() {
+    const contenedor = document.getElementById('lista-personajes');
+    contenedor.innerHTML = PERSONAJES.map(p => `
+        <div class="col-md-6 col-lg-4">
+            <div class="personaje-card">
+                <div style="font-size:3rem;">${p.emoji}</div>
+                <div class="nombre">${p.nombre}</div>
+                <div class="planeta"><i class="bi bi-globe"></i> ${p.planeta}</div>
+                <p class="small text-light-50 mt-2">${p.descripcion}</p>
+                <span class="herramienta-tag" style="background:${p.color}33; color:${p.color}; border:1px solid ${p.color}55;">
+                    <i class="bi bi-palette"></i> ${p.color}
+                </span>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+// RENDERIZADO DE HERRAMIENTAS
+// ============================================================
+
+const HERRAMIENTAS = [
+    { nombre: "Leonardo AI / Midjourney", uso: "Generación de personajes, fondos, B-Rolls y miniaturas.", icono: "bi-image" },
+    { nombre: "RunwayML / Pika", uso: "Animación de B-Rolls (movimiento de 3s).", icono: "bi-film" },
+    { nombre: "D-ID Studio / HeyGen", uso: "Animación de rostro (sincronización labial).", icono: "bi-person-video" },
+    { nombre: "ElevenLabs / Murf.ai", uso: "Generación de voz en off con diferentes tonos.", icono: "bi-mic" },
+    { nombre: "CapCut", uso: "Edición de video, efectos, subtítulos y exportación.", icono: "bi-scissors" },
+    { nombre: "Audacity", uso: "Limpieza de audio (normalización, reducción de ruido).", icono: "bi-sliders2" },
+    { nombre: "Canva", uso: "Diseño de miniaturas y gráficos para redes.", icono: "bi-palette" },
+    { nombre: "Google Docs / Notion", uso: "Redacción de guiones y organización de proyectos.", icono: "bi-journal" }
+];
+
+function renderHerramientas() {
+    const contenedor = document.getElementById('lista-herramientas');
+    contenedor.innerHTML = HERRAMIENTAS.map(h => `
+        <div class="d-flex align-items-center gap-3 p-2 border-bottom border-secondary border-opacity-10">
+            <i class="bi ${h.icono} text-gold" style="font-size:1.5rem;"></i>
+            <div>
+                <strong>${h.nombre}</strong><br>
+                <small class="text-light-50">${h.uso}</small>
+            </div>
+        </div>
+    `).join('');
+}
+
+// ============================================================
+// GENERAR LECCIONES (reiniciar)
+// ============================================================
+
+function generarLeccionesNuevas() {
+    if (confirm('¿Generar de nuevo las 100 lecciones? Se perderán los estados actuales.')) {
+        estadoGlobal.lecciones = generarLecciones();
+        guardarEstado(estadoGlobal);
+        renderLecciones();
+        renderDashboard();
+    }
+}
+
+// ============================================================
+// EVENTOS Y ARRANQUE
+// ============================================================
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Renderizar todo
+    renderDashboard();
+    renderLecciones();
+    renderChecklist();
+    renderFlashcard();
+    renderPersonajes();
+    renderHerramientas();
+
+    // Filtros de lecciones
+    document.querySelectorAll('[data-filtro-leccion]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            filtroLeccion = this.dataset.filtroLeccion;
+            renderLecciones();
+        });
+    });
+
+    // Filtros de checklist
+    document.querySelectorAll('[data-filtro-checklist]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            filtroChecklist = this.dataset.filtroChecklist;
+            renderChecklist();
+        });
+    });
+
+    // Botones checklist
+    document.getElementById('btn-marcar-todos-checklist').addEventListener('click', marcarTodosChecklist);
+    document.getElementById('btn-reiniciar-checklist').addEventListener('click', reiniciarChecklist);
+
+    // Flashcard
+    document.getElementById('flashcard-container').addEventListener('click', toggleFlashcard);
+    document.getElementById('btn-siguiente-flashcard').addEventListener('click', siguienteFlashcard);
+
+    // Generar lecciones
+    document.getElementById('btn-generar-lecciones').addEventListener('click', generarLeccionesNuevas);
+
+    // Inicializar Bootstrap tabs para que funcionen
+    const triggerTabList = [].slice.call(document.querySelectorAll('#mainTabs button'));
+    triggerTabList.forEach(triggerEl => {
+        const tabTrigger = new bootstrap.Tab(triggerEl);
+        triggerEl.addEventListener('click', function(e) {
+            e.preventDefault();
+            tabTrigger.show();
+        });
+    });
+});
+</script>
+</body>
+</html>

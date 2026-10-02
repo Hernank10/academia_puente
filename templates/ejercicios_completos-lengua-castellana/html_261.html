@@ -1,0 +1,1794 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Ordenamiento de Frases y Párrafos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">ordenamiento de frases · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Técnica: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Reescribe la siguiente secuencia en el orden correcto:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Llegó tarde. Se sentó. Comenzó la clase.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS DE ORDENAMIENTO DE FRASES Y PÁRRAFOS
+        //  Coherencia, cohesión, progresión temática, conectores, etc.
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'coherencia', label: 'Coherencia y Progresión' },
+            { id: 'conectores', label: 'Conectores Temporales' },
+            { id: 'conectores_logicos', label: 'Conectores Lógicos' },
+            { id: 'referencia', label: 'Referencia y Anáfora' },
+            { id: 'orden_cronologico', label: 'Orden Cronológico' },
+            { id: 'orden_espacial', label: 'Orden Espacial' },
+            { id: 'orden_logico', label: 'Orden Lógico' },
+            { id: 'parrafos', label: 'Estructura de Párrafos' },
+            { id: 'narrativos', label: 'Párrafos Narrativos' },
+            { id: 'argumentativos', label: 'Párrafos Argumentativos' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: COHERENCIA Y PROGRESIÓN (1–10)
+        // ============================================================
+        const b1 = [
+            ['Tema y rema', 'Tema (información conocida) + Rema (información nueva)',
+                'En una oración, el tema es la información ya conocida o el punto de partida; el rema es la información nueva que se aporta.',
+                'El libro (tema) está sobre la mesa (rema).',
+                'El libro (tema) / está sobre la mesa (rema)',
+                '¿Qué es el tema en una oración?', ['Información conocida', 'Información nueva', 'El sujeto',
+                    'El predicado'
+                ], 0, 'Escribe una oración identificando tema y rema.'
+            ],
+            ['Progresión temática lineal', 'Tema → Rema → (nuevo tema)',
+                'La progresión temática lineal consiste en que el rema de una oración se convierte en el tema de la siguiente.',
+                'El libro (tema) es interesante (rema). Su autor (nuevo tema) es famoso (rema).',
+                'libro (tema) → interesante (rema) → autor (nuevo tema)',
+                '¿Cómo se llama la progresión en que el rema se convierte en tema?', ['Lineal', 'Constante', 'Derivada',
+                    'Cíclica'
+                ], 0, 'Escribe un ejemplo de progresión temática lineal.'
+            ],
+            ['Progresión temática constante', 'Tema constante + remas diferentes',
+                'La progresión temática constante mantiene el mismo tema a lo largo de varias oraciones, cambiando el rema.',
+                'El libro (tema) es interesante. El libro es largo. El libro es caro.',
+                'El libro (tema constante) + remas diferentes',
+                '¿Qué tipo de progresión mantiene el mismo tema?', ['Constante', 'Lineal', 'Derivada', 'Cíclica'],
+                0, 'Escribe un ejemplo de progresión temática constante.'
+            ],
+            ['Progresión temática derivada', 'Tema general + subtemas derivados',
+                'La progresión temática derivada parte de un tema general y desarrolla subtemas relacionados.',
+                'La ciudad (tema general) tiene muchos parques. Los parques (subterna) son verdes. Las calles (subterna) son anchas.',
+                'ciudad (general) → parques (subterna) → calles (subterna)',
+                '¿Qué tipo de progresión parte de un tema general?', ['Derivada', 'Constante', 'Lineal', 'Cíclica'],
+                0, 'Escribe un ejemplo de progresión temática derivada.'
+            ],
+            ['Cohesión: pronombres anafóricos', 'Pronombres que se refieren a algo anterior',
+                'Los pronombres anafóricos (él, ella, lo, la, le, etc.) mantienen la cohesión al referirse a elementos mencionados antes.',
+                'Juan llegó tarde. Él se disculpó.',
+                'Él (anáfora de Juan)',
+                '¿Qué recurso mantiene la cohesión refiriéndose a algo anterior?', ['Pronombres anafóricos',
+                    'Conectores', 'Repetición', 'Sinónimos'
+                ], 0, 'Escribe una oración con un pronombre anafórico.'
+            ],
+            ['Cohesión: elipsis', 'Omisión de elementos sobreentendidos',
+                'La elipsis omite elementos que se sobreentienden, manteniendo la cohesión y evitando repeticiones.',
+                'Juan llegó tarde. (Él) se disculpó.',
+                'Elipsis del sujeto (él)',
+                '¿Qué recurso omite elementos sobreentendidos?', ['Elipsis', 'Anáfora', 'Catáfora', 'Sinonimia'],
+                0, 'Escribe una oración con elipsis del sujeto.'
+            ],
+            ['Cohesión: sinónimos', 'Uso de sinónimos para evitar repeticiones',
+                'Los sinónimos mantienen la cohesión al referirse a lo mismo sin repetir la misma palabra.',
+                'El coche es rojo. El vehículo es rápido.',
+                'coche → vehículo (sinónimo)',
+                '¿Qué recurso evita repeticiones usando palabras de significado similar?', ['Sinónimos', 'Anáfora',
+                    'Elipsis', 'Catáfora'
+                ], 0, 'Escribe una oración usando sinónimos.'
+            ],
+            ['Cohesión: catáfora', 'Pronombre que anticipa algo posterior',
+                'La catáfora es un pronombre que anticipa información que se mencionará después.',
+                'Te lo digo: no voy a ir.',
+                'lo (catáfora que anticipa "no voy a ir")',
+                '¿Qué recurso anticipa información posterior?', ['Catáfora', 'Anáfora', 'Elipsis', 'Sinonimia'],
+                0, 'Escribe una oración con catáfora.'
+            ],
+            ['Coherencia: unidad temática', 'Todas las oraciones tratan del mismo tema',
+                'La coherencia exige que todas las oraciones de un párrafo traten del mismo tema principal.',
+                'El libro es interesante. Su autor es famoso. La trama es compleja. (todas sobre el libro)',
+                'Todas las oraciones sobre el libro',
+                '¿Qué exige la coherencia temática?', ['Unidad temática', 'Variedad temática', 'Contraste',
+                    'Ambigüedad'
+                ], 0, 'Escribe un párrafo coherente sobre un mismo tema.'
+            ],
+            ['Orden lógico de las ideas', 'Las ideas deben seguir un orden lógico',
+                'Las ideas deben presentarse en un orden lógico que facilite la comprensión del lector.',
+                'Primero, llegó. Luego, se sentó. Finalmente, comenzó la clase.',
+                'Orden cronológico lógico',
+                '¿Qué debe seguir el orden de las ideas?', ['Un orden lógico', 'Un orden alfabético', 'Un orden aleatorio',
+                    'Un orden jerárquico'
+                ], 0, 'Escribe una secuencia lógica de tres acciones.'
+            ]
+        ];
+        b1.forEach(d => addLesson('coherencia', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: CONECTORES TEMPORALES (11–20)
+        // ============================================================
+        const b2 = [
+            ['Primero, luego, después', 'Secuencia temporal: primero → luego → después',
+                'Los conectores temporales indican el orden en que ocurren las acciones.',
+                'Primero, llegó. Luego, se sentó. Después, comenzó la clase.',
+                'primero → luego → después (secuencia)',
+                '¿Qué conector indica la primera acción?', ['Primero', 'Luego', 'Después', 'Finalmente'],
+                0, 'Escribe una secuencia con primero, luego y después.'
+            ],
+            ['Mientras', 'Simultaneidad',
+                'Mientras indica que dos acciones ocurren al mismo tiempo.',
+                'Mientras estudiaba, escuchaba música.',
+                'mientras (simultaneidad)',
+                '¿Qué conector expresa simultaneidad?', ['Mientras', 'Primero', 'Luego', 'Después'],
+                0, 'Escribe una oración con "mientras".'
+            ],
+            ['Cuando', 'Momento puntual',
+                'Cuando indica el momento en que ocurre una acción en relación con otra.',
+                'Cuando llegó, todos se fueron.',
+                'cuando (momento puntual)',
+                '¿Qué conector indica un momento puntual?', ['Cuando', 'Mientras', 'Primero', 'Luego'],
+                0, 'Escribe una oración con "cuando".'
+            ],
+            ['Antes de', 'Anterioridad',
+                'Antes de indica que una acción ocurre antes que otra.',
+                'Antes de salir, apaga la luz.',
+                'antes de (anterioridad)',
+                '¿Qué conector expresa anterioridad?', ['Antes de', 'Después de', 'Mientras', 'Cuando'],
+                0, 'Escribe una oración con "antes de".'
+            ],
+            ['Después de', 'Posterioridad',
+                'Después de indica que una acción ocurre después que otra.',
+                'Después de comer, salimos a pasear.',
+                'después de (posterioridad)',
+                '¿Qué conector expresa posterioridad?', ['Después de', 'Antes de', 'Mientras', 'Cuando'],
+                0, 'Escribe una oración con "después de".'
+            ],
+            ['Hasta que', 'Límite temporal',
+                'Hasta que indica el límite temporal de una acción.',
+                'Esperó hasta que llegó.',
+                'hasta que (límite temporal)',
+                '¿Qué conector indica un límite temporal?', ['Hasta que', 'Mientras', 'Cuando', 'Antes de'],
+                0, 'Escribe una oración con "hasta que".'
+            ],
+            ['Desde que', 'Punto de inicio',
+                'Desde que indica el punto de inicio de una acción que continúa.',
+                'Desde que llegó, no ha parado de llover.',
+                'desde que (punto de inicio)',
+                '¿Qué conector indica el punto de inicio?', ['Desde que', 'Hasta que', 'Mientras', 'Cuando'],
+                0, 'Escribe una oración con "desde que".'
+            ],
+            ['Tan pronto como', 'Inmediatez',
+                'Tan pronto como indica que una acción ocurre inmediatamente después de otra.',
+                'Tan pronto como llegue, te llamo.',
+                'tan pronto como (inmediatez)',
+                '¿Qué conector expresa inmediatez?', ['Tan pronto como', 'Mientras', 'Cuando', 'Después de'],
+                0, 'Escribe una oración con "tan pronto como".'
+            ],
+            ['En cuanto', 'Inmediatez',
+                'En cuanto indica inmediatez, similar a "tan pronto como".',
+                'En cuanto termine, avísame.',
+                'en cuanto (inmediatez)',
+                '¿Qué conector es sinónimo de "tan pronto como"?', ['En cuanto', 'Mientras', 'Cuando', 'Después de'],
+                0, 'Escribe una oración con "en cuanto".'
+            ],
+            ['Finalmente, por último', 'Conclusión temporal',
+                'Finalmente indica el último elemento de una secuencia.',
+                'Finalmente, todos se fueron.',
+                'finalmente (conclusión)',
+                '¿Qué conector indica el último elemento de una secuencia?', ['Finalmente', 'Primero', 'Luego',
+                    'Después'
+                ], 0, 'Escribe una oración con "finalmente".'
+            ]
+        ];
+        b2.forEach(d => addLesson('conectores', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: CONECTORES LÓGICOS (21–30)
+        // ============================================================
+        const b3 = [
+            ['Por lo tanto', 'Consecuencia',
+                'Por lo tanto expresa una consecuencia lógica de lo dicho anteriormente.',
+                'Estudió mucho, por lo tanto aprobó.',
+                'por lo tanto (consecuencia)',
+                '¿Qué conector expresa consecuencia?', ['Por lo tanto', 'Sin embargo', 'Además', 'Porque'],
+                0, 'Escribe una oración con "por lo tanto".'
+            ],
+            ['Porque', 'Causa',
+                'Porque expresa la causa de lo que se afirma.',
+                'Aprobó porque estudió mucho.',
+                'porque (causa)',
+                '¿Qué conector expresa causa?', ['Porque', 'Por lo tanto', 'Sin embargo', 'Además'],
+                0, 'Escribe una oración con "porque".'
+            ],
+            ['Sin embargo', 'Contraste',
+                'Sin embargo expresa una oposición o contraste con lo dicho anteriormente.',
+                'Estudió mucho, sin embargo suspendió.',
+                'sin embargo (contraste)',
+                '¿Qué conector expresa contraste?', ['Sin embargo', 'Porque', 'Por lo tanto', 'Además'],
+                0, 'Escribe una oración con "sin embargo".'
+            ],
+            ['Además', 'Adición',
+                'Además añade información adicional a lo dicho anteriormente.',
+                'Estudió mucho, además repasó con amigos.',
+                'además (adición)',
+                '¿Qué conector expresa adición?', ['Además', 'Porque', 'Sin embargo', 'Por lo tanto'],
+                0, 'Escribe una oración con "además".'
+            ],
+            ['No obstante', 'Contraste formal',
+                'No obstante es un conector de contraste más formal que "sin embargo".',
+                'Estudió mucho, no obstante suspendió.',
+                'no obstante (contraste formal)',
+                '¿Qué conector de contraste es más formal?', ['No obstante', 'Sin embargo', 'Pero', 'Aunque'],
+                0, 'Escribe una oración con "no obstante".'
+            ],
+            ['En consecuencia', 'Consecuencia formal',
+                'En consecuencia es un conector de consecuencia más formal que "por lo tanto".',
+                'Estudió mucho, en consecuencia aprobó.',
+                'en consecuencia (consecuencia formal)',
+                '¿Qué conector de consecuencia es más formal?', ['En consecuencia', 'Por lo tanto', 'Así que',
+                    'Entonces'
+                ], 0, 'Escribe una oración con "en consecuencia".'
+            ],
+            ['Así que', 'Consecuencia coloquial',
+                'Así que es un conector de consecuencia coloquial.',
+                'Estudió mucho, así que aprobó.',
+                'así que (consecuencia coloquial)',
+                '¿Qué conector de consecuencia es coloquial?', ['Así que', 'Por lo tanto', 'En consecuencia',
+                    'Por consiguiente'
+                ], 0, 'Escribe una oración con "así que".'
+            ],
+            ['Aunque', 'Concesión',
+                'Aunque expresa una concesión, indicando que a pesar de lo dicho, ocurre lo otro.',
+                'Aunque estudió mucho, suspendió.',
+                'aunque (concesión)',
+                '¿Qué conector expresa concesión?', ['Aunque', 'Porque', 'Sin embargo', 'Además'],
+                0, 'Escribe una oración con "aunque".'
+            ],
+            ['Puesto que', 'Causa formal',
+                'Puesto que es un conector causal formal.',
+                'Puesto que estudió, aprobó.',
+                'puesto que (causa formal)',
+                '¿Qué conector causal es formal?', ['Puesto que', 'Porque', 'Ya que', 'Como'],
+                0, 'Escribe una oración con "puesto que".'
+            ],
+            ['En resumen', 'Conclusión',
+                'En resumen introduce una conclusión o síntesis de lo dicho.',
+                'En resumen, estudió y aprobó.',
+                'en resumen (conclusión)',
+                '¿Qué conector introduce una conclusión?', ['En resumen', 'Además', 'Porque', 'Sin embargo'],
+                0, 'Escribe una oración con "en resumen".'
+            ]
+        ];
+        b3.forEach(d => addLesson('conectores_logicos', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: REFERENCIA Y ANÁFORA (31–40)
+        // ============================================================
+        const b4 = [
+            ['Pronombres personales (él, ella, ellos)', 'Anáfora con pronombres personales',
+                'Los pronombres personales (él, ella, ellos) se refieren a personas o cosas mencionadas anteriormente.',
+                'Juan llegó tarde. Él se disculpó.',
+                'Él (anáfora de Juan)',
+                '¿Qué pronombre se refiere a una persona mencionada antes?', ['Él', 'Eso', 'Aquello', 'Ello'],
+                0, 'Escribe una oración con un pronombre personal anafórico.'
+            ],
+            ['Pronombres demostrativos (este, ese, aquel)', 'Anáfora con demostrativos',
+                'Los pronombres demostrativos (este, ese, aquel) se refieren a elementos mencionados o presentes en el contexto.',
+                'El libro es interesante. Ese es el que busco.',
+                'Ese (anáfora de "el libro")',
+                '¿Qué pronombre demostrativo indica cercanía?', ['Este', 'Ese', 'Aquel', 'Eso'],
+                0, 'Escribe una oración con un pronombre demostrativo anafórico.'
+            ],
+            ['Pronombres posesivos (mío, tuyo, suyo)', 'Anáfora con posesivos',
+                'Los pronombres posesivos (mío, tuyo, suyo) indican posesión y se refieren a algo mencionado antes.',
+                'El libro es mío.',
+                'mío (posesivo anafórico)',
+                '¿Qué pronombre posesivo indica pertenencia?', ['Mío', 'Este', 'Eso', 'Aquello'],
+                0, 'Escribe una oración con un pronombre posesivo anafórico.'
+            ],
+            ['Pronombres relativos (que, quien, cuyo)', 'Anáfora con relativos',
+                'Los pronombres relativos (que, quien, cuyo) se refieren a un antecedente mencionado antes.',
+                'El libro que leí es interesante.',
+                'que (relativo que se refiere a "el libro")',
+                '¿Qué pronombre relativo se refiere a una persona?', ['Quien', 'Que', 'Cuyo', 'El cual'],
+                0, 'Escribe una oración con un pronombre relativo anafórico.'
+            ],
+            ['Pronombres indefinidos (alguien, nadie, todos)', 'Anáfora con indefinidos',
+                'Los pronombres indefinidos (alguien, nadie, todos) se refieren a personas o cosas de forma general.',
+                'Todos llegaron. Alguien llamó.',
+                'Todos (indefinido anafórico)',
+                '¿Qué pronombre indefinido indica totalidad?', ['Todos', 'Alguien', 'Nadie', 'Cualquiera'],
+                0, 'Escribe una oración con un pronombre indefinido anafórico.'
+            ],
+            ['Adverbios de lugar (aquí, allí, ahí)', 'Anáfora con adverbios de lugar',
+                'Los adverbios de lugar (aquí, allí, ahí) se refieren a lugares mencionados antes.',
+                'La casa está allí. Aquí está.',
+                'allí (anáfora de lugar)',
+                '¿Qué adverbio de lugar indica distancia media?', ['Ahí', 'Aquí', 'Allí', 'Acá'],
+                0, 'Escribe una oración con un adverbio de lugar anafórico.'
+            ],
+            ['Adverbios de tiempo (ahora, entonces, luego)', 'Anáfora con adverbios de tiempo',
+                'Los adverbios de tiempo (ahora, entonces, luego) se refieren a momentos mencionados antes.',
+                'Llegó ayer. Ahora está aquí.',
+                'ahora (anáfora temporal)',
+                '¿Qué adverbio de tiempo indica el presente?', ['Ahora', 'Entonces', 'Luego', 'Antes'],
+                0, 'Escribe una oración con un adverbio de tiempo anafórico.'
+            ],
+            ['Repetición léxica', 'Repetición de palabras para cohesión',
+                'La repetición léxica consiste en repetir una misma palabra para mantener la cohesión.',
+                'El libro es interesante. El libro es largo.',
+                'libro (repetición léxica)',
+                '¿Qué recurso repite la misma palabra?', ['Repetición léxica', 'Sinonimia', 'Anáfora', 'Elipsis'],
+                0, 'Escribe una oración con repetición léxica.'
+            ],
+            ['Sinonimia', 'Uso de sinónimos para cohesión',
+                'La sinonimia usa palabras de significado similar para evitar repeticiones.',
+                'El coche es rojo. El vehículo es rápido.',
+                'coche → vehículo (sinonimia)',
+                '¿Qué recurso usa palabras de significado similar?', ['Sinonimia', 'Repetición léxica', 'Anáfora',
+                    'Elipsis'
+                ], 0, 'Escribe una oración con sinonimia.'
+            ],
+            ['Hiperónimos e hipónimos', 'Relación de generalidad / especificidad',
+                'Los hiperónimos son términos generales; los hipónimos son términos específicos.',
+                'El animal (hiperónimo) es un perro (hipónimo).',
+                'animal (hiperónimo) / perro (hipónimo)',
+                '¿Qué término es más general?', ['Hiperónimo', 'Hipónimo', 'Sinónimo', 'Antónimo'],
+                0, 'Escribe una oración con un hiperónimo y un hipónimo.'
+            ]
+        ];
+        b4.forEach(d => addLesson('referencia', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: ORDEN CRONOLÓGICO (41–50)
+        // ============================================================
+        const b5 = [
+            ['Secuencia de eventos', 'Orden temporal de acciones',
+                'Las acciones deben presentarse en el orden en que ocurren en el tiempo.',
+                'Llegó, se sentó y comenzó la clase.',
+                'llegó → se sentó → comenzó (orden cronológico)',
+                '¿Qué orden deben seguir las acciones en una narración?', ['Cronológico', 'Alfabético', 'Aleatorio',
+                    'Jerárquico'
+                ], 0, 'Escribe una secuencia de tres eventos en orden cronológico.'
+            ],
+            ['Orden de causa-efecto', 'Primero la causa, luego el efecto',
+                'En una secuencia causa-efecto, primero se presenta la causa y luego el efecto.',
+                'Llovió, por eso el suelo se mojó.',
+                'llovió (causa) → suelo mojado (efecto)',
+                '¿Qué se presenta primero en una relación causa-efecto?', ['La causa', 'El efecto', 'Ambos',
+                    'Ninguno'
+                ], 0, 'Escribe una oración con causa y efecto en orden lógico.'
+            ],
+            ['Orden de problema-solución', 'Primero el problema, luego la solución',
+                'En una secuencia problema-solución, primero se presenta el problema y luego la solución.',
+                'El coche no arrancaba. Llamó a la grúa.',
+                'problema (coche no arranca) → solución (llamar grúa)',
+                '¿Qué se presenta primero en una secuencia problema-solución?', ['El problema', 'La solución',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una oración con problema y solución en orden lógico.'
+            ],
+            ['Orden de pregunta-respuesta', 'Primero la pregunta, luego la respuesta',
+                'En una secuencia pregunta-respuesta, primero se plantea la pregunta y luego la respuesta.',
+                '¿Qué hora es? Son las tres.',
+                'pregunta (¿qué hora es?) → respuesta (son las tres)',
+                '¿Qué se presenta primero en una secuencia pregunta-respuesta?', ['La pregunta', 'La respuesta',
+                    'Ambas', 'Ninguna'
+                ], 0, 'Escribe una pregunta y su respuesta en orden lógico.'
+            ],
+            ['Orden de introducción-desarrollo-conclusión', 'Estructura tripartita',
+                'Un texto bien estructurado sigue el orden: introducción, desarrollo y conclusión.',
+                'Introducción: El tema es... Desarrollo: argumentos... Conclusión: en resumen...',
+                'introducción → desarrollo → conclusión',
+                '¿Cuál es el orden de una estructura tripartita?', ['Introducción → Desarrollo → Conclusión',
+                    'Desarrollo → Introducción → Conclusión', 'Conclusión → Introducción → Desarrollo',
+                    'Desarrollo → Conclusión → Introducción'
+                ], 0, 'Escribe un texto breve con introducción, desarrollo y conclusión.'
+            ],
+            ['Orden de lo general a lo particular', 'De lo general a lo específico',
+                'El orden de lo general a lo particular presenta primero la idea general y luego los detalles específicos.',
+                'El clima es importante. La lluvia afecta los cultivos.',
+                'general (clima) → particular (lluvia)',
+                '¿Qué se presenta primero en el orden de lo general a lo particular?', ['Lo general', 'Lo particular',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una oración que vaya de lo general a lo particular.'
+            ],
+            ['Orden de lo particular a lo general', 'De lo específico a lo general',
+                'El orden de lo particular a lo general presenta primero los detalles específicos y luego la idea general.',
+                'La lluvia afecta los cultivos. El clima es importante.',
+                'particular (lluvia) → general (clima)',
+                '¿Qué se presenta primero en el orden de lo particular a lo general?', ['Lo particular', 'Lo general',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una oración que vaya de lo particular a lo general.'
+            ],
+            ['Orden de importancia', 'De lo más importante a lo menos importante',
+                'El orden de importancia presenta primero la idea más relevante y luego las secundarias.',
+                'Lo más importante es la salud. Luego, la familia.',
+                'más importante (salud) → menos importante (familia)',
+                '¿Qué se presenta primero en el orden de importancia?', ['Lo más importante', 'Lo menos importante',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una oración con orden de importancia.'
+            ],
+            ['Orden de familiaridad', 'De lo conocido a lo desconocido',
+                'El orden de familiaridad presenta primero lo que el lector ya conoce y luego lo nuevo.',
+                'El español es fácil. El chino es difícil.',
+                'conocido (español) → desconocido (chino)',
+                '¿Qué se presenta primero en el orden de familiaridad?', ['Lo conocido', 'Lo desconocido', 'Ambos',
+                    'Ninguno'
+                ], 0, 'Escribe una oración con orden de familiaridad.'
+            ],
+            ['Orden de contraste', 'Elemento A → pero → elemento B',
+                'El orden de contraste presenta dos elementos opuestos, primero uno y luego el otro.',
+                'El verano es caluroso, pero el invierno es frío.',
+                'verano (caluroso) → invierno (frío)',
+                '¿Qué conector se usa en el orden de contraste?', ['Pero', 'Porque', 'Además', 'Por lo tanto'],
+                0, 'Escribe una oración con contraste entre dos elementos.'
+            ]
+        ];
+        b5.forEach(d => addLesson('orden_cronologico', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: ORDEN ESPACIAL (51–55)
+        // ============================================================
+        const b6 = [
+            ['Descripción de arriba a abajo', 'De lo superior a lo inferior',
+                'Una descripción espacial puede ir de arriba hacia abajo.',
+                'El cielo es azul. El suelo es verde.',
+                'arriba (cielo) → abajo (suelo)',
+                '¿Qué orden sigue una descripción de arriba a abajo?', ['De superior a inferior', 'De inferior a superior',
+                    'De izquierda a derecha', 'De derecha a izquierda'
+                ], 0, 'Escribe una descripción de arriba a abajo.'
+            ],
+            ['Descripción de abajo a arriba', 'De lo inferior a lo superior',
+                'Una descripción espacial puede ir de abajo hacia arriba.',
+                'El suelo es verde. El cielo es azul.',
+                'abajo (suelo) → arriba (cielo)',
+                '¿Qué orden sigue una descripción de abajo a arriba?', ['De inferior a superior', 'De superior a inferior',
+                    'De izquierda a derecha', 'De derecha a izquierda'
+                ], 0, 'Escribe una descripción de abajo a arriba.'
+            ],
+            ['Descripción de izquierda a derecha', 'De izquierda a derecha',
+                'Una descripción espacial puede ir de izquierda a derecha.',
+                'A la izquierda está el río. A la derecha, la montaña.',
+                'izquierda (río) → derecha (montaña)',
+                '¿Qué orden sigue una descripción de izquierda a derecha?', ['De izquierda a derecha',
+                    'De derecha a izquierda', 'De arriba a abajo', 'De abajo a arriba'
+                ], 0, 'Escribe una descripción de izquierda a derecha.'
+            ],
+            ['Descripción de cerca a lejos', 'De lo cercano a lo lejano',
+                'Una descripción espacial puede ir de cerca a lejos.',
+                'La casa está cerca. El bosque está lejos.',
+                'cerca (casa) → lejos (bosque)',
+                '¿Qué orden sigue una descripción de cerca a lejos?', ['De cercano a lejano', 'De lejano a cercano',
+                    'De arriba a abajo', 'De abajo a arriba'
+                ], 0, 'Escribe una descripción de cerca a lejos.'
+            ],
+            ['Descripción de lejos a cerca', 'De lo lejano a lo cercano',
+                'Una descripción espacial puede ir de lejos a cerca.',
+                'El bosque está lejos. La casa está cerca.',
+                'lejos (bosque) → cerca (casa)',
+                '¿Qué orden sigue una descripción de lejos a cerca?', ['De lejano a cercano', 'De cercano a lejano',
+                    'De arriba a abajo', 'De abajo a arriba'
+                ], 0, 'Escribe una descripción de lejos a cerca.'
+            ]
+        ];
+        b6.forEach(d => addLesson('orden_espacial', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: ORDEN LÓGICO (56–65)
+        // ============================================================
+        const b7 = [
+            ['Orden deductivo', 'De lo general a lo particular (deducción)',
+                'El orden deductivo parte de una idea general y llega a una conclusión particular.',
+                'Todos los hombres son mortales. Juan es hombre, por lo tanto, Juan es mortal.',
+                'general (todos los hombres) → particular (Juan)',
+                '¿Qué orden va de lo general a lo particular?', ['Deductivo', 'Inductivo', 'Analógico', 'Sintético'],
+                0, 'Escribe un razonamiento deductivo.'
+            ],
+            ['Orden inductivo', 'De lo particular a lo general (inducción)',
+                'El orden inductivo parte de observaciones particulares para llegar a una conclusión general.',
+                'Juan es mortal. Pedro es mortal. Todos los hombres son mortales.',
+                'particular (Juan, Pedro) → general (todos los hombres)',
+                '¿Qué orden va de lo particular a lo general?', ['Inductivo', 'Deductivo', 'Analógico', 'Sintético'],
+                0, 'Escribe un razonamiento inductivo.'
+            ],
+            ['Orden analógico', 'Comparación entre dos elementos',
+                'El orden analógico presenta una comparación entre dos elementos similares.',
+                'La vida es como un viaje. Tiene etapas y desafíos.',
+                'vida (elemento A) → viaje (elemento B)',
+                '¿Qué tipo de orden compara dos elementos?', ['Analógico', 'Deductivo', 'Inductivo', 'Sintético'],
+                0, 'Escribe una analogía entre dos elementos.'
+            ],
+            ['Orden de argumentos', 'Argumentos en orden de fuerza',
+                'Los argumentos deben presentarse en orden de fuerza, de más débil a más fuerte, o viceversa.',
+                'Primero, un argumento menor. Luego, el argumento principal.',
+                'argumento débil → argumento fuerte',
+                '¿Qué orden siguen los argumentos en una exposición?', ['De más débil a más fuerte',
+                    'De más fuerte a más débil', 'Ambos', 'Ninguno'
+                ], 0, 'Escribe dos argumentos en orden de fuerza.'
+            ],
+            ['Orden de ejemplos', 'Ejemplos de menor a mayor importancia',
+                'Los ejemplos pueden presentarse de menor a mayor importancia.',
+                'Por ejemplo, el agua. Más importante, el aire.',
+                'ejemplo menor (agua) → ejemplo mayor (aire)',
+                '¿Qué orden siguen los ejemplos?', ['De menor a mayor importancia', 'De mayor a menor importancia',
+                    'Alfabético', 'Aleatorio'
+                ], 0, 'Escribe dos ejemplos en orden de importancia.'
+            ],
+            ['Orden de definición', 'Definición + explicación + ejemplo',
+                'Una definición bien estructurada sigue el orden: definición, explicación y ejemplo.',
+                'La sinestesia es una figura retórica. Consiste en mezclar sensaciones. Por ejemplo, "oír colores".',
+                'definición → explicación → ejemplo',
+                '¿Qué orden sigue una definición?', ['Definición → Explicación → Ejemplo',
+                    'Ejemplo → Definición → Explicación', 'Explicación → Ejemplo → Definición',
+                    'Definición → Ejemplo → Explicación'
+                ], 0, 'Escribe una definición con explicación y ejemplo.'
+            ],
+            ['Orden de clasificación', 'Categoría → subcategorías',
+                'Una clasificación presenta la categoría general y luego las subcategorías.',
+                'Los animales se dividen en vertebrados e invertebrados.',
+                'categoría (animales) → subcategorías (vertebrados, invertebrados)',
+                '¿Qué orden sigue una clasificación?', ['Categoría → Subcategorías', 'Subcategorías → Categoría',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una clasificación con categoría y subcategorías.'
+            ],
+            ['Orden de comparación y contraste', 'Elemento A → Elemento B → comparación',
+                'La comparación presenta dos elementos y luego los contrasta.',
+                'El español y el inglés son diferentes. El español tiene más vocales.',
+                'elemento A (español) → elemento B (inglés) → comparación',
+                '¿Qué orden sigue una comparación?', ['Elemento A → Elemento B → comparación',
+                    'Comparación → Elemento A → Elemento B', 'Elemento B → Elemento A → comparación',
+                    'Solo comparación'
+                ], 0, 'Escribe una comparación entre dos elementos.'
+            ],
+            ['Orden de causa y efecto', 'Causa → efecto',
+                'El orden de causa y efecto presenta primero la causa y luego el efecto.',
+                'El sol calienta el agua (causa), por eso se evapora (efecto).',
+                'causa (sol calienta agua) → efecto (evaporación)',
+                '¿Qué se presenta primero en una relación causa-efecto?', ['La causa', 'El efecto', 'Ambos',
+                    'Ninguno'
+                ], 0, 'Escribe una oración con causa y efecto.'
+            ],
+            ['Orden de problema-solución', 'Problema → solución',
+                'El orden de problema-solución presenta primero el problema y luego la solución.',
+                'El coche no arranca (problema), así que llamamos a la grúa (solución).',
+                'problema (coche no arranca) → solución (llamar grúa)',
+                '¿Qué se presenta primero en una secuencia problema-solución?', ['El problema', 'La solución',
+                    'Ambos', 'Ninguno'
+                ], 0, 'Escribe una oración con problema y solución.'
+            ]
+        ];
+        b7.forEach(d => addLesson('orden_logico', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: ESTRUCTURA DE PÁRRAFOS (66–75)
+        // ============================================================
+        const b8 = [
+            ['Párrafo con idea principal al principio', 'Idea principal → detalles',
+                'El párrafo comienza con la idea principal y luego la desarrolla con detalles.',
+                'El español es una lengua romance. Proviene del latín. Tiene muchos hablantes.',
+                'idea principal (español es romance) → detalles',
+                '¿Dónde se coloca la idea principal en este tipo de párrafo?', ['Al principio', 'Al final', 'En el medio',
+                    'No tiene idea principal'
+                ], 0, 'Escribe un párrafo con la idea principal al principio.'
+            ],
+            ['Párrafo con idea principal al final', 'Detalles → idea principal',
+                'El párrafo presenta primero detalles y luego la idea principal al final.',
+                'Proviene del latín. Tiene muchos hablantes. El español es una lengua romance.',
+                'detalles → idea principal (español es romance)',
+                '¿Dónde se coloca la idea principal en este tipo de párrafo?', ['Al final', 'Al principio', 'En el medio',
+                    'No tiene idea principal'
+                ], 0, 'Escribe un párrafo con la idea principal al final.'
+            ],
+            ['Párrafo con idea principal en el medio', 'Detalles → idea principal → más detalles',
+                'El párrafo presenta detalles, luego la idea principal, y después más detalles.',
+                'Proviene del latín. El español es una lengua romance. Tiene muchos hablantes.',
+                'detalles → idea principal → detalles',
+                '¿Dónde se coloca la idea principal en este tipo de párrafo?', ['En el medio', 'Al principio', 'Al final',
+                    'No tiene idea principal'
+                ], 0, 'Escribe un párrafo con la idea principal en el medio.'
+            ],
+            ['Párrafo con idea principal implícita', 'Idea principal sobreentendida',
+                'El párrafo no expresa la idea principal de forma explícita, pero se sobreentiende.',
+                'Proviene del latín. Tiene muchos hablantes. Es muy estudiada.',
+                'idea principal implícita (el español es una lengua romance)',
+                '¿Cómo se expresa la idea principal en este tipo de párrafo?', ['Implícitamente', 'Explícitamente',
+                    'No se expresa', 'Se repite'
+                ], 0, 'Escribe un párrafo con idea principal implícita.'
+            ],
+            ['Párrafo de enumeración', 'Lista de elementos relacionados',
+                'El párrafo de enumeración presenta una lista de elementos que comparten una característica común.',
+                'Las lenguas romances son: español, francés, italiano, portugués y rumano.',
+                'enumeración (español, francés, italiano, portugués, rumano)',
+                '¿Qué tipo de párrafo presenta una lista?', ['De enumeración', 'De causa-efecto', 'De comparación',
+                    'De definición'
+                ], 0, 'Escribe un párrafo de enumeración.'
+            ],
+            ['Párrafo de causa-efecto', 'Causa → efecto',
+                'El párrafo de causa-efecto explica las razones de un fenómeno y sus consecuencias.',
+                'El calentamiento global causa el deshielo de los polos.',
+                'causa (calentamiento global) → efecto (deshielo)',
+                '¿Qué tipo de párrafo explica causas y efectos?', ['De causa-efecto', 'De enumeración', 'De comparación',
+                    'De definición'
+                ], 0, 'Escribe un párrafo de causa-efecto.'
+            ],
+            ['Párrafo de comparación', 'Comparación entre dos elementos',
+                'El párrafo de comparación establece semejanzas y diferencias entre dos elementos.',
+                'El español y el inglés son similares en el alfabeto, pero diferentes en la pronunciación.',
+                'comparación (español vs inglés)',
+                '¿Qué tipo de párrafo compara dos elementos?', ['De comparación', 'De enumeración', 'De causa-efecto',
+                    'De definición'
+                ], 0, 'Escribe un párrafo de comparación.'
+            ],
+            ['Párrafo de definición', 'Definición + características',
+                'El párrafo de definición explica el significado de un concepto y sus características.',
+                'La sinestesia es una figura retórica que mezcla sensaciones de diferentes sentidos.',
+                'definición (sinestesia) → características',
+                '¿Qué tipo de párrafo define un concepto?', ['De definición', 'De enumeración', 'De causa-efecto',
+                    'De comparación'
+                ], 0, 'Escribe un párrafo de definición.'
+            ],
+            ['Párrafo de ejemplificación', 'Idea general → ejemplos',
+                'El párrafo de ejemplificación presenta una idea general y luego la ilustra con ejemplos.',
+                'Muchas lenguas son romances. Por ejemplo, el español, el francés y el italiano.',
+                'idea general (lenguas romances) → ejemplos (español, francés, italiano)',
+                '¿Qué tipo de párrafo ilustra una idea con ejemplos?', ['De ejemplificación', 'De definición',
+                    'De comparación', 'De causa-efecto'
+                ], 0, 'Escribe un párrafo de ejemplificación.'
+            ],
+            ['Párrafo de transición', 'Conecta dos ideas o párrafos',
+                'El párrafo de transición sirve para conectar dos ideas o párrafos, guiando al lector.',
+                'Hemos visto las características del español. Ahora veremos su evolución.',
+                'transición (de características a evolución)',
+                '¿Qué función tiene el párrafo de transición?', ['Conectar ideas', 'Definir un concepto', 'Enumerar elementos',
+                    'Comparar dos elementos'
+                ], 0, 'Escribe un párrafo de transición.'
+            ]
+        ];
+        b8.forEach(d => addLesson('parrafos', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: PÁRRAFOS NARRATIVOS (76–85)
+        // ============================================================
+        const b9 = [
+            ['Introducción narrativa', 'Presentación de personajes y situación inicial',
+                'La introducción narrativa presenta a los personajes y la situación inicial de la historia.',
+                'Había una vez un niño que vivía en un pequeño pueblo.',
+                'introducción (niño, pueblo)',
+                '¿Qué presenta la introducción narrativa?', ['Personajes y situación inicial', 'El conflicto',
+                    'El desenlace', 'La moraleja'
+                ], 0, 'Escribe una introducción narrativa.'
+            ],
+            ['Desarrollo narrativo', 'Conflicto y acciones',
+                'El desarrollo narrativo presenta el conflicto y las acciones que ocurren.',
+                'Un día, el niño encontró un mapa del tesoro.',
+                'desarrollo (conflicto: mapa del tesoro)',
+                '¿Qué presenta el desarrollo narrativo?', ['El conflicto y las acciones', 'La situación inicial',
+                    'El desenlace', 'La moraleja'
+                ], 0, 'Escribe un desarrollo narrativo.'
+            ],
+            ['Clímax narrativo', 'Punto de máxima tensión',
+                'El clímax es el punto de máxima tensión en la narración.',
+                'El niño llegó a la cueva y vio el tesoro.',
+                'clímax (máxima tensión: encontrar el tesoro)',
+                '¿Qué es el clímax narrativo?', ['Punto de máxima tensión', 'La situación inicial', 'El desenlace',
+                    'La introducción'
+                ], 0, 'Escribe un clímax narrativo.'
+            ],
+            ['Desenlace narrativo', 'Resolución del conflicto',
+                'El desenlace resuelve el conflicto de la historia.',
+                'El niño tomó el tesoro y volvió a casa feliz.',
+                'desenlace (resolución: toma el tesoro)',
+                '¿Qué presenta el desenlace narrativo?', ['La resolución del conflicto', 'El conflicto',
+                    'La situación inicial', 'La introducción'
+                ], 0, 'Escribe un desenlace narrativo.'
+            ],
+            ['Orden cronológico en narración', 'Secuencia temporal de eventos',
+                'La narración sigue un orden cronológico de los eventos.',
+                'Primero, el niño encontró el mapa. Luego, buscó el tesoro. Finalmente, lo encontró.',
+                'orden cronológico (encuentro → búsqueda → hallazgo)',
+                '¿Qué orden sigue una narración?', ['Cronológico', 'Alfabético', 'Aleatorio', 'Jerárquico'],
+                0, 'Escribe una narración con orden cronológico.'
+            ],
+            ['Uso de conectores temporales en narración', 'Conectores de tiempo',
+                'Los conectores temporales (entonces, después, finalmente) organizan la narración.',
+                'Entonces, el niño decidió buscar el tesoro. Después, emprendió el viaje.',
+                'entonces → después (conectores temporales)',
+                '¿Qué conectores organizan la narración?', ['Temporales', 'Lógicos', 'Espaciales', 'Comparativos'],
+                0, 'Escribe una narración con conectores temporales.'
+            ],
+            ['Párrafo narrativo con diálogo', 'Inclusión de diálogos',
+                'Los párrafos narrativos pueden incluir diálogos para dar vida a los personajes.',
+                '—¿Dónde está el tesoro? —preguntó el niño.',
+                'diálogo (pregunta del niño)',
+                '¿Qué recurso se usa para dar vida a los personajes?', ['El diálogo', 'La descripción', 'La enumeración',
+                    'La definición'
+                ], 0, 'Escribe un párrafo narrativo con diálogo.'
+            ],
+            ['Párrafo narrativo con descripción', 'Descripción de personajes o lugares',
+                'Los párrafos narrativos pueden incluir descripciones para situar la historia.',
+                'El pueblo era pequeño y acogedor, con calles empedradas.',
+                'descripción (pueblo)',
+                '¿Qué recurso se usa para situar la historia?', ['La descripción', 'El diálogo', 'La enumeración',
+                    'La definición'
+                ], 0, 'Escribe un párrafo narrativo con descripción.'
+            ],
+            ['Párrafo narrativo con suspense', 'Creación de expectación',
+                'El suspense mantiene al lector en expectación sobre lo que va a pasar.',
+                'El niño entró en la cueva. De repente, escuchó un ruido.',
+                'suspense (ruido en la cueva)',
+                '¿Qué recurso mantiene al lector en expectación?', ['El suspense', 'La descripción', 'El diálogo',
+                    'La enumeración'
+                ], 0, 'Escribe un párrafo narrativo con suspense.'
+            ],
+            ['Párrafo narrativo con moraleja', 'Enseñanza final',
+                'El párrafo narrativo puede concluir con una enseñanza o moraleja.',
+                'El niño aprendió que la verdadera riqueza está en la familia.',
+                'moraleja (verdadera riqueza: la familia)',
+                '¿Qué recurso concluye con una enseñanza?', ['La moraleja', 'El suspense', 'La descripción',
+                    'El diálogo'
+                ], 0, 'Escribe un párrafo narrativo con moraleja.'
+            ]
+        ];
+        b9.forEach(d => addLesson('narrativos', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: PÁRRAFOS ARGUMENTATIVOS (86–100)
+        // ============================================================
+        const b10 = [
+            ['Tesis argumentativa', 'Idea principal que se defiende',
+                'La tesis es la idea principal que se defiende en un texto argumentativo.',
+                'La educación es fundamental para el desarrollo de un país.',
+                'tesis (educación fundamental)',
+                '¿Qué es la tesis en un texto argumentativo?', ['La idea principal que se defiende', 'El argumento',
+                    'La conclusión', 'El ejemplo'
+                ], 0, 'Escribe una tesis argumentativa.'
+            ],
+            ['Argumento de autoridad', 'Cita de una fuente fiable',
+                'El argumento de autoridad se basa en citas de fuentes fiables o expertos.',
+                'Como dijo Nelson Mandela, "la educación es el arma más poderosa".',
+                'argumento de autoridad (Mandela)',
+                '¿Qué tipo de argumento se basa en citas de expertos?', ['De autoridad', 'De ejemplificación',
+                    'De causa-efecto', 'De comparación'
+                ], 0, 'Escribe un argumento de autoridad.'
+            ],
+            ['Argumento de ejemplificación', 'Ilustración con ejemplos',
+                'El argumento de ejemplificación se apoya en ejemplos concretos.',
+                'Países como Finlandia invierten mucho en educación y tienen buenos resultados.',
+                'argumento de ejemplificación (Finlandia)',
+                '¿Qué tipo de argumento se apoya en ejemplos?', ['De ejemplificación', 'De autoridad', 'De causa-efecto',
+                    'De comparación'
+                ], 0, 'Escribe un argumento de ejemplificación.'
+            ],
+            ['Argumento de causa-efecto', 'Relación causal',
+                'El argumento de causa-efecto explica las consecuencias de una acción.',
+                'Si se invierte en educación, el país se desarrolla.',
+                'argumento de causa-efecto (inversión → desarrollo)',
+                '¿Qué tipo de argumento explica consecuencias?', ['De causa-efecto', 'De autoridad', 'De ejemplificación',
+                    'De comparación'
+                ], 0, 'Escribe un argumento de causa-efecto.'
+            ],
+            ['Argumento de comparación', 'Semejanzas y diferencias',
+                'El argumento de comparación establece semejanzas y diferencias para apoyar la tesis.',
+                'A diferencia de otros países, Finlandia invierte en educación.',
+                'argumento de comparación (Finlandia vs otros)',
+                '¿Qué tipo de argumento compara dos elementos?', ['De comparación', 'De autoridad', 'De ejemplificación',
+                    'De causa-efecto'
+                ], 0, 'Escribe un argumento de comparación.'
+            ],
+            ['Estructura de párrafo argumentativo', 'Tesis → argumento → conclusión',
+                'Un párrafo argumentativo sigue la estructura: tesis, argumento y conclusión.',
+                'La educación es fundamental. Finlandia invierte en educación. Por lo tanto, es un país desarrollado.',
+                'tesis (educación fundamental) → argumento (Finlandia) → conclusión',
+                '¿Qué estructura sigue un párrafo argumentativo?', ['Tesis → Argumento → Conclusión',
+                    'Conclusión → Argumento → Tesis', 'Argumento → Tesis → Conclusión', 'Tesis → Conclusión → Argumento'
+                ], 0, 'Escribe un párrafo argumentativo con tesis, argumento y conclusión.'
+            ],
+            ['Contraargumentación', 'Refutación de una objeción',
+                'La contraargumentación refuta posibles objeciones a la tesis.',
+                'Algunos dicen que la educación es cara. Sin embargo, es una inversión a largo plazo.',
+                'contraargumentación (educación cara → inversión)',
+                '¿Qué recurso refuta objeciones?', ['La contraargumentación', 'La ejemplificación', 'La comparación',
+                    'La definición'
+                ], 0, 'Escribe una contraargumentación.'
+            ],
+            ['Conclusión argumentativa', 'Cierre que refuerza la tesis',
+                'La conclusión argumentativa refuerza la tesis y cierra el texto.',
+                'En conclusión, la educación es la clave del desarrollo.',
+                'conclusión (educación = clave del desarrollo)',
+                '¿Qué función tiene la conclusión argumentativa?', ['Reforzar la tesis', 'Introducir un nuevo argumento',
+                    'Presentar ejemplos', 'Definir conceptos'
+                ], 0, 'Escribe una conclusión argumentativa.'
+            ],
+            ['Orden de argumentos en un párrafo', 'Argumento principal → argumentos secundarios',
+                'En un párrafo argumentativo, el argumento principal debe ir primero, seguido de los secundarios.',
+                'La educación es fundamental. Además, fomenta la igualdad. Por último, impulsa la economía.',
+                'argumento principal (educación fundamental) → secundarios',
+                '¿Qué orden siguen los argumentos en un párrafo?', ['Principal → Secundarios', 'Secundarios → Principal',
+                    'Alfabético', 'Aleatorio'
+                ], 0, 'Escribe un párrafo con argumento principal y secundarios.'
+            ],
+            ['Revisión general: ordenamiento de frases y párrafos', 'Resumen de técnicas',
+                'El ordenamiento de frases y párrafos requiere coherencia, cohesión y una progresión lógica de las ideas.',
+                'Introducción → Desarrollo → Conclusión. Tema → Rema. Causa → Efecto. Problema → Solución.',
+                'resumen de técnicas de ordenamiento',
+                '¿Qué elementos son clave para el ordenamiento de frases y párrafos?',
+                ['Coherencia, cohesión y progresión lógica', 'Solo coherencia', 'Solo cohesión', 'Solo progresión'],
+                0, 'Escribe un texto breve que muestre un ordenamiento coherente de frases y párrafos.'
+            ]
+        ];
+        b10.forEach(d => addLesson('argumentativos', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Técnica: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Ordenamiento de Frases');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Ordenamiento cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

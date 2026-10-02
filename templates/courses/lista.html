@@ -1,0 +1,77 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Lecciones de Modismos - Puente Digital" %}</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        body { background-color: #f8f9fa; }
+        .leccion-card { transition: transform 0.2s; }
+        .leccion-card:hover { transform: translateY(-5px); }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="#">🎓 {% trans "Puente Digital" %}</a>
+            
+            <form action="{% url 'set_language' %}" method="post" class="d-flex align-items-center">
+                {% csrf_token %}
+                <select name="language" class="form-select form-select-sm" onchange="this.form.submit()">
+                    {% get_current_language as CURRENT_LANG %}
+                    {% get_available_languages as ALL_LANGS %}
+                    {% for code, name in ALL_LANGS %}
+                        <option value="{{ code }}" {% if code == CURRENT_LANG %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </nav>
+
+    <div class="container">
+        <header class="text-center mb-5">
+            <h1 class="display-4 fw-bold">{% trans "Lecciones de Modismos" %}</h1>
+            <p class="lead text-muted">{% trans "Explora la cultura hispana a través de su lenguaje." %}</p>
+        </header>
+
+        <div class="row">
+            {% for leccion in lecciones %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0 leccion-card">
+                        <div class="card-body">
+                            <h3 class="card-title h5">
+                                {{ leccion.titulo }} 
+                                <span class="badge bg-primary float-end">{{ leccion.pais_origen }}</span>
+                            </h3>
+                            <p class="card-text mt-3">
+                                <strong>{% trans "Significado" %}:</strong> {{ leccion.explicacion }}
+                            </p>
+                            <div class="p-3 bg-light rounded italic">
+                                <em>"{{ leccion.ejemplo_uso }}"</em>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center">
+                    <div class="alert alert-info">{% trans "Aún no hay lecciones cargadas." %}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>    
+    
+
+            
+
+

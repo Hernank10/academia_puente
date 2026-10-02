@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Redacción Periodística Hispanoamericana | Cuaderno de 100 técnicas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --noche: #0a0a0c;
+            --espresso: #1c1713;
+            --pergamino: #ece3d5;
+            --pergamino-oscuro: #d4c9b5;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #ddb856;
+            --texto-oscuro: #2c241e;
+        }
+        body {
+            background: var(--noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-oscuro);
+            line-height: 1.55;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><filter id="grano"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grano)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.5;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .lms-app { display: flex; min-height: 100vh; position: relative; }
+        .sidebar-lux {
+            position: fixed;
+            top: 0;
+            left: -360px;
+            width: 360px;
+            height: 100vh;
+            background: #1a1512;
+            backdrop-filter: blur(6px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1100;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.2rem;
+            overflow-y: auto;
+            color: var(--pergamino);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar-lux.open { left: 0; }
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 2px;
+        }
+        .close-sidebar { background: none; border: none; color: var(--oro-pálido); font-size: 1.8rem; cursor: pointer; }
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d2620;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 6px;
+        }
+        .tech-index { list-style: none; }
+        .tech-index li {
+            margin-bottom: 0.7rem;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: 0.2s;
+        }
+        .tech-index li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .tech-index li:hover { border-left-color: var(--oro-antiguo); }
+        .main-lux {
+            flex: 1;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 20% 35%, rgba(160, 130, 80, 0.05) 1.5%, transparent 2%);
+            background-size: 35px 35px;
+        }
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a221d;
+            z-index: 1020;
+        }
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2da8f, var(--oro-antiguo));
+            transition: width 0.3s;
+        }
+        .hero-welcome {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--oro-antiguo);
+            background: rgba(245, 238, 225, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .hero-welcome h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: var(--espresso);
+        }
+        .ornament-line {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 8px;
+            margin: 0.4rem 0;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1120;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .tech-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .tech-primary { flex: 3; min-width: 260px; }
+        .tech-aside {
+            flex: 1;
+            min-width: 230px;
+            background: #f4ede2;
+            padding: 1.5rem;
+            border-left: 3px solid var(--oro-antiguo);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        }
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.6rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .tech-title {
+            font-size: 1.9rem;
+            font-weight: 600;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .numero-gigante {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.1);
+            position: absolute;
+            right: 15px;
+            top: -15px;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'EB Garamond', serif;
+        }
+        .card { position: relative; margin-bottom: 2rem; }
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+        textarea {
+            width: 100%;
+            background: #fffef7;
+            border: 1px solid #cfc3ad;
+            padding: 0.9rem;
+            font-family: 'EB Garamond', serif;
+            margin-top: 0.6rem;
+            border-radius: 8px;
+        }
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: var(--oro-antiguo); color: var(--espresso); }
+        .btn-complete { background: var(--oro-antiguo); color: #1f1a16; border: none; }
+        .btn-show-answer { background: #2c2620; border-color: var(--oro-antiguo); margin-left: 0.5rem; }
+        .progress-unit { background: #cfc2ae; border-radius: 30px; height: 6px; margin: 0.7rem 0; }
+        .respuesta-correcta {
+            background: #e8ddcc;
+            border-left: 3px solid var(--oro-antiguo);
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .respuesta-correcta.visible { display: block; }
+        @media (max-width: 780px) {
+            .tech-layout { flex-direction: column; padding: 1rem; }
+            .hero-welcome h1 { font-size: 2rem; }
+            .sidebar-lux { width: 280px; left: -280px; }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggleBtn">≡</button>
+
+<div class="sidebar-lux" id="luxSidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice Periodístico</span>
+        <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+    </div>
+    <input type="text" id="searchTech" class="search-box" placeholder="🔎 Buscar técnica (lead, noticia, crónica, titular, estilo)...">
+    <ul class="tech-index" id="techIndexList"></ul>
+    <div style="margin-top: 2rem; text-align: center; opacity: 0.5;">⁂ § ⚜</div>
+</div>
+
+<div class="main-lux">
+    <div class="gold-progress"><div class="gold-fill" id="globalGoldFill"></div></div>
+    <div class="hero-welcome">
+        <div class="ornament-line">⁂ § ⚜</div>
+        <h1>Redacción Periodística Hispanoamericana <span style="font-size: 1.2rem;">géneros · estructura · estilo · ética</span></h1>
+        <div class="stats-mini" id="statsPreview">Progreso: 0% · Técnicas completadas: 0/100</div>
+        <div class="ornament-line" style="font-size: 0.9rem;">⎯ el oficio de informar con precisión y responsabilidad ⎯</div>
+    </div>
+    <div id="dynamicTechView" class="tech-layout"></div>
+</div>
+
+<script>
+    // ========== DATOS COMPLETOS DE 100 TÉCNICAS DE REDACCIÓN PERIODÍSTICA ==========
+    const tecnicasPeriodismo = [
+        {id:1, nombre:"La pirámide invertida", teoria:"La pirámide invertida es la estructura clásica de la noticia periodística. Coloca la información más importante al principio (lead) y luego desarrolla los detalles en orden descendente de importancia. Responde a las 5W. Permite al lector obtener lo esencial rápidamente y al editor recortar desde el final sin pérdida de información clave.", ejemplo:"Ejemplo: 'El Congreso aprobó hoy la nueva ley de educación por amplia mayoría. La medida entrará en vigor el próximo mes.'", ejercicio:"Escribe un lead de noticia sobre la inauguración de un hospital aplicando pirámide invertida.", respuesta:"Lead: 'El nuevo hospital San Rafael fue inaugurado ayer en el barrio Las Américas por el alcalde, en un acto con 500 vecinos.' Datos secundarios: 120 camas, inversión $15M, atenderá a 50,000 habitantes."},
+        {id:2, nombre:"Las 5W y 1H", teoria:"Las 5W (What, Who, When, Where, Why) y 1H (How) son las preguntas esenciales que toda noticia debe responder en su lead o primeros párrafos: qué sucedió, quién, cuándo, dónde, por qué y cómo. Garantiza información fundamental de inmediato.", ejemplo:"Ejemplo: 'El presidente López anunció ayer la reducción del 10% en el impuesto a las gasolinas en todo el país, como parte de su plan de alivio económico.'", ejercicio:"Identifica las 6W en: 'Millonarios se coronó campeón anoche en El Campín tras vencer 2-1 a Santa Fe.'", respuesta:"Qué: se coronó campeón. Quién: Millonarios. Cuándo: anoche. Dónde: El Campín. Cómo: venciendo 2-1. Por qué: final de la liga."},
+        {id:3, nombre:"Pirámide normal (cronológica)", teoria:"La pirámide normal ordena los hechos en secuencia temporal, desde el principio hasta el final. Propia de crónicas y reportajes donde el orden temporal es relevante. No prioriza lo más importante al inicio.", ejemplo:"Ejemplo crónica de incendio: 'El fuego comenzó a las 3:00 AM. A las 3:15, llegaron los bomberos. A las 6:00, controlaron las llamas.'", ejercicio:"Convierte a cronológica: 'Dos muertos en accidente anoche. Un camión embistió a un auto detenido.'", respuesta:"'Un auto se detuvo por avería. Minutos después, un camión lo embistió. Dos personas murieron.'"},
+        {id:4, nombre:"Lead directo o resumen", teoria:"El lead directo resume la información esencial (5W) en uno o dos párrafos de 25-30 palabras. Es el más utilizado en periodismo.", ejemplo:"'El Banco Central subió ayer la tasa de interés del 5% al 6% para frenar la inflación, que alcanzó el 8%.'", ejercicio:"Escribe lead directo (30 palabras máx): terremoto 6.5 en Lima, sin víctimas, daños en edificios antiguos, estado de emergencia.", respuesta:"'Un terremoto de magnitud 6.5 sacudió Lima esta madrugada. El presidente declaró estado de emergencia en tres distritos tras daños en edificios antiguos, sin víctimas fatales.'"},
+        {id:5, nombre:"Lead de contraste", teoria:"El lead de contraste enfrenta dos hechos o ideas opuestas para generar interés: expectativa vs realidad, ayer vs hoy.", ejemplo:"'Hace un año prometió construir 100 escuelas; hoy, el gobernador inaugura la número 10.'", ejercicio:"Lead de contraste para: promesa electoral de reducir delincuencia 50% vs resultado real 5%.", respuesta:"'Prometió reducir la delincuencia a la mitad; dos años después, la baja apenas alcanza el 5%. El gobernador enfrenta críticas.'"},
+        {id:6, nombre:"Lead de pregunta", teoria:"El lead de pregunta inicia con una interrogante que atrapa la curiosidad del lector. La pregunta debe ser relevante y se responde en los párrafos siguientes.", ejemplo:"'¿Sabes cuánta agua consumes al día? Un estudio revela que los bogotanos gastan 150 litros diarios.'", ejercicio:"Lead de pregunta para aumento de casos de dengue y campaña de fumigación.", respuesta:"'¿Estamos haciendo lo suficiente contra el dengue? A pesar de la fumigación, los casos aumentaron un 30% en dos semanas.'"},
+        {id:7, nombre:"Lead de cita", teoria:"El lead de cita utiliza una frase textual de una fuente relevante como gancho. La cita se entrecomilla y atribuye inmediatamente.", ejemplo:"'“Nunca imaginé que el agua del grifo podría enfermarme”, declaró María López, vecina de la Comuna 4.'", ejercicio:"Lead de cita para entrevista a atleta que ganó medalla olímpica.", respuesta:"'“Todavía no lo creo, esto es un sueño”, dijo el nadador argentino Juan Pérez tras ganar la medalla de oro.'"},
+        {id:8, nombre:"Lead descriptivo", teoria:"El lead descriptivo pinta una escena o imagen para sumergir al lector en la atmósfera de la noticia. Común en crónicas y reportajes.", ejemplo:"'El humo aún flotaba entre los escombros cuando los bomberos sacaban los cuerpos. La explosión dejó 12 heridos.'", ejercicio:"Lead descriptivo para crónica de protesta frente al Congreso.", respuesta:"'El olor a gas lacrimógeno y el estruendo de los cacerolazos llenaban la Plaza de Bolívar. Miles exigían la renuncia del ministro.'"},
+        {id:9, nombre:"Lead narrativo", teoria:"El lead narrativo cuenta una breve anécdota que ilustra el tema central. Funciona bien para reportajes de interés humano.", ejemplo:"'Cuando María López perdió su empleo en marzo, nunca pensó que terminaría en un comedor comunitario. Hoy es una de las 500 personas que reciben comida en el barrio.'", ejercicio:"Lead narrativo para reportaje sobre migración venezolana.", respuesta:"'Carlos Ruiz empacó una mochila, despidió a su familia y caminó siete días desde Caracas hasta Cúcuta. Hoy, seis meses después, atiende un puesto de arepas en Bogotá.'"},
+        {id:10, nombre:"Lead de suspenso", teoria:"El lead de suspenso retiene información clave para generar intriga. Es común en crónicas policiales o judiciales.", ejemplo:"'Todo empezó con una llamada anónima. Una hora después, cinco allanamientos desarticularon una banda de medicamentos adulterados.'", ejercicio:"Lead de suspenso para hallazgo de tesoro arqueológico en obra.", respuesta:"'Los obreros cavaban los cimientos cuando sus palas chocaron contra algo sólido. No era una roca. Era una vasija con monedas de oro del siglo XVII.'"},
+        {id:11, nombre:"Noticia: definición y características", teoria:"La noticia es el relato objetivo y veraz de un hecho reciente de interés público. Se caracteriza por actualidad, novedad, veracidad, objetividad, claridad, brevedad, interés general y estructura de pirámide invertida.", ejemplo:"'El ministerio de Salud confirmó hoy 120 nuevos casos de COVID-19, lo que eleva el total a 15,000 contagios.'", ejercicio:"Escribe una noticia de 3 párrafos sobre nuevo impuesto a bebidas azucaradas.", respuesta:"'El gobierno anunció un impuesto del 15% a las bebidas azucaradas desde enero. La medida busca reducir el consumo y financiar salud. La industria expresó preocupación por el empleo, pero la OPS respaldó la iniciativa.'"},
+        {id:12, nombre:"Crónica: definición", teoria:"La crónica narra hechos en orden cronológico, con estilo literario y mirada subjetiva. El cronista es testigo y puede opinar. Combina información y entretenimiento.", ejemplo:"'El estadio tembló. Lautaro recibió el balón, amagó y enganchó. Gol. Y con él, la clasificación.'", ejercicio:"Escribe un párrafo de crónica sobre final de torneo local con recursos literarios.", respuesta:"'El sudor mezclado con barro dibujaba mapas en los rostros. El árbitro miró el reloj. Faltaba un minuto. El delantero recibió, se giró como bailarín y fusiló al arquero. El griterío hizo temblar las tribunas.'"},
+        {id:13, nombre:"Entrevista periodística", teoria:"La entrevista es un diálogo con una fuente para obtener información. Tipos: de declaraciones, de personalidad, cuestionario fijo. Estructura: título, presentación, preguntas y respuestas.", ejemplo:"'Juan Pérez, el músico detrás del éxito: “Nunca imaginé que mi acordeón llegaría al Luna Park”.'", ejercicio:"Enumera 5 preguntas para entrevista a artista plástico sobre su primera exposición.", respuesta:"1) ¿Cómo surgió la idea? 2) ¿Qué técnica usaste? 3) ¿Hay algún cuadro especial? 4) ¿Qué mensaje esperas transmitir? 5) ¿Quiénes son tus influencias?"},
+        {id:14, nombre:"Entrevista de personalidad (perfil)", teoria:"El perfil retrata la vida, personalidad e ideas del entrevistado. Se interesa por anécdotas, experiencias, motivaciones. Intercala declaraciones con descripciones del entorno y lenguaje no verbal.", ejemplo:"'Cuenta la leyenda que a María Sánchez le regalaron su primera cámara a los 7 años. Desde entonces, no la ha soltado. Hoy es la fotógrafa más premiada.'", ejercicio:"Primer párrafo de perfil de un científico destacado.", respuesta:"'La taza de café humeaba sobre la mesa repleta de papeles. El doctor Ramírez, de 58 años, lleva puesta la misma bata desde su doctorado. 'El secreto está en la paciencia', dice.'"},
+        {id:15, nombre:"Editorial", teoria:"El editorial es un artículo de opinión no firmado que representa la postura institucional del periódico. Estructura: título, tesis, argumentos, conclusiones. Busca influir en la opinión pública.", ejemplo:"'El gobierno debe priorizar la implementación de los programas de reintegración económica, so pena de que la ilusión de paz se desvanezca.'", ejercicio:"Tesis de editorial sobre aumento de presupuesto educativo.", respuesta:"'Es urgente que el Congreso apruebe un aumento del 15% en el presupuesto educativo; de lo contrario, la brecha entre educación pública y privada se ensanchará.'"},
+        {id:16, nombre:"Columna de opinión", teoria:"La columna de opinión es un artículo firmado que expresa el punto de vista personal del columnista. Estilo propio (irónico, reflexivo, ácido). No representa al periódico.", ejemplo:"'Confieso que cada vez que veo a un político prometer lo que nunca cumplió, recuerdo a mi abuela: 'Más vale pájaro en mano que ciento volando'.'", ejercicio:"Primera oración de columna sobre uso excesivo del celular, tono irónico.", respuesta:"'El otro día vi a una pareja cenar: cada uno miraba su pantalla, y la única conversación fue '¿pedimos postre?' por WhatsApp. El siglo XXI nos prometió robots voladores y nos entregó esclavitud digital.'"},
+        {id:17, nombre:"Crítica periodística", teoria:"La crítica evalúa una obra cultural (cine, teatro, música, libros). Combina información (sinopsis) y juicio argumentado. El crítico debe tener conocimiento del campo.", ejemplo:"'La última película de Almodóvar es un despliegue de colores y emociones. La fotografía es impecable, pero el guion se enreda en subtramas.'", ejercicio:"Introducción de crítica de un concierto.", respuesta:"'El estadio vibró con el regreso de Los Zurdos después de 10 años. Las expectativas eran altas, y la banda no defraudó: tres horas de show impecable.'"},
+        {id:18, nombre:"Reseña periodística", teoria:"La reseña es un texto breve que informa sobre una obra y la evalúa sucintamente. Estructura: datos de la obra, resumen argumental (sin spoilers), juicio, recomendación.", ejemplo:"'Cien años de soledad, de García Márquez (Sudamericana, 1967). Narra la historia de los Buendía. Realismo mágico en estado puro. Imprescindible.'", ejercicio:"Reseña de un libro o película reciente.", respuesta:"'El país de las últimas cosas, de Paul Auster (Anagrama, 1988). Narra la búsqueda de un hermano en una ciudad distópica. La prosa es seca, pero el final abierto puede decepcionar. Recomendable para amantes de la ciencia ficción social.'"},
+        {id:19, nombre:"Crónica roja o de sucesos", teoria:"La crónica roja narra hechos violentos (crímenes, accidentes) con dramatismo pero respeto a las víctimas. Enfatiza detalles sensoriales y testimonios.", ejemplo:"'El cuerpo sin vida de un hombre fue hallado esta mañana en un descampado. Vestía campera azul y presentaba una herida de bala.'", ejercicio:"Párrafo de crónica roja sobre robo a joyería con declaración de testigo.", respuesta:"'El vidrio de la puerta yacía hecho añicos. 'Escuché un estruendo y luego dos encapuchados salieron corriendo', declaró el dueño del local vecino.'"},
+        {id:20, nombre:"Crónica deportiva", teoria:"La crónica deportiva narra el desarrollo de un evento deportivo con pasión, recursos literarios y datos estadísticos. El cronista puede opinar.", ejemplo:"'El partido empezó trabado. River avisó con un remate al travesaño. Boca respondió con una contra letal: Merentiel definió cruzado para el 1-0.'", ejercicio:"Apertura de crónica de un partido de tu equipo favorito con metáfora.", respuesta:"'La lluvia no arruinó la fiesta. El estadio era un hervidero de banderas cuando el árbitro pitó el inicio. El local salió como aplanadora, y a los 15 minutos, el delantero giró como bailarina y fusiló al arquero.'"},
+        {id:21, nombre:"Titular informativo", teoria:"El titular informativo responde a las 5W básicas en estructura activa, concisa, con verbo conjugado. Extensión recomendada: máximo 12 palabras.", ejemplo:"'La NASA descubrió agua en Marte'", ejercicio:"Titular informativo para: investigadores de la UBA desarrollaron vacuna contra el dengue, pruebas en humanos en 2026.", respuesta:"'Científicos argentinos desarrollan vacuna contra el dengue'"},
+        {id:22, nombre:"Antetítulo y subtítulo", teoria:"El antetítulo va encima del título y contextualiza. El subtítulo va debajo y amplía la información, detallando alguna de las 5W.", ejemplo:"Antetítulo: 'Frente a la crisis energética'. Título: 'El gobierno anunció un plan de ahorro eléctrico'. Subtítulo: 'Incluye reducción del alumbrado público y horarios escalonados.'", ejercicio:"Antetítulo, título y subtítulo para clausura de vertedero ilegal.", respuesta:"Antetítulo: 'Tras décadas de reclamos vecinales'. Título: 'Clausuran definitivamente el vertedero El Tunal'. Subtítulo: 'Recibía 500 toneladas diarias de basura; será convertido en parque lineal.'"},
+        {id:23, nombre:"Titular de frase nominal", teoria:"El titular de frase nominal elimina verbos y artículos para lograr mayor impacto. Estructura: sustantivo + adjetivo + complemento.", ejemplo:"'Aprobado el presupuesto 2025'", ejercicio:"Convierte a frase nominal: 'La selección de Colombia ganó el partido contra Brasil por 2 a 1.'", respuesta:"'Histórico triunfo de Colombia ante Brasil: 2 a 1'"},
+        {id:24, nombre:"Titular de pregunta", teoria:"El titular de pregunta plantea una interrogante que el artículo responderá. Es útil para temas de interés público o cuando el dato principal aún es incierto.", ejemplo:"'¿Estamos preparados para el próximo terremoto? Un informe revela que solo el 30% de las escuelas cumplen normas antisísmicas.'", ejercicio:"Titular de pregunta para escasez de agua en tu región.", respuesta:"'¿Hasta cuándo tendremos agua? Expertos advierten que los embalses podrían secarse en tres meses.'"},
+        {id:25, nombre:"Titular de declaración textual", teoria:"El titular de declaración textual entrecomilla una frase dicha por una fuente. La cita debe ser impactante, polémica o reveladora.", ejemplo:"'“La educación pública está en coma”, disparó el gremio docente tras el veto al aumento salarial.'", ejercicio:"Titular de declaración textual para entrevista a científico sobre cambio climático.", respuesta:"'“El calentamiento global es irreversible en este punto”, advirtió el climatólogo Juan Torres.'"},
+        {id:26, nombre:"El párrafo de contexto (segundo párrafo)", teoria:"El segundo párrafo amplía la información del lead, añade datos de respaldo, antecedentes, citas. Incluye el 'cómo' y 'por qué' que no cupieron en el lead.", ejemplo:"Lead: 'El presidente sancionó la ley de educación.' Segundo párrafo: 'La norma, aprobada por el Senado la semana pasada, fue impulsada por el ministerio de Educación.'", ejercicio:"Segundo párrafo para lead: 'Un deslizamiento sepultó tres viviendas, hay 5 desaparecidos.'", respuesta:"'Las intensas lluvias de las últimas 48 horas habrían provocado la remoción. 20 rescatistas trabajaban en el lugar al cierre de esta edición.'"},
+        {id:27, nombre:"El párrafo de antecedentes (background)", teoria:"El párrafo de antecedentes contextualiza la noticia con información de base: hechos previos, causas, estadísticas, contexto histórico.", ejemplo:"'El conflicto docente se extiende desde hace dos semanas. El gobierno ofrece un 10%, mientras los gremios reclaman el 25%. El año pasado, una huelga similar duró 45 días.'", ejercicio:"Párrafo de antecedentes para nuevo brote de dengue.", respuesta:"'El dengue no es nuevo en la región. En 2023 se registraron 5,000 casos y 12 muertes. La campaña de fumigación de enero se suspendió por falta de insumos.'"},
+        {id:28, nombre:"El párrafo de reacción o testimonios", teoria:"Incluye declaraciones, testimonios o reacciones de involucrados, testigos o autoridades. Las citas textuales van entre comillas.", ejemplo:"'“Es un día histórico”, celebró la directora del hospital. Los vecinos, sin embargo, no ocultaron su escepticismo: “Ya nos prometieron antes”, dijo una vecina.'", ejercicio:"Párrafo de reacción para ley de protección animal con declaraciones de legislador y activista.", respuesta:"'“Es un avance para los derechos de los animales”, declaró el diputado. Sin embargo, el activista Pablo Méndez fue crítico: “La ley es insuficiente; no prohíbe las peleas de gallos”.'"},
+        {id:29, nombre:"El párrafo de proyección o prospectiva", teoria:"El párrafo de proyección anticipa consecuencias futuras: plazos, próximos pasos, escenarios posibles. Usa futuro, condicional o expresiones como 'se espera que'.", ejemplo:"'Tras la sanción de la ley, el gobierno tiene 60 días para reglamentarla. Los beneficiarios podrán acceder al subsidio a partir de julio.'", ejercicio:"Párrafo de proyección para detención de líder sindical.", respuesta:"'El líder sindical permanecerá detenido durante la investigación, que podría extenderse seis meses. La fiscalía solicitará prisión preventiva. De ser condenado, enfrentaría una pena de 5 a 10 años.'"},
+        {id:30, nombre:"El párrafo de contraste o balance", teoria:"El párrafo de contraste enfrenta dos visiones, datos o situaciones opuestas para dar equilibrio a la noticia. Incluye puntos de vista de diferentes fuentes.", ejemplo:"'Mientras el gobierno celebra la reducción de la pobreza al 20%, los economistas opositores señalan que la cifra no considera la inflación real.'", ejercicio:"Párrafo de contraste para aumento del salario mínimo (gobierno vs empresarios).", respuesta:"'El gobierno calificó el aumento como 'histórico'. Sin embargo, la cámara de comercio advirtió que las pequeñas empresas no podrán afrontarlo y se verán forzadas a despedir personal.'"},
+        {id:31, nombre:"Uso del estilo directo e indirecto", teoria:"El estilo directo reproduce textualmente las palabras de la fuente entre comillas. El indirecto parafrasea, sin comillas. Se prefiere el directo para declaraciones polémicas o emotivas.", ejemplo:"Directo: '“Jamás cederé”, declaró el gobernador.' Indirecto: 'El gobernador declaró que jamás cedería.'", ejercicio:"Convierte a indirecto: 'El ministro afirmó: 'El ajuste es inevitable para salvar el país'.'", respuesta:"'El ministro afirmó que el ajuste es inevitable para salvar el país.'"},
+        {id:32, nombre:"Oraciones cortas vs largas", teoria:"La redacción periodística prefiere oraciones cortas (20-25 palabras) y párrafos breves (2-3 oraciones), para facilitar la lectura rápida.", ejemplo:"Largo: 'El ministro anunció que el gobierno había decidido postergar la suba del impuesto.' Corto: 'El ministro anunció ayer la postergación de la suba del impuesto.'", ejercicio:"Reescribe en dos oraciones cortas: 'El club Boca Juniors, eliminado la semana pasada, anunció hoy la contratación del DT uruguayo Diego Pérez.'", respuesta:"'El club Boca Juniors anunció hoy la contratación del DT uruguayo Diego Pérez. El técnico reemplaza al DT saliente tras la eliminación.'"},
+        {id:33, nombre:"Nominalización vs verbos activos", teoria:"Se recomienda usar verbos activos en lugar de nominalizaciones: 'el congreso aprobó' (no 'se produjo la aprobación'), 'los bomberos rescataron' (no 'tuvo lugar el rescate').", ejemplo:"Nominalización: 'Se produjo el hallazgo del cuerpo.' Activo: 'Los buzos hallaron el cuerpo.'", ejercicio:"Reescribe evitando nominalizaciones: 'La realización del operativo por parte de la policía tuvo lugar durante la madrugada.'", respuesta:"'La policía realizó el operativo durante la madrugada.'"},
+        {id:34, nombre:"Uso de adjetivos y adverbios", teoria:"Los adjetivos y adverbios deben usarse con moderación en la noticia pura porque introducen subjetividad. Se prefieren hechos, no calificaciones.", ejemplo:"Subjetivo: 'El incompetente funcionario gestionó la crisis pésimamente.' Objetivo: 'El funcionario gestionó la crisis; hubo tres renuncias.'", ejercicio:"Reescribe eliminando adjetivos valorativos: 'El brillante jugador hizo un golazo espectacular.'", respuesta:"'El jugador convirtió un gol.'"},
+        {id:35, nombre:"Uso de cifras y estadísticas", teoria:"Las cifras deben ser precisas y contextualizadas. Se redondean: 'unos 200 mil' en lugar de '198,743', salvo que la precisión sea clave.", ejemplo:"Mal: 'El PIB creció un 0.75% frente al 0.68% del trimestre anterior.' Mejor: 'El PIB creció 0,8%, levemente por debajo de lo proyectado.'", ejercicio:"Reescribe redondeando: 'Fallecieron 23 personas y resultaron heridas 47, de las cuales 12 fueron trasladadas con fracturas múltiples.'", respuesta:"'Fallecieron 23 personas y más de 40 resultaron heridas. Una docena fue trasladada al hospital con fracturas.'"},
+        {id:36, nombre:"Orden de información: de lo general a lo particular", teoria:"Se ordena la información de lo más general a lo más particular (pirámide invertida). Primero el dato principal, luego detalles, antecedentes, reacciones.", ejercicio:"Reordena los datos: a) incendio afectó 50 viviendas, b) comenzó a las 3 AM en fábrica textil, c) vecinos evacuados, d) no hubo víctimas.", respuesta:"1) 'El incendio afectó 50 viviendas.' 2) 'No se reportaron víctimas fatales.' 3) 'El fuego comenzó a las 3 AM en una fábrica textil.' 4) 'Los vecinos fueron evacuados.'"},
+        {id:37, nombre:"Redacción inclusiva en periodismo", teoria:"Se promueve lenguaje no sexista: usar términos genéricos ('la ciudadanía'), desdoblamientos ('los y las'), o formas neutras ('estudiantado').", ejemplo:"No inclusivo: 'Los argentinos votaron.' Inclusivo: 'La ciudadanía argentina votó.'", ejercicio:"Reescribe en lenguaje inclusivo: 'Los médicos del hospital atenderán a los pacientes desde las 8.'", respuesta:"'El equipo médico del hospital atenderá a los pacientes desde las 8.' o 'Las y los médicos atenderán a las y los pacientes.'"},
+        {id:38, nombre:"Uso de siglas y acrónimos", teoria:"Las siglas se escriben completas en la primera mención, seguidas de la abreviatura entre paréntesis: 'Organización de las Naciones Unidas (ONU)'. Luego solo la sigla.", ejercicio:"Escribe primera mención de: OEA, UNESCO, FIFA, PIB.", respuesta:"'Organización de los Estados Americanos (OEA), Organización de las Naciones Unidas para la Educación, la Ciencia y la Cultura (UNESCO), Federación Internacional de Fútbol Asociación (FIFA), Producto Interno Bruto (PIB).'"},
+        {id:39, nombre:"Verbos de atribución", teoria:"Los verbos de atribución introducen declaraciones: 'afirmar', 'declarar', 'señalar' (neutrales), 'asegurar' (confianza), 'advertir' (peligro), 'revelar' (novedad).", ejemplo:"'El ministro afirmó que no hay riesgo.' 'El científico advirtió sobre el cambio climático.'", ejercicio:"Elige verbo adecuado para: a) científico presenta descubrimiento; b) testigo describe accidente.", respuesta:"a) 'El científico reveló que hallaron una nueva especie.' b) 'El testigo relató cómo ocurrió el accidente.'"},
+        {id:40, nombre:"Evitar la voz pasiva", teoria:"Se prefiere la voz activa porque identifica al sujeto que realiza la acción. Ejemplo: 'El ladrón robó el banco' (activo) es mejor que 'El banco fue robado por el ladrón' (pasivo).", ejemplo:"Pasiva: 'El proyecto fue aprobado por el comité.' Activa: 'El comité aprobó el proyecto.'", ejercicio:"Reescribe en voz activa: 'La ley fue sancionada por el presidente la semana pasada.'", respuesta:"'El presidente sancionó la ley la semana pasada.'"},
+        {id:41, nombre:"Manejo de la temporalidad ('ayer', 'hoy')", teoria:"Se recomienda evitar adverbios temporales relativos que envejecen rápido la noticia. Se prefiere el día concreto: 'el jueves pasado', 'el 15 de marzo'.", ejemplo:"En vez de 'Ayer se inauguró el hospital', escribir 'El miércoles 12 de marzo se inauguró el hospital.'", ejercicio:"Reescribe eliminando 'hoy' y 'mañana': 'Hoy, el presidente anunciará el nuevo gabinete. Mañana asumirán los ministros.'", respuesta:"'El presidente anunciará el nuevo gabinete este viernes 20 de mayo. Los ministros asumirán el sábado 21.'"},
+        {id:42, nombre:"Extensión recomendada de titulares", teoria:"En prensa escrita: hasta 12 palabras; en digital: hasta 8 para móviles, hasta 12 para escritorio. En redes sociales: hasta 80 caracteres.", ejercicio:"Acorta a 8 palabras: 'El gobierno nacional anunció ayer un nuevo aumento del 15% en las jubilaciones.'", respuesta:"'Anuncian aumento del 15% en jubilaciones'"},
+        {id:43, nombre:"Titular en redes sociales (engagement)", teoria:"En redes sociales, los titulares buscan interacción: preguntas, imperativos, emojis, curiosidad. Deben ser breves (80 caracteres) y atractivos.", ejercicio:"Titular para Twitter (máx 80 caracteres) sobre lanzamiento de cohete espacial, con emoji.", respuesta:"'🚀 Despegue exitoso: el cohete 'Fénix' partió rumbo a la Estación Espacial.' (75 caracteres)"},
+        {id:44, nombre:"SEO y titulares para web", teoria:"Los titulares web deben ser SEO amigables: incluir palabra clave al inicio, 50-60 caracteres, legibles para humanos y máquinas.", ejercicio:"Optimiza para SEO: 'Ayer el gobierno anunció una nueva ayuda económica. Conocé los requisitos.'", respuesta:"'Ayuda económica 2025: requisitos para solicitarla | Gobierno nacional'"},
+        {id:45, nombre:"Lead de interés humano", teoria:"El lead de interés humano comienza con una anécdota personal para conectar emocionalmente. Luego se amplía al tema general.", ejercicio:"Lead de interés humano para reportaje sobre desempleo juvenil.", respuesta:"'Martín tiene 22 años y envió 150 currículums en seis meses. Solo lo llamaron de dos lugares. Hoy sigue desempleado, como otros 30 jóvenes de su barrio.'"},
+        {id:46, nombre:"Lead de contexto histórico", teoria:"El lead de contexto histórico comienza con una referencia a hechos pasados para explicar la noticia actual.", ejercicio:"Lead de contexto histórico para reapertura de juicio por crimen de 1995.", respuesta:"'Treinta años después del crimen de la modelo Jimena Pérez, la justicia reabrió la causa con nuevas pruebas de ADN. El caso podría tener ahora un desenlace.'"},
+        {id:47, nombre:"Lead de estadística impactante", teoria:"El lead de estadística impactante comienza con un dato numérico sorprendente que resume la noticia.", ejercicio:"Lead estadístico sobre consumo de plásticos de un solo uso.", respuesta:"'Cada minuto, 2.000 botellas de plástico terminan en el océano. Argentina es el segundo país de la región que más residuos plásticos genera.'"},
+        {id:48, nombre:"Lead de declaración textual", teoria:"El lead de declaración textual comienza con una cita textual que condensa la esencia de la noticia.", ejercicio:"Lead de declaración textual para lanzamiento de libro de escritor local.", respuesta:"'“Escribir esta novela fue como exorcizar mis demonios”, confesó el escritor Jorge Pérez durante la presentación de su obra 'El silencio del agua', que ya lleva 5.000 ejemplares vendidos.'"},
+        {id:49, nombre:"Lead de ubicación temporal", teoria:"El lead de ubicación temporal es útil para eventos futuros o recientes. Comienza con la fecha o el plazo.", ejercicio:"Lead temporal para inauguración de feria del libro el próximo fin de semana.", respuesta:"'Este sábado 10 y domingo 11 de junio, el predio ferial recibirá la 25ª edición de la Feria del Libro con más de 200 expositores.'"},
+        {id:50, nombre:"Tipos de fuentes periodísticas", teoria:"Fuentes primarias (directas): protagonistas, testigos, documentos. Secundarias: interpretaciones. Oficiales: gobierno. Oficiosas: filtraciones anónimas. Se priorizan las primarias.", ejercicio:"Clasifica: a) sobreviviente de accidente; b) informe de comisión; c) filtrador anónimo.", respuesta:"a) fuente primaria directa; b) fuente secundaria oficial; c) fuente oficiosa (anónima)."},
+        {id:51, nombre:"Verificación de datos (fact-checking)", teoria:"El fact-checking verifica la veracidad de declaraciones o noticias. Incluye contrastar con fuentes oficiales, documentos, bases de datos, expertos.", ejercicio:"Pasos para verificar afirmación 'el desempleo bajó al 5%'.", respuesta:"1) Buscar dato oficial del INDEC. 2) Comparar con meses anteriores. 3) Consultar a economistas. 4) Verificar si es desempleo abierto o con subempleo. 5) Publicar 'El INDEC reporta 7,2%: la afirmación es falsa.'"},
+        {id:52, nombre:"Ética periodística: on y off the record", teoria:"On the record: fuente acepta ser citada con nombre. Off the record: información no publicable, solo orienta. Background: publicable sin nombrar fuente. Deep background: publicable sin atribución.", ejercicio:"Define on the record, off the record, background, deep background.", respuesta:"On the record: fuente citada con nombre. Off the record: no publicable. Background: publicable sin nombrar fuente. Deep background: publicable sin atribución alguna."},
+        {id:53, nombre:"Derecho a la rectificación", teoria:"El derecho a la rectificación permite a una persona solicitar corrección de información inexacta publicada sobre ella. Los medios deben publicar la rectificación gratuita y destacada.", ejercicio:"Pasos para rectificar error sobre pérdidas millonarias de empresa.", respuesta:"1) Recibir solicitud. 2) Verificar error. 3) Publicar rectificación en el mismo espacio. 4) Explicar error y dar información correcta. 5) Disculparse. 6) Notificar al afectado."},
+        {id:54, nombre:"Protección de fuentes periodísticas", teoria:"La protección de fuentes es un derecho fundamental del periodista para no revelar la identidad de un informante y no ponerlo en riesgo. Esencial para periodismo de investigación.", ejercicio:"Importancia de protección de fuentes para denunciar corrupción.", respuesta:"Permite que denunciantes internos revelen irregularidades sin temor a represalias. Así se destapan casos como Odebrecht."},
+        {id:55, nombre:"Códigos de ética periodística", teoria:"Los códigos de ética incluyen veracidad, independencia, respeto a la privacidad, no discriminación, rectificación, protección de fuentes.", ejercicio:"Enumera cinco principios del código de ética.", respuesta:"1) Veracidad. 2) Independencia. 3) Respeto a la privacidad. 4) Rectificación. 5) No discriminación. 6) Protección de fuentes."},
+        {id:56, nombre:"Diferencia entre periodismo y opinión", teoria:"El periodismo informativo debe ser objetivo (hechos contrastados). La opinión es valorativa y está etiquetada (editorial, columna).", ejercicio:"Clasifica como información u opinión: a) 'El gobierno anunció aumento del 10%.' b) 'El gobierno debería aumentar las jubilaciones.'", respuesta:"a) Información. b) Opinión."},
+        {id:57, nombre:"Sensacionalismo", teoria:"El sensacionalismo exagera o dramatiza la noticia para generar impacto, a costa de la precisión y el respeto. Daña la credibilidad del medio.", ejercicio:"Reescribe titular sensacionalista en informativo: '¡Horror en la ruta! Camión destrozó auto causando matanza.'", respuesta:"'Un camión volcó en la ruta 3: dos muertos y tres heridos tras chocar con un auto.'"},
+        {id:58, nombre:"Periodismo de investigación", teoria:"El periodismo de investigación revela información oculta (corrupción, delitos). Requiere fuentes confidenciales, cruce de datos, documentación.", ejercicio:"Etapas de investigación sobre posible desvío de fondos en municipalidad.", respuesta:"1) Hipótesis. 2) Búsqueda de fuentes. 3) Solicitud de documentos. 4) Cruce de datos. 5) Verificación con peritos. 6) Entrevistas. 7) Publicación. 8) Seguimiento."},
+        {id:59, nombre:"Periodismo de datos", teoria:"El periodismo de datos utiliza grandes volúmenes de información (bases de datos) para descubrir patrones y noticias. Usa herramientas de análisis y visualización.", ejercicio:"¿Qué noticias puede revelar el análisis de datos de evasión tributaria?", respuesta:"Empresas que declaran pérdidas pero tienen alta facturación; patrones de facturación falsa; sectores con mayor evasión; diferencias entre lo declarado y lo registrado."},
+        {id:60, nombre:"Periodismo digital: características", teoria:"Características: inmediatez, hipertextualidad (enlaces), multimedialidad, interactividad (comentarios), personalización, memoria (archivo).", ejercicio:"Enumera tres diferencias entre prensa escrita y digital.", respuesta:"1) Inmediatez: digital al instante; papel periódico. 2) Espacio: digital ilimitado; papel limitado. 3) Interactividad: digital permite comentarios; papel unidireccional."},
+        {id:61, nombre:"Escritura para web y móviles", teoria:"La escritura web debe ser escaneable: párrafos cortos, subtítulos, listas, negritas. Información principal arriba (pirámide invertida). Enlaces descriptivos.", ejercicio:"Reescribe para web con subtítulos y listas: 'El nuevo impuesto afectará a empresas que facturen más de $10M o tengan más de 50 empleados. Excepto tecnológicas y cooperativas.'", respuesta:"'**¿A quiénes afecta?** - Facturación > $10M. - Más de 50 empleados. **Excepciones:** tecnológicas y cooperativas.'"},
+        {id:62, nombre:"Redes sociales como canal periodístico", teoria:"Cada red tiene lenguaje propio: Twitter (breve, hashtags, hilos), Instagram (visual, stories), TikTok (videos cortos). Se verifica información antes de compartir.", ejercicio:"Estrategia para cubrir manifestación en vivo con redes.", respuesta:"1) Twitter: hilo con fotos y videos, hashtag. 2) Instagram: stories con actualizaciones. 3) Facebook: live en momentos clave. 4) TikTok: resumen de 30 segundos."},
+        {id:63, nombre:"Periodismo de soluciones", teoria:"El periodismo de soluciones investiga y difunde respuestas efectivas a problemas. Busca 'qué funciona' en lugar de solo 'qué anda mal'.", ejercicio:"Tema para reportaje de periodismo de soluciones sobre educación rural.", respuesta:"'Cómo una escuela rural en Jujuy redujo la deserción escolar del 40% al 5% gracias a conectividad y huerta orgánica.'"},
+        {id:64, nombre:"Clickbait", teoria:"Clickbait son titulares engañosos que buscan clics ocultando información o generando falsa expectativa. Daña la credibilidad.", ejercicio:"Reescribe clickbait en honesto: 'El increíble truco que usan los millonarios para pagar menos impuestos (y que el fisco no quiere que sepas).'", respuesta:"'Los fideicomisos offshore: cómo algunas empresas reducen su carga tributaria.'"},
+        {id:65, nombre:"Posverdad y fake news", teoria:"La posverdad es la distorsión deliberada donde los hechos importan menos que las emociones. Fake news son noticias falsas difundidas como verdaderas. El periodismo combate con fact-checking.", ejercicio:"Qué hacer si una noticia falsa sobre tu medio se vuelve viral.", respuesta:"1) Desmentir inmediatamente. 2) Verificar origen. 3) Denunciar a la plataforma. 4) Educar a la audiencia. 5) Publicar versión correcta con evidencia."},
+        {id:66, nombre:"Breaking news y actualización", teoria:"En breaking news, se publica primero un mínimo de información confirmada (lead 5W), luego se actualiza constantemente. Cada actualización se marca con la hora.", ejercicio:"Primera actualización (15 min después) de incendio en edificio sin especular víctimas.", respuesta:"'[Actualización 15:30] Los bomberos trabajan en el incendio en la calle Corrientes 2000. No se reportan heridos hasta el momento. Más información en breve.'"},
+        {id:67, nombre:"Newsletter por correo electrónico", teoria:"El newsletter es un resumen periódico de noticias enviado por correo a suscriptores. Debe tener asunto atractivo, estructura clara, llamado a la acción.", ejercicio:"Asunto y primer párrafo de newsletter matutino con tres noticias.", respuesta:"Asunto: '💡 Tu resumen del lunes: acuerdo salarial, lluvias, y Boca en la final'. Párrafo: 'Buenos días. El gobierno llegó a un acuerdo y aumentará el salario mínimo un 12%. Además, las lluvias no dan tregua en el sur. Y Boca se clasificó a la final.'"},
+        {id:68, nombre:"Podcast periodístico", teoria:"El podcast periodístico es un formato de audio que permite contar historias en profundidad. Requiere guion, locución clara, edición cuidadosa.", ejercicio:"Estructura de podcast de 15 minutos sobre escándalo político local.", respuesta:"1) Intro (30 seg). 2) Lead (1 min). 3) Contexto (2 min). 4) Entrevista (5 min). 5) Datos y documentos (3 min). 6) Reacciones (2 min). 7) Cierre (1 min). 8) Outro."},
+        {id:69, nombre:"Visualización de datos en periodismo", teoria:"Las visualizaciones (gráficos, mapas, líneas de tiempo) ayudan a entender información compleja. Deben ser claras, con fuentes, escalas adecuadas.", ejercicio:"¿Qué visualización usarías para comparar población de tres ciudades?", respuesta:"Un gráfico de barras o de columnas. También un mapa con círculos proporcionales a la población (burbujas)."},
+        {id:70, nombre:"Periodismo de proximidad (local)", teoria:"El periodismo de proximidad se enfoca en noticias locales (barriales, municipales) con enfoque cercano a la audiencia. Construye confianza y lealtad.", ejercicio:"Lead de noticia local sobre instalación de luminaria LED en plaza del barrio.", respuesta:"'El barrio Las Flores estrenó anoche nueva iluminación LED en la plaza principal. Los vecinos destacaron la mejora en seguridad, tras años de reclamos. La obra demandó $5 millones.'"},
+        {id:71, nombre:"Periodismo de servicio público", teoria:"Informa sobre temas que afectan la vida cotidiana y ayuda a tomar decisiones: trámites, salud, educación, derechos del consumidor. Es práctico y útil.", ejercicio:"Titular y primer párrafo de nota de servicio público sobre cómo solicitar pasaporte.", respuesta:"Titular: 'Pasaporte argentino 2025: requisitos, turnos y costos'. Párrafo: '¿Necesitas sacar tu pasaporte? Te explicamos paso a paso requisitos, dónde pedir turno, cuánto cuesta y plazos de entrega, según información oficial.'"},
+        {id:72, nombre:"Edición de textos periodísticos", teoria:"La edición revisa ortografía, gramática, estilo, claridad, exactitud, extensión, adecuación al género, verificación de datos. El editor corta redundancias y corrige errores.", ejercicio:"Corrige como editor: 'El gobernador, junto a su comitiva, viajaron a Catamarca para inaugurarán el hospital.'", respuesta:"'El gobernador, junto a su comitiva, viajó a Catamarca para inaugurar el hospital.'"},
+        {id:73, nombre:"Libro de estilo", teoria:"El libro de estilo es un manual interno del medio que unifica criterios: grafías, uso de mayúsculas, siglas, extranjerismos, fechas, tratamiento de cargos.", ejercicio:"Según tu libro de estilo imaginario, ¿cómo se escribe 'ONU' y 'presidente'?", respuesta:"'ONU' en mayúsculas sin puntos; 'presidente' en minúscula cuando no es tratamiento honorífico ('el presidente', pero 'el Presidente Alberto Fernández' con mayúscula según el manual)."},
+        {id:74, nombre:"Corrección de estilo (copyediting)", teoria:"El copyediting mejora claridad, elimina repeticiones, adecua registro al género, verifica lógica, ajusta extensión. No altera el sentido.", ejercicio:"Reescribe para mayor claridad: 'El mismo, después de ser detenido, dijo que no, que él no había estado allí.'", respuesta:"'Tras ser detenido, el acusado negó haber estado en el lugar.'"},
+        {id:75, nombre:"Normas de puntuación en periodismo", teoria:"Se prioriza claridad y economía: comas para enumeraciones, punto y coma para oraciones relacionadas, dos puntos para citas, puntos seguidos para separar ideas.", ejercicio:"Puntúa: 'El ministro afirmó que la economía creció un 3% en el primer trimestre y que la inflación se desaceleró al 2% y que las exportaciones aumentaron un 10%.'", respuesta:"'El ministro afirmó que la economía creció un 3% en el primer trimestre, que la inflación se desaceleró al 2% y que las exportaciones aumentaron un 10%.'"},
+        {id:76, nombre:"Uso de mayúsculas en cargos", teoria:"Se escriben con mayúscula los cargos de alta jerarquía (Presidente, Papa) cuando refieren a una persona específica con tratamiento honorífico. En genérico, minúscula.", ejercicio:"Corrige: 'El Papa Francisco visitará Argentina. El Papa es muy querido.'", respuesta:"'El papa Francisco visitará Argentina. El Papa es muy querido.' (según algunas normas, 'el Papa' siempre mayúscula para Sumo Pontífice)."},
+        {id:77, nombre:"Uso de extranjerismos y comillas", teoria:"Los extranjerismos no adaptados se escriben en cursiva o entre comillas: 'software', 'marketing'. Adaptados, sin resalte: 'fútbol', 'champú'.", ejercicio:"Reescribe reemplazando extranjerismos: 'El 'marketing' digital es clave para el 'business'.'", respuesta:"'El mercadeo digital es clave para los negocios.'"},
+        {id:78, nombre:"Normas de numeración y cifras", teoria:"Números del 0 al 10 con letra, superiores en cifras. Cifras grandes redondeadas (2 millones). Porcentajes en cifras más símbolo (5%).", ejercicio:"Reescribe: 'Había 9 autos y doce motos. El 50% de los vehículos eran de alta gama.'", respuesta:"'Había nueve autos y 12 motos. El 50% de los vehículos eran de alta gama.'"},
+        {id:79, nombre:"Uso de fechas y horas", teoria:"Fechas: día + mes + año (12 de enero de 2025). Horas: 10:00 AM o 10.00 según estilo. Se evitan años recortados.", ejercicio:"Convierte al formato español: 'On January 15th, 2025, at 2:30 PM.'", respuesta:"'El 15 de enero de 2025, a las 14:30 (o a las 2:30 PM).'"},
+        {id:80, nombre:"Corrección de errores comunes (dequeísmo)", teoria:"Dequeísmo: uso erróneo de 'de' antes de 'que' cuando no corresponde: 'Pienso de que vendrá' (error). Queísmo: omisión de 'de' necesaria.", ejercicio:"Corrige: 'El ministro aseguró de que no habrá aumentos.'", respuesta:"'El ministro aseguró que no habrá aumentos.'"},
+        {id:81, nombre:"Corrección de errores comunes (leísmo, laísmo)", teoria:"Leísmo: usar 'le' como CD. Laísmo: usar 'la' como CI (incorrecto: 'la dije'). Loísmo: usar 'lo' como CI (incorrecto).", ejercicio:"Corrige: 'La dije que viniera a mi oficina.'", respuesta:"'Le dije que viniera a mi oficina.'"},
+        {id:82, nombre:"Corrección de errores comunes (concordancia)", teoria:"Concordancia: 'Habían muchos problemas' (incorrecto: 'había muchos problemas'). 'Se alquila habitaciones' (incorrecto: 'se alquilan habitaciones').", ejercicio:"Corrige: 'Se vende departamentos en el centro.'", respuesta:"'Se venden departamentos en el centro.'"},
+        {id:83, nombre:"Corrección de errores comunes (muletillas)", teoria:"Evitar 'en relación a' (usar 'sobre'), 'a nivel de' (usar 'en'), 'en base a' (usar 'basado en').", ejercicio:"Reescribe: 'El proyecto fue aprobado en base a los informes técnicos.'", respuesta:"'El proyecto fue aprobado basado en los informes técnicos.' o 'según los informes técnicos.'"},
+        {id:84, nombre:"Corrección de errores comunes (cacofonías)", teoria:"Cacofonías son repeticiones de sonidos que suenan mal: 'el ágil águila ávida'. Se evitan reordenando o cambiando sinónimos.", ejercicio:"Corrige: 'El nuevo alumno no usaba los útiles usuales.'", respuesta:"'El nuevo estudiante no usaba los útiles habituales.'"},
+        {id:85, nombre:"Revisión final antes de publicar", teoria:"Checklist: ¿el título es claro? ¿el lead responde 5W? ¿fuentes verificadas? ¿ortografía? ¿extensión adecuada? ¿enlaces funcionan?", ejercicio:"Enumera cinco pasos de tu rutina de revisión.", respuesta:"1) Leer en voz alta. 2) Verificar nombres, fechas, cifras. 3) Confirmar atribución de citas. 4) Revisar ortografía. 5) Probar enlaces y visualización móvil."},
+        {id:86, nombre:"Actualización y fe de erratas", teoria:"La fe de erratas corrige errores graves (fechas, cifras, nombres, información falsa). Se publica en el mismo lugar (digital) o edición siguiente (papel).", ejercicio:"Redacta fe de erratas por publicar 10 víctimas en lugar de 5.", respuesta:"'**Fe de erratas**: En la nota 'Tragedia en la ruta' publicada ayer, informamos por error que el accidente dejó 10 víctimas. La cifra correcta es 5. Lamentamos el error y ofrecemos disculpas.'"},
+        {id:87, nombre:"Entrevista por WhatsApp", teoria:"El WhatsApp se usa para reporteo rápido: preguntas por audio o texto, verificación de datos, obtención de declaraciones breves. Se debe pedir permiso para publicar audios.", ejercicio:"¿Qué precauciones tomar al entrevistar por WhatsApp?", respuesta:"Verificar identidad del entrevistado, pedir confirmación de datos, obtener autorización para publicar respuestas, guardar capturas de pantalla como registro, no presionar por respuestas inmediatas."},
+        {id:88, nombre:"Liveblogging o cobertura en vivo", teoria:"Liveblogging es la cobertura minuto a minuto de un evento en una página web actualizable. Combina texto breve, fotos, videos, declaraciones. El periodista publica actualizaciones cortas y frecuentes.", ejercicio:"¿Qué información publicarías en un liveblog de un juicio de alto perfil?", respuesta:"Apertura del juicio, declaraciones de testigos, reacciones del acusado, alegatos finales, suspensión o receso, veredicto y sentencia. Incluir citas textuales y fotos de los protagonistas (sin mostrar jurado)."},
+        {id:89, nombre:"Storytelling periodístico", teoria:"El storytelling aplica técnicas narrativas (personajes, conflicto, clímax) a la no ficción. Busca enganchar al lector emocionalmente sin perder rigor. Es común en reportajes y crónicas.", ejercicio:"Escribe la primera línea de un reportaje con storytelling sobre un bombero voluntario.", respuesta:"'El casco le pesaba más que el humo. Juan Pérez saltó del camión sin pensarlo. Adentro, una niña gritaba. Treinta segundos después, el techo se derrumbó.'"},
+        {id:90, nombre:"Uso de hashtags en periodismo", teoria:"Los hashtags agrupan conversaciones en redes. En periodismo, se usan para dar seguimiento a temas (#Elecciones2025, #CasoOdebrecht). Deben ser cortos, relevantes, sin espacios ni caracteres especiales.", ejercicio:"Propón tres hashtags para cubrir un juicio por corrupción.", respuesta:"#CasoCorrupción, #JuicioDelSiglo, #ImpunidadNo, #Justicia."},
+        {id:91, nombre:"Verificación de imágenes virales", teoria:"Las imágenes virales a menudo son falsas o fuera de contexto. Métodos de verificación: búsqueda inversa en Google Imágenes, análisis de metadatos (EXIF), comparación con imágenes de archivo.", ejercicio:"¿Qué pasos seguirías para verificar una foto de supuesto extraterrestre?", respuesta:"1) Búsqueda inversa en Google Imágenes. 2) Analizar metadatos (si disponibles). 3) Buscar si apareció en otros sitios con fecha anterior. 4) Consultar a expertos en fotografía digital. 5) Verificar la fuente original. 6) Si no se confirma, no publicar."},
+        {id:92, nombre:"Periodismo de frontera y migración", teoria:"El periodismo de frontera cubre temas migratorios con sensibilidad y rigor. Evita estereotipos y criminalización. Fuentes: migrantes, activistas, funcionarios, defensores de derechos humanos.", ejercicio:"¿Qué cuidados éticos debe tener una nota sobre migrantes en situación irregular?", respuesta:"No mostrar rostros sin consentimiento, no estigmatizar, verificar versiones, evitar términos como 'ilegal', contextualizar causas estructurales (pobreza, violencia), proteger fuentes vulnerables."},
+        {id:93, nombre:"Derechos de autor en periodismo", teoria:"El periodista debe respetar derechos de autor: no copiar textos enteros sin permiso, citar fuentes, usar imágenes con licencia (Creative Commons, banco de imágenes) o propias, solicitar autorización para reproducir contenido ajeno.", ejercicio:"¿Qué hacer si quieres reproducir una foto de agencia de noticias?", respuesta:"Contactar a la agencia, solicitar licencia, pagar derechos si corresponde, y dar crédito explícito al autor y a la agencia. No usar sin permiso."},
+        {id:94, nombre:"Accesibilidad en periodismo digital", teoria:"El periodismo accesible considera a personas con discapacidad: texto alternativo (alt) en imágenes, transcripción de videos (subtítulos), lenguaje claro, contraste de colores, navegación por teclado.", ejercicio:"¿Qué ajustes harías en un sitio web para personas con baja visión?", respuesta:"Aumentar contraste de colores, permitir zoom hasta 200%, usar fuentes legibles (sans serif), evitar texto sobre imágenes, implementar lector de pantalla (screen reader), ofrecer versión de alto contraste."},
+        {id:95, nombre:"Periodismo en zonas de conflicto", teoria:"El periodismo en zonas de conflicto requiere medidas de seguridad: usar chaleco antibalas, coordinar con fuentes locales, no arriesgar la vida por una nota, verificar información cruzada, proteger fuentes, respetar el dolor de víctimas.", ejercicio:"¿Qué equipo básico de seguridad debe llevar un periodista en una zona de conflicto?", respuesta:"Chaleco antibalas, casco, botiquín de primeros auxilios, teléfono satelital, baterías extra, agua potable, alimentos no perecederos, documentación de prensa, mapa de la zona, dispositivo GPS."},
+        {id:96, nombre:"Periodismo económico y finanzas", teoria:"El periodismo económico requiere claridad para explicar conceptos complejos (inflación, PIB, tasas). Evita tecnicismos innecesarios, usa ejemplos cotidianos, explica impacto en la vida del lector.", ejercicio:"Explica qué es la inflación en un párrafo de periodismo económico para público general.", respuesta:"'La inflación es el aumento generalizado de los precios. Significa que con tu mismo dinero compras menos cosas. Por ejemplo, si el año pasado una docena de huevos costaba $100 y hoy cuesta $120, los precios subieron un 20%.'"},
+        {id:97, nombre:"Periodismo político: cobertura electoral", teoria:"La cobertura electoral debe ser equilibrada (dar espacio equitativo a candidatos), veraz (contrastar promesas con datos), y evitar el sensacionalismo. Se publican encuestas (con metodología clara), debates, y análisis de propuestas.", ejercicio:"¿Qué información debe incluir una encuesta electoral publicada en un diario?", respuesta:"Fecha de realización, tamaño de muestra, margen de error, metodología (telefónica, presencial, online), organismo que la realizó, preguntas exactas, y porcentaje de indecisos. No publicar encuestas sin estos datos."},
+        {id:98, nombre:"Periodismo cultural y de espectáculos", teoria:"El periodismo cultural cubre arte, música, literatura, cine, teatro. Debe equilibrar entre el gusto popular y la crítica fundamentada. Se evita el chisme gratuito y se prioriza el análisis.", ejercicio:"Escribe un párrafo de crítica sobre una exposición de arte sin tecnicismos excesivos.", respuesta:"'La muestra 'Colores del Sur' del artista Juan Pérez es una explosión de tonos cálidos que evocan el atardecer en el desierto. Sus pinceladas gruesas parecen capturar el viento. Sin embargo, las figuras humanas resultan borrosas, casi fantasmales, lo que puede desconcertar a quien busca realismo.'"},
+        {id:99, nombre:"Periodismo científico y de salud", teoria:"El periodismo científico traduce el lenguaje técnico a términos comprensibles sin perder precisión. Verifica fuentes, contrasta con expertos, evita sensacionalismo ('cura milagrosa'), y explica incertidumbres.", ejercicio:"Titular y lead de una nota sobre un estudio que vincula café con menor riesgo de Alzheimer.", respuesta:"Titular: 'Tomar café diario podría reducir el riesgo de Alzheimer'. Lead: 'Un estudio de la Universidad de Barcelona, que siguió a 2.000 personas durante 10 años, sugiere que tres tazas de café al día se asocian con un 30% menos de probabilidad de desarrollar Alzheimer. Los autores advierten que aún se necesitan más investigaciones.'"},
+        {id:100, nombre:"Ética en redes sociales del periodista", teoria:"El periodista en redes sociales debe diferenciar su opinión personal de la línea del medio, verificar antes de compartir, evitar insultos, no revelar fuentes confidenciales, y respetar la privacidad de las víctimas.", ejercicio:"¿Qué harías si una fuente te pide mantener una conversación por mensaje privado de Twitter?", respuesta:"Aceptar con precaución. Verificar la identidad de la fuente. Guardar capturas de pantalla. Si la información es sensible, proponer una comunicación más segura (correo encriptado o teléfono). No publicar la conversación sin consentimiento explícito."}
+    ];
+
+    let tecnicas = tecnicasPeriodismo.map(t => ({ ...t, completada: false, respuestaUsuario: "" }));
+    let currentTechIdx = 0;
+
+    // localStorage functions
+    function guardarProgreso() {
+        let data = tecnicas.map(t => ({ completada: t.completada, respuestaUsuario: t.respuestaUsuario || "" }));
+        localStorage.setItem("periodismo_progreso", JSON.stringify(data));
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function cargarProgreso() {
+        let saved = localStorage.getItem("periodismo_progreso");
+        if (saved) {
+            let data = JSON.parse(saved);
+            for (let i = 0; i < tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuestaUsuario = data[i].respuestaUsuario || "";
+                }
+            }
+        }
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function actualizarEstadisticas() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = Math.round((completadas / 100) * 100);
+        const statsDiv = document.getElementById("statsPreview");
+        if (statsDiv) statsDiv.innerHTML = `Progreso: ${porcentaje}% · Técnicas completadas: ${completadas}/100 · ⚜ periodismo`;
+        const goldFill = document.getElementById("globalGoldFill");
+        if (goldFill) goldFill.style.width = porcentaje + "%";
+    }
+
+    function actualizarBarraOro() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let pct = (completadas / 100) * 100;
+        document.getElementById("globalGoldFill").style.width = pct + "%";
+    }
+
+    function renderIndiceLateral() {
+        const busqueda = document.getElementById("searchTech")?.value.toLowerCase() || "";
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda) || (t.teoria && t.teoria.toLowerCase().includes(busqueda)));
+        const listaUl = document.getElementById("techIndexList");
+        if (!listaUl) return;
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.innerHTML = `${tech.nombre.substring(0, 52)}${tech.nombre.length > 52 ? "…" : ""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentTechIdx = tech.id - 1;
+                renderVistaTecnica();
+                if (window.innerWidth <= 800) document.getElementById("luxSidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+
+    function renderVistaTecnica() {
+        const t = tecnicas[currentTechIdx];
+        const container = document.getElementById("dynamicTechView");
+        if (!container) return;
+        const letraInicial = t.nombre.charAt(0);
+        container.innerHTML = `
+            <div class="tech-primary">
+                <div class="numero-gigante">${t.id}</div>
+                <div class="tech-title"><span class="capitular">${letraInicial}</span>${t.nombre.substring(1)}</div>
+                <div class="card"><h3>📜 Teoría periodística</h3><p>${t.teoria}</p></div>
+                <div class="card"><h3>❧ Ejemplo práctico</h3><p>${t.ejemplo}</p></div>
+                <div class="card"><h3>✍️ Ejercicio de redacción</h3><p>${t.ejercicio}</p>
+                    <textarea id="respuestaTextAreaLux" rows="4" placeholder="Escribe aquí tu respuesta...">${t.respuestaUsuario || ""}</textarea>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-nav btn-show-answer" id="btnMostrarRespuesta">📖 Ver respuesta correcta</button>
+                    </div>
+                    <div id="respuestaCorrectaPanel" class="respuesta-correcta">
+                        <strong>✓ Respuesta modelo:</strong><br>${t.respuesta}
+                    </div>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="btnAnterior">← anterior</button>
+                    <button class="btn-nav btn-complete" id="btnCompletar">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="btnSiguiente">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-aside">
+                <div><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(tc=>tc.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:30px;"></div></div>
+                <p>${tecnicas.filter(tc=>tc.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color:#cfc3ad;">
+                <p><strong>📖 Técnica actual</strong><br>${t.nombre.split(':')[0]}</p>
+                <p><strong>🎨 Enfoque</strong><br>Géneros · Estructura · Estilo · Ética</p>
+                <div class="ornament-line" style="font-size:1.2rem;">⁂ § ⚜</div>
+                <p style="margin-top:1rem; font-size:0.8rem;">“El periodismo es el primer borrador de la historia” — Philip Graham</p>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextAreaLux");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentTechIdx].respuestaUsuario = e.target.value;
+                guardarProgreso();
+            });
+        }
+        const btnRespuesta = document.getElementById("btnMostrarRespuesta");
+        const panelRespuesta = document.getElementById("respuestaCorrectaPanel");
+        if (btnRespuesta && panelRespuesta) {
+            btnRespuesta.addEventListener("click", () => {
+                panelRespuesta.classList.toggle("visible");
+            });
+        }
+        document.getElementById("btnAnterior")?.addEventListener("click", () => {
+            if (currentTechIdx > 0) { currentTechIdx--; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnSiguiente")?.addEventListener("click", () => {
+            if (currentTechIdx < 99) { currentTechIdx++; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnCompletar")?.addEventListener("click", () => {
+            tecnicas[currentTechIdx].completada = !tecnicas[currentTechIdx].completada;
+            guardarProgreso();
+            renderVistaTecnica();
+            renderIndiceLateral();
+        });
+    }
+
+    const menuBtn = document.getElementById("menuToggleBtn");
+    const sidebar = document.getElementById("luxSidebar");
+    const closeBtn = document.getElementById("closeSidebarBtn");
+    menuBtn?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeBtn?.addEventListener("click", () => sidebar.classList.remove("open"));
+    const searchInput = document.getElementById("searchTech");
+    searchInput?.addEventListener("input", () => renderIndiceLateral());
+
+    function inicializar() {
+        cargarProgreso();
+        renderVistaTecnica();
+        window.addEventListener("beforeunload", () => guardarProgreso());
+    }
+    inicializar();
+</script>
+</body>
+</html>

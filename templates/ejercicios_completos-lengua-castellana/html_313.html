@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Flota Aphorism · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .aforismo-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .aforismo-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📜 FLOTA APHORISM<small>100 TÉCNICAS · AFORISMOS</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="esencia" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Esencia <span class="badge-personaje bg-dorado">Brevedad</span></a>
+        <a class="nav-link" data-section="lenguaje" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Lenguaje <span class="badge-personaje bg-azul">Estilo</span></a>
+        <a class="nav-link" data-section="pensamiento" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Pensamiento <span class="badge-personaje bg-verde">Filosofía</span></a>
+        <a class="nav-link" data-section="humor" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Humor <span class="badge-personaje bg-purpura">Ironía</span></a>
+        <a class="nav-link" data-section="vida" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Vida <span class="badge-personaje bg-rojo">Sabiduría</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📜</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Aforismos universales</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> El aforismo universal</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área del aforismo:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Esencia</strong> – La brevedad: concisión, precisión, síntesis, impacto.</li>
+                    <li><strong style="color:var(--neon-azul);">Lenguaje</strong> – El estilo: ritmo, imagen, metáfora, ironía, paradoja.</li>
+                    <li><strong style="color:var(--neon-verde);">Pensamiento</strong> – La filosofía: verdad, conocimiento, existencia, sentido.</li>
+                    <li><strong style="color:var(--neon-purpura);">Humor</strong> – La ironía: ingenio, sarcasmo, sorpresa, agudeza.</li>
+                    <li><strong style="color:var(--neon-rojo);">Vida</strong> – La sabiduría: experiencia, amor, muerte, tiempo, felicidad.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-esencia" class="section-content" style="display:none;"></div>
+        <div id="section-lenguaje" class="section-content" style="display:none;"></div>
+        <div id="section-pensamiento" class="section-content" style="display:none;"></div>
+        <div id="section-humor" class="section-content" style="display:none;"></div>
+        <div id="section-vida" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    esencia: {
+        nombre: "Esencia", color: "dorado", icono: "bi-robot",
+        especialidad: "La brevedad: concisión, precisión, síntesis, impacto",
+        tecnicas: [
+            { titulo: "La máxima", teoria: "La máxima es una verdad general expresada de forma breve y sentenciosa, que contiene una enseñanza moral.", aforismo: "La máxima", ejemplo: "Séneca: 'La vida es breve, el arte es largo.'", ejercicio: "Escribe una máxima sobre la vida.", reto: "Crea una serie de 5 máximas." },
+            { titulo: "El proverbio", teoria: "El proverbio es un refrán o dicho popular que contiene una enseñanza práctica sobre la vida.", aforismo: "El proverbio", ejemplo: "Refrán: 'Más vale pájaro en mano que ciento volando.'", ejercicio: "Escribe un proverbio sobre la prudencia.", reto: "Crea una colección de 10 proverbios." },
+            { titulo: "El adagio", teoria: "El adagio es un dicho breve que contiene una verdad aceptada por la tradición, a menudo de origen latino.", aforismo: "El adagio", ejemplo: "'Errare humanum est' (Errar es humano).", ejercicio: "Escribe un adagio sobre la verdad.", reto: "Traduce un adagio latino al español." },
+            { titulo: "La sentencia", teoria: "La sentencia es una afirmación breve que encierra una verdad general, a menudo de carácter moral o filosófico.", aforismo: "La sentencia", ejemplo: "Epicuro: 'La muerte no es nada para nosotros.'", ejercicio: "Escribe una sentencia sobre la felicidad.", reto: "Crea un aforismo que sea una sentencia." },
+            { titulo: "El epigrama", teoria: "El epigrama es un poema breve, a menudo satírico o ingenioso, que termina con una frase aguda.", aforismo: "El epigrama", ejemplo: "Marcial: 'Te he leído un libro, Publio, y me has gustado... porque me lo has regalado.'", ejercicio: "Escribe un epigrama sobre la lectura.", reto: "Crea un epigrama satírico." },
+            { titulo: "La concisión", teoria: "La concisión es la cualidad de decir mucho con pocas palabras. Es la esencia del aforismo.", aforismo: "La concisión", ejemplo: "Pascal: 'La elocuencia es el arte de decir las cosas de tal manera que se entiendan.'", ejercicio: "Reescribe una frase larga en una breve.", reto: "Crea un aforismo de una sola línea." },
+            { titulo: "La precisión", teoria: "La precisión es la exactitud y claridad en la expresión. Cada palabra debe tener un peso específico.", aforismo: "La precisión", ejemplo: "Kafka: 'El camino de la verdad es un camino de la atención.'", ejercicio: "Elige una palabra y escribe un aforismo sobre ella.", reto: "Crea un aforismo con palabras precisas." },
+            { titulo: "La síntesis", teoria: "La síntesis es la capacidad de condensar una idea compleja en una frase simple.", aforismo: "La síntesis", ejemplo: "Epicteto: 'No son las cosas las que nos perturban, sino el juicio que hacemos de ellas.'", ejercicio: "Sintetiza una idea compleja en una frase.", reto: "Crea un aforismo que sintetice una filosofía." },
+            { titulo: "El impacto", teoria: "El aforismo debe causar impacto en el lector, sorprenderlo o hacerlo reflexionar.", aforismo: "El impacto", ejemplo: "Nietzsche: 'Lo que no te mata, te hace más fuerte.'", ejercicio: "Escribe un aforismo que cause impacto.", reto: "Crea un aforismo que sorprenda." },
+            { titulo: "La universalidad", teoria: "El aforismo debe tener una validez universal, aplicable a diferentes situaciones y personas.", aforismo: "La universalidad", ejemplo: "Confucio: 'No hagas a los demás lo que no quieras que te hagan a ti.'", ejercicio: "Escribe un aforismo universal.", reto: "Crea un aforismo aplicable a todos." },
+            { titulo: "La eternidad", teoria: "El aforismo debe trascender el tiempo, ser relevante en cualquier época.", aforismo: "La eternidad", ejemplo: "Sócrates: 'Solo sé que no sé nada.'", ejercicio: "Escribe un aforismo que pueda ser eterno.", reto: "Crea un aforismo que trascienda el tiempo." },
+            { titulo: "La claridad", teoria: "El aforismo debe ser claro, fácil de entender, sin ambigüedades innecesarias.", aforismo: "La claridad", ejemplo: "Descartes: 'Pienso, luego existo.'", ejercicio: "Escribe un aforismo claro.", reto: "Crea un aforismo que sea cristalino." },
+            { titulo: "La brevedad", teoria: "El aforismo es breve por naturaleza. Debe ser una frase corta, a veces de una sola línea.", aforismo: "La brevedad", ejemplo: "Séneca: 'No es que tengamos poco tiempo, es que perdemos mucho.'", ejercicio: "Escribe un aforismo de una línea.", reto: "Crea un aforismo de menos de 10 palabras." },
+            { titulo: "La profundidad", teoria: "El aforismo debe tener profundidad, una capa de significado que se revela con la reflexión.", aforismo: "La profundidad", ejemplo: "Pascal: 'El corazón tiene razones que la razón no entiende.'", ejercicio: "Escribe un aforismo con profundidad.", reto: "Crea un aforismo que invite a la reflexión." },
+            { titulo: "La paradoja", teoria: "La paradoja es una afirmación que parece contradictoria pero encierra una verdad profunda.", aforismo: "La paradoja", ejemplo: "Kierkegaard: 'La vida solo puede entenderse mirando hacia atrás, pero debe vivirse mirando hacia adelante.'", ejercicio: "Escribe un aforismo paradójico.", reto: "Crea un aforismo con paradoja." },
+            { titulo: "La antítesis", teoria: "La antítesis contrapone dos ideas opuestas para crear tensión y claridad.", aforismo: "La antítesis", ejemplo: "Séneca: 'El amor es una guerra, y el deseo una tregua.'", ejercicio: "Escribe un aforismo con antítesis.", reto: "Crea un aforismo con oposición." },
+            { titulo: "La metáfora", teoria: "La metáfora es una figura que identifica un término con otro, creando una imagen poderosa.", aforismo: "La metáfora", ejemplo: "Nietzsche: 'El hombre es una cuerda tendida entre el animal y el superhombre.'", ejercicio: "Escribe un aforismo con metáfora.", reto: "Crea un aforismo metafórico." },
+            { titulo: "El símil", teoria: "El símil es una comparación explícita que usa 'como' o 'cual'.", aforismo: "El símil", ejemplo: "Borges: 'El tiempo es como un río que fluye.'", ejercicio: "Escribe un aforismo con símil.", reto: "Crea un aforismo comparativo." },
+            { titulo: "La hipérbole", teoria: "La hipérbole es una exageración intencionada para enfatizar una idea.", aforismo: "La hipérbole", ejemplo: "Oscar Wilde: 'Puedo resistir cualquier cosa excepto la tentación.'", ejercicio: "Escribe un aforismo con hipérbole.", reto: "Crea un aforismo exagerado." },
+            { titulo: "La ironía", teoria: "La ironía es decir lo contrario de lo que se piensa, con un tono burlesco.", aforismo: "La ironía", ejemplo: "Voltaire: 'Dios está del lado de los ejércitos más numerosos.'", ejercicio: "Escribe un aforismo con ironía.", reto: "Crea un aforismo irónico." }
+        ]
+    },
+    lenguaje: {
+        nombre: "Lenguaje", color: "azul", icono: "bi-robot",
+        especialidad: "El estilo: ritmo, imagen, metáfora, ironía, paradoja",
+        tecnicas: [
+            { titulo: "El ritmo", teoria: "El ritmo del aforismo se logra a través de la longitud de las frases, el uso de pausas y la musicalidad.", aforismo: "El ritmo", ejemplo: "Neruda: 'El amor es un instante que dura toda la vida.'", ejercicio: "Escribe un aforismo con ritmo.", reto: "Crea un aforismo musical." },
+            { titulo: "La imagen", teoria: "La imagen es una representación mental que evoca el aforismo. Una buena imagen hace el aforismo memorable.", aforismo: "La imagen", ejemplo: "Machado: 'El camino se hace al andar.'", ejercicio: "Escribe un aforismo con una imagen poderosa.", reto: "Crea un aforismo visual." },
+            { titulo: "La palabra exacta", teoria: "La palabra exacta es aquella que transmite el significado con precisión y sin ambigüedades.", aforismo: "La palabra exacta", ejemplo: "Cervantes: 'La pluma es la lengua del alma.'", ejercicio: "Elige una palabra y escribe un aforismo sobre ella.", reto: "Crea un aforismo con palabras precisas." },
+            { titulo: "La metáfora", teoria: "La metáfora es una figura que identifica un término con otro, creando una imagen poderosa y sugerente.", aforismo: "La metáfora", ejemplo: "Borges: 'La memoria es un espejo quebrado.'", ejercicio: "Escribe un aforismo con metáfora.", reto: "Crea un aforismo metafórico." },
+            { titulo: "La paradoja", teoria: "La paradoja es una afirmación que parece contradictoria pero encierra una verdad profunda.", aforismo: "La paradoja", ejemplo: "Chesterton: 'El hombre que cree en nada está dispuesto a creer en todo.'", ejercicio: "Escribe un aforismo paradójico.", reto: "Crea un aforismo con paradoja." },
+            { titulo: "La ironía", teoria: "La ironía es decir lo contrario de lo que se piensa, con un tono burlesco o crítico.", aforismo: "La ironía", ejemplo: "Wilde: 'La vida es demasiado importante para tomarla en serio.'", ejercicio: "Escribe un aforismo irónico.", reto: "Crea un aforismo irónico." },
+            { titulo: "El humor", teoria: "El humor en el aforismo aligera la carga de la verdad y la hace más digerible.", aforismo: "El humor", ejemplo: "Groucho Marx: 'No quiero pertenecer a ningún club que me acepte como miembro.'", ejercicio: "Escribe un aforismo humorístico.", reto: "Crea un aforismo divertido." },
+            { titulo: "La sorpresa", teoria: "La sorpresa en el aforismo es el giro inesperado que despierta la atención del lector.", aforismo: "La sorpresa", ejemplo: "Chomsky: 'El lenguaje es la herramienta del poder.'", ejercicio: "Escribe un aforismo sorprendente.", reto: "Crea un aforismo con giro." },
+            { titulo: "La repetición", teoria: "La repetición de palabras o estructuras crea ritmo y enfatiza la idea central.", aforismo: "La repetición", ejemplo: "Rimbaud: 'Yo es otro. Yo es otro.'", ejercicio: "Escribe un aforismo con repetición.", reto: "Crea un aforismo con eco." },
+            { titulo: "La antítesis", teoria: "La antítesis contrapone dos ideas opuestas para crear tensión y claridad.", aforismo: "La antítesis", ejemplo: "Séneca: 'El amor es una guerra, y el deseo una tregua.'", ejercicio: "Escribe un aforismo con antítesis.", reto: "Crea un aforismo con oposición." },
+            { titulo: "La elipsis", teoria: "La elipsis es la omisión de palabras que se sobrentienden, creando un efecto de brevedad.", aforismo: "La elipsis", ejemplo: "Hemingway: 'Escribe una línea verdadera.'", ejercicio: "Escribe un aforismo con elipsis.", reto: "Crea un aforismo sugerente." },
+            { titulo: "La pregunta", teoria: "La pregunta retórica en el aforismo invita a la reflexión sin esperar respuesta.", aforismo: "La pregunta", ejemplo: "Sócrates: '¿Qué sé yo?'", ejercicio: "Escribe un aforismo en forma de pregunta.", reto: "Crea un aforismo interrogativo." },
+            { titulo: "La exclamación", teoria: "La exclamación en el aforismo expresa una emoción intensa, sorpresa o admiración.", aforismo: "La exclamación", ejemplo: "San Agustín: '¡Tarde te amé!'", ejercicio: "Escribe un aforismo exclamativo.", reto: "Crea un aforismo apasionado." },
+            { titulo: "El silencio", teoria: "El silencio en el aforismo es lo que no se dice, lo que se insinúa, lo que queda entre líneas.", aforismo: "El silencio", ejemplo: "Mallarmé: 'La poesía es el silencio de las palabras.'", ejercicio: "Escribe un aforismo sobre el silencio.", reto: "Crea un aforismo sugerente." },
+            { titulo: "La aliteración", teoria: "La aliteración es la repetición de sonidos consonánticos que crea musicalidad.", aforismo: "La aliteración", ejemplo: "Góngora: 'El susurro del silencio.'", ejercicio: "Escribe un aforismo con aliteración.", reto: "Crea un aforismo con sonoridad." },
+            { titulo: "La imagen visual", teoria: "La imagen visual es una representación gráfica que evoca el aforismo.", aforismo: "La imagen visual", ejemplo: "Kandinsky: 'El color es el teclado, el ojo es el martillo, el alma es el piano.'", ejercicio: "Escribe un aforismo con imagen visual.", reto: "Crea un aforismo pictórico." },
+            { titulo: "La imagen auditiva", teoria: "La imagen auditiva es la representación de un sonido en el aforismo.", aforismo: "La imagen auditiva", ejemplo: "Bécquer: 'El sonido del silencio.'", ejercicio: "Escribe un aforismo con imagen auditiva.", reto: "Crea un aforismo sonoro." },
+            { titulo: "La imagen táctil", teoria: "La imagen táctil es la representación de una textura o sensación en el aforismo.", aforismo: "La imagen táctil", ejemplo: "Rilke: 'El tacto de la noche.'", ejercicio: "Escribe un aforismo con imagen táctil.", reto: "Crea un aforismo táctil." },
+            { titulo: "La imagen olfativa", teoria: "La imagen olfativa es la representación de un olor en el aforismo.", aforismo: "La imagen olfativa", ejemplo: "Proust: 'El olor de la magdalena.'", ejercicio: "Escribe un aforismo con imagen olfativa.", reto: "Crea un aforismo olfativo." },
+            { titulo: "La imagen gustativa", teoria: "La imagen gustativa es la representación de un sabor en el aforismo.", aforismo: "La imagen gustativa", ejemplo: "Esquivel: 'El sabor del amor.'", ejercicio: "Escribe un aforismo con imagen gustativa.", reto: "Crea un aforismo gustativo." }
+        ]
+    },
+    pensamiento: {
+        nombre: "Pensamiento", color: "verde", icono: "bi-robot",
+        especialidad: "La filosofía: verdad, conocimiento, existencia, sentido",
+        tecnicas: [
+            { titulo: "La verdad", teoria: "El aforismo sobre la verdad busca definir o cuestionar qué es la verdad.", aforismo: "La verdad", ejemplo: "Heidegger: 'La verdad es la revelación del ser.'", ejercicio: "Escribe un aforismo sobre la verdad.", reto: "Crea un aforismo que cuestione la verdad." },
+            { titulo: "El conocimiento", teoria: "El aforismo sobre el conocimiento reflexiona sobre el saber, la razón y la ignorancia.", aforismo: "El conocimiento", ejemplo: "Sócrates: 'Solo sé que no sé nada.'", ejercicio: "Escribe un aforismo sobre el conocimiento.", reto: "Crea un aforismo que defina la sabiduría." },
+            { titulo: "La existencia", teoria: "El aforismo existencial reflexiona sobre el ser humano, su libertad y su sentido.", aforismo: "La existencia", ejemplo: "Sartre: 'El hombre está condenado a ser libre.'", ejercicio: "Escribe un aforismo sobre la existencia.", reto: "Crea un aforismo existencial." },
+            { titulo: "El sentido", teoria: "El aforismo sobre el sentido reflexiona sobre el propósito de la vida.", aforismo: "El sentido", ejemplo: "Camus: 'Hay que imaginarse a Sísifo feliz.'", ejercicio: "Escribe un aforismo sobre el sentido de la vida.", reto: "Crea un aforismo que dé sentido." },
+            { titulo: "La razón", teoria: "El aforismo sobre la razón reflexiona sobre el poder y los límites de la razón humana.", aforismo: "La razón", ejemplo: "Kant: 'La razón es la facultad de los principios.'", ejercicio: "Escribe un aforismo sobre la razón.", reto: "Crea un aforismo sobre la racionalidad." },
+            { titulo: "La fe", teoria: "El aforismo sobre la fe reflexiona sobre la creencia, la duda y la espiritualidad.", aforismo: "La fe", ejemplo: "Pascal: 'El corazón tiene razones que la razón no entiende.'", ejercicio: "Escribe un aforismo sobre la fe.", reto: "Crea un aforismo espiritual." },
+            { titulo: "La libertad", teoria: "El aforismo sobre la libertad reflexiona sobre la capacidad de elegir y la autonomía.", aforismo: "La libertad", ejemplo: "Sartre: 'El hombre es libre, el hombre es libertad.'", ejercicio: "Escribe un aforismo sobre la libertad.", reto: "Crea un aforismo sobre la autonomía." },
+            { titulo: "La moral", teoria: "El aforismo sobre la moral reflexiona sobre el bien, el mal y la ética.", aforismo: "La moral", ejemplo: "Nietzsche: 'Más allá del bien y del mal.'", ejercicio: "Escribe un aforismo sobre la moral.", reto: "Crea un aforismo ético." },
+            { titulo: "La política", teoria: "El aforismo sobre la política reflexiona sobre el poder, la sociedad y la justicia.", aforismo: "La política", ejemplo: "Maquiavelo: 'El fin justifica los medios.'", ejercicio: "Escribe un aforismo sobre la política.", reto: "Crea un aforismo político." },
+            { titulo: "La historia", teoria: "El aforismo sobre la historia reflexiona sobre el tiempo, el progreso y la memoria.", aforismo: "La historia", ejemplo: "Hegel: 'La historia es el progreso de la conciencia de la libertad.'", ejercicio: "Escribe un aforismo sobre la historia.", reto: "Crea un aforismo histórico." },
+            { titulo: "El arte", teoria: "El aforismo sobre el arte reflexiona sobre la belleza, la creación y la inspiración.", aforismo: "El arte", ejemplo: "Picasso: 'El arte es una mentira que nos permite ver la verdad.'", ejercicio: "Escribe un aforismo sobre el arte.", reto: "Crea un aforismo artístico." },
+            { titulo: "La ciencia", teoria: "El aforismo sobre la ciencia reflexiona sobre el conocimiento, la verdad y el método.", aforismo: "La ciencia", ejemplo: "Einstein: 'La imaginación es más importante que el conocimiento.'", ejercicio: "Escribe un aforismo sobre la ciencia.", reto: "Crea un aforismo científico." },
+            { titulo: "La filosofía", teoria: "El aforismo sobre la filosofía reflexiona sobre la naturaleza del pensamiento y la reflexión.", aforismo: "La filosofía", ejemplo: "Wittgenstein: 'Los límites de mi lenguaje son los límites de mi mundo.'", ejercicio: "Escribe un aforismo sobre la filosofía.", reto: "Crea un aforismo filosófico." },
+            { titulo: "La realidad", teoria: "El aforismo sobre la realidad reflexiona sobre la naturaleza de lo que existe.", aforismo: "La realidad", ejemplo: "Platón: 'La realidad es una sombra de las ideas.'", ejercicio: "Escribe un aforismo sobre la realidad.", reto: "Crea un aforismo sobre el ser." },
+            { titulo: "El tiempo", teoria: "El aforismo sobre el tiempo reflexiona sobre su naturaleza, su paso y su significado.", aforismo: "El tiempo", ejemplo: "Heráclito: 'Todo fluye, nada permanece.'", ejercicio: "Escribe un aforismo sobre el tiempo.", reto: "Crea un aforismo sobre el tiempo." },
+            { titulo: "La muerte", teoria: "El aforismo sobre la muerte reflexiona sobre su inevitabilidad, su sentido y su significado.", aforismo: "La muerte", ejemplo: "Epicuro: 'La muerte no es nada para nosotros.'", ejercicio: "Escribe un aforismo sobre la muerte.", reto: "Crea un aforismo sobre la mortalidad." },
+            { titulo: "El amor", teoria: "El aforismo sobre el amor reflexiona sobre su naturaleza, su poder y su significado.", aforismo: "El amor", ejemplo: "Platón: 'El amor es el deseo de la belleza.'", ejercicio: "Escribe un aforismo sobre el amor.", reto: "Crea un aforismo sobre el amor." },
+            { titulo: "La amistad", teoria: "El aforismo sobre la amistad reflexiona sobre su valor, su significado y su importancia.", aforismo: "La amistad", ejemplo: "Aristóteles: 'La amistad es una sola alma en dos cuerpos.'", ejercicio: "Escribe un aforismo sobre la amistad.", reto: "Crea un aforismo sobre la amistad." },
+            { titulo: "La soledad", teoria: "El aforismo sobre la soledad reflexiona sobre su significado y su valor.", aforismo: "La soledad", ejemplo: "Borges: 'La soledad es el espejo del alma.'", ejercicio: "Escribe un aforismo sobre la soledad.", reto: "Crea un aforismo sobre la soledad." },
+            { titulo: "El conocimiento de sí mismo", teoria: "El aforismo sobre el autoconocimiento reflexiona sobre la importancia de conocerse a uno mismo.", aforismo: "El autoconocimiento", ejemplo: "Sócrates: 'Conócete a ti mismo.'", ejercicio: "Escribe un aforismo sobre el autoconocimiento.", reto: "Crea un aforismo sobre la introspección." }
+        ]
+    },
+    humor: {
+        nombre: "Humor", color: "purpura", icono: "bi-robot",
+        especialidad: "La ironía: ingenio, sarcasmo, sorpresa, agudeza",
+        tecnicas: [
+            { titulo: "La ironía", teoria: "La ironía es el arte de decir lo contrario de lo que se piensa, con un tono burlesco.", aforismo: "La ironía", ejemplo: "Wilde: 'La vida es demasiado importante para tomarla en serio.'", ejercicio: "Escribe un aforismo irónico.", reto: "Crea un aforismo irónico sobre la política." },
+            { titulo: "El sarcasmo", teoria: "El sarcasmo es una ironía más agresiva, con intención de herir o burlarse.", aforismo: "El sarcasmo", ejemplo: "Nietzsche: 'El hombre es un animal que puede prometer.'", ejercicio: "Escribe un aforismo sarcástico.", reto: "Crea un aforismo sarcástico sobre la sociedad." },
+            { titulo: "La agudeza", teoria: "La agudeza es la capacidad de encontrar relaciones inesperadas entre ideas, creando un efecto de ingenio.", aforismo: "La agudeza", ejemplo: "Borges: 'La vida es un sueño y la muerte es el despertar.'", ejercicio: "Escribe un aforismo con agudeza.", reto: "Crea un aforismo agudo." },
+            { titulo: "La sorpresa", teoria: "La sorpresa es el giro inesperado que despierta la atención del lector.", aforismo: "La sorpresa", ejemplo: "Kafka: 'El camino de la verdad es un camino de la atención.'", ejercicio: "Escribe un aforismo sorprendente.", reto: "Crea un aforismo con giro." },
+            { titulo: "El ingenio", teoria: "El ingenio es la habilidad para decir cosas inteligentes y oportunas.", aforismo: "El ingenio", ejemplo: "Voltaire: 'Dios está del lado de los ejércitos más numerosos.'", ejercicio: "Escribe un aforismo ingenioso.", reto: "Crea un aforismo ingenioso." },
+            { titulo: "La paradoja", teoria: "La paradoja es una afirmación que parece contradictoria pero encierra una verdad.", aforismo: "La paradoja", ejemplo: "Chesterton: 'El hombre que cree en nada está dispuesto a creer en todo.'", ejercicio: "Escribe un aforismo paradójico.", reto: "Crea un aforismo con paradoja." },
+            { titulo: "El humor negro", teoria: "El humor negro es el humor que se basa en temas trágicos o tabúes, como la muerte o la enfermedad.", aforismo: "El humor negro", ejemplo: "Groucho Marx: 'No quiero pertenecer a ningún club que me acepte como miembro.'", ejercicio: "Escribe un aforismo de humor negro.", reto: "Crea un aforismo de humor negro." },
+            { titulo: "La ironía socrática", teoria: "La ironía socrática es la técnica de preguntar para mostrar la ignorancia del otro.", aforismo: "La ironía socrática", ejemplo: "Sócrates: 'Solo sé que no sé nada.'", ejercicio: "Escribe un aforismo con ironía socrática.", reto: "Crea un aforismo socrático." },
+            { titulo: "El humor absurdo", teoria: "El humor absurdo se basa en la falta de lógica y la irracionalidad.", aforismo: "El humor absurdo", ejemplo: "Kafka: 'La vida es una espera sin espera.'", ejercicio: "Escribe un aforismo absurdo.", reto: "Crea un aforismo absurdo." },
+            { titulo: "La sátira", teoria: "La sátira es la crítica social o política a través del humor y la ironía.", aforismo: "La sátira", ejemplo: "Swift: 'La sátira es un espejo que refleja los vicios de la sociedad.'", ejercicio: "Escribe un aforismo satírico.", reto: "Crea un aforismo satírico." },
+            { titulo: "El humor inteligente", teoria: "El humor inteligente es aquel que requiere un nivel de comprensión para ser apreciado.", aforismo: "El humor inteligente", ejemplo: "Groucho Marx: 'No quiero pertenecer a ningún club que me acepte como miembro.'", ejercicio: "Escribe un aforismo con humor inteligente.", reto: "Crea un aforismo inteligente." },
+            { titulo: "El humor ingenioso", teoria: "El humor ingenioso se basa en la rapidez mental y la agudeza.", aforismo: "El humor ingenioso", ejemplo: "Oscar Wilde: 'Puedo resistir cualquier cosa excepto la tentación.'", ejercicio: "Escribe un aforismo con humor ingenioso.", reto: "Crea un aforismo ingenioso." },
+            { titulo: "El humor y la verdad", teoria: "El humor puede ser una forma de decir la verdad de manera más digerible.", aforismo: "El humor y la verdad", ejemplo: "Mark Twain: 'La verdad es la cosa más valiosa que tenemos. Gastémosla con moderación.'", ejercicio: "Escribe un aforismo que combine humor y verdad.", reto: "Crea un aforismo con humor y verdad." },
+            { titulo: "El humor y la ironía", teoria: "El humor y la ironía son herramientas poderosas para la crítica social.", aforismo: "El humor y la ironía", ejemplo: "Swift: 'La sátira es un espejo que refleja los vicios de la sociedad.'", ejercicio: "Escribe un aforismo con humor e ironía.", reto: "Crea un aforismo con humor e ironía." },
+            { titulo: "El humor y la realidad", teoria: "El humor puede ser una forma de enfrentar la realidad.", aforismo: "El humor y la realidad", ejemplo: "Nietzsche: 'El hombre es un animal que puede prometer.'", ejercicio: "Escribe un aforismo que combine humor y realidad.", reto: "Crea un aforismo con humor y realidad." },
+            { titulo: "El humor y la vida", teoria: "El humor es una forma de celebrar la vida a pesar de sus dificultades.", aforismo: "El humor y la vida", ejemplo: "Groucho Marx: 'No quiero pertenecer a ningún club que me acepte como miembro.'", ejercicio: "Escribe un aforismo que combine humor y vida.", reto: "Crea un aforismo con humor y vida." },
+            { titulo: "El humor y la muerte", teoria: "El humor negro se atreve a reírse de la muerte.", aforismo: "El humor y la muerte", ejemplo: "Epicuro: 'La muerte no es nada para nosotros.'", ejercicio: "Escribe un aforismo que combine humor y muerte.", reto: "Crea un aforismo de humor negro." },
+            { titulo: "El humor y el amor", teoria: "El humor puede ser una forma de expresar el amor de manera ligera.", aforismo: "El humor y el amor", ejemplo: "Wilde: 'El amor es una guerra, y el deseo una tregua.'", ejercicio: "Escribe un aforismo que combine humor y amor.", reto: "Crea un aforismo con humor y amor." },
+            { titulo: "El humor y la sabiduría", teoria: "El humor puede ser una forma de sabiduría popular.", aforismo: "El humor y la sabiduría", ejemplo: "Confucio: 'No hagas a los demás lo que no quieras que te hagan a ti.'", ejercicio: "Escribe un aforismo con humor y sabiduría.", reto: "Crea un aforismo con humor y sabiduría." },
+            { titulo: "El humor y el ingenio", teoria: "El humor y el ingenio son dos caras de la misma moneda.", aforismo: "El humor y el ingenio", ejemplo: "Borges: 'La vida es un sueño y la muerte es el despertar.'", ejercicio: "Escribe un aforismo con humor e ingenio.", reto: "Crea un aforismo con humor e ingenio." }
+        ]
+    },
+    vida: {
+        nombre: "Vida", color: "rojo", icono: "bi-robot",
+        especialidad: "La sabiduría: experiencia, amor, muerte, tiempo, felicidad",
+        tecnicas: [
+            { titulo: "La experiencia", teoria: "El aforismo sobre la experiencia reflexiona sobre la sabiduría que da el vivir.", aforismo: "La experiencia", ejemplo: "Séneca: 'No es que tengamos poco tiempo, es que perdemos mucho.'", ejercicio: "Escribe un aforismo sobre la experiencia.", reto: "Crea un aforismo sobre la sabiduría vivida." },
+            { titulo: "El amor", teoria: "El aforismo sobre el amor reflexiona sobre su naturaleza, su poder y su significado.", aforismo: "El amor", ejemplo: "Platón: 'El amor es el deseo de la belleza.'", ejercicio: "Escribe un aforismo sobre el amor.", reto: "Crea un aforismo sobre el amor." },
+            { titulo: "La muerte", teoria: "El aforismo sobre la muerte reflexiona sobre su inevitabilidad, su sentido y su significado.", aforismo: "La muerte", ejemplo: "Epicuro: 'La muerte no es nada para nosotros.'", ejercicio: "Escribe un aforismo sobre la muerte.", reto: "Crea un aforismo sobre la mortalidad." },
+            { titulo: "El tiempo", teoria: "El aforismo sobre el tiempo reflexiona sobre su naturaleza, su paso y su significado.", aforismo: "El tiempo", ejemplo: "Heráclito: 'Todo fluye, nada permanece.'", ejercicio: "Escribe un aforismo sobre el tiempo.", reto: "Crea un aforismo sobre el tiempo." },
+            { titulo: "La felicidad", teoria: "El aforismo sobre la felicidad reflexiona sobre su naturaleza y su búsqueda.", aforismo: "La felicidad", ejemplo: "Aristóteles: 'La felicidad es el fin de la acción humana.'", ejercicio: "Escribe un aforismo sobre la felicidad.", reto: "Crea un aforismo sobre la felicidad." },
+            { titulo: "La tristeza", teoria: "El aforismo sobre la tristeza reflexiona sobre su naturaleza y su significado.", aforismo: "La tristeza", ejemplo: "Bécquer: 'La tristeza es el eco del amor perdido.'", ejercicio: "Escribe un aforismo sobre la tristeza.", reto: "Crea un aforismo sobre la tristeza." },
+            { titulo: "La amistad", teoria: "El aforismo sobre la amistad reflexiona sobre su valor y su significado.", aforismo: "La amistad", ejemplo: "Aristóteles: 'La amistad es una sola alma en dos cuerpos.'", ejercicio: "Escribe un aforismo sobre la amistad.", reto: "Crea un aforismo sobre la amistad." },
+            { titulo: "La soledad", teoria: "El aforismo sobre la soledad reflexiona sobre su significado y su valor.", aforismo: "La soledad", ejemplo: "Borges: 'La soledad es el espejo del alma.'", ejercicio: "Escribe un aforismo sobre la soledad.", reto: "Crea un aforismo sobre la soledad." },
+            { titulo: "El conocimiento de sí mismo", teoria: "El aforismo sobre el autoconocimiento reflexiona sobre la importancia de conocerse a uno mismo.", aforismo: "El autoconocimiento", ejemplo: "Sócrates: 'Conócete a ti mismo.'", ejercicio: "Escribe un aforismo sobre el autoconocimiento.", reto: "Crea un aforismo sobre la introspección." },
+            { titulo: "El destino", teoria: "El aforismo sobre el destino reflexiona sobre la idea de un futuro predecible o inevitable.", aforismo: "El destino", ejemplo: "Séneca: 'El destino guía al que quiere y arrastra al que no.'", ejercicio: "Escribe un aforismo sobre el destino.", reto: "Crea un aforismo sobre el destino." },
+            { titulo: "La suerte", teoria: "El aforismo sobre la suerte reflexiona sobre el azar y la casualidad.", aforismo: "La suerte", ejemplo: "Séneca: 'La suerte es lo que sucede cuando la preparación se encuentra con la oportunidad.'", ejercicio: "Escribe un aforismo sobre la suerte.", reto: "Crea aforismo sobre la suerte." },
+            { titulo: "El trabajo", teoria: "El aforismo sobre el trabajo reflexiona sobre su sentido y su valor.", aforismo: "El trabajo", ejemplo: "Cervantes: 'El trabajo es el padre de la felicidad.'", ejercicio: "Escribe un aforismo sobre el trabajo.", reto: "Crea un aforismo sobre el trabajo." },
+            { titulo: "La educación", teoria: "El aforismo sobre la educación reflexiona sobre su importancia y su sentido.", aforismo: "La educación", ejemplo: "Platón: 'La educación es el arte de despertar el alma.'", ejercicio: "Escribe un aforismo sobre la educación.", reto: "Crea un aforismo sobre la educación." },
+            { titulo: "La sabiduría", teoria: "El aforismo sobre la sabiduría reflexiona sobre su naturaleza y su búsqueda.", aforismo: "La sabiduría", ejemplo: "Séneca: 'La sabiduría es el arte de vivir bien.'", ejercicio: "Escribe un aforismo sobre la sabiduría.", reto: "Crea un aforismo sobre la sabiduría." },
+            { titulo: "La juventud", teoria: "El aforismo sobre la juventud reflexiona sobre su naturaleza y su valor.", aforismo: "La juventud", ejemplo: "Neruda: 'La juventud es un sueño que se desvanece.'", ejercicio: "Escribe un aforismo sobre la juventud.", reto: "Crea un aforismo sobre la juventud." },
+            { titulo: "La vejez", teoria: "El aforismo sobre la vejez reflexiona sobre su naturaleza y su valor.", aforismo: "La vejez", ejemplo: "Cicerón: 'La vejez es la corona de la vida.'", ejercicio: "Escribe un aforismo sobre la vejez.", reto: "Crea un aforismo sobre la vejez." },
+            { titulo: "La libertad", teoria: "El aforismo sobre la libertad reflexiona sobre su naturaleza y su significado.", aforismo: "La libertad", ejemplo: "Sartre: 'El hombre es libre, el hombre es libertad.'", ejercicio: "Escribe un aforismo sobre la libertad.", reto: "Crea un aforismo sobre la libertad." },
+            { titulo: "La justicia", teoria: "El aforismo sobre la justicia reflexiona sobre su naturaleza y su importancia.", aforismo: "La justicia", ejemplo: "Platón: 'La justicia es dar a cada uno lo que le corresponde.'", ejercicio: "Escribe un aforismo sobre la justicia.", reto: "Crea un aforismo sobre la justicia." },
+            { titulo: "La paz", teoria: "El aforismo sobre la paz reflexiona sobre su naturaleza y su importancia.", aforismo: "La paz", ejemplo: "Séneca: 'La paz es el bien supremo.'", ejercicio: "Escribe un aforismo sobre la paz.", reto: "Crea un aforismo sobre la paz." },
+            { titulo: "El legado", teoria: "El aforismo sobre el legado reflexiona sobre lo que dejamos a los demás.", aforismo: "El legado", ejemplo: "Borges: 'La vida es un sueño y la muerte es el despertar.'", ejercicio: "Escribe un aforismo sobre el legado.", reto: "Crea un aforismo sobre el legado." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['esencia','lenguaje','pensamiento','humor','vida'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="aforismo-clave">
+                        <span>${t.aforismo}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_aphorism_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

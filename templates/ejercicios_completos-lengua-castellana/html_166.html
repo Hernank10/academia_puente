@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas de semiótica</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas de semiótica · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'signo', 'connotación', 'símbolo', 'sema')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de semiótica de la lengua castellana, desde los fundamentos del signo hasta las aplicaciones literarias contemporáneas.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto, devolviendo al oficio de escribir su dimensión física y artesanal.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas han sido seleccionadas a partir de las principales corrientes semióticas (Saussure, Peirce, Barthes, Greimas, Eco, Lotman) y su aplicación a textos literarios hispánicos (Borges, Cortázar, García Márquez, Valle-Inclán, Cervantes). Se organizan en diez familias que cubren la estructura del signo, los tipos de signos, la significación, el análisis textual y la semiótica cultural.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia semiótica</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Fundamentos del signo lingüístico",
+                tecnicas: [
+                    {nombre:"Significante", desc:"La imagen acústica o la forma material del signo.", ej:"La palabra /ár-bol/ es el significante."},
+                    {nombre:"Significado", desc:"El concepto o idea que evoca el signo.", ej:"El concepto 'planta de tronco leñoso' es el significado de árbol."},
+                    {nombre:"Arbitrariedad", desc:"Relación inmotivada entre significante y significado.", ej:"No hay razón natural para que 'perro' designe a ese animal (inglés 'dog', francés 'chien')."},
+                    {nombre:"Linealidad", desc:"El significante se desarrolla en el tiempo (habla) o en el espacio (escritura).", ej:"Las palabras se pronuncian una tras otra, no simultáneamente."},
+                    {nombre:"Doble articulación", desc:"El lenguaje se articula en unidades con significado (monemas) y sin significado (fonemas).", ej:"/g-a-t-o/ (fonemas) → 'gato' (monema)."},
+                    {nombre:"Inmutabilidad sincrónica", desc:"El signo no puede ser cambiado por un hablante individual en un momento dado.", ej:"No puedo decidir que 'mesa' se llame 'silla' de hoy en adelante."},
+                    {nombre:"Mutabilidad diacrónica", desc:"Los signos evolucionan con el tiempo.", ej:"La palabra 'retrete' ha pasado de significar 'cuarto pequeño' a 'inodoro'."},
+                    {nombre:"Valor lingüístico", desc:"Cada signo se define por su relación con los demás signos del sistema.", ej:"'Rojo' solo tiene valor frente a 'verde', 'azul', etc."},
+                    {nombre:"Sintagma", desc:"Combinación de unidades lingüísticas en presencia.", ej:"'El niño corre' es un sintagma."},
+                    {nombre:"Paradigma", desc:"Conjunto de unidades que pueden aparecer en un mismo contexto.", ej:"En 'El ___ corre', puedo elegir entre niño, perro, atleta... (paradigma)."}
+                ]
+            },
+            {
+                nombre: "B. Tipología del signo (Peirce)",
+                tecnicas: [
+                    {nombre:"Icono", desc:"Signo que se parece a lo que representa (relación de semejanza).", ej:"Una fotografía, un dibujo, onomatopeyas como 'guau'."},
+                    {nombre:"Índice", desc:"Signo que está conectado físicamente con su objeto (contigüidad).", ej:"El humo es índice del fuego; una huella dactilar."},
+                    {nombre:"Símbolo", desc:"Signo convencional, arbitrario, basado en un acuerdo social.", ej:"Las palabras, las banderas, los números."},
+                    {nombre:"Cualisigno", desc:"Signo que es una cualidad en sí mismo.", ej:"Un color, una textura (el rojo de una señal de tráfico)."},
+                    {nombre:"Sinsigno", desc:"Signo que es una cosa o evento real.", ej:"Un grito concreto, una fotografía específica."},
+                    {nombre:"Legisigno", desc:"Signo que es una ley o convención.", ej:"Las palabras del diccionario, las normas de tráfico."},
+                    {nombre:"Rema", desc:"Signo que se interpreta como posibilidad cualitativa.", ej:"Un adjetivo aislado: 'rojo'."},
+                    {nombre:"Dicente", desc:"Signo que se interpreta como un hecho real.", ej:"Una oración aseverativa: 'Llueve'."},
+                    {nombre:"Argumento", desc:"Signo que se interpreta como una regla o razonamiento.", ej:"Un silogismo: 'Todos los hombres son mortales; Sócrates es hombre; Sócrates es mortal'."},
+                    {nombre:"Semiosis ilimitada", desc:"Cada signo remite a otro signo en un proceso interpretativo infinito.", ej:"La palabra 'árbol' remite a la imagen de un árbol, que remite a la naturaleza, que remite a la vida..."}
+                ]
+            },
+            {
+                nombre: "C. Denotación y connotación",
+                tecnicas: [
+                    {nombre:"Denotación", desc:"Significado literal y objetivo de un signo.", ej:"'Lobo' denota un animal mamífero carnívoro."},
+                    {nombre:"Connotación", desc:"Significados culturales y subjetivos asociados.", ej:"'Lobo' connota ferocidad, soledad, peligro."},
+                    {nombre:"Mito (Barthes)", desc:"Sistema semiológico segundo que convierte la historia en naturaleza.", ej:"La imagen de un soldado negro saludando la bandera francesa: el mito del imperio francés."},
+                    {nombre:"Naturalización", desc:"Proceso por el cual lo cultural se presenta como natural.", ej:"Se asume que 'la maternidad' es instintiva cuando es una construcción social."},
+                    {nombre:"Metalenguaje", desc:"Lenguaje que habla de otro lenguaje.", ej:"Un diccionario que define palabras, un comentario literario."},
+                    {nombre:"Signo vacío", desc:"Significante que puede llenarse con diversos significados según el contexto.", ej:"'Libertad' como significante político usado por ideologías opuestas."},
+                    {nombre:"Sema", desc:"Unidad mínima de significado.", ej:"'Mujer' contiene semas como [+humano], [+adulto], [-masculino]."},
+                    {nombre:"Semema", desc:"Conjunto de semas que forman el significado de una palabra.", ej:"El semema de 'niño' incluye [+humano], [-adulto]."},
+                    {nombre:"Isotopía", desc:"Redundancia de semas en un texto que garantiza su coherencia.", ej:"En un poema amoroso, semas como [afecto], [deseo], [belleza]."},
+                    {nombre:"Anclaje", desc:"Texto que fija el sentido de una imagen.", ej:"Un pie de foto que dice 'El presidente saluda' impide otras interpretaciones."}
+                ]
+            },
+            {
+                nombre: "D. Semiología del discurso",
+                tecnicas: [
+                    {nombre:"Enunciado", desc:"Producto concreto del acto de enunciación.", ej:"'Cierra la puerta' es el enunciado."},
+                    {nombre:"Enunciación", desc:"Acto de producir un enunciado, dejando huellas en él.", ej:"En 'Yo creo que...', el 'yo' y el presente son marcas de enunciación."},
+                    {nombre:"Deixis", desc:"Elementos lingüísticos que señalan el contexto de la enunciación (persona, tiempo, lugar).", ej:"'Yo' (persona), 'aquí' (lugar), 'ahora' (tiempo)."},
+                    {nombre:"Modalidad", desc:"Actitud del hablante ante lo dicho (certeza, duda, deseo...).", ej:"'Quizá llueva' (duda), 'Ojalá venga' (deseo)."},
+                    {nombre:"Polifonía", desc:"Presencia de varias voces en un enunciado.", ej:"'Como decía mi abuela: más vale pájaro en mano...'"},
+                    {nombre:"Intertextualidad", desc:"Presencia de un texto en otro mediante cita o alusión.", ej:"Borges alude constantemente a Cervantes o a Homero en sus cuentos."},
+                    {nombre:"Discurso referido", desc:"Inserción de un discurso en otro (estilo directo, indirecto, indirecto libre).", ej:"Él dijo: 'Voy' (directo) / Él dijo que iba (indirecto)."},
+                    {nombre:"Subcódigo", desc:"Variedad de código según la situación comunicativa.", ej:"El registro formal frente al coloquial."},
+                    {nombre:"Competencia semiótica", desc:"Capacidad de interpretar los signos de una cultura.", ej:"Saber que el negro es luto en Occidente pero no en otras culturas."},
+                    {nombre:"Contrato de veridicción", desc:"Acuerdo tácito entre emisor y receptor sobre la verdad del discurso.", ej:"Al leer una novela, aceptamos como verosímil lo que cuenta el narrador."}
+                ]
+            },
+            {
+                nombre: "E. Semiótica narrativa",
+                tecnicas: [
+                    {nombre:"Actante", desc:"Función en la estructura narrativa (sujeto, objeto, destinador, destinatario, ayudante, oponente).", ej:"En 'Caperucita', el sujeto es Caperucita, el objeto es llegar a la abuela."},
+                    {nombre:"Programa narrativo", desc:"Secuencia de acciones orientada a un fin.", ej:"El héroe debe superar pruebas para obtener el objeto mágico."},
+                    {nombre:"Esquema narrativo canónico", desc:"Modelo de Greimas: manipulación → competencia → acción → sanción.", ej:"El rey ordena al caballero que salve a la princesa (manipulación), el caballero se prepara (competencia), lucha (acción), recibe recompensa (sanción)."},
+                    {nombre:"Cuadrado semiótico", desc:"Representación de las relaciones de oposición entre categorías semánticas.", ej:"En 'vida/muerte' están en oposición; 'no vida' y 'no muerte' ocupan los otros vértices."},
+                    {nombre:"Isotopía narrativa", desc:"Redundancia de sentido que da unidad al relato.", ej:"En 'Cien años de soledad', la isotopía de la soledad y la circularidad."},
+                    {nombre:"Focalización", desc:"Perspectiva desde la que se narra (interna, externa, omnisciente).", ej:"'Pedro sintió miedo' (interna), 'Pedro parecía asustado' (externa)."},
+                    {nombre:"Modalidad narrativa", desc:"Grado de certeza, obligación o capacidad que expresan los enunciados narrativos.", ej:"'El héroe debe vencer', 'puede vencer', 'sabe vencer'."},
+                    {nombre:"Narratario", desc:"Destinatario interno de la narración.", ej:"En 'Cien años de soledad', el lector implícito que va descifrando la historia."},
+                    {nombre:"Puesta en abismo", desc:"Narración dentro de la narración que refleja la totalidad.", ej:"En 'El Quijote', el episodio de 'El curioso impertinente'."},
+                    {nombre:"Cronotopo", desc:"Relación entre tiempo y espacio en la narrativa.", ej:"El camino, el castillo, la ciudad provinciana (Bajtín)."}
+                ]
+            },
+            {
+                nombre: "F. Semiótica visual y espacial",
+                tecnicas: [
+                    {nombre:"Signo plástico", desc:"Elementos visuales no figurativos (color, forma, textura).", ej:"El rojo intenso en un cuadro transmite pasión."},
+                    {nombre:"Signo icónico", desc:"Elementos figurativos que representan objetos reconocibles.", ej:"La silueta de un caballo en una pintura rupestre."},
+                    {nombre:"Símbolo gráfico", desc:"Signo visual convencional, como los iconos informáticos.", ej:"El dibujo de un sobre para 'correo electrónico'."},
+                    {nombre:"Proxémica", desc:"Uso del espacio como sistema de significación.", ej:"La distancia íntima, personal, social y pública entre interlocutores."},
+                    {nombre:"Kinésica", desc:"Significación de los gestos y movimientos corporales.", ej:"Un dedo índice sobre los labios = silencio."},
+                    {nombre:"Paratexto", desc:"Elementos visuales que acompañan al texto (portada, tipografía, ilustración).", ej:"La portada de 'Rayuela' con el dibujo de una rayuela."},
+                    {nombre:"Toposemiótica", desc:"Significación de los lugares y espacios urbanos.", ej:"Una plaza mayor como centro de poder simbólico."},
+                    {nombre:"Cromosemiótica", desc:"Significación de los colores en una cultura.", ej:"El blanco como pureza en Occidente, como luto en Asia."},
+                    {nombre:"Iconografía", desc:"Estudio de los temas visuales y su significado cultural.", ej:"La calavera como símbolo del Día de Muertos mexicano."},
+                    {nombre:"Semiología del vestido", desc:"La ropa como sistema de signos sociales.", ej:"El traje y la corbata como signo de formalidad laboral."}
+                ]
+            },
+            {
+                nombre: "G. Semiótica de la cultura",
+                tecnicas: [
+                    {nombre:"Semiosfera (Lotman)", desc:"Espacio semiótico donde se producen los signos de una cultura.", ej:"La cultura hispánica como semiosfera con sus tradiciones y símbolos."},
+                    {nombre:"Memoria cultural", desc:"Conjunto de textos y signos que una cultura conserva y transmite.", ej:"El romancero español como memoria colectiva."},
+                    {nombre:"Traducción intersemiótica", desc:"Paso de un sistema de signos a otro.", ej:"Llevar una novela al cine."},
+                    {nombre:"Frontera semiótica", desc:"Límite entre semiosferas, donde ocurren los intercambios.", ej:"El contacto entre español y lenguas indígenas en América."},
+                    {nombre:"Explosión cultural", desc:"Momentos de cambio brusco en los sistemas de signos.", ej:"La llegada del modernismo y la ruptura con el realismo."},
+                    {nombre:"Cronótopo cultural", desc:"Espacio-tiempo con significado específico en una cultura.", ej:"La frontera (México-EE. UU.) como cronotopo de la identidad chicana."},
+                    {nombre:"Carnavalización", desc:"Subversión temporal de las jerarquías semióticas.", ej:"Los carnavales donde el bufón se convierte en rey."},
+                    {nombre:"Texto cultural", desc:"Cualquier producto de una cultura que puede ser leído como signo.", ej:"Una receta de cocina, una canción popular, un chiste."},
+                    {nombre:"Hibridación semiótica", desc:"Mezcla de signos de diferentes culturas o sistemas.", ej:"El spanglish como hibridación de español e inglés."},
+                    {nombre:"Modelización", desc:"Proceso por el que la lengua natural modela otros sistemas de signos.", ej:"El lenguaje publicitario usa recursos poéticos y retóricos del habla común."}
+                ]
+            },
+            {
+                nombre: "H. Semiótica literaria",
+                tecnicas: [
+                    {nombre:"Narratología", desc:"Estudio de la estructura de los relatos.", ej:"Análisis de 'El Aleph' según Genette: narrador homodiegético."},
+                    {nombre:"Semaforización", desc:"Procedimiento por el cual un texto distribuye los semas entre sus elementos.", ej:"En 'Don Quijote', el sema 'locura' se asocia al protagonista."},
+                    {nombre:"Análisis sémico", desc:"Descomposición del significado de las palabras en semas para estudiar el sentido del texto.", ej:"En el verso 'verde que te quiero verde', el sema [color] y [deseo] se imbrican."},
+                    {nombre:"Efecto de realidad", desc:"Detalles superfluos que crean la ilusión de lo real.", ej:"La mención minuciosa de objetos en las novelas realistas."},
+                    {nombre:"Mise en abyme", desc:"Reflejo de la obra dentro de la obra.", ej:"En 'Niebla' de Unamuno, el personaje visita al autor."},
+                    {nombre:"Autor modelo / Lector modelo", desc:"Instancias previstas por el texto para su funcionamiento semiótico.", ej:"El lector modelo de 'Rayuela' es activo y cómplice."},
+                    {nombre:"Tema y motivo", desc:"El tema es el asunto central; el motivo, la unidad menor recurrente.", ej:"En la poesía de Machado, el tema es el tiempo; el motivo, el reloj."},
+                    {nombre:"Símbolo literario", desc:"Signo que trasciende su significado literal por acumulación de asociaciones.", ej:"El aleph de Borges como símbolo del infinito."},
+                    {nombre:"Alegoría", desc:"Metáfora continuada que representa ideas abstractas mediante figuras concretas.", ej:"'El jardín de los senderos que se bifurcan' como alegoría del tiempo."},
+                    {nombre:"Ironía romántica", desc:"La obra se vuelve sobre sí misma para cuestionar su propio estatuto.", ej:"Un narrador que se ríe de su propia incapacidad para contar la historia."}
+                ]
+            },
+            {
+                nombre: "I. Semiótica del lenguaje no verbal",
+                tecnicas: [
+                    {nombre:"Comunicación no verbal", desc:"Intercambio de signos sin palabras (gestos, posturas, miradas).", ej:"Un apretón de manos firme transmite seguridad."},
+                    {nombre:"Paralenguaje", desc:"Elementos vocales no lingüísticos: tono, volumen, velocidad.", ej:"Decir 'te quiero' en tono irónico cambia el mensaje."},
+                    {nombre:"Cronémica", desc:"Uso del tiempo como signo.", ej:"Llegar tarde a una cita puede significar desinterés."},
+                    {nombre:"Olfato semiótico", desc:"Los olores como portadores de significado.", ej:"El olor a café recién hecho = hogar, confort."},
+                    {nombre:"Tactil semiótica", desc:"Significado del contacto físico.", ej:"Una palmada en la espalda según el contexto puede ser ánimo o agresión."},
+                    {nombre:"Gustativa semiótica", desc:"Los sabores como signos culturales.", ej:"El sabor dulce asociado a celebraciones."},
+                    {nombre:"Zoosemiótica", desc:"Comunicación entre animales como sistema de signos.", ej:"El canto de las aves para marcar territorio."},
+                    {nombre:"Biosemiótica", desc:"Procesos de significación en organismos vivos.", ej:"Las señales químicas entre células."},
+                    {nombre:"Semiótica de los objetos", desc:"Los objetos cotidianos como signos de estatus, identidad.", ej:"El coche que se elige puede significar riqueza o conciencia ecológica."},
+                    {nombre:"Semiótica digital", desc:"Signos y sistemas de significación en el entorno digital.", ej:"Los emojis como nuevo lenguaje: 😂 = risa, ❤️ = amor."}
+                ]
+            },
+            {
+                nombre: "J. Semiótica aplicada al español",
+                tecnicas: [
+                    {nombre:"Realismo mágico como semiosfera", desc:"El realismo mágico crea un mundo donde lo extraordinario es signo de la realidad americana.", ej:"En 'Cien años de soledad', la lluvia de flores amarillas significa la muerte de José Arcadio Buendía."},
+                    {nombre:"El esperpento como distorsión semiótica", desc:"Deformación de los signos para revelar la esencia de la realidad.", ej:"Los personajes de Valle-Inclán son caricaturas semióticas de la España negra."},
+                    {nombre:"El símbolo en la poesía de Lorca", desc:"Uso de símbolos privados con resonancia colectiva.", ej:"'Verde que te quiero verde' simboliza el deseo prohibido."},
+                    {nombre:"Intertextualidad borgiana", desc:"El texto como red de signos que remiten a otros textos.", ej:"'Pierre Menard, autor del Quijote' reflexiona sobre la reescritura como signo."},
+                    {nombre:"El signo del idioma en la identidad", desc:"La lengua como marcador de identidad cultural y política.", ej:"El debate sobre el uso del 'vos' en Argentina como signo de identidad rioplatense."},
+                    {nombre:"La jerga como subsistema semiótico", desc:"Código interno de un grupo social.", ej:"El lunfardo en los tangos: 'mina', 'pibe', 'guita'."},
+                    {nombre:"Semiótica del realismo sucio", desc:"Los objetos mínimos como signo de la precariedad existencial.", ej:"En los cuentos de Raymond Carver, una botella vacía significa desolación."},
+                    {nombre:"El humor como transgresión semiótica", desc:"El chiste rompe las expectativas de sentido.", ej:"'¿Qué le dice un semáforo a otro? No me mires que me pongo verde.'"},
+                    {nombre:"Semiótica del silencio", desc:"El silencio como signo comunicativo pleno.", ej:"En 'El túnel' de Sábato, el silencio de María significa misterio."},
+                    {nombre:"La publicidad hispánica", desc:"Uso de signos culturales para persuadir.", ej:"Anuncios que apelan a la familia y la tradición en España."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoSemiotica')) {
+                const p = JSON.parse(localStorage.getItem('progresoSemiotica'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoSemiotica', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea el concepto <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

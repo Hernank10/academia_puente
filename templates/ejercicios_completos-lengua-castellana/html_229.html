@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Muletillas y Claridad</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">muletillas y claridad · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Muletilla: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Reescribe una frase eliminando la muletilla o mejorando la claridad:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Básicamente, creo que...» → «Creo que...»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE MULETILLAS Y CLARIDAD
+        //  Muletillas comunes, cómo evitarlas y claridad en las frases
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'muletillas_A_D', label: 'Muletillas (A-D)' },
+            { id: 'muletillas_E_I', label: 'Muletillas (E-I)' },
+            { id: 'muletillas_J_P', label: 'Muletillas (J-P)' },
+            { id: 'muletillas_Q_Z', label: 'Muletillas (Q-Z)' },
+            { id: 'claridad_sujeto', label: 'Claridad: Sujeto' },
+            { id: 'claridad_verbos', label: 'Claridad: Verbos' },
+            { id: 'claridad_oraciones', label: 'Claridad: Oraciones' },
+            { id: 'claridad_conectores', label: 'Claridad: Conectores' },
+            { id: 'claridad_puntuacion', label: 'Claridad: Puntuación' },
+            { id: 'claridad_estilo', label: 'Claridad: Estilo' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: MULETILLAS (A-D) (1–10)
+        // ============================================================
+        const b1 = [
+            ['"Básicamente" (muletilla)', 'Básicamente → evitar',
+                '"Básicamente" es una muletilla muy común que a menudo no aporta información. Se puede eliminar o sustituir por "en esencia".',
+                'Incorrecto: Básicamente, creo que es tarde. / Correcto: Creo que es tarde.',
+                'Básicamente (muletilla)',
+                '¿Cómo se puede mejorar una frase con "básicamente"?', ['Eliminándolo', 'Añadiendo más palabras',
+                    'Cambiando el verbo', 'Nada'
+                ], 0, 'Reescribe "Básicamente, no sé qué hacer" sin la muletilla.'
+            ],
+            ['"Bueno" (muletilla)', 'Bueno → evitar',
+                '"Bueno" como muletilla al inicio de una frase no aporta contenido. Se puede eliminar.',
+                'Incorrecto: Bueno, creo que sí. / Correcto: Creo que sí.',
+                'Bueno (muletilla)',
+                '¿Cómo se mejora una frase que empieza con "Bueno"?', ['Eliminándolo', 'Añadiendo más palabras',
+                    'Cambiando el verbo', 'Nada'
+                ], 0, 'Reescribe "Bueno, voy a salir" sin la muletilla.'
+            ],
+            ['"Claro" (muletilla)', 'Claro → evitar',
+                '"Claro" como muletilla no añade contenido. Se puede eliminar o sustituir por "por supuesto" en casos necesarios.',
+                'Incorrecto: Claro, yo creo que es así. / Correcto: Yo creo que es así.',
+                'Claro (muletilla)',
+                '¿Cómo se mejora una frase con "Claro" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                    'Cambiando el verbo', 'Nada'
+                ], 0, 'Reescribe "Claro, tienes razón" sin la muletilla.'
+            ],
+            ['"Como" (muletilla)', 'Como → evitar (en exceso)',
+                '"Como" como muletilla se usa para comenzar explicaciones. Se puede eliminar o sustituir por "por ejemplo" o "es decir".',
+                'Incorrecto: Como, no sé qué hacer. / Correcto: No sé qué hacer.',
+                'Como (muletilla)',
+                '¿Cómo se mejora una frase que empieza con "Como"?', ['Eliminándolo', 'Añadiendo más palabras',
+                    'Cambiando el verbo', 'Nada'
+                ], 0, 'Reescribe "Como, no me gusta el frío" sin la muletilla.'
+            ],
+            ['"Digo" (muletilla)', 'Digo → evitar',
+                    '"Digo" es una muletilla que se usa para corregirse o dudar. Se puede eliminar o sustituir por "quiero decir".',
+                    'Incorrecto: Digo, si no te importa. / Correcto: Si no te importa.',
+                    'Digo (muletilla)',
+                    '¿Cómo se mejora una frase con "Digo" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Digo, creo que es mejor esperar" sin la muletilla.'
+                ],
+                ['"En realidad" (muletilla)', 'En realidad → evitar',
+                    '"En realidad" es una muletilla que suele ser redundante. Se puede eliminar o sustituir por "realmente".',
+                    'Incorrecto: En realidad, no sé qué hacer. / Correcto: No sé qué hacer.',
+                    'En realidad (muletilla)',
+                    '¿Cómo se mejora una frase con "En realidad"?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "En realidad, no es tan difícil" sin la muletilla.'
+                ],
+                ['"Entonces" (muletilla)', 'Entonces → evitar (como muletilla)',
+                    '"Entonces" como muletilla no aporta contenido. Se puede eliminar o sustituir por "por tanto" en contextos lógicos.',
+                    'Incorrecto: Entonces, yo creo que... / Correcto: Yo creo que...',
+                    'Entonces (muletilla)',
+                    '¿Cómo se mejora una frase que empieza con "Entonces"?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Entonces, ¿qué hacemos?" sin la muletilla.'
+                ],
+                ['"Es que" (muletilla)', 'Es que → evitar',
+                    '"Es que" es una muletilla que se usa para justificar. Se puede eliminar o sustituir por "porque".',
+                    'Incorrecto: Es que no pude venir. / Correcto: No pude venir.',
+                    'Es que (muletilla)',
+                    '¿Cómo se mejora una frase con "Es que"?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Es que se me olvidó" sin la muletilla.'
+                ],
+                ['"Este" (muletilla)', 'Este → evitar',
+                    '"Este" es una muletilla muy común para ganar tiempo al hablar. Se puede eliminar.',
+                    'Incorrecto: Este, quería preguntarte... / Correcto: Quería preguntarte...',
+                    'Este (muletilla)',
+                    '¿Cómo se mejora una frase con "Este" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Este, ¿me podrías ayudar?" sin la muletilla.'
+                ],
+                ['"Espera" (muletilla)', 'Espera → evitar',
+                    '"Espera" como muletilla para ganar tiempo se puede eliminar.',
+                    'Incorrecto: Espera, creo que es mejor... / Correcto: Creo que es mejor...',
+                    'Espera (muletilla)',
+                    '¿Cómo se mejora una frase con "Espera" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Espera, no estoy seguro" sin la muletilla.'
+                ]
+            ];
+        b1.forEach(d => addLesson('muletillas_A_D', ...d));
+
+            // ============================================================
+            //  BLOQUE 2: MULETILLAS (E-I) (11–20)
+            // ============================================================
+            const b2 = [
+                ['"Esto" (muletilla)', 'Esto → evitar',
+                    '"Esto" es una muletilla para ganar tiempo al hablar. Se puede eliminar.',
+                    'Incorrecto: Esto, quería decirte... / Correcto: Quería decirte...',
+                    'Esto (muletilla)',
+                    '¿Cómo se mejora una frase con "Esto" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Esto, no sé qué hacer" sin la muletilla.'
+                ],
+                ['"Exactamente" (muletilla)', 'Exactamente → evitar',
+                    '"Exactamente" se usa a menudo como muletilla de afirmación. Se puede eliminar o sustituir por "sí".',
+                    'Incorrecto: Exactamente, creo que tienes razón. / Correcto: Creo que tienes razón.',
+                    'Exactamente (muletilla)',
+                    '¿Cómo se mejora una frase con "Exactamente" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Exactamente, es lo que pienso" sin la muletilla.'
+                ],
+                ['"Fíjate" (muletilla)', 'Fíjate → evitar',
+                    '"Fíjate" es una muletilla que se usa para llamar la atención. Se puede eliminar o sustituir por "mira".',
+                    'Incorrecto: Fíjate, no sabía eso. / Correcto: No sabía eso.',
+                    'Fíjate (muletilla)',
+                    '¿Cómo se mejora una frase con "Fíjate" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Fíjate, es muy interesante" sin la muletilla.'
+                ],
+                ['"Hombre" (muletilla)', 'Hombre → evitar',
+                    '"Hombre" es una muletilla coloquial para expresar sorpresa o duda. Se puede eliminar.',
+                    'Incorrecto: Hombre, no sé qué decir. / Correcto: No sé qué decir.',
+                    'Hombre (muletilla)',
+                    '¿Cómo se mejora una frase con "Hombre" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Hombre, no creo que sea así" sin la muletilla.'
+                ],
+                ['"Imagínate" (muletilla)', 'Imagínate → evitar',
+                    '"Imagínate" es una muletilla que se usa para ejemplificar o dar énfasis. Se puede eliminar.',
+                    'Incorrecto: Imagínate, no vino nadie. / Correcto: No vino nadie.',
+                    'Imagínate (muletilla)',
+                    '¿Cómo se mejora una frase con "Imagínate" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Imagínate, llegó tarde" sin la muletilla.'
+                ],
+                ['"Incluso" (muletilla)', 'Incluso → evitar (como muletilla)',
+                    '"Incluso" como muletilla para enfatizar se puede eliminar o usar con moderación.',
+                    'Incorrecto: Incluso, yo también lo creo. / Correcto: Yo también lo creo.',
+                    'Incluso (muletilla)',
+                    '¿Cómo se mejora una frase con "Incluso" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Incluso, no sé qué hacer" sin la muletilla.'
+                ],
+                ['"Lo que pasa es que" (muletilla)', 'Lo que pasa es que → evitar',
+                    '"Lo que pasa es que" es una muletilla larga que no aporta contenido. Se puede eliminar o sustituir por "es que".',
+                    'Incorrecto: Lo que pasa es que no pude venir. / Correcto: No pude venir.',
+                    'Lo que pasa es que (muletilla)',
+                    '¿Cómo se mejora una frase con "Lo que pasa es que"?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Lo que pasa es que me olvidé" sin la muletilla.'
+                ],
+                ['"Mira" (muletilla)', 'Mira → evitar',
+                    '"Mira" como muletilla para llamar la atención se puede eliminar.',
+                    'Incorrecto: Mira, creo que es mejor... / Correcto: Creo que es mejor...',
+                    'Mira (muletilla)',
+                    '¿Cómo se mejora una frase con "Mira" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Mira, no sé qué decir" sin la muletilla.'
+                ],
+                ['"O sea" (muletilla)', 'O sea → evitar (como muletilla)',
+                    '"O sea" como muletilla se usa para reformular. Se puede eliminar o sustituir por "es decir".',
+                    'Incorrecto: O sea, no sé qué hacer. / Correcto: No sé qué hacer.',
+                    'O sea (muletilla)',
+                    '¿Cómo se mejora una frase con "O sea" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "O sea, quiero decir que no" sin la muletilla.'
+                ],
+                ['"Pues" (muletilla)', 'Pues → evitar',
+                    '"Pues" es una muletilla muy común para conectar ideas. Se puede eliminar.',
+                    'Incorrecto: Pues, creo que sí. / Correcto: Creo que sí.',
+                    'Pues (muletilla)',
+                    '¿Cómo se mejora una frase con "Pues" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Pues, no sé qué hacer" sin la muletilla.'
+                ]
+            ];
+        b2.forEach(d => addLesson('muletillas_E_I', ...d));
+
+            // ============================================================
+            //  BLOQUE 3: MULETILLAS (J-P) (21–30)
+            // ============================================================
+            const b3 = [
+                ['"Por ejemplo" (muletilla)', 'Por ejemplo → evitar (en exceso)',
+                    '"Por ejemplo" se usa para dar ejemplos, pero en exceso se convierte en muletilla. Se puede sustituir por "como".',
+                    'Incorrecto: Por ejemplo, me gusta el cine. / Correcto: Me gusta el cine.',
+                    'Por ejemplo (muletilla en exceso)',
+                    '¿Cómo se mejora una frase con "Por ejemplo" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Por ejemplo, no me gusta el frío" sin la muletilla.'
+                ],
+                ['"Por supuesto" (muletilla)', 'Por supuesto → evitar',
+                    '"Por supuesto" como muletilla de afirmación se puede eliminar o sustituir por "sí".',
+                    'Incorrecto: Por supuesto, creo que sí. / Correcto: Creo que sí.',
+                    'Por supuesto (muletilla)',
+                    '¿Cómo se mejora una frase con "Por supuesto" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Por supuesto, tienes razón" sin la muletilla.'
+                ],
+                ['"Realmente" (muletilla)', 'Realmente → evitar',
+                    '"Realmente" es una muletilla que enfatiza, pero a menudo es redundante. Se puede eliminar.',
+                    'Incorrecto: Realmente, no sé qué hacer. / Correcto: No sé qué hacer.',
+                    'Realmente (muletilla)',
+                    '¿Cómo se mejora una frase con "Realmente" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Realmente, es muy difícil" sin la muletilla.'
+                ],
+                ['"Sinceramente" (muletilla)', 'Sinceramente → evitar',
+                    '"Sinceramente" es una muletilla que suele ser innecesaria. Se puede eliminar.',
+                    'Incorrecto: Sinceramente, no lo sé. / Correcto: No lo sé.',
+                    'Sinceramente (muletilla)',
+                    '¿Cómo se mejora una frase con "Sinceramente" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Sinceramente, creo que es mejor" sin la muletilla.'
+                ],
+                ['"Total" (muletilla)', 'Total → evitar',
+                    '"Total" como muletilla para resumir se puede eliminar.',
+                    'Incorrecto: Total, que no vino. / Correcto: No vino.',
+                    'Total (muletilla)',
+                    '¿Cómo se mejora una frase con "Total" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Total, no sé qué hacer" sin la muletilla.'
+                ],
+                ['"Vamos" (muletilla)', 'Vamos → evitar',
+                    '"Vamos" como muletilla para dar énfasis se puede eliminar.',
+                    'Incorrecto: Vamos, no me digas eso. / Correcto: No me digas eso.',
+                    'Vamos (muletilla)',
+                    '¿Cómo se mejora una frase con "Vamos" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Vamos, no es tan difícil" sin la muletilla.'
+                ],
+                ['"Vale" (muletilla)', 'Vale → evitar',
+                    '"Vale" es una muletilla coloquial para asentir. Se puede eliminar.',
+                    'Incorrecto: Vale, entonces voy. / Correcto: Entonces voy.',
+                    'Vale (muletilla)',
+                    '¿Cómo se mejora una frase con "Vale" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Vale, de acuerdo" sin la muletilla.'
+                ],
+                ['"Verás" (muletilla)', 'Verás → evitar',
+                    '"Verás" como muletilla para introducir una explicación se puede eliminar.',
+                    'Incorrecto: Verás, es que no pude. / Correcto: Es que no pude.',
+                    'Verás (muletilla)',
+                    '¿Cómo se mejora una frase con "Verás" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Verás, no es tan fácil" sin la muletilla.'
+                ],
+                ['"Voy a decir" (muletilla)', 'Voy a decir → evitar',
+                    '"Voy a decir" es una muletilla para introducir un comentario. Se puede eliminar.',
+                    'Incorrecto: Voy a decir que no. / Correcto: No.',
+                    'Voy a decir (muletilla)',
+                    '¿Cómo se mejora una frase con "Voy a decir" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Voy a decir que no me gusta" sin la muletilla.'
+                ],
+                ['"Ya" (muletilla)', 'Ya → evitar',
+                    '"Ya" como muletilla de afirmación se puede eliminar.',
+                    'Incorrecto: Ya, creo que sí. / Correcto: Creo que sí.',
+                    'Ya (muletilla)',
+                    '¿Cómo se mejora una frase con "Ya" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Ya, tienes razón" sin la muletilla.'
+                ]
+            ];
+        b3.forEach(d => addLesson('muletillas_J_P', ...d));
+
+            // ============================================================
+            //  BLOQUE 4: MULETILLAS (Q-Z) (31–40)
+            // ============================================================
+            const b4 = [
+                ['"¿Me entiendes?" (muletilla)', '¿Me entiendes? → evitar',
+                    '"¿Me entiendes?" es una muletilla que se usa para comprobar la comprensión. Se puede eliminar o sustituir por "¿está claro?".',
+                    'Incorrecto: Es difícil, ¿me entiendes? / Correcto: Es difícil.',
+                    '¿Me entiendes? (muletilla)',
+                    '¿Cómo se mejora una frase con "¿Me entiendes?" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "No es fácil, ¿me entiendes?" sin la muletilla.'
+                ],
+                ['"¿Sabes?" (muletilla)', '¿Sabes? → evitar',
+                    '"¿Sabes?" es una muletilla para buscar confirmación. Se puede eliminar.',
+                    'Incorrecto: Es muy caro, ¿sabes? / Correcto: Es muy caro.',
+                    '¿Sabes? (muletilla)',
+                    '¿Cómo se mejora una frase con "¿Sabes?" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Es complicado, ¿sabes?" sin la muletilla.'
+                ],
+                ['"¿Ves?" (muletilla)', '¿Ves? → evitar',
+                    '"¿Ves?" es una muletilla para enfatizar. Se puede eliminar.',
+                    'Incorrecto: Es fácil, ¿ves? / Correcto: Es fácil.',
+                    '¿Ves? (muletilla)',
+                    '¿Cómo se mejora una frase con "¿Ves?" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Te lo dije, ¿ves?" sin la muletilla.'
+                ],
+                ['"¿No?" (muletilla)', '¿No? → evitar',
+                    '"¿No?" al final de una frase es una muletilla para buscar confirmación. Se puede eliminar.',
+                    'Incorrecto: Es verdad, ¿no? / Correcto: Es verdad.',
+                    '¿No? (muletilla)',
+                    '¿Cómo se mejora una frase con "¿No?" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Es bonito, ¿no?" sin la muletilla.'
+                ],
+                ['"¿Verdad?" (muletilla)', '¿Verdad? → evitar',
+                    '"¿Verdad?" es una muletilla para buscar confirmación. Se puede eliminar o sustituir por "¿no es así?".',
+                    'Incorrecto: Es genial, ¿verdad? / Correcto: Es genial.',
+                    '¿Verdad? (muletilla)',
+                    '¿Cómo se mejora una frase con "¿Verdad?" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Es increíble, ¿verdad?" sin la muletilla.'
+                ],
+                ['"O sea que" (muletilla)', 'O sea que → evitar',
+                    '"O sea que" es una muletilla para concluir. Se puede eliminar o sustituir por "entonces".',
+                    'Incorrecto: O sea que, no vino. / Correcto: No vino.',
+                    'O sea que (muletilla)',
+                    '¿Cómo se mejora una frase con "O sea que" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "O sea que, no sé qué hacer" sin la muletilla.'
+                ],
+                ['"Digo yo" (muletilla)', 'Digo yo → evitar',
+                    '"Digo yo" es una muletilla para expresar opinión personal. Se puede eliminar.',
+                    'Incorrecto: Es mejor así, digo yo. / Correcto: Es mejor así.',
+                    'Digo yo (muletilla)',
+                    '¿Cómo se mejora una frase con "Digo yo" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "No es difícil, digo yo" sin la muletilla.'
+                ],
+                ['"Quiero decir" (muletilla)', 'Quiero decir → evitar',
+                    '"Quiero decir" es una muletilla para reformular. Se puede eliminar.',
+                    'Incorrecto: Quiero decir, no es tan malo. / Correcto: No es tan malo.',
+                    'Quiero decir (muletilla)',
+                    '¿Cómo se mejora una frase con "Quiero decir" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Quiero decir, no me gusta" sin la muletilla.'
+                ],
+                ['"Es decir" (muletilla)', 'Es decir → evitar',
+                    '"Es decir" como muletilla para reformular se puede eliminar.',
+                    'Incorrecto: Es decir, no vino. / Correcto: No vino.',
+                    'Es decir (muletilla)',
+                    '¿Cómo se mejora una frase con "Es decir" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "Es decir, no sé qué hacer" sin la muletilla.'
+                ],
+                ['"En fin" (muletilla)', 'En fin → evitar',
+                    '"En fin" es una muletilla para concluir. Se puede eliminar.',
+                    'Incorrecto: En fin, no sé qué hacer. / Correcto: No sé qué hacer.',
+                    'En fin (muletilla)',
+                    '¿Cómo se mejora una frase con "En fin" como muletilla?', ['Eliminándolo', 'Añadiendo más palabras',
+                        'Cambiando el verbo', 'Nada'
+                    ], 0, 'Reescribe "En fin, ya veremos" sin la muletilla.'
+                ]
+            ];
+        b4.forEach(d => addLesson('muletillas_Q_Z', ...d));
+
+            // ============================================================
+            //  BLOQUE 5: CLARIDAD: SUJETO (41–50)
+            // ============================================================
+            const b5 = [
+                ['Sujeto claro y visible', 'Sujeto + verbo + complementos',
+                    'Para que una frase sea clara, el sujeto debe estar claramente identificado y visible, no escondido en la oración.',
+                    'Incorrecto: Se dice que llegó tarde. / Correcto: El director llegó tarde.',
+                    'Sujeto claro (el director)',
+                    '¿Qué debe estar claramente identificado en una oración?', ['El sujeto', 'El verbo', 'El complemento',
+                        'El adverbio'
+                    ], 0, 'Reescribe "Se dice que va a llover" con un sujeto claro.'
+                ],
+                ['Evitar sujetos tácitos confusos', 'Sujeto tácito → evitar ambigüedad',
+                    'Cuando el sujeto está omitido, puede haber ambigüedad. Es mejor explicitarlo si hay duda.',
+                    'Incorrecto: Llegó tarde. (¿quién?) / Correcto: Juan llegó tarde.',
+                    'Sujeto explícito (Juan)',
+                    '¿Qué se debe hacer si el sujeto tácito es ambiguo?', ['Explicitarlo', 'Mantenerlo oculto',
+                        'Usar un pronombre', 'Nada'
+                    ], 0, 'Reescribe "Dijo que no" con un sujeto claro.'
+                ],
+                ['Concordancia sujeto-verbo', 'Concordancia en número y persona',
+                    'El sujeto y el verbo deben concordar en número y persona para evitar confusiones.',
+                    'Incorrecto: Los niños juega. / Correcto: Los niños juegan.',
+                    'Concordancia sujeto-verbo',
+                    '¿Qué debe concordar con el sujeto?', ['El verbo', 'El adjetivo', 'El complemento', 'El adverbio'],
+                0, 'Corrige "La casa son grandes".'
+            ],
+            ['Sujeto cerca del verbo', 'Cercanía sujeto-verbo',
+                'El sujeto debe estar cerca del verbo para que la oración sea clara y fácil de entender.',
+                'Incorrecto: El libro que me prestaste ayer, está en la mesa. / Correcto: El libro está en la mesa.',
+                'Sujeto cerca del verbo',
+                '¿Dónde debe estar el sujeto respecto al verbo?', ['Cerca', 'Lejos', 'Al final', 'Al principio'],
+                0, 'Reescribe "El coche que compré el año pasado, está averiado" con el sujeto cerca del verbo.'
+            ],
+            ['Sujeto como núcleo de la oración', 'Sujeto como núcleo',
+                'El sujeto es el núcleo de la oración y debe ser claro para que el mensaje sea comprensible.',
+                'Incorrecto: Fueron recibidos con honores. (¿quién?) / Correcto: Los héroes fueron recibidos con honores.',
+                'Sujeto como núcleo',
+                '¿Qué es el núcleo de la oración?', ['El sujeto', 'El verbo', 'El complemento', 'El adverbio'],
+                0, 'Reescribe "Fueron premiados" con un sujeto claro.'
+            ],
+            ['Sujeto en oraciones pasivas', 'Pasiva con sujeto claro',
+                'En oraciones pasivas, el sujeto paciente debe ser claro y no confundirse con el agente.',
+                'Incorrecto: El pastel fue comido. (¿por quién?) / Correcto: El pastel fue comido por los niños.',
+                'Sujeto paciente claro',
+                '¿Qué debe ser claro en una oración pasiva?', ['El sujeto paciente', 'El agente', 'El verbo',
+                        'El complemento'
+                    ], 0, 'Reescribe "La carta fue escrita" con un sujeto claro.'
+                ],
+                ['Sujeto en oraciones con "se"', 'Oraciones impersonales y pasivas reflejas',
+                    'En oraciones con "se", el sujeto puede estar implícito. Es importante identificar si es impersonal o pasiva refleja.',
+                    'Incorrecto: Se vive bien aquí. (impersonal) / Correcto: La gente vive bien aquí.',
+                    'Sujeto en oraciones con "se"',
+                    '¿Qué tipo de oración con "se" tiene sujeto implícito?', ['Impersonal', 'Pasiva refleja',
+                        'Reflexiva', 'Recíproca'
+                    ], 0, 'Reescribe "Se necesitan trabajadores" con un sujeto claro.'
+                ],
+                ['Sujeto compuesto y concordancia', 'Concordancia con sujeto compuesto',
+                    'En sujetos compuestos, el verbo va en plural.',
+                    'Incorrecto: Juan y María estudia. / Correcto: Juan y María estudian.',
+                    'Sujeto compuesto → verbo plural',
+                    '¿Cómo concuerda el verbo con un sujeto compuesto?', ['En plural', 'En singular', 'Depende',
+                        'Con el primer elemento'
+                    ], 0, 'Corrige "El perro y el gato juega".'
+                ],
+                ['Sujeto pospuesto para claridad', 'Sujeto pospuesto (énfasis)',
+                    'A veces, posponer el sujeto puede dar claridad o énfasis a la oración.',
+                    'Llegó tarde el tren. (énfasis en "llegó")',
+                    'Sujeto pospuesto',
+                    '¿Qué efecto tiene posponer el sujeto?', ['Énfasis', 'Confusión', 'Ambigüedad', 'Nada'],
+                0, 'Escribe una oración con el sujeto pospuesto.'
+            ]
+        ];
+        b5.forEach(d => addLesson('claridad_sujeto', ...d));
+
+            // ============================================================
+            //  BLOQUE 6: CLARIDAD: VERBOS (51–60)
+            // ============================================================
+            const b6 = [
+                ['Verbo activo vs pasivo', 'Voz activa (más clara)',
+                    'La voz activa es más directa y clara que la pasiva. Se recomienda usar activa siempre que sea posible.',
+                    'Pasiva: El informe fue realizado por el equipo. / Activa: El equipo realizó el informe.',
+                    'Voz activa (más clara)',
+                    '¿Qué voz es más clara en una oración?', ['Activa', 'Pasiva', 'Impersonal', 'Reflexiva'],
+                0, 'Reescribe "La carta fue escrita por Juan" en voz activa.'
+            ],
+            ['Verbo en presente para actualidad', 'Presente para hechos actuales',
+                'Usar el presente de indicativo para hechos actuales o generales hace la frase más clara y directa.',
+                'Incorrecto: El agua hervía a 100 grados. / Correcto: El agua hierve a 100 grados.',
+                'Presente para hechos generales',
+                '¿Qué tiempo verbal es más claro para hechos generales?', ['Presente', 'Pretérito', 'Futuro',
+                        'Condicional'
+                    ], 0, 'Reescribe "La Tierra giraba alrededor del Sol" en presente.'
+                ],
+                ['Verbo conjugado correctamente', 'Conjugación correcta',
+                    'La conjugación verbal debe ser correcta en persona, número y tiempo para evitar confusiones.',
+                    'Incorrecto: Nosotros estudia. / Correcto: Nosotros estudiamos.',
+                    'Conjugación correcta',
+                    '¿Qué debe ser correcto en el verbo?', ['La conjugación', 'El significado', 'La forma',
+                        'El tiempo'
+                    ], 0, 'Corrige "Ellos estudia".'
+                ],
+                ['Verbo como núcleo del predicado', 'Verbo como núcleo',
+                    'El verbo es el núcleo del predicado y debe ser claro para que la oración tenga sentido.',
+                    'Incorrecto: El libro en la mesa. (sin verbo) / Correcto: El libro está en la mesa.',
+                    'Verbo como núcleo',
+                    '¿Qué es el núcleo del predicado?', ['El verbo', 'El sujeto', 'El complemento', 'El adverbio'],
+                0, 'Añade el verbo a "El perro en el parque".'
+            ],
+            ['Tiempos verbales consistentes', 'Consistencia temporal',
+                'Los tiempos verbales deben ser consistentes dentro de una misma oración o párrafo.',
+                'Incorrecto: Iba al cine y compró palomitas. / Correcto: Fue al cine y compró palomitas.',
+                'Consistencia temporal',
+                '¿Qué debe ser consistente en los verbos?', ['El tiempo', 'El modo', 'La persona', 'El número'],
+                0, 'Corrige "Estudia y aprobó".'
+            ],
+            ['Perífrasis verbales claras', 'Perífrasis sin rodeos',
+                'Las perífrasis verbales deben ser claras y no complicar innecesariamente la oración.',
+                'Incorrecto: Se va a proceder a la firma. / Correcto: Se firmará.',
+                'Perífrasis clara',
+                '¿Qué se debe evitar en las perífrasis verbales?', ['Rodeos innecesarios', 'La claridad', 'La precisión',
+                        'La concisión'
+                    ], 0, 'Reescribe "Se va a realizar la entrega" de forma más clara.'
+                ],
+                ['Verbos no personales (infinitivo, gerundio, participio)', 'Uso correcto de formas no personales',
+                    'Los verbos no personales deben usarse correctamente para evitar ambigüedades.',
+                    'Incorrecto: Al llegar, me llamó. (ambigüedad) / Correcto: Cuando llegó, me llamó.',
+                    'Formas no personales claras',
+                    '¿Qué problema pueden causar las formas no personales?', ['Ambigüedad', 'Claridad', 'Precisión',
+                        'Concisión'
+                    ], 0, 'Reescribe "Al salir, lo vi" para evitar ambigüedad.'
+                ],
+                ['Verbos de comunicación claros', 'Verbos de comunicación precisos',
+                    'Usar verbos de comunicación precisos (decir, afirmar, preguntar) en lugar de genéricos como "hablar".',
+                    'Incorrecto: Habló sobre el tema. / Correcto: Explicó el tema.',
+                    'Verbo de comunicación preciso',
+                    '¿Qué verbo es más preciso que "hablar"?', ['Explicar', 'Decir', 'Preguntar', 'Argumentar'],
+                0, 'Reescribe "Habló de sus vacaciones" con un verbo más preciso.'
+            ],
+            ['Verbos de movimiento claros', 'Verbos de movimiento precisos',
+                'Usar verbos de movimiento precisos (caminar, correr, llegar) en lugar de genéricos como "ir".',
+                'Incorrecto: Fue a la tienda. / Correcto: Caminó a la tienda.',
+                'Verbo de movimiento preciso',
+                '¿Qué verbo es más preciso que "ir"?', ['Caminar', 'Correr', 'Llegar', 'Partir'],
+                0, 'Reescribe "Se fue de la casa" con un verbo más preciso.'
+            ],
+            ['Eliminar verbos redundantes', 'Evitar verbos vacíos',
+                'Eliminar verbos como "hacer", "tener" o "estar" cuando son redundantes y sustituirlos por verbos más precisos.',
+                'Incorrecto: Hizo una caminata. / Correcto: Caminó.',
+                'Verbo más preciso',
+                '¿Qué verbo se puede eliminar por redundante?', ['Hacer', 'Caminar', 'Correr', 'Saltar'],
+                0, 'Reescribe "Hizo una revisión del documento" con un verbo más preciso.'
+            ]
+        ];
+        b6.forEach(d => addLesson('claridad_verbos', ...d));
+
+            // ============================================================
+            //  BLOQUE 7: CLARIDAD: ORACIONES (61–70)
+            // ============================================================
+            const b7 = [
+                ['Oraciones cortas', 'Oraciones breves y claras',
+                    'Las oraciones cortas son más fáciles de entender. Se recomienda no exceder las 15-20 palabras.',
+                    'Larga: El libro que me compré ayer en la librería del centro, y que me recomendó mi amigo, es muy interesante. / Corta: El libro es muy interesante. Me lo compré ayer.',
+                    'Oraciones cortas',
+                    '¿Qué longitud es recomendable para una oración clara?', ['Corta (15-20 palabras)',
+                        'Larga (más de 30 palabras)', 'Mediana (20-30 palabras)', 'Indiferente'
+                    ], 0, 'Divide una oración larga en dos cortas.'
+                ],
+                ['Una idea por oración', 'Una idea principal por oración',
+                    'Cada oración debe expresar una sola idea principal para evitar confusiones.',
+                    'Incorrecto: Fui al cine y compré palomitas y me encontré con Juan y hablamos. / Correcto: Fui al cine. Compré palomitas. Me encontré con Juan. Hablamos.',
+                    'Una idea por oración',
+                    '¿Cuántas ideas debe tener una oración?', ['Una', 'Dos', 'Tres', 'Varias'],
+                0, 'Divide una oración con varias ideas en oraciones separadas.'
+            ],
+            ['Evitar subordinación excesiva', 'Subordinación limitada',
+                    'El exceso de subordinadas complica la comprensión. Se recomienda limitar el número de subordinadas por oración.',
+                    'Incorrecto: El libro que compré ayer, que es muy interesante, y que me recomendó mi amigo, lo estoy leyendo. / Correcto: Estoy leyendo el libro que me recomendó mi amigo. Es muy interesante.',
+                    'Subordinación limitada',
+                    '¿Qué se debe evitar en las oraciones?', ['Subordinación excesiva', 'Coordinación', 'Yuxtaposición',
+                        'Elipsis'
+                    ], 0, 'Reescribe una oración con muchas subordinadas en varias oraciones simples.'
+                ],
+                ['Orden lógico de las palabras', 'Orden sujeto-verbo-complementos',
+                    'El orden lógico en español es sujeto + verbo + complementos. Alterar este orden puede dificultar la comprensión.',
+                    'Incorrecto: Ayer, en el parque, a Juan lo vi. / Correcto: Vi a Juan ayer en el parque.',
+                    'Orden lógico',
+                    '¿Cuál es el orden lógico en español?', ['Sujeto + verbo + complementos', 'Verbo + sujeto + complementos',
+                        'Complementos + verbo + sujeto', 'Sujeto + complementos + verbo'
+                    ], 0, 'Reescribe "En el cine, a María la encontré" con orden lógico.'
+                ],
+                ['Evitar anacolutos', 'Anacoluto (estructura rota)',
+                    'El anacoluto es una ruptura en la estructura de la oración que dificulta la comprensión. Se debe evitar.',
+                    'Incorrecto: El libro, no sé si lo has leído. / Correcto: ¿Has leído el libro?',
+                    'Estructura rota → anacoluto',
+                    '¿Qué es un anacoluto?', ['Una ruptura en la estructura de la oración', 'Una oración larga',
+                        'Una oración corta', 'Una oración subordinada'
+                    ], 0, 'Corrige "La película, no me gustó".'
+                ],
+                ['Evitar queísmo y dequeísmo', 'Queísmo y dequeísmo',
+                    'El queísmo (omitir "de" cuando es necesario) y el dequeísmo (añadir "de" cuando no es necesario) dificultan la claridad.',
+                    'Incorrecto: Me acuerdo que llegó tarde. (queísmo) / Correcto: Me acuerdo de que llegó tarde.',
+                    'Dequeísmo y queísmo',
+                    '¿Qué es el queísmo?', ['Omitir "de" cuando es necesario', 'Añadir "de" cuando no es necesario',
+                        'Usar "que" en lugar de "de"', 'Usar "de" en lugar de "que"'
+                    ], 0, 'Corrige "Me acuerdo que vino".'
+                ],
+                ['Evitar gerundio de posterioridad', 'Gerundio de posterioridad (error)',
+                    'El gerundio no debe expresar una acción posterior a la del verbo principal.',
+                    'Incorrecto: Se cayó, rompiéndose la pierna. (rompiéndose es posterior) / Correcto: Se cayó y se rompió la pierna.',
+                    'Gerundio de posterioridad (error)',
+                    '¿Cuándo es incorrecto usar el gerundio?', ['Cuando expresa posterioridad', 'Cuando expresa simultaneidad',
+                        'Cuando expresa causa', 'Cuando expresa modo'
+                    ], 0, 'Corrige "Llegó, sentándose en la silla".'
+                ],
+                ['Evitar la elipsis excesiva', 'Elipsis (omisión)',
+                    'La elipsis puede ser útil, pero si se abusa, dificulta la comprensión.',
+                    'Incorrecto: Juan llegó tarde, Pedro también. / Correcto: Juan llegó tarde. Pedro también llegó tarde.',
+                    'Elipsis excesiva',
+                    '¿Qué se debe evitar en la elipsis?', ['Abusar de ella', 'Usarla siempre', 'No usarla nunca',
+                        'Usarla solo en verbos'
+                    ], 0, 'Reescribe una frase con elipsis excesiva de forma completa.'
+                ],
+                ['Oraciones afirmativas vs negativas', 'Afirmativas (más claras)',
+                    'Las oraciones afirmativas suelen ser más claras que las negativas, que pueden crear confusión.',
+                    'Negativa: No es que no quiera ir. / Afirmativa: Quiero ir.',
+                    'Afirmativas más claras',
+                    '¿Qué tipo de oración es más clara?', ['Afirmativa', 'Negativa', 'Interrogativa', 'Exclamativa'],
+                0, 'Reescribe "No es que no me guste" en forma afirmativa.'
+            ],
+            ['Uso de ejemplos para claridad', 'Ejemplos para aclarar',
+                    'Incluir ejemplos puede aclarar ideas complejas y hacer el mensaje más comprensible.',
+                    'Concepto: La sinestesia es... / Ejemplo: "Oír el color azul".',
+                    'Ejemplos para claridad',
+                    '¿Qué recurso aclara ideas complejas?', ['Los ejemplos', 'Las definiciones', 'Las comparaciones',
+                        'Las enumeraciones'
+                    ], 0, 'Añade un ejemplo a una idea compleja.'
+                ]
+            ];
+        b7.forEach(d => addLesson('claridad_oraciones', ...d));
+
+            // ============================================================
+            //  BLOQUE 8: CLARIDAD: CONECTORES (71–80)
+            // ============================================================
+            const b8 = [
+                ['Conectores lógicos claros', 'Uso de conectores adecuados',
+                    'Los conectores deben expresar claramente la relación entre las ideas (causa, consecuencia, contraste, etc.).',
+                    'Incorrecto: Llegué tarde, y me fui. (relación confusa) / Correcto: Llegué tarde, así que me fui.',
+                    'Conectores claros',
+                    '¿Qué deben expresar los conectores?', ['Relaciones lógicas', 'Emociones', 'Opiniones', 'Dudas'],
+                0, 'Sustituye "y" por un conector más preciso en "Llegué tarde, y me fui".'
+            ],
+            ['Evitar conectores redundantes', 'Conectores innecesarios',
+                    'No usar conectores que no aporten información o que sean redundantes.',
+                    'Incorrecto: Y además, también vino. / Correcto: También vino.',
+                    'Conectores redundantes',
+                    '¿Qué se debe evitar en los conectores?', ['La redundancia', 'La claridad', 'La precisión',
+                        'La variedad'
+                    ], 0, 'Reescribe "Y además, también se fue" sin redundancias.'
+                ],
+                ['Conectores de causa claros', 'Porque, puesto que, ya que',
+                    'Usar conectores causales claros para expresar la razón de algo.',
+                    'Incorrecto: No vino, no sé por qué. / Correcto: No vino porque estaba enfermo.',
+                    'Conectores causales',
+                    '¿Qué conector expresa causa?', ['Porque', 'Pero', 'Sin embargo', 'Además'],
+                0, 'Reescribe "No fue, no sé" con un conector causal.'
+            ],
+            ['Conectores de consecuencia', 'Así que, por lo tanto, en consecuencia',
+                    'Usar conectores de consecuencia para expresar el resultado de una acción.',
+                    'Incorrecto: Llovió, y me mojé. / Correcto: Llovió, así que me mojé.',
+                    'Conectores de consecuencia',
+                    '¿Qué conector expresa consecuencia?', ['Así que', 'Porque', 'Pero', 'Aunque'],
+                0, 'Reescribe "Estudió, y aprobó" con un conector de consecuencia.'
+            ],
+            ['Conectores de contraste', 'Pero, sin embargo, no obstante',
+                    'Usar conectores de contraste para expresar oposición.',
+                    'Incorrecto: Llovió, y no salí. (confuso) / Correcto: Llovió, pero salí.',
+                    'Conectores de contraste',
+                    '¿Qué conector expresa contraste?', ['Pero', 'Porque', 'Así que', 'Además'],
+                0, 'Reescribe "Llovió, y no fui" con un conector de contraste.'
+            ],
+            ['Conectores de adición', 'Además, también, asimismo',
+                    'Usar conectores de adición para añadir información.',
+                    'Incorrecto: Compré pan, leche. / Correcto: Compré pan y leche. Además, compré huevos.',
+                    'Conectores de adición',
+                    '¿Qué conector expresa adición?', ['Además', 'Pero', 'Por tanto', 'Aunque'],
+                0, 'Añade información a "Compré pan" usando un conector de adición.'
+            ],
+            ['Conectores de ejemplificación', 'Por ejemplo, como, es decir',
+                    'Usar conectores de ejemplificación para ilustrar una idea.',
+                    'Incorrecto: Me gustan las frutas. / Correcto: Me gustan las frutas, como la manzana y la pera.',
+                    'Conectores de ejemplificación',
+                    '¿Qué conector introduce un ejemplo?', ['Como', 'Además', 'Pero', 'Por tanto'],
+                0, 'Añade un ejemplo a "Me gusta el deporte" usando un conector de ejemplificación.'
+            ],
+            ['Conectores de conclusión', 'En conclusión, en resumen, finalmente',
+                    'Usar conectores de conclusión para finalizar un texto o una idea.',
+                    'Incorrecto: Bueno, eso es todo. / Correcto: En conclusión, es importante estudiar.',
+                    'Conectores de conclusión',
+                    '¿Qué conector indica una conclusión?', ['En conclusión', 'Por ejemplo', 'Además', 'Pero'],
+                0, 'Escribe una conclusión usando "en resumen".'
+            ],
+            ['Conectores de condición', 'Si, en caso de que, a menos que',
+                    'Usar conectores condicionales para expresar condiciones.',
+                    'Incorrecto: Llueve, no salgo. / Correcto: Si llueve, no salgo.',
+                    'Conectores condicionales',
+                    '¿Qué conector introduce una condición?', ['Si', 'Porque', 'Además', 'Pero'],
+                0, 'Reescribe "Llegas tarde, no entras" con un conector condicional.'
+            ],
+            ['Conectores de finalidad', 'Para, con el fin de, a fin de',
+                    'Usar conectores de finalidad para expresar el propósito de una acción.',
+                    'Incorrecto: Estudio, quiero aprobar. / Correcto: Estudio para aprobar.',
+                    'Conectores de finalidad',
+                    '¿Qué conector expresa finalidad?', ['Para', 'Porque', 'Pero', 'Así que'],
+                0, 'Reescribe "Trabajo, quiero ganar dinero" con un conector de finalidad.'
+            ]
+        ];
+        b8.forEach(d => addLesson('claridad_conectores', ...d));
+
+            // ============================================================
+            //  BLOQUE 9: CLARIDAD: PUNTUACIÓN (81–90)
+            // ============================================================
+            const b9 = [
+                ['Uso correcto de la coma', 'Coma para separar elementos',
+                    'La coma se usa para separar elementos en una enumeración, vocativos y oraciones subordinadas antepuestas.',
+                    'Incorrecto: Compré pan leche huevos. / Correcto: Compré pan, leche y huevos.',
+                    'Coma en enumeraciones',
+                    '¿Qué signo separa elementos en una enumeración?', ['Coma', 'Punto', 'Punto y coma', 'Dos puntos'],
+                0, 'Añade comas a "Compré frutas verduras y carne".'
+            ],
+            ['Uso correcto del punto', 'Punto para separar oraciones',
+                    'El punto separa oraciones y párrafos. Es fundamental para la claridad del texto.',
+                    'Incorrecto: Llegué tarde me fui. / Correcto: Llegué tarde. Me fui.',
+                    'Punto para separar oraciones',
+                    '¿Qué signo separa oraciones?', ['Punto', 'Coma', 'Punto y coma', 'Dos puntos'],
+                0, 'Añade puntos a "Llegué a casa cené y me acosté".'
+            ],
+            ['Uso correcto del punto y coma', 'Punto y coma para oraciones largas',
+                    'El punto y coma separa oraciones largas relacionadas o elementos con comas internas.',
+                    'Incorrecto: Compré manzanas, peras y naranjas, leche, queso y yogur. / Correcto: Compré manzanas, peras y naranjas; leche, queso y yogur.',
+                    'Punto y coma',
+                    '¿Cuándo se usa el punto y coma?', ['En enumeraciones con comas internas', 'Siempre', 'Nunca',
+                        'Solo en títulos'
+                    ], 0, 'Añade punto y coma a "Compré manzanas peras y naranjas leche queso y yogur".'
+                ],
+                ['Uso correcto de los dos puntos', 'Dos puntos para introducir enumeraciones o citas',
+                    'Los dos puntos introducen enumeraciones, citas textuales o explicaciones.',
+                    'Incorrecto: Compré frutas manzanas peras. / Correcto: Compré frutas: manzanas y peras.',
+                    'Dos puntos',
+                    '¿Qué signo introduce una enumeración?', ['Dos puntos', 'Coma', 'Punto', 'Punto y coma'],
+                0, 'Añade dos puntos a "Necesito comprar pan leche huevos".'
+            ],
+            ['Uso correcto de los puntos suspensivos', 'Puntos suspensivos para suspenso o enumeración incompleta',
+                    'Los puntos suspensivos indican suspenso o que la enumeración no está completa.',
+                    'Incorrecto: Compré manzanas, peras y... / Correcto: Compré manzanas, peras...',
+                    'Puntos suspensivos',
+                    '¿Qué indican los puntos suspensivos?', ['Suspenso o enumeración incompleta', 'Final de oración',
+                        'Separación de elementos', 'Introducción de cita'
+                    ], 0, 'Añade puntos suspensivos a "Compré manzanas, peras".'
+                ],
+                ['Uso correcto de las comillas', 'Comillas para citas y palabras extranjeras',
+                    'Las comillas encierran citas textuales, palabras extranjeras o usos irónicos.',
+                    'Incorrecto: Dijo que era tarde. / Correcto: Dijo: «Es tarde».',
+                    'Comillas',
+                    '¿Qué encierran las comillas?', ['Citas textuales', 'Oraciones largas', 'Enumeraciones', 'Títulos'],
+                0, 'Añade comillas a "Dijo que era tarde".'
+            ],
+            ['Uso correcto del guion y la raya', 'Guion y raya para diálogos e incisos',
+                    'La raya (—) se usa en diálogos e incisos; el guion (-) se usa para unir palabras.',
+                    'Incorrecto: Juan dijo -no sé-. / Correcto: Juan dijo: —No sé—.',
+                    'Raya en diálogos',
+                    '¿Qué signo se usa en diálogos?', ['Raya (—)', 'Guion (-)', 'Comillas', 'Paréntesis'],
+                0, 'Reescribe un diálogo usando rayas.'
+            ],
+            ['Uso correcto de los paréntesis', 'Paréntesis para información adicional',
+                    'Los paréntesis encierran información adicional o aclaratoria.',
+                    'Incorrecto: El libro interesante, estaba en la mesa. / Correcto: El libro (interesante) estaba en la mesa.',
+                    'Paréntesis',
+                    '¿Qué encierran los paréntesis?', ['Información adicional', 'Citas textuales', 'Enumeraciones',
+                        'Títulos'
+                    ], 0, 'Añade un inciso con paréntesis a "El libro estaba en la mesa".'
+                ],
+                ['Uso correcto de los signos de interrogación', 'Interrogación para preguntas directas',
+                    'Los signos de interrogación encierran preguntas directas.',
+                    'Incorrecto: Cómo te llamas. / Correcto: ¿Cómo te llamas?',
+                    'Signos de interrogación',
+                    '¿Qué signos encierran preguntas directas?', ['¿ ?', '¡ !', '( )', '" "'],
+                0, 'Añade signos de interrogación a "Cómo te llamas".'
+            ],
+            ['Uso correcto de los signos de exclamación', 'Exclamación para emociones',
+                    'Los signos de exclamación encierran expresiones de emoción o énfasis.',
+                    'Incorrecto: Qué bonito. / Correcto: ¡Qué bonito!',
+                    'Signos de exclamación',
+                    '¿Qué signos encierran expresiones de emoción?', ['¡ !', '¿ ?', '( )', '" "'],
+                0, 'Añade signos de exclamación a "Qué bonito".'
+            ]
+        ];
+        b9.forEach(d => addLesson('claridad_puntuacion', ...d));
+
+            // ============================================================
+            //  BLOQUE 10: CLARIDAD: ESTILO (91–100)
+            // ============================================================
+            const b10 = [
+                ['Lenguaje directo', 'Evitar rodeos y ambigüedades',
+                    'El lenguaje directo es más claro y efectivo que los rodeos y las ambigüedades.',
+                    'Rodeo: En base a lo anteriormente expuesto, se puede afirmar que... / Directo: Por lo tanto...',
+                    'Lenguaje directo',
+                    '¿Qué es más claro: el lenguaje directo o los rodeos?', ['Directo', 'Rodeos', 'Ambigüedades',
+                        'Subjetividades'
+                    ], 0, 'Reescribe una frase con rodeos en lenguaje directo.'
+                ],
+                ['Concisión', 'Eliminar palabras innecesarias',
+                    'La concisión es la cualidad de decir mucho con pocas palabras. Eliminar lo superfluo mejora la claridad.',
+                    'Incorrecto: En el día de hoy, voy a proceder a irme. / Correcto: Hoy me voy.',
+                    'Concisión',
+                    '¿Qué mejora la concisión?', ['La claridad', 'La complejidad', 'La longitud', 'La subjetividad'],
+                0, 'Reescribe "En el momento presente, me dispongo a salir" de forma concisa.'
+            ],
+            ['Precisión léxica', 'Elegir la palabra exacta',
+                    'Elegir la palabra exacta evita ambigüedades y mejora la claridad del mensaje.',
+                    'Incorrecto: El coche es bueno. / Correcto: El coche es eficiente.',
+                    'Precisión léxica',
+                    '¿Qué evita la precisión léxica?', ['Ambigüedades', 'Claridad', 'Concisión', 'Variedad'],
+                0, 'Sustituye "bueno" por una palabra más precisa en "El libro es bueno".'
+            ],
+            ['Evitar jerga innecesaria', 'Jerga solo cuando sea necesaria',
+                    'La jerga puede ser útil en contextos especializados, pero en textos generales dificulta la comprensión.',
+                    'Incorrecto: El flujo de caja es positivo. (en un texto general) / Correcto: Hay suficiente dinero.',
+                    'Jerga innecesaria',
+                    '¿Cuándo es apropiada la jerga?', ['En contextos especializados', 'Siempre', 'Nunca',
+                        'Solo en textos literarios'
+                    ], 0, 'Reescribe "El ROI del proyecto es alto" en lenguaje claro.'
+                ],
+                ['Evitar extranjerismos innecesarios', 'Extranjerismos solo si no hay alternativa',
+                    'Usar extranjerismos cuando exista una palabra en español es innecesario y dificulta la comprensión.',
+                    'Incorrecto: El meeting fue productivo. / Correcto: La reunión fue productiva.',
+                    'Extranjerismos innecesarios',
+                    '¿Cuándo se debe evitar un extranjerismo?', ['Cuando hay alternativa en español', 'Siempre',
+                        'Nunca', 'Solo en textos formales'
+                    ], 0, 'Sustituye "El software es nuevo" por una palabra en español.'
+                ],
+                ['Uso de ejemplos concretos', 'Ejemplos concretos para aclarar',
+                    'Los ejemplos concretos ayudan a comprender ideas abstractas o complejas.',
+                    'Abstracto: La honestidad es importante. / Concreto: Decir siempre la verdad, como cuando...',
+                    'Ejemplos concretos',
+                    '¿Qué ayuda a comprender ideas abstractas?', ['Ejemplos concretos', 'Definiciones', 'Comparaciones',
+                        'Enumeraciones'
+                    ], 0, 'Añade un ejemplo concreto a "La puntualidad es importante".'
+                ],
+                ['Uso de analogías', 'Analogías para explicar conceptos',
+                    'Las analogías comparan lo desconocido con lo conocido, facilitando la comprensión.',
+                    'Complejo: La sinestesia es... / Analógía: Es como oír colores.',
+                    'Analogías',
+                    '¿Qué recurso compara lo desconocido con lo conocido?', ['Analogías', 'Definiciones', 'Ejemplos',
+                        'Enumeraciones'
+                    ], 0, 'Escribe una analogía para explicar "la memoria".'
+                ],
+                ['Estructurar con párrafos', 'Un párrafo por idea',
+                    'Cada párrafo debe desarrollar una idea principal, facilitando la lectura y comprensión.',
+                    'Párrafo largo: (muchas ideas) / Correcto: Varios párrafos, cada uno con una idea.',
+                    'Estructura en párrafos',
+                    '¿Cuántas ideas debe desarrollar un párrafo?', ['Una', 'Dos', 'Tres', 'Varias'],
+                0, 'Divide un párrafo largo en varios párrafos cortos.'
+            ],
+            ['Uso de listas y viñetas', 'Listas para enumerar elementos',
+                    'Las listas y viñetas ayudan a organizar la información y hacerla más clara.',
+                    'Párrafo: ... / Correcto: - Primero... - Segundo... - Tercero...',
+                    'Listas y viñetas',
+                    '¿Qué recurso organiza la información de forma clara?', ['Listas y viñetas', 'Párrafos largos',
+                        'Oraciones complejas', 'Subordinaciones'
+                    ], 0, 'Convierte un párrafo enumerativo en una lista con viñetas.'
+                ],
+                ['Revisión y corrección', 'Revisar para mejorar la claridad',
+                    'Siempre es recomendable revisar y corregir el texto para eliminar ambigüedades y mejorar la claridad.',
+                    'Leer el texto en voz alta para detectar problemas.',
+                    'Revisión y corrección',
+                    '¿Qué se recomienda hacer antes de publicar un texto?', ['Revisarlo y corregirlo', 'Publicarlo sin revisar',
+                        'Añadir más palabras', 'Cambiar el tema'
+                    ], 0, 'Revisa un texto breve y mejora su claridad.'
+                ]
+            ];
+        b10.forEach(d => addLesson('claridad_estilo', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Muletilla: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Muletillas y Claridad');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Muletillas cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

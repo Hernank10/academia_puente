@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .hero-title { font-size: 2rem; font-weight: 700; color: #f1c40f;
+        margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+    .hero-sub { color: #8b949e; margin-bottom: 2rem; }
+
+    .bienvenida-card {
+        background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border: 2px solid #f1c40f; border-radius: 14px;
+        padding: 2rem; margin-bottom: 2.5rem; text-align: center;
+    }
+    .bienvenida-titulo { font-size: 2.2rem; font-weight: 800; color: #f1c40f;
+        margin-bottom: 0.75rem; }
+    .bienvenida-sub { font-size: 1.1rem; color: #c9d1d9; margin-bottom: 1.5rem; }
+    .bienvenida-botones { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+    .btn-grande { display: inline-block; padding: 0.9rem 2rem; font-weight: 700;
+        border-radius: 10px; text-decoration: none; font-size: 1rem;
+        transition: all 0.2s; }
+    .btn-grande-primario { background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; }
+    .btn-grande-primario:hover { transform: scale(1.03);
+        box-shadow: 0 6px 20px rgba(241, 196, 15, 0.4); color: #0d1117; }
+    .btn-grande-secundario { background: transparent; color: #f1c40f;
+        border: 2px solid #f1c40f; }
+    .btn-grande-secundario:hover { background: #f1c40f; color: #0d1117; }
+
+    .saludo-user {
+        background: #161b22; border: 1px solid #30363d;
+        border-radius: 12px; padding: 1.25rem 1.5rem;
+        margin-bottom: 2rem; display: flex; justify-content: space-between;
+        align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .saludo-user h2 { color: #e6edf3; margin: 0; font-size: 1.3rem; }
+    .saludo-user p { color: #8b949e; margin: 0.25rem 0 0; font-size: 0.9rem; }
+
+    .materia-section { margin-bottom: 2.5rem; }
+    .materia-title {
+        font-size: 1.3rem; font-weight: 700; color: #58a6ff;
+        border-bottom: 2px solid #21262d; padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        display: flex; justify-content: space-between; align-items: baseline;
+    }
+    .materia-count { font-size: 0.85rem; color: #8b949e; font-weight: 400; }
+
+    .card-curso {
+        background: #161b22; border: 1px solid #30363d;
+        border-radius: 10px; padding: 1.25rem; height: 100%;
+        transition: all 0.2s ease; text-decoration: none;
+        color: inherit; display: flex; flex-direction: column;
+        position: relative;
+    }
+    .card-curso:hover {
+        border-color: #f1c40f; transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(241, 196, 15, 0.15);
+    }
+    .card-title-custom {
+        font-size: 1.05rem; font-weight: 700; color: #e6edf3;
+        margin-bottom: 0.5rem; line-height: 1.3;
+    }
+    .card-meta {
+        font-size: 0.85rem; color: #8b949e; margin-bottom: 0.75rem;
+        display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+    }
+    .badge-nivel {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 4px; font-size: 0.7rem; font-weight: 700;
+        background: #21262d; color: #58a6ff;
+    }
+    .badge-nivel.a1, .badge-nivel.a2 { background: #1f3d1f; color: #4ade80; }
+    .badge-nivel.b1, .badge-nivel.b2 { background: #3d3520; color: #f1c40f; }
+    .badge-nivel.c1, .badge-nivel.c2 { background: #3d1f1f; color: #ff9999; }
+    .badge-lecciones {
+        display: inline-block; padding: 0.15rem 0.5rem;
+        border-radius: 4px; font-size: 0.7rem;
+        background: #21262d; color: #c9d1d9;
+    }
+
+    .btn-primary-custom {
+        display: inline-block; padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border-radius: 8px;
+        text-decoration: none; font-size: 0.85rem;
+        margin-top: auto; text-align: center;
+    }
+    .btn-primary-custom:hover { color: #0d1117; }
+    .btn-lock {
+        display: inline-block; padding: 0.5rem 1rem;
+        background: #21262d; color: #8b949e; font-weight: 600;
+        border-radius: 8px; text-decoration: none; font-size: 0.85rem;
+        border: 1px solid #30363d; margin-top: auto; text-align: center;
+    }
+    .btn-lock:hover { color: #f1c40f; border-color: #f1c40f; }
+
+    .section-divider { border-top: 1px solid #30363d; margin: 3rem 0 2rem; }
+    .chip-tipo {
+        display: inline-block; padding: 0.4rem 0.9rem; border-radius: 20px;
+        background: #21262d; color: #c9d1d9; text-decoration: none;
+        font-size: 0.85rem; border: 1px solid #30363d; transition: all 0.2s;
+    }
+    .chip-tipo:hover { background: #f1c40f; color: #0d1117; border-color: #f1c40f; }
+    .chip-tipo.active { background: #f1c40f; color: #0d1117; border-color: #f1c40f; font-weight: 600; }
+    .tipo-tag {
+        display: inline-block; font-size: 0.65rem; font-weight: 700;
+        letter-spacing: 1px; padding: 0.2rem 0.5rem; border-radius: 4px;
+        background: #21262d; color: #58a6ff; margin-bottom: 0.6rem;
+        text-transform: uppercase;
+    }
+    .btn-ver-todo {
+        display: inline-block; padding: 0.8rem 2rem;
+        background: transparent; color: #f1c40f;
+        border: 2px solid #f1c40f; border-radius: 10px;
+        text-decoration: none; font-weight: 700; transition: all 0.2s;
+    }
+    .btn-ver-todo:hover { background: #f1c40f; color: #0d1117; }
+</style>
+
+<!-- BIENVENIDA -->
+{% if user.is_authenticated %}
+    <div class="saludo-user">
+        <div>
+            <h2>👋 Hola, {{ user.get_full_name|default:user.username }}</h2>
+            <p>
+                {% if user.perfil.rol_principal == 'profesor' %}
+                    Panel de profesor · {{ user.perfil.rango_academico }}
+                {% else %}
+                    {{ user.perfil.rango_academico }} · {{ user.perfil.puntos }} puntos
+                {% endif %}
+            </p>
+        </div>
+        <div>
+            {% if user.perfil.rol_principal == 'profesor' %}
+                <a href="{% url 'users:dashboard_profesor' %}" class="btn-primary-custom" style="padding: 0.6rem 1.2rem;">
+                    👨‍🏫 Ir a mi panel →
+                </a>
+            {% else %}
+                <a href="{% url 'users:dashboard' %}" class="btn-primary-custom" style="padding: 0.6rem 1.2rem;">
+                    📊 Ir a mi dashboard →
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% else %}
+    <div class="bienvenida-card">
+        <div class="bienvenida-titulo">🏛️ Academia Puente Digital</div>
+        <div class="bienvenida-sub">
+            {% trans "Formación en lengua castellana, lingüística y soberanía digital." %}<br>
+            <strong style="color:#f1c40f;">{{ total_cursos }} cursos · 2.346 lecciones · {{ recursos_count }} recursos interactivos</strong>
+        </div>
+        <div class="bienvenida-botones">
+            <a href="{% url 'users:registro' %}" class="btn-grande btn-grande-primario">
+                🎓 Crear cuenta gratis
+            </a>
+            <a href="{% url 'users:login' %}" class="btn-grande btn-grande-secundario">
+                🔐 Iniciar sesión
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+<!-- CURSOS POR MATERIA -->
+<div class="hero-title">🎓 Cursos por Materia</div>
+<p class="hero-sub">
+    {{ total_cursos }} cursos organizados por temática.
+    {% if not user.is_authenticated %}
+        <span style="color:#f1c40f;">Regístrate para acceder a las lecciones.</span>
+    {% endif %}
+</p>
+
+{% for materia, cursos in materias.items %}
+    <div class="materia-section">
+        <h2 class="materia-title">
+            <span>📚 {{ materia }}</span>
+            <span class="materia-count">{{ cursos|length }} curso{{ cursos|length|pluralize:"s" }}</span>
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+            {% for curso in cursos %}
+                <div class="card-curso">
+                    <div class="card-title-custom">{{ curso.titulo }}</div>
+                    <div class="card-meta">
+                        <span class="badge-nivel {{ curso.nivel|lower }}">{{ curso.nivel }}</span>
+                        <span class="badge-lecciones">📖 {{ curso.n_lecciones }} leccione{{ curso.n_lecciones|pluralize:"s" }}</span>
+                        <span style="color:#8b949e;">{{ curso.get_idioma_display }}</span>
+                    </div>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'courses:curso_detalle' curso.id %}" class="btn-primary-custom">
+                            Ver curso →
+                        </a>
+                    {% else %}
+                        <a href="{% url 'users:registro' %}" class="btn-lock">
+                            🔒 Regístrate para acceder
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endfor %}
+
+<!-- RECURSOS -->
+{% if user.is_authenticated %}
+    <div class="section-divider"></div>
+
+    <div class="hero-title">🎮 Recursos Interactivos</div>
+    <p class="hero-sub">{{ recursos_count }} aplicaciones HTML interactivas.</p>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;">
+        <a href="{% url 'courses:recursos_lista' %}" class="chip-tipo active">
+            Todo ({{ recursos_count }})
+        </a>
+        {% for codigo, etiqueta in tipos %}
+            <a href="{% url 'courses:recursos_lista' %}?tipo={{ codigo }}" class="chip-tipo">
+                {{ etiqueta }}
+            </a>
+        {% endfor %}
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+        {% for r in recursos_destacados %}
+            <a href="{% url 'courses:recurso_detalle' r.slug %}" class="card-curso">
+                <span class="tipo-tag">{{ r.get_tipo_display }}</span>
+                <div class="card-title-custom">{{ r.titulo }}</div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{% url 'courses:recursos_lista' %}" class="btn-ver-todo">
+            Ver los {{ recursos_count }} recursos →
+        </a>
+    </div>
+{% else %}
+    <div class="bienvenida-card" style="margin-top: 3rem; border-color: #58a6ff;">
+        <div class="bienvenida-titulo" style="font-size: 1.6rem; color: #58a6ff;">
+            🔒 Recursos interactivos bloqueados
+        </div>
+        <div class="bienvenida-sub">
+            {{ recursos_count }} aplicaciones HTML interactivas esperan por ti.<br>
+            Regístrate gratis para acceder a todas.
+        </div>
+        <div class="bienvenida-botones">
+            <a href="{% url 'users:registro' %}" class="btn-grande btn-grande-primario">
+                🎓 Crear cuenta gratis
+            </a>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock %}

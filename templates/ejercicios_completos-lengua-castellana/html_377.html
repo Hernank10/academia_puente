@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Flota Gramatical · Con API</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* ... (mismo CSS que la app original) ... */
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        /* ... resto del CSS igual que antes ... */
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📚 FLOTA GRAMATICAL<small>CON API</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="morfema" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Morfema</a>
+        <a class="nav-link" data-section="sintaxis" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Sintaxis</a>
+        <a class="nav-link" data-section="ortografia" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Ortografía</a>
+        <a class="nav-link" data-section="fonetica" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Fonética</a>
+        <a class="nav-link" data-section="semantica" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Semántica</a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+        <!-- Botón de login/logout -->
+        <div class="mt-3 text-center" id="auth-section">
+            <button class="btn btn-neon-lleno w-100" id="btn-login">🔐 Iniciar sesión</button>
+            <div id="user-info" style="display:none;" class="mt-2">
+                <span id="user-name" class="text-light-50"></span>
+                <button class="btn btn-sm btn-outline-danger" id="btn-logout">Cerrar sesión</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <!-- DASHBOARD -->
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero <small>Con API</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Módulos</h5><p class="text-muted small">20 técnicas cada uno</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📚</div><h5>100 Técnicas</h5><p class="text-muted small">Desde la API</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Conectado a la API</h5>
+                <p style="color:var(--texto-muted);">Los datos se sincronizan con el servidor. Inicia sesión para guardar tu progreso.</p>
+                <div id="api-status" class="badge bg-secondary">Desconectado</div>
+            </div>
+        </div>
+
+        <!-- SECCIONES DE MÓDULOS (se generan dinámicamente desde la API) -->
+        <div id="section-morfema" class="section-content" style="display:none;"></div>
+        <div id="section-sintaxis" class="section-content" style="display:none;"></div>
+        <div id="section-ortografia" class="section-content" style="display:none;"></div>
+        <div id="section-fonetica" class="section-content" style="display:none;"></div>
+        <div id="section-semantica" class="section-content" style="display:none;"></div>
+
+        <!-- SEGUIMIENTO -->
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso desde la API</small></div>
+            <div class="holo-card">
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Módulo</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// CONFIGURACIÓN DE LA API
+// ============================================================
+const API_URL = 'http://localhost:3000/api';
+let token = null;
+let usuario = null;
+
+// ============================================================
+// FUNCIONES DE AUTENTICACIÓN
+// ============================================================
+
+function guardarToken(token) {
+    localStorage.setItem('api_token', token);
+}
+
+function obtenerToken() {
+    return localStorage.getItem('api_token');
+}
+
+function guardarUsuario(usuario) {
+    localStorage.setItem('api_usuario', JSON.stringify(usuario));
+}
+
+function obtenerUsuario() {
+    const data = localStorage.getItem('api_usuario');
+    return data ? JSON.parse(data) : null;
+}
+
+async function login(email, password) {
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await response.json();
+        if (response.ok) {
+            token = data.token;
+            usuario = data.usuario;
+            guardarToken(token);
+            guardarUsuario(usuario);
+            actualizarUIUsuario();
+            cargarDatos();
+            return { success: true };
+        } else {
+            return { success: false, error: data.error };
+        }
+    } catch (error) {
+        return { success: false, error: 'Error de conexión' };
+    }
+}
+
+function logout() {
+    token = null;
+    usuario = null;
+    localStorage.removeItem('api_token');
+    localStorage.removeItem('api_usuario');
+    actualizarUIUsuario();
+    document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+    document.getElementById('section-dashboard').style.display = 'block';
+}
+
+function actualizarUIUsuario() {
+    const authSection = document.getElementById('auth-section');
+    const btnLogin = document.getElementById('btn-login');
+    const userInfo = document.getElementById('user-info');
+    const userName = document.getElementById('user-name');
+    
+    if (usuario) {
+        btnLogin.style.display = 'none';
+        userInfo.style.display = 'block';
+        userName.textContent = `👤 ${usuario.nombre}`;
+        document.getElementById('api-status').textContent = '✅ Conectado';
+        document.getElementById('api-status').className = 'badge bg-success';
+    } else {
+        btnLogin.style.display = 'block';
+        userInfo.style.display = 'none';
+        document.getElementById('api-status').textContent = '🔴 Desconectado';
+        document.getElementById('api-status').className = 'badge bg-secondary';
+    }
+}
+
+// ============================================================
+// FUNCIONES DE DATOS (API)
+// ============================================================
+
+async function fetchApi(endpoint, options = {}) {
+    const defaultOptions = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': token ? `Bearer ${token}` : ''
+        }
+    };
+    const response = await fetch(`${API_URL}${endpoint}`, { ...defaultOptions, ...options });
+    return response;
+}
+
+async function cargarDatos() {
+    if (!token) return;
+    await cargarProgreso();
+    await cargarDashboard();
+    // Si hay una sección activa, recargarla
+    const activeSection = document.querySelector('.sidebar-stellar .nav-link.active');
+    if (activeSection) {
+        const section = activeSection.dataset.section;
+        if (['morfema','sintaxis','ortografia','fonetica','semantica'].includes(section)) {
+            cargarModulo(section);
+        }
+    }
+}
+
+async function cargarModulo(moduloKey) {
+    const container = document.getElementById('section-' + moduloKey);
+    if (!container) return;
+    
+    // Mapear nombres de módulos
+    const moduloMap = {
+        'morfema': 'Morfema',
+        'sintaxis': 'Sintaxis',
+        'ortografia': 'Ortografía',
+        'fonetica': 'Fonética',
+        'semantica': 'Semántica'
+    };
+    const moduloNombre = moduloMap[moduloKey];
+    if (!moduloNombre) return;
+    
+    try {
+        // Obtener el ID del módulo
+        const modulosResp = await fetchApi('/aplicaciones/1/modulos');
+        const modulos = await modulosResp.json();
+        const modulo = modulos.find(m => m.nombre === moduloNombre);
+        if (!modulo) return;
+        
+        // Obtener las técnicas del módulo
+        const tecnicasResp = await fetchApi(`/modulos/${modulo.id}/tecnicas`);
+        const tecnicas = await tecnicasResp.json();
+        
+        // Obtener progreso
+        const progresoResp = await fetchApi('/usuario/progreso');
+        const progreso = await progresoResp.json();
+        
+        // Renderizar
+        let html = `
+            <div class="personaje-destacado" style="border-left:4px solid ${modulo.color_hex || 'var(--neon-dorado)'};">
+                <div class="avatar">🤖</div>
+                <div class="info">
+                    <h4 style="color:${modulo.color_hex || '#fff'};">${modulo.nombre}</h4>
+                    <p style="color:var(--texto-muted);">${modulo.descripcion}</p>
+                </div>
+            </div>
+            <div id="tecnicas-${moduloKey}">
+        `;
+        
+        tecnicas.forEach((t) => {
+            const completada = progreso.find(p => p.id === t.id && p.completado) !== undefined;
+            html += `
+                <div class="tecnica-card" style="border-left-color: ${modulo.color_hex || 'var(--neon-dorado)'};">
+                    <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                        <span class="num">#${t.id}</span>
+                        <span class="titulo">${t.numero_tecnica}. ${t.titulo}</span>
+                        <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                    </div>
+                    <div class="contenido" id="contenido-${t.id}">
+                        <div class="teoria">
+                            <strong>📖 Teoría:</strong> ${t.teoria}
+                            <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${t.teoria.replace(/'/g, "\\'")}', this);">
+                                <i class="bi bi-play-circle"></i> Escuchar
+                            </button>
+                        </div>
+                        <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                        <div class="ejercicio">
+                            <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                            <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                            <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                        </div>
+                        <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `</div>`;
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando módulo:', error);
+        container.innerHTML = `<div class="holo-card"><p class="text-danger">Error al cargar el módulo: ${error.message}</p></div>`;
+    }
+}
+
+async function cargarProgreso() {
+    if (!token) return;
+    try {
+        const response = await fetchApi('/usuario/progreso');
+        const progreso = await response.json();
+        // Guardar en una variable global para uso rápido
+        window.progresoData = progreso;
+        renderSeguimiento(progreso);
+        actualizarProgreso(progreso);
+    } catch (error) {
+        console.error('Error cargando progreso:', error);
+    }
+}
+
+async function cargarDashboard() {
+    if (!token) return;
+    try {
+        const response = await fetchApi('/usuario/progreso/estadisticas');
+        const stats = await response.json();
+        const total = stats.reduce((sum, s) => sum + s.total, 0);
+        const completadas = stats.reduce((sum, s) => sum + s.completadas, 0);
+        const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+        document.getElementById('dashboard-completadas').textContent = completadas;
+        document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+    } catch (error) {
+        console.error('Error cargando dashboard:', error);
+    }
+}
+
+async function marcarEjercicio(id) {
+    if (!token) {
+        alert('Debes iniciar sesión para guardar tu progreso');
+        return;
+    }
+    try {
+        // Verificar estado actual
+        const progreso = window.progresoData || [];
+        const actual = progreso.find(p => p.id === id);
+        const nuevoEstado = actual ? !actual.completado : true;
+        
+        const response = await fetchApi(`/usuario/progreso/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ completado: nuevoEstado })
+        });
+        
+        if (response.ok) {
+            await cargarProgreso();
+            await cargarDashboard();
+            // Actualizar la tarjeta visualmente
+            const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+            if (card) {
+                const badge = card.querySelector('.badge-personaje');
+                if (badge) {
+                    badge.textContent = nuevoEstado ? '✅ Completada' : '⬜ Pendiente';
+                    badge.style.background = nuevoEstado ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+                    badge.style.color = nuevoEstado ? 'var(--neon-verde)' : '#fff';
+                }
+                const btn = card.querySelector('.ejercicio button');
+                if (btn && nuevoEstado) {
+                    btn.textContent = '✅ ¡Completado!';
+                    btn.disabled = true;
+                    btn.style.opacity = '0.6';
+                } else if (btn) {
+                    btn.textContent = '📝 Marcar como completado';
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error marcando ejercicio:', error);
+    }
+}
+
+function renderSeguimiento(progreso) {
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    // Esta función se completará cuando tengamos todas las técnicas
+}
+
+function actualizarProgreso(progreso) {
+    const total = 100; // 100 técnicas
+    const completadas = progreso ? progreso.filter(p => p.completado).length : 0;
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+// ============================================================
+// FUNCIONES DE UTILIDAD
+// ============================================================
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+// ============================================================
+// NAVEGACIÓN
+// ============================================================
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['morfema','sintaxis','ortografia','fonetica','semantica'].includes(section)) {
+            cargarModulo(section);
+        }
+        if (section === 'seguimiento') cargarProgreso();
+        if (section === 'dashboard') cargarDashboard();
+    });
+});
+
+// ============================================================
+// LOGIN / LOGOUT
+// ============================================================
+document.getElementById('btn-login').addEventListener('click', function() {
+    const email = prompt('Email:');
+    if (!email) return;
+    const password = prompt('Contraseña:');
+    if (!password) return;
+    login(email, password).then(result => {
+        if (result.success) {
+            alert('✅ Inicio de sesión exitoso');
+        } else {
+            alert('❌ Error: ' + result.error);
+        }
+    });
+});
+
+document.getElementById('btn-logout').addEventListener('click', function() {
+    if (confirm('¿Cerrar sesión?')) {
+        logout();
+        alert('Sesión cerrada');
+    }
+});
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    // Restaurar sesión
+    token = obtenerToken();
+    usuario = obtenerUsuario();
+    if (token && usuario) {
+        actualizarUIUsuario();
+        cargarDatos();
+    } else {
+        actualizarUIUsuario();
+    }
+});
+</script>
+</body>
+</html>

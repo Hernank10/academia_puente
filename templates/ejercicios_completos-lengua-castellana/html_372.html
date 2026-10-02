@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SintaxisPlay · 100 técnicas de sintaxis estructuralista</title>
+    <!-- Bootstrap 5 + Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(145deg, #0f0c1a 0%, #1a1435 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #e0dce8;
+        }
+        .card-morph {
+            border-radius: 2rem;
+            border: 1px solid rgba(180, 130, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px rgba(130, 80, 255, 0.05);
+            backdrop-filter: blur(8px);
+            background: rgba(25, 20, 50, 0.75);
+        }
+        .game-header {
+            border-bottom: 2px dashed rgba(180, 130, 255, 0.2);
+            padding-bottom: 0.75rem;
+        }
+        .badge-cat {
+            background: linear-gradient(135deg, #7c4dff, #651fff);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .badge-cat-estructural {
+            background: linear-gradient(135deg, #d500f9, #aa00ff);
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        .btn-morph {
+            background: linear-gradient(135deg, #7c4dff, #651fff);
+            border: none;
+            color: white;
+            border-radius: 60px;
+            padding: 0.5rem 1.8rem;
+            font-weight: 600;
+            transition: 0.3s;
+            box-shadow: 0 6px 20px rgba(124, 77, 255, 0.3);
+        }
+        .btn-morph:hover {
+            transform: scale(1.03) translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 77, 255, 0.5);
+            color: white;
+        }
+        .btn-outline-morph {
+            border: 2px solid #7c4dff;
+            color: #b388ff;
+            border-radius: 60px;
+            padding: 0.4rem 1.5rem;
+            font-weight: 600;
+            background: rgba(124, 77, 255, 0.05);
+            transition: 0.3s;
+        }
+        .btn-outline-morph:hover {
+            background: rgba(124, 77, 255, 0.2);
+            color: white;
+            border-color: #b388ff;
+        }
+        .cursive-input {
+            font-family: 'Brush Script MT', 'Comic Sans MS', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(124, 77, 255, 0.3);
+            border-radius: 30px;
+            padding: 0.4rem 1.2rem;
+            color: #e0dce8;
+        }
+        .cursive-input:focus {
+            border-color: #7c4dff;
+            box-shadow: 0 0 0 4px rgba(124, 77, 255, 0.15);
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+        }
+        .cursive-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1rem;
+        }
+        .streak-box {
+            background: rgba(124, 77, 255, 0.15);
+            border-radius: 60px;
+            padding: 0.4rem 1.2rem;
+            font-weight: 600;
+            color: #b388ff;
+            border: 1px solid rgba(124, 77, 255, 0.2);
+        }
+        .game-wrapper {
+            min-height: 420px;
+        }
+        .list-group-item {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid rgba(180, 130, 255, 0.08);
+            padding: 0.7rem 0.2rem;
+            color: #c8bce8;
+        }
+        .list-group-item:hover {
+            background: rgba(124, 77, 255, 0.05);
+            border-radius: 12px;
+        }
+        .list-group-item:last-child {
+            border: none;
+        }
+        .progress-bar-morph {
+            background: linear-gradient(90deg, #7c4dff, #651fff, #b388ff);
+            height: 0.5rem;
+            border-radius: 40px;
+        }
+        .escritura-badge {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        .game-title {
+            font-weight: 700;
+            color: #b388ff;
+        }
+        .respuesta-correcta {
+            background: rgba(0, 200, 100, 0.15);
+            border-radius: 40px;
+            padding: 0.3rem 1.2rem;
+            color: #7ddfb0;
+            border: 1px solid rgba(0, 200, 100, 0.2);
+        }
+        .pregunta-destacada {
+            background: rgba(124, 77, 255, 0.08);
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            border-left: 5px solid #7c4dff;
+            color: #d0c4e8;
+        }
+        #canvasContainer {
+            position: relative;
+            border-radius: 30px;
+            border: 2px solid rgba(124, 77, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            touch-action: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 30"><circle cx="12" cy="12" r="10" fill="rgba(124,77,255,0.2)" stroke="%237c4dff" stroke-width="2"/><line x1="12" y1="22" x2="12" y2="30" stroke="%237c4dff" stroke-width="3"/></svg>') 12 12, auto;
+        }
+        #canvasEscritura {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 28px;
+            background: rgba(0, 0, 0, 0.4);
+            touch-action: none;
+        }
+        .canvas-toolbar {
+            background: rgba(124, 77, 255, 0.08);
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            border: 1px solid rgba(124, 77, 255, 0.1);
+        }
+        .btn-canvas {
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            border: 1px solid rgba(124, 77, 255, 0.2);
+            background: rgba(0, 0, 0, 0.3);
+            color: #b388ff;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-canvas:hover {
+            background: rgba(124, 77, 255, 0.2);
+            color: white;
+            border-color: #7c4dff;
+        }
+        .text-glowing {
+            text-shadow: 0 0 20px rgba(124, 77, 255, 0.1);
+        }
+        .badge-sintaxis-level {
+            background: linear-gradient(135deg, #6a4c9c, #3a1f6e);
+            color: #c8b0e8;
+        }
+        .level-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+        .level-basic { background: #4caf50; }
+        .level-intermediate { background: #ffa726; }
+        .level-advanced { background: #ef5350; }
+        .level-expert { background: #ab47bc; }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(124, 77, 255, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(124, 77, 255, 0.5);
+        }
+        .ejemplo-texto {
+            background: rgba(124, 77, 255, 0.05);
+            border-radius: 12px;
+            padding: 0.5rem 1rem;
+            font-style: italic;
+            color: #b8a8d8;
+            border: 1px solid rgba(124, 77, 255, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4 py-md-5">
+        <!-- Título -->
+        <div class="text-center mb-4">
+            <h1 class="display-4 fw-bold" style="color: #b388ff; letter-spacing: -0.5px; text-shadow: 0 0 40px rgba(124,77,255,0.1);">
+                <i class="fas fa-code-branch me-3" style="color: #7c4dff;"></i>SintaxisPlay
+            </h1>
+            <p class="lead fw-light" style="color: #9a8ab5;">100 técnicas de sintaxis estructuralista del castellano · <i class="fas fa-pen-fancy"></i> análisis creativo</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="badge-cat"><i class="fas fa-sitemap me-1"></i> Estructura</span>
+                <span class="badge-cat-estructural"><i class="fas fa-layer-group me-1"></i> Funciones</span>
+                <span class="badge-cat" style="background: linear-gradient(135deg, #d500f9, #aa00ff);"><i class="fas fa-arrow-right me-1"></i> Relaciones</span>
+                <span class="badge-cat-estructural" style="background: linear-gradient(135deg, #ffd700, #ff8f00);"><i class="fas fa-pen-fancy me-1"></i> ✍️ Escritura</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Panel principal -->
+            <div class="col-lg-8">
+                <div class="card card-morph p-4 game-wrapper">
+                    <div class="d-flex justify-content-between align-items-start game-header">
+                        <div>
+                            <span class="badge bg-secondary bg-opacity-25 text-light me-2" id="gameIndexDisplay">#1</span>
+                            <span class="badge" id="categoryBadge" style="background:linear-gradient(135deg,#7c4dff,#651fff); color:white;">Estructura</span>
+                            <span class="badge bg-warning bg-opacity-10 text-warning ms-2" id="escrituraBadge">✍️</span>
+                            <span class="badge ms-1" id="levelBadge" style="background:rgba(76,175,80,0.2); color:#81c784;">★ Básico</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="streak-box"><i class="fas fa-fire text-warning me-1"></i> <span id="streakCount">0</span> racha</span>
+                            <span class="streak-box" style="background: rgba(255,215,0,0.1); border-color: rgba(255,215,0,0.2);"><i class="fas fa-star text-warning me-1"></i> <span id="scoreCount">0</span> pts</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <h4 class="game-title" id="gameTitle">Cargando juego...</h4>
+                        <div class="pregunta-destacada mt-2">
+                            <i class="fas fa-question-circle me-2" style="color:#7c4dff;"></i>
+                            <span id="gameDescription">Instrucción del juego</span>
+                        </div>
+                    </div>
+
+                    <!-- Área de interacción -->
+                    <div class="mt-3" id="interactionArea">
+                        <!-- dinámico -->
+                    </div>
+
+                    <!-- Respuesta correcta -->
+                    <div id="respuestaCorrectaContainer" class="mt-3 text-center" style="display: none;">
+                        <div class="respuesta-correcta d-inline-block"><i class="fas fa-check-circle me-2"></i> Respuesta: <span id="respuestaCorrectaTexto" style="font-weight:700;">---</span></div>
+                    </div>
+
+                    <!-- Controles -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top" style="border-color: rgba(180,130,255,0.1)!important;">
+                        <button class="btn btn-outline-morph" id="prevGameBtn"><i class="fas fa-arrow-left me-1"></i> Anterior</button>
+                        <div>
+                            <span class="badge bg-light bg-opacity-10 text-light rounded-pill px-3 py-2" id="progressText">1 / 100</span>
+                        </div>
+                        <button class="btn btn-morph" id="nextGameBtn">Siguiente <i class="fas fa-arrow-right ms-1"></i></button>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px; background: rgba(255,255,255,0.05);">
+                        <div class="progress-bar progress-bar-morph" id="progressBar" style="width: 1%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel lateral -->
+            <div class="col-lg-4">
+                <div class="card card-morph p-3" style="background: rgba(15,12,26,0.7);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold" style="color:#b388ff;"><i class="fas fa-list-ul me-2" style="color:#7c4dff;"></i> Técnicas</h5>
+                        <span class="badge bg-primary bg-opacity-10 text-info" id="completedCount">0/100</span>
+                    </div>
+                    <div class="list-group mt-2" id="gameList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- JS -->
+                    </div>
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-sm btn-outline-secondary w-100" style="border-color: rgba(255,255,255,0.1); color:#9a8ab5;" id="resetProgressBtn"><i class="fas fa-undo-alt me-1"></i> Reiniciar progreso</button>
+                    </div>
+                    <div class="mt-2 text-center text-muted small" style="color:#5a4a75!important;">
+                        <i class="fas fa-level-up-alt me-1"></i> 100 técnicas · 4 niveles
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-muted mt-4 small" style="color:#5a4a75!important;">
+            <i class="fas fa-pen-fancy me-1"></i> Juegos de escritura: analiza y escribe estructuras sintácticas. <span style="color:#7a6a95;">· Estructuralismo · 100 retos</span>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --------------------------------------------------------------
+            // GENERADOR DE 100 JUEGOS DE SINTAXIS ESTRUCTURALISTA
+            // --------------------------------------------------------------
+            function generarJuegosSintaxis() {
+                const juegos = [];
+                const categorias = ['Estructura', 'Funciones', 'Relaciones', 'Transformaciones'];
+                const niveles = ['Básico', 'Intermedio', 'Avanzado', 'Experto'];
+                const coloresNivel = ['#4caf50', '#ffa726', '#ef5350', '#ab47bc'];
+
+                // Conceptos sintácticos estructuralistas
+                const conceptos = [
+                    { nombre: 'Sujeto', desc: 'Elemento que realiza la acción del verbo.', ejemplo: 'El niño come pan.' },
+                    { nombre: 'Predicado', desc: 'Expresa la acción o estado del sujeto.', ejemplo: 'come pan.' },
+                    { nombre: 'Núcleo del sujeto', desc: 'Palabra principal del sujeto (sustantivo o pronombre).', ejemplo: 'niño' },
+                    { nombre: 'Núcleo del predicado', desc: 'Verbo principal de la oración.', ejemplo: 'come' },
+                    { nombre: 'Complemento directo', desc: 'Recibe la acción del verbo directamente.', ejemplo: 'pan' },
+                    { nombre: 'Complemento indirecto', desc: 'Indica el destinatario de la acción.', ejemplo: 'a María' },
+                    { nombre: 'Complemento circunstancial', desc: 'Expresa circunstancias (tiempo, lugar, modo).', ejemplo: 'ayer' },
+                    { nombre: 'Atributo', desc: 'Complemento de verbos copulativos (ser, estar, parecer).', ejemplo: 'alto' },
+                    { nombre: 'Oración simple', desc: 'Contiene un solo verbo conjugado.', ejemplo: 'Juan estudia.' },
+                    { nombre: 'Oración compuesta', desc: 'Contiene más de un verbo conjugado.', ejemplo: 'Juan estudia y María trabaja.' },
+                    { nombre: 'Oración coordinada', desc: 'Unión de oraciones independientes.', ejemplo: 'Llegó y se fue.' },
+                    { nombre: 'Oración subordinada', desc: 'Depende de otra oración principal.', ejemplo: 'Dijo que vendría.' },
+                    { nombre: 'Oración yuxtapuesta', desc: 'Unidas sin nexo, solo con coma o punto.', ejemplo: 'Llegó, saludó, se fue.' },
+                    { nombre: 'Sintagma nominal', desc: 'Grupo de palabras con un sustantivo como núcleo.', ejemplo: 'El perro grande' },
+                    { nombre: 'Sintagma verbal', desc: 'Grupo con un verbo como núcleo.', ejemplo: 'corre rápidamente' },
+                    { nombre: 'Sintagma preposicional', desc: 'Grupo con preposición + sintagma nominal.', ejemplo: 'en la casa' },
+                    { nombre: 'Sintagma adjetival', desc: 'Grupo con adjetivo como núcleo.', ejemplo: 'muy alto' },
+                    { nombre: 'Sintagma adverbial', desc: 'Grupo con adverbio como núcleo.', ejemplo: 'muy rápido' },
+                    { nombre: 'Determinante', desc: 'Artículos, demostrativos, posesivos.', ejemplo: 'el, este, mi' },
+                    { nombre: 'Nexo coordinante', desc: 'Conecta elementos de igual nivel.', ejemplo: 'y, o, pero' },
+                    { nombre: 'Nexo subordinante', desc: 'Conecta oraciones dependientes.', ejemplo: 'que, cuando, aunque' },
+                    { nombre: 'Pronombre', desc: 'Sustituye al sustantivo.', ejemplo: 'él, ella, ellos' },
+                    { nombre: 'Verbo copulativo', desc: 'Ser, estar, parecer.', ejemplo: 'es, está' },
+                    { nombre: 'Verbo transitivo', desc: 'Necesita complemento directo.', ejemplo: 'comer, leer' },
+                    { nombre: 'Verbo intransitivo', desc: 'No necesita complemento directo.', ejemplo: 'dormir, vivir' },
+                    { nombre: 'Verbo reflexivo', desc: 'Acción recae sobre el sujeto.', ejemplo: 'lavarse' },
+                    { nombre: 'Verbo recíproco', desc: 'Acción mutua entre sujetos.', ejemplo: 'se saludan' },
+                    { nombre: 'Perífrasis verbal', desc: 'Verbo auxiliar + verbo principal.', ejemplo: 'voy a comer' },
+                    { nombre: 'Oración pasiva', desc: 'Sujeto recibe la acción.', ejemplo: 'La carta fue escrita.' },
+                    { nombre: 'Oración activa', desc: 'Sujeto realiza la acción.', ejemplo: 'Juan escribe la carta.' },
+                    { nombre: 'Oración impersonal', desc: 'No tiene sujeto explícito.', ejemplo: 'Llueve mucho.' },
+                    { nombre: 'Oración personal', desc: 'Tiene sujeto explícito o implícito.', ejemplo: '(Yo) estudio.' },
+                    { nombre: 'Concordancia', desc: 'Relación de número y persona entre sujeto y verbo.', ejemplo: 'Los niños juegan.' },
+                    { nombre: 'Análisis sintáctico', desc: 'Identificación de funciones en la oración.', ejemplo: 'Sujeto, predicado, etc.' },
+                    { nombre: 'Árbol sintáctico', desc: 'Representación jerárquica de la oración.', ejemplo: 'S → SN + SV' },
+                    { nombre: 'Constituyente', desc: 'Unidad sintáctica con función propia.', ejemplo: 'SN, SV' },
+                    { nombre: 'Núcleo', desc: 'Palabra principal del sintagma.', ejemplo: 'sustantivo, verbo' },
+                    { nombre: 'Modificador', desc: 'Acompaña y modifica al núcleo.', ejemplo: 'adjetivo, adverbio' },
+                    { nombre: 'Complemento del nombre', desc: 'Modifica al sustantivo.', ejemplo: 'de la casa' },
+                    { nombre: 'Complemento del adjetivo', desc: 'Modifica al adjetivo.', ejemplo: 'muy contento' },
+                    { nombre: 'Complemento del adverbio', desc: 'Modifica al adverbio.', ejemplo: 'muy cerca' },
+                    { nombre: 'Oración enunciativa', desc: 'Declara un hecho.', ejemplo: 'El sol brilla.' },
+                    { nombre: 'Oración interrogativa', desc: 'Formula una pregunta.', ejemplo: '¿Llegarás hoy?' },
+                    { nombre: 'Oración exclamativa', desc: 'Expresa emoción.', ejemplo: '¡Qué bonito!' },
+                    { nombre: 'Oración imperativa', desc: 'Expresa orden o ruego.', ejemplo: 'Ven aquí.' },
+                    { nombre: 'Oración desiderativa', desc: 'Expresa deseo.', ejemplo: 'Ojalá venga.' },
+                    { nombre: 'Oración dubitativa', desc: 'Expresa duda.', ejemplo: 'Quizás venga.' },
+                    { nombre: 'Sujeto elíptico', desc: 'Sujeto omitido pero sobreentendido.', ejemplo: 'Comimos pizza.' },
+                    { nombre: 'Sujeto expreso', desc: 'Sujeto explícito en la oración.', ejemplo: 'Nosotros comimos.' },
+                    { nombre: 'Predicado nominal', desc: 'Con verbos copulativos + atributo.', ejemplo: 'Es inteligente.' },
+                    { nombre: 'Predicado verbal', desc: 'Con verbos predicativos.', ejemplo: 'Corre rápido.' },
+                    { nombre: 'Complemento predicativo', desc: 'Modifica al sujeto y al verbo.', ejemplo: 'Llegó cansado.' },
+                    { nombre: 'Complemento agente', desc: 'En oraciones pasivas, indica quien realiza la acción.', ejemplo: 'por Juan' },
+                    { nombre: 'Oración pasiva refleja', desc: 'Se + verbo en tercera persona.', ejemplo: 'Se venden casas.' },
+                    { nombre: 'Oración pasiva perifrástica', desc: 'Ser + participio.', ejemplo: 'Fue construido.' },
+                    { nombre: 'Proposición', desc: 'Unidad con verbo conjugado.', ejemplo: 'que vino' },
+                    { nombre: 'Oración principal', desc: 'Proposición independiente.', ejemplo: 'Dijo' },
+                    { nombre: 'Oración subordinada sustantiva', desc: 'Función de sustantivo.', ejemplo: 'que venga' },
+                    { nombre: 'Oración subordinada adjetiva', desc: 'Función de adjetivo.', ejemplo: 'que me gusta' },
+                    { nombre: 'Oración subordinada adverbial', desc: 'Función de adverbio.', ejemplo: 'cuando llegues' },
+                    { nombre: 'Conjunción', desc: 'Nexo que une oraciones.', ejemplo: 'y, o, pero, que' },
+                    { nombre: 'Preposición', desc: 'Relaciona elementos.', ejemplo: 'a, de, en, con' },
+                    { nombre: 'Locución', desc: 'Grupo de palabras con función unitaria.', ejemplo: 'a pesar de' },
+                    { nombre: 'Oración final', desc: 'Expresa finalidad.', ejemplo: 'para comer' },
+                    { nombre: 'Oración causal', desc: 'Expresa causa.', ejemplo: 'porque llueve' },
+                    { nombre: 'Oración consecutiva', desc: 'Expresa consecuencia.', ejemplo: 'así que' },
+                    { nombre: 'Oración concesiva', desc: 'Expresa concesión.', ejemplo: 'aunque llueva' },
+                    { nombre: 'Oración condicional', desc: 'Expresa condición.', ejemplo: 'si llueve' },
+                    { nombre: 'Oración temporal', desc: 'Expresa tiempo.', ejemplo: 'cuando llegues' },
+                    { nombre: 'Oración comparativa', desc: 'Expresa comparación.', ejemplo: 'más que' },
+                    { nombre: 'Oración modal', desc: 'Expresa modo.', ejemplo: 'como si' },
+                    { nombre: 'Oración copulativa', desc: 'Unión con "y" o "ni".', ejemplo: 'come y baila' },
+                    { nombre: 'Oración disyuntiva', desc: 'Unión con "o" o "u".', ejemplo: 'ven o quédate' },
+                    { nombre: 'Oración adversativa', desc: 'Unión con "pero" o "sino".', ejemplo: 'estudia pero no aprueba' },
+                    { nombre: 'Oración distributiva', desc: 'Unión con "bien... bien" o "ya... ya".', ejemplo: 'bien ríe, bien llora' },
+                    { nombre: 'Oración explicativa', desc: 'Aclara o explica.', ejemplo: 'es decir' },
+                    { nombre: 'Modo verbal', desc: 'Indica la actitud del hablante: indicativo, subjuntivo, imperativo.', ejemplo: 'come, coma, comed' },
+                    { nombre: 'Tiempo verbal', desc: 'Indica cuándo ocurre la acción: presente, pasado, futuro.', ejemplo: 'como, comí, comeré' },
+                    { nombre: 'Persona verbal', desc: 'Indica quien realiza la acción: 1a, 2a, 3a persona.', ejemplo: 'yo, tú, él' },
+                    { nombre: 'Número verbal', desc: 'Indica singular o plural.', ejemplo: 'canto, cantan' },
+                    { nombre: 'Voz activa', desc: 'Sujeto realiza la acción.', ejemplo: 'Juan come.' },
+                    { nombre: 'Voz pasiva', desc: 'Sujeto recibe la acción.', ejemplo: 'La comida es comida por Juan.' },
+                    { nombre: 'Voz media', desc: 'Sujeto realiza y recibe la acción.', ejemplo: 'se lava' },
+                    { nombre: 'Oración reflexiva', desc: 'Acción recae sobre el sujeto.', ejemplo: 'se peina' },
+                    { nombre: 'Oración recíproca', desc: 'Acción mutua entre sujetos.', ejemplo: 'se abrazan' },
+                    { nombre: 'Oración iterativa', desc: 'Acción repetida.', ejemplo: 'suele llegar' },
+                    { nombre: 'Oración incoativa', desc: 'Acción que comienza.', ejemplo: 'empezó a llover' },
+                    { nombre: 'Oración terminativa', desc: 'Acción que termina.', ejemplo: 'dejó de fumar' },
+                    { nombre: 'Oración desiderativa', desc: 'Expresa deseo con "ojalá" o "que".', ejemplo: 'Ojalá venga.' },
+                    { nombre: 'Oración potencial', desc: 'Expresa posibilidad con "poder" o "deber".', ejemplo: 'puede venir' },
+                    { nombre: 'Oración factitiva', desc: 'Expresa hecho con "hacer que".', ejemplo: 'hizo que viniera' },
+                    { nombre: 'Complemento de régimen', desc: 'Preposición + sintagma exigida por el verbo.', ejemplo: 'confío en ti' },
+                    { nombre: 'Predicativo objetivo', desc: 'Modifica al CD.', ejemplo: 'lo nombraron presidente' },
+                    { nombre: 'Predicativo subjetivo', desc: 'Modifica al sujeto.', ejemplo: 'el niño llegó contento' },
+                    { nombre: 'Oración hendida', desc: 'Enfoca un elemento con "ser + que".', ejemplo: 'fue Juan quien llegó' },
+                    { nombre: 'Elipsis', desc: 'Omisión de elementos sobreentendidos.', ejemplo: 'yo como, él también' },
+                    { nombre: 'Anáfora', desc: 'Referencia a un elemento anterior.', ejemplo: 'Juan llegó. Él...' },
+                    { nombre: 'Catáfora', desc: 'Referencia a un elemento posterior.', ejemplo: 'Esto dijo: "hola".' },
+                    { nombre: 'Deíxis', desc: 'Referencia al contexto.', ejemplo: 'aquí, ahora' },
+                    { nombre: 'Conector', desc: 'Relaciona elementos textuales.', ejemplo: 'sin embargo' },
+                    { nombre: 'Oración enfática', desc: 'Destaca un elemento.', ejemplo: 'es que...' },
+                    { nombre: 'Oración pasiva con "se"', desc: 'Pasiva refleja.', ejemplo: 'se dice' },
+                    { nombre: 'Perífrasis de infinitivo', desc: 'Verbo auxiliar + infinitivo.', ejemplo: 'voy a decir' },
+                    { nombre: 'Perífrasis de gerundio', desc: 'Verbo auxiliar + gerundio.', ejemplo: 'estoy diciendo' },
+                    { nombre: 'Perífrasis de participio', desc: 'Verbo auxiliar + participio.', ejemplo: 'tengo dicho' },
+                ];
+
+                // Seleccionar 100 conceptos (si hay menos, repetir)
+                const seleccionados = [];
+                const totalConceptos = conceptos.length;
+                for (let i = 0; i < 100; i++) {
+                    const idx = i % totalConceptos;
+                    const c = conceptos[idx];
+                    const cat = categorias[i % categorias.length];
+                    const nivel = niveles[Math.floor(i / 25) % 4];
+                    const esEscritura = (i % 5 === 0 || i % 7 === 0 || i % 11 === 0 || i % 13 === 0); // ~30%
+                    const tipo = esEscritura ? 'escritura' : 'opcion';
+
+                    // Generar opciones falsas para opción múltiple
+                    const opcionesFalsas = [];
+                    const opcionesPool = conceptos.map(c => c.nombre);
+                    while (opcionesFalsas.length < 3) {
+                        const rand = opcionesPool[Math.floor(Math.random() * opcionesPool.length)];
+                        if (rand !== c.nombre && !opcionesFalsas.includes(rand)) {
+                            opcionesFalsas.push(rand);
+                        }
+                    }
+                    const opciones = [c.nombre, ...opcionesFalsas].sort(() => Math.random() - 0.5);
+
+                    juegos.push({
+                        id: i + 1,
+                        cat: cat,
+                        tipo: tipo,
+                        titulo: `${c.nombre}`,
+                        desc: c.desc,
+                        ejemplo: c.ejemplo || '',
+                        opciones: tipo === 'opcion' ? opciones : [],
+                        correcta: c.nombre,
+                        escritura: esEscritura,
+                        pregunta: tipo === 'escritura' ? `Escribe el concepto: "${c.desc}"` : '',
+                        nivel: nivel,
+                        nivelColor: coloresNivel[Math.floor(i / 25) % 4]
+                    });
+                }
+                return juegos;
+            }
+
+            const juegos = generarJuegosSintaxis();
+
+            // Estado
+            let currentIndex = 0;
+            let score = 0;
+            let streak = 0;
+            let completed = new Array(100).fill(false);
+
+            // DOM refs
+            const gameIndexDisplay = document.getElementById('gameIndexDisplay');
+            const categoryBadge = document.getElementById('categoryBadge');
+            const escrituraBadge = document.getElementById('escrituraBadge');
+            const levelBadge = document.getElementById('levelBadge');
+            const gameTitle = document.getElementById('gameTitle');
+            const gameDescription = document.getElementById('gameDescription');
+            const interactionArea = document.getElementById('interactionArea');
+            const respuestaCorrectaContainer = document.getElementById('respuestaCorrectaContainer');
+            const respuestaCorrectaTexto = document.getElementById('respuestaCorrectaTexto');
+            const streakCount = document.getElementById('streakCount');
+            const scoreCount = document.getElementById('scoreCount');
+            const progressText = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            const completedCount = document.getElementById('completedCount');
+            const gameList = document.getElementById('gameList');
+            const prevBtn = document.getElementById('prevGameBtn');
+            const nextBtn = document.getElementById('nextGameBtn');
+            const resetBtn = document.getElementById('resetProgressBtn');
+
+            // Canvas
+            let canvas, ctx, isDrawing = false;
+            let lastX = 0, lastY = 0;
+
+            function initCanvas() {
+                canvas = document.getElementById('canvasEscritura');
+                if (!canvas) return;
+                ctx = canvas.getContext('2d');
+                resizeCanvas();
+                canvas.addEventListener('mousedown', startDraw);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDraw);
+                canvas.addEventListener('mouseleave', stopDraw);
+                canvas.addEventListener('touchstart', handleTouch(startDraw));
+                canvas.addEventListener('touchmove', handleTouch(draw));
+                canvas.addEventListener('touchend', stopDraw);
+                document.getElementById('limpiarCanvasBtn')?.addEventListener('click', clearCanvas);
+                document.getElementById('comprobarEscrituraBtn')?.addEventListener('click', comprobarEscritura);
+            }
+
+            function resizeCanvas() {
+                if (!canvas) return;
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const width = Math.min(rect.width - 4, 600);
+                canvas.width = width;
+                canvas.height = width * 0.4;
+                canvas.style.width = width + 'px';
+                canvas.style.height = (width * 0.4) + 'px';
+                if (ctx) {
+                    ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.strokeStyle = '#b388ff';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                }
+            }
+
+            function startDraw(e) {
+                if (!canvas) return;
+                isDrawing = true;
+                const pos = getPos(e);
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+
+            function draw(e) {
+                if (!isDrawing || !canvas) return;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+
+            function stopDraw() { isDrawing = false; }
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                return {
+                    x: (clientX - rect.left) * (canvas.width / rect.width),
+                    y: (clientY - rect.top) * (canvas.height / rect.height)
+                };
+            }
+
+            function handleTouch(fn) {
+                return function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    if (!touch) return;
+                    const mouseEvent = new MouseEvent(
+                        e.type === 'touchstart' ? 'mousedown' : e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                            clientX: touch.clientX,
+                            clientY: touch.clientY
+                        }
+                    );
+                    canvas.dispatchEvent(mouseEvent);
+                };
+            }
+
+            function clearCanvas() {
+                if (!ctx || !canvas) return;
+                ctx.fillStyle = 'rgba(0,0,0,0.4)';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = '#b388ff';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+            }
+
+            function comprobarEscritura() {
+                const input = document.getElementById('escrituraInput');
+                let texto = input ? input.value.trim().toLowerCase() : '';
+                const juego = juegos[currentIndex];
+                if (!juego || !juego.escritura) return;
+                const correcta = juego.correcta.toLowerCase();
+                const isCorrect = (texto === correcta);
+
+                if (isCorrect) {
+                    if (!completed[currentIndex]) {
+                        score += 15;
+                        streak += 1;
+                        completed[currentIndex] = true;
+                    }
+                    if (input) {
+                        input.style.borderColor = '#4caf50';
+                        input.style.background = 'rgba(76,175,80,0.1)';
+                    }
+                } else {
+                    streak = 0;
+                    if (input) {
+                        input.style.borderColor = '#ef5350';
+                        input.style.background = 'rgba(239,83,80,0.1)';
+                    }
+                }
+                respuestaCorrectaTexto.textContent = juego.correcta;
+                respuestaCorrectaContainer.style.display = 'block';
+                if (input) input.disabled = true;
+                document.getElementById('comprobarEscrituraBtn').disabled = true;
+                updateStats();
+            }
+
+            // Render
+            function renderGame(index) {
+                const juego = juegos[index];
+                if (!juego) return;
+
+                categoryBadge.textContent = juego.cat;
+                if (juego.escritura) {
+                    escrituraBadge.style.display = 'inline-block';
+                    escrituraBadge.textContent = '✍️ escritura';
+                } else {
+                    escrituraBadge.style.display = 'none';
+                }
+                levelBadge.textContent = `★ ${juego.nivel}`;
+                levelBadge.style.background = `rgba(${juego.nivelColor === '#4caf50' ? '76,175,80' : juego.nivelColor === '#ffa726' ? '255,167,38' : juego.nivelColor === '#ef5350' ? '239,83,80' : '171,71,188'},0.15)`;
+                levelBadge.style.color = juego.nivelColor;
+
+                gameTitle.textContent = `Técnica #${juego.id}: ${juego.titulo}`;
+                let descTexto = juego.desc;
+                if (juego.ejemplo) {
+                    descTexto += ` <span class="ejemplo-texto d-block mt-1"><i class="fas fa-quote-left me-1"></i>${juego.ejemplo}</span>`;
+                }
+                if (juego.escritura && juego.pregunta) {
+                    gameDescription.innerHTML = juego.pregunta;
+                } else {
+                    gameDescription.innerHTML = descTexto;
+                }
+                respuestaCorrectaContainer.style.display = 'none';
+
+                let html = '';
+                if (juego.tipo === 'opcion') {
+                    html = `<div class="d-flex flex-wrap gap-3 justify-content-center">`;
+                    juego.opciones.forEach((opt) => {
+                        html += `<button class="btn btn-outline-morph opcion-btn" data-opt="${opt}" data-correct="${juego.correcta}">${opt}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (juego.tipo === 'escritura') {
+                    html = `
+                        <div class="text-center">
+                            <div class="mb-2">
+                                <label class="fw-semibold" style="color:#9a8ab5;">✍️ Escribe el concepto sintáctico:</label>
+                            </div>
+                            <div id="canvasContainer" class="mx-auto" style="max-width:600px;">
+                                <canvas id="canvasEscritura"></canvas>
+                            </div>
+                            <div class="canvas-toolbar mt-2">
+                                <button class="btn-canvas" id="limpiarCanvasBtn"><i class="fas fa-eraser"></i> Limpiar</button>
+                                <button class="btn-canvas" id="comprobarEscrituraBtn"><i class="fas fa-check"></i> Comprobar</button>
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" class="cursive-input w-75" id="escrituraInput" placeholder="Escribe el concepto..." autocomplete="off">
+                            </div>
+                            <div class="mt-2 text-muted small" style="color:#5a4a75!important;">Escribe el concepto o dibújalo. Luego pulsa "Comprobar".</div>
+                        </div>
+                    `;
+                }
+                interactionArea.innerHTML = html;
+
+                if (juego.tipo === 'opcion') {
+                    document.querySelectorAll('.opcion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const selected = this.dataset.opt;
+                            const correct = this.dataset.correct;
+                            const isCorrect = (selected === correct);
+                            document.querySelectorAll('.opcion-btn').forEach(b => b.disabled = true);
+                            if (isCorrect) {
+                                this.classList.add('btn-success');
+                                this.classList.remove('btn-outline-morph');
+                                if (!completed[index]) {
+                                    score += 10;
+                                    streak += 1;
+                                    completed[index] = true;
+                                }
+                            } else {
+                                this.classList.add('btn-danger');
+                                this.classList.remove('btn-outline-morph');
+                                streak = 0;
+                            }
+                            respuestaCorrectaTexto.textContent = correct;
+                            respuestaCorrectaContainer.style.display = 'block';
+                            document.querySelectorAll('.opcion-btn').forEach(b => {
+                                if (b.dataset.opt === correct) {
+                                    b.classList.add('border', 'border-success', 'bg-success', 'bg-opacity-10');
+                                }
+                            });
+                            updateStats();
+                        });
+                    });
+                } else if (juego.tipo === 'escritura') {
+                    setTimeout(() => {
+                        initCanvas();
+                        const input = document.getElementById('escrituraInput');
+                        if (input) {
+                            input.addEventListener('keypress', function(e) {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    comprobarEscritura();
+                                }
+                            });
+                        }
+                        const comprobarBtn = document.getElementById('comprobarEscrituraBtn');
+                        if (comprobarBtn) {
+                            comprobarBtn.addEventListener('click', comprobarEscritura);
+                        }
+                    }, 50);
+                }
+
+                updateStats();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Stats
+            function updateStats() {
+                streakCount.textContent = streak;
+                scoreCount.textContent = score;
+                const done = completed.filter(v => v).length;
+                completedCount.textContent = `${done}/100`;
+                const items = gameList.querySelectorAll('.list-group-item');
+                items.forEach((li, idx) => {
+                    if (completed[idx]) {
+                        li.classList.add('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+                        li.querySelector('.badge').innerHTML = '<i class="fas fa-check-circle text-success"></i> OK';
+                    } else {
+                        li.classList.remove('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+                        li.querySelector('.badge').textContent = `#${idx+1}`;
+                    }
+                });
+                const pct = Math.min(100, (done / 100) * 100);
+                progressBar.style.width = pct + '%';
+                progressText.textContent = `${currentIndex+1} / 100`;
+                gameIndexDisplay.textContent = `#${currentIndex+1}`;
+            }
+
+            // Lista
+            function populateGameList() {
+                gameList.innerHTML = '';
+                juegos.forEach((j, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.style.cursor = 'pointer';
+                    const icono = j.escritura ? '✍️ ' : '';
+                    const nivelIcon = j.nivel === 'Básico' ? '🟢' : j.nivel === 'Intermedio' ? '🟡' : j.nivel === 'Avanzado' ? '🔴' : '🟣';
+                    li.innerHTML = `<span>${icono} ${j.titulo.substring(0, 22)}</span><span class="badge bg-secondary bg-opacity-25 text-light">${nivelIcon} #${idx+1}</span>`;
+                    li.addEventListener('click', function() {
+                        currentIndex = idx;
+                        renderGame(currentIndex);
+                    });
+                    gameList.appendChild(li);
+                });
+                updateStats();
+            }
+
+            function goTo(index) {
+                if (index < 0) index = 0;
+                if (index >= juegos.length) index = juegos.length - 1;
+                currentIndex = index;
+                renderGame(currentIndex);
+            }
+
+            prevBtn.addEventListener('click', function() { goTo(currentIndex - 1); });
+            nextBtn.addEventListener('click', function() { goTo(currentIndex + 1); });
+
+            resetBtn.addEventListener('click', function() {
+                if (confirm('¿Reiniciar todo el progreso en SintaxisPlay?')) {
+                    completed = new Array(100).fill(false);
+                    score = 0;
+                    streak = 0;
+                    currentIndex = 0;
+                    renderGame(0);
+                    updateStats();
+                }
+            });
+
+            populateGameList();
+            renderGame(0);
+        })();
+    </script>
+</body>
+</html>

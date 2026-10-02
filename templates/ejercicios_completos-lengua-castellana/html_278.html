@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno Contrastivo · 100 técnicas bilingües</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Cookie&family=Caveat:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --indigo: #2b2d8f;
+      --indigo-light: #7a7fd9;
+      --indigo-dark: #1a1a5e;
+      --galaxy-bg: #f0f2ff;
+      --card-bg: #e6e9ff;
+    }
+    body { background-color: var(--galaxy-bg); font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+    .navbar-custom {
+      background: linear-gradient(135deg, #d0d4ff, #a5adf0);
+      border-bottom: 3px solid var(--indigo);
+    }
+    .navbar-custom .navbar-brand { font-weight: 700; color: var(--indigo-dark); }
+    .navbar-custom .nav-link { color: var(--indigo-dark); font-weight: 500; cursor: pointer; }
+    .navbar-custom .nav-link.active {
+      background-color: var(--indigo);
+      color: #fff !important;
+      border-radius: 20px;
+      padding: 0.4rem 1.2rem;
+    }
+    .btn-indigo { background-color: var(--indigo); border-color: var(--indigo); color: #fff; }
+    .btn-indigo:hover { background-color: var(--indigo-dark); border-color: var(--indigo-dark); color: #fff; }
+    .btn-outline-indigo { border-color: var(--indigo); color: var(--indigo); }
+    .btn-outline-indigo:hover { background-color: var(--indigo); color: #fff; }
+    .card-contrastivo {
+      background-color: var(--card-bg);
+      border-left: 6px solid var(--indigo);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(43,45,143,0.1);
+      transition: transform 0.15s, box-shadow 0.2s;
+      height: 100%;
+    }
+    .card-contrastivo:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(43,45,143,0.2); }
+    .card-contrastivo .card-title { color: var(--indigo-dark); font-weight: 700; font-size: 1.1rem; }
+    .badge-bloque { background-color: var(--indigo); color: #fff; font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 30px; }
+    .firma-cursiva { font-style: italic; font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--indigo-dark); }
+    .ejemplo-cursiva { font-style: italic; color: #333; }
+    .progreso-bar { height: 8px; border-radius: 10px; background-color: #d9ddf5; }
+    .progreso-bar .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--indigo-light), var(--indigo)); transition: width 0.4s; }
+    .filtro-bloque { background-color: #d6dcf5; border-radius: 30px; padding: 0.25rem 0.5rem; }
+    .filtro-bloque .btn-outline-secondary { border-color: var(--indigo); color: var(--indigo); font-size: 0.75rem; padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; }
+    .filtro-bloque .btn-outline-secondary.active { background-color: var(--indigo); color: #fff; }
+    .filtro-bloque .btn-outline-secondary:hover { background-color: var(--indigo-light); color: var(--indigo-dark); }
+    .modo-practica .card-contrastivo { cursor: pointer; }
+    .modo-practica .card-contrastivo .definicion,
+    .modo-practica .card-contrastivo .ejemplo {
+      filter: blur(4px);
+      user-select: none;
+      transition: filter 0.3s;
+    }
+    .modo-practica .card-contrastivo.revelado .definicion,
+    .modo-practica .card-contrastivo.revelado .ejemplo {
+      filter: blur(0);
+      user-select: auto;
+    }
+    .lector-activo { background-color: #c8cef0; border-radius: 30px; padding: 0.2rem 1rem; color: var(--indigo-dark); }
+    #voiceStatus { font-size: 0.9rem; font-style: italic; }
+    .fuente-selector { background-color: #d6dcf5; border-radius: 30px; padding: 0.2rem 0.8rem; }
+    .fuente-selector select { border: none; background: transparent; color: var(--indigo-dark); font-weight: 500; outline: none; }
+    .fuente-tangerine { font-family: 'Tangerine', cursive; font-size: 1.4rem; }
+    .fuente-cookie { font-family: 'Cookie', cursive; font-size: 1.3rem; }
+    .fuente-caveat { font-family: 'Caveat', cursive; font-size: 1.2rem; }
+    .fuente-garabato { font-family: 'Patrick Hand', cursive; font-size: 1.1rem; }
+    .flashcard, .ejercicio-card {
+      background-color: var(--card-bg);
+      border: 3px solid var(--indigo);
+      border-radius: 24px;
+      padding: 2rem;
+      min-height: 300px;
+      box-shadow: 0 8px 24px rgba(43,45,143,0.15);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .flashcard .card-front, .flashcard .card-back { transition: opacity 0.3s; }
+    .flashcard .card-back { display: none; }
+    .flashcard.revelada .card-front { display: none; }
+    .flashcard.revelada .card-back { display: block; }
+    .flashcard .badge-bloque, .ejercicio-card .badge-bloque { font-size: 0.9rem; }
+    .flashcard .card-title, .ejercicio-card .card-title { font-size: 2rem; font-weight: 700; color: var(--indigo-dark); }
+    .flashcard .definicion, .ejercicio-card .definicion { font-size: 1.1rem; }
+    .flashcard .ejemplo, .ejercicio-card .ejemplo { font-size: 1.2rem; }
+    .opcion-ejercicio {
+      display: block;
+      width: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border: 2px solid var(--indigo-light);
+      border-radius: 12px;
+      background: white;
+      text-align: left;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .opcion-ejercicio:hover { background-color: var(--indigo-light); border-color: var(--indigo); }
+    .opcion-ejercicio.seleccionada { background-color: var(--indigo-light); border-color: var(--indigo); }
+    .opcion-ejercicio.correcta { background-color: #b5d6b5; border-color: #28a745; }
+    .opcion-ejercicio.incorrecta { background-color: #f8d7da; border-color: #dc3545; }
+    .opcion-ejercicio:disabled { opacity: 0.7; cursor: default; }
+    @media (max-width: 576px) {
+      .card-contrastivo .card-title { font-size: 0.95rem; }
+      .flashcard .card-title, .ejercicio-card .card-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-journal-bookmark-fill me-2" style="color:var(--indigo-dark);"></i>Cuaderno Contrastivo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" data-modo="explorar" href="#"><i class="bi bi-grid-3x3-gap-fill me-1"></i>Explorar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="practicar" href="#"><i class="bi bi-puzzle-fill me-1"></i>Practicar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="flashcards" href="#"><i class="bi bi-stack me-1"></i>Flashcards</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="progreso" href="#"><i class="bi bi-bar-chart-fill me-1"></i>Progreso</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <div class="fuente-selector d-none d-md-inline-block">
+          <i class="bi bi-fonts" style="color:var(--indigo-dark);"></i>
+          <select id="fuenteCursiva" aria-label="Elegir caligrafía">
+            <option value="caveat">Caveat</option>
+            <option value="tangerine">Tangerine</option>
+            <option value="cookie">Cookie</option>
+            <option value="garabato">Garabato</option>
+          </select>
+        </div>
+        <span id="voiceStatus" class="d-none d-md-inline"><i class="bi bi-volume-up-fill me-1"></i>Lector</span>
+        <button id="btnVoiceToggle" class="btn btn-outline-indigo btn-sm" title="Activar/desactivar lector"><i class="bi bi-mic"></i></button>
+        <span class="badge bg-indigo rounded-pill" id="contadorAprendidas">0/100</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12 d-flex flex-wrap align-items-center gap-2 filtro-bloque p-2">
+      <span class="fw-bold me-2" style="color:var(--indigo-dark);"><i class="bi bi-tags"></i> Bloques:</span>
+      <button class="btn btn-outline-secondary active" data-bloque="todos">Todos</button>
+      <button class="btn btn-outline-secondary" data-bloque="I">I</button>
+      <button class="btn btn-outline-secondary" data-bloque="II">II</button>
+      <button class="btn btn-outline-secondary" data-bloque="III">III</button>
+      <button class="btn btn-outline-secondary" data-bloque="IV">IV</button>
+      <button class="btn btn-outline-secondary" data-bloque="V">V</button>
+      <button class="btn btn-outline-secondary" data-bloque="VI">VI</button>
+      <button class="btn btn-outline-secondary" data-bloque="VII">VII</button>
+      <button class="btn btn-outline-secondary" data-bloque="VIII">VIII</button>
+      <button class="btn btn-outline-secondary" data-bloque="IX">IX</button>
+      <button class="btn btn-outline-secondary" data-bloque="X">X</button>
+      <span class="ms-2 text-muted small" id="resultCount">100 técnicas</span>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-3 pb-5">
+  <div id="gridTecnicas" class="row g-3"></div>
+
+  <!-- Flashcard Container -->
+  <div id="flashcardContainer" class="row justify-content-center" style="display:none;">
+    <div class="col-lg-8 col-md-10">
+      <div id="flashcard" class="flashcard">
+        <div class="card-front text-center">
+          <span class="badge-bloque mb-2" id="flashBloque">I</span>
+          <h2 class="card-title" id="flashNombre">Nombre</h2>
+          <p class="text-muted mt-3"><i class="bi bi-info-circle"></i> Haz clic en la tarjeta o en "Voltear"</p>
+        </div>
+        <div class="card-back">
+          <span class="badge-bloque mb-2" id="flashBloqueBack">I</span>
+          <h2 class="card-title" id="flashNombreBack">Nombre</h2>
+          <p class="definicion" id="flashDefinicion">Definición</p>
+          <p class="ejemplo-cursiva ejemplo" id="flashEjemplo">Ejemplo bilingüe</p>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center mt-4">
+        <div>
+          <button id="flashPrev" class="btn btn-outline-indigo"><i class="bi bi-chevron-left"></i> Anterior</button>
+          <button id="flashNext" class="btn btn-outline-indigo">Siguiente <i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div>
+          <button id="flashVoltear" class="btn btn-indigo"><i class="bi bi-arrow-repeat"></i> Voltear</button>
+          <button id="flashFirmar" class="btn btn-outline-warning"><i class="bi bi-pen"></i> Firmar</button>
+          <button id="flashVoice" class="btn btn-outline-indigo"><i class="bi bi-volume-up"></i></button>
+        </div>
+      </div>
+      <div class="text-center mt-2">
+        <span id="flashContador" class="text-muted">1 / 100</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPractica" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color:var(--galaxy-bg); border-left:8px solid var(--indigo);">
+      <div class="modal-header" style="border-bottom:2px solid var(--indigo-light);">
+        <h5 class="modal-title" style="color:var(--indigo-dark);"><i class="bi bi-puzzle me-2"></i>Detalle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalPracticaBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-indigo" id="btnVoiceModal"><i class="bi bi-volume-up"></i> Escuchar</button>
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ----------------------------------------------------------------
+    // 1. DATOS: 100 técnicas en 10 bloques (10 cada uno)
+    // ----------------------------------------------------------------
+    const TECNICAS = [];
+
+    // BLOQUE I: Orden de la oración
+    const bloqueI = [
+      { nombre: 'Sujeto + Verbo + Objeto (SVO) vs. Sujeto + Objeto + Verbo (SOV)', definicion: 'Orden canónico en español e inglés (SVO) contrastado con lenguas SOV.', ejemplo: 'Esp: "Juan come manzanas" / Eng: "John eats apples" / SOV: "Juan manzanas come" (orden marcado)' },
+      { nombre: 'Adjetivo antes del sustantivo vs. después', definicion: 'En inglés el adjetivo precede al sustantivo; en español puede ir antes o después.', ejemplo: 'Eng: "a red car" / Esp: "un coche rojo" o "un rojo coche" (poético)' },
+      { nombre: 'Adverbio de frecuencia (posición)', definicion: 'En inglés van antes del verbo principal; en español suelen ir después.', ejemplo: 'Eng: "She always arrives early" / Esp: "Ella llega siempre temprano"' },
+      { nombre: 'Posición de los pronombres objeto', definicion: 'En español los pronombres átonos van antes del verbo conjugado; en inglés después.', ejemplo: 'Esp: "Lo veo" / Eng: "I see him"' },
+      { nombre: 'Inversión en preguntas', definicion: 'En inglés se invierte sujeto-verbo auxiliar; en español solo entonación.', ejemplo: 'Eng: "Are you coming?" / Esp: "¿Vienes?"' },
+      { nombre: 'Orden en oraciones negativas', definicion: 'El "no" español precede al verbo; en inglés "not" sigue al auxiliar.', ejemplo: 'Esp: "No quiero" / Eng: "I do not want"' },
+      { nombre: 'Posición de las partículas modales', definicion: 'En inglés los modales (can, must) preceden al verbo; en español el verbo modal rige infinitivo.', ejemplo: 'Eng: "You must go" / Esp: "Debes ir"' },
+      { nombre: 'Orden de los cuantificadores', definicion: 'Todos / all, cada / each, algunos / some.', ejemplo: 'Esp: "Todos los estudiantes" / Eng: "All the students"' },
+      { nombre: 'Orden de los posesivos', definicion: 'En español el posesivo puede ir antes o después; en inglés siempre antes.', ejemplo: 'Esp: "mi casa" / Eng: "my house"' },
+      { nombre: 'Orden de los demostrativos', definicion: 'En español van antes del sustantivo; en inglés igual.', ejemplo: 'Esp: "este libro" / Eng: "this book"' }
+    ];
+    bloqueI.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 'I', ...t }));
+
+    // BLOQUE II: Verbos y tiempos
+    const bloqueII = [
+      { nombre: 'Presente simple vs. presente continuo', definicion: 'El presente simple expresa hábitos; el continuo, acciones en curso.', ejemplo: 'Esp: "Trabajo todos los días" / Eng: "I work every day" vs. "Estoy trabajando ahora" / "I am working now"' },
+      { nombre: 'Pretérito perfecto vs. pasado simple', definicion: 'El perfecto conecta con el presente; el pasado simple es anterior.', ejemplo: 'Esp: "He comido" / Eng: "I have eaten" vs. "Comí" / "I ate"' },
+      { nombre: 'Futuro con "will" vs. "going to"', definicion: '"Will" para decisiones espontáneas; "going to" para planes.', ejemplo: 'Esp: "Mañana llamaré" / Eng: "I will call tomorrow" vs. "Voy a viajar" / "I am going to travel"' },
+      { nombre: 'Condicional simple y compuesto', definicion: 'Expresan hipótesis y consecuencias.', ejemplo: 'Esp: "Si tuviera dinero, viajaría" / Eng: "If I had money, I would travel"' },
+      { nombre: 'Uso del subjuntivo en español vs. indicativo en inglés', definicion: 'El subjuntivo español no tiene equivalente exacto en inglés.', ejemplo: 'Esp: "Espero que vengas" / Eng: "I hope you come" (sin subjuntivo)' },
+      { nombre: 'Voz pasiva: ser + participio vs. to be + past participle', definicion: 'Estructura similar pero con diferencias en el uso de "por" / "by".', ejemplo: 'Esp: "La carta fue escrita por Juan" / Eng: "The letter was written by Juan"' },
+      { nombre: 'Gerundio vs. infinitivo tras verbos', definicion: 'Algunos verbos rigen gerundio o infinitivo de forma distinta.', ejemplo: 'Esp: "Evito fumar" / Eng: "I avoid smoking" (gerundio) vs. "Quiero fumar" / "I want to smoke"' },
+      { nombre: 'Verbos reflexivos vs. no reflexivos', definicion: 'En español los reflexivos llevan pronombre; en inglés no siempre.', ejemplo: 'Esp: "Me levanto" / Eng: "I get up"' },
+      { nombre: 'Uso de "ser" y "estar"', definicion: 'Dos verbos para "to be" según cualidad o estado.', ejemplo: 'Esp: "Eres alto" / Eng: "You are tall" (cualidad) vs. "Estás cansado" / "You are tired" (estado)' },
+      { nombre: 'Perífrasis verbales (estar + gerundio, ir a + infinitivo)', definicion: 'Estructuras verbales compuestas con matices aspectuales.', ejemplo: 'Esp: "Estoy estudiando" / Eng: "I am studying" (presente continuo)' }
+    ];
+    bloqueII.forEach((t, i) => TECNICAS.push({ id: 10+i+1, bloque: 'II', ...t }));
+
+    // BLOQUE III: Concordancia
+    const bloqueIII = [
+      { nombre: 'Concordancia de género y número (sustantivo-adjetivo)', definicion: 'En español hay concordancia; en inglés solo número.', ejemplo: 'Esp: "casa blanca" / Eng: "white house" (sin género)' },
+      { nombre: 'Concordancia sujeto-verbo en número', definicion: 'El verbo concuerda en número con el sujeto.', ejemplo: 'Esp: "El niño come" / Eng: "The child eats" (singular)' },
+      { nombre: 'Concordancia con sujetos colectivos', definicion: 'En español se usa singular; en inglés puede ser singular o plural según énfasis.', ejemplo: 'Esp: "La gente dice" / Eng: "People say" (plural)' },
+      { nombre: 'Concordancia en oraciones con "se"', definicion: 'El verbo concuerda con el sujeto real aunque "se" lo oculte.', ejemplo: 'Esp: "Se venden casas" / Eng: "Houses are sold"' },
+      { nombre: 'Concordancia en tiempos compuestos', definicion: 'El participio pasado no varía en español; en inglés el past participle es invariable.', ejemplo: 'Esp: "He escrito" / Eng: "I have written"' },
+      { nombre: 'Concordancia de los determinantes', definicion: 'Artículos y demostrativos concuerdan en género y número.', ejemplo: 'Esp: "la casa, el coche" / Eng: "the house, the car"' },
+      { nombre: 'Concordancia en oraciones condicionales', definicion: 'El verbo de la prótasis y apódosis deben concordar en modo y tiempo.', ejemplo: 'Esp: "Si llueve, no salgo" / Eng: "If it rains, I don\'t go out"' },
+      { nombre: 'Concordancia con pronombres relativos', definicion: 'El verbo concuerda con el antecedente del pronombre relativo.', ejemplo: 'Esp: "Los libros que me gustan" / Eng: "The books that I like"' },
+      { nombre: 'Concordancia en expresiones impersonales', definicion: 'El verbo siempre en tercera persona del singular.', ejemplo: 'Esp: "Hay mucha gente" / Eng: "There are many people"' },
+      { nombre: 'Concordancia en la voz pasiva', definicion: 'El participio concuerda en género y número con el sujeto paciente.', ejemplo: 'Esp: "Las cartas fueron enviadas" / Eng: "The letters were sent"' }
+    ];
+    bloqueIII.forEach((t, i) => TECNICAS.push({ id: 20+i+1, bloque: 'III', ...t }));
+
+    // BLOQUE IV: Artículos
+    const bloqueIV = [
+      { nombre: 'Artículo definido (el, la, los, las) vs. "the"', definicion: 'Uso del artículo definido: similar pero con diferencias.', ejemplo: 'Esp: "La vida es bella" / Eng: "Life is beautiful" (sin artículo)' },
+      { nombre: 'Artículo indefinido (un, una) vs. "a/an"', definicion: 'Uso del artículo indefinido.', ejemplo: 'Esp: "Tengo un coche" / Eng: "I have a car"' },
+      { nombre: 'Omisión del artículo en español con sustantivos abstractos', definicion: 'En español se omite a menudo; en inglés a veces no.', ejemplo: 'Esp: "Tengo fe" / Eng: "I have faith" (sin artículo)' },
+      { nombre: 'Artículo con posesivos', definicion: 'En español no se usa artículo con posesivo; en inglés sí.', ejemplo: 'Esp: "mi casa" / Eng: "my house" (no "the my house")' },
+      { nombre: 'Artículo con nombres de idiomas', definicion: 'En español se usa artículo; en inglés no.', ejemplo: 'Esp: "El español es fácil" / Eng: "Spanish is easy"' },
+      { nombre: 'Artículo con nombres de países', definicion: 'En español algunos países llevan artículo; en inglés no.', ejemplo: 'Esp: "El Perú" / Eng: "Peru" (sin artículo)' },
+      { nombre: 'Artículo con partes del cuerpo', definicion: 'En español se usa artículo; en inglés posesivo.', ejemplo: 'Esp: "Me duele la cabeza" / Eng: "My head hurts"' },
+      { nombre: 'Artículo con fechas y horas', definicion: 'Uso del artículo en expresiones temporales.', ejemplo: 'Esp: "Llegaré a las cinco" / Eng: "I will arrive at five o\'clock"' },
+      { nombre: 'Artículo neutro "lo"', definicion: 'El "lo" español (ante adjetivo) no tiene equivalente en inglés.', ejemplo: 'Esp: "Lo importante es..." / Eng: "The important thing is..."' },
+      { nombre: 'Omisión del artículo en inglés con sustantivos en plural genérico', definicion: 'En inglés se omite; en español se usa.', ejemplo: 'Esp: "Los perros son fieles" / Eng: "Dogs are loyal"' }
+    ];
+    bloqueIV.forEach((t, i) => TECNICAS.push({ id: 30+i+1, bloque: 'IV', ...t }));
+
+    // BLOQUE V: Preposiciones y régimen verbal
+    const bloqueV = [
+      { nombre: 'Preposición "a" (dirección) vs. "to"', definicion: 'Indica movimiento hacia un lugar.', ejemplo: 'Esp: "Voy a Madrid" / Eng: "I go to Madrid"' },
+      { nombre: 'Preposición "de" (posesión) vs. "of"', definicion: 'Indica posesión o pertenencia.', ejemplo: 'Esp: "La casa de Juan" / Eng: "John\'s house" o "the house of John"' },
+      { nombre: 'Preposición "en" (lugar) vs. "in/on/at"', definicion: 'En español una sola preposición para varios casos.', ejemplo: 'Esp: "en la mesa" / Eng: "on the table" / "en Madrid" / "in Madrid"' },
+      { nombre: 'Preposición "por" y "para" vs. "for"', definicion: 'Dos preposiciones españolas que se traducen a "for" en inglés.', ejemplo: 'Esp: "Gracias por" / Eng: "Thanks for" / "Para ti" / "For you"' },
+      { nombre: 'Régimen verbal: verbos que rigen preposición', definicion: 'En español muchos verbos llevan preposición; en inglés no siempre.', ejemplo: 'Esp: "Soñar con" / Eng: "Dream of" (preposición diferente)' },
+      { nombre: 'Verbos de movimiento + "a" vs. "to"', definicion: 'Similar al español, pero con diferencias.', ejemplo: 'Esp: "Llegar a" / Eng: "Arrive at/in"' },
+      { nombre: 'Preposición "hasta" vs. "until" / "as far as"', definicion: 'Indica límite espacial o temporal.', ejemplo: 'Esp: "Camina hasta la esquina" / Eng: "Walk to the corner"' },
+      { nombre: 'Preposición "desde" vs. "from"', definicion: 'Indica origen temporal o espacial.', ejemplo: 'Esp: "Desde aquí" / Eng: "From here"' },
+      { nombre: 'Preposición "sin" vs. "without"', definicion: 'Indica ausencia.', ejemplo: 'Esp: "Sin ti" / Eng: "Without you"' },
+      { nombre: 'Preposición "entre" vs. "between/among"', definicion: 'Dos opciones en inglés según el número.', ejemplo: 'Esp: "entre dos personas" / Eng: "between two people" / "entre varios" / "among several"' }
+    ];
+    bloqueV.forEach((t, i) => TECNICAS.push({ id: 40+i+1, bloque: 'V', ...t }));
+
+    // BLOQUE VI: Falsos amigos y calcos sintácticos
+    const bloqueVI = [
+      { nombre: 'Actual / Actually vs. Actualmente', definicion: '"Actually" = en realidad; "actualmente" = currently.', ejemplo: 'Esp: "Actualmente trabajo" / Eng: "Actually, I work" (mal uso) → "Currently I work"' },
+      { nombre: 'Asistir / Attend vs. Assist', definicion: '"Attend" = ir a; "assist" = ayudar.', ejemplo: 'Esp: "Asisto a clase" / Eng: "I attend class" (no "assist")' },
+      { nombre: 'Éxito / Success vs. Exit', definicion: '"Success" = triunfo; "exit" = salida.', ejemplo: 'Esp: "Tuve éxito" / Eng: "I had success" (no "exit")' },
+      { nombre: 'Realizar / Realize vs. Carry out', definicion: '"Realize" = darse cuenta; "realizar" = llevar a cabo.', ejemplo: 'Esp: "Realicé el proyecto" / Eng: "I carried out the project" (no "realized")' },
+      { nombre: 'Sensible / Sensitive vs. Sensible', definicion: '"Sensible" = sensato; "sensitive" = sensible.', ejemplo: 'Esp: "Es una persona sensible" / Eng: "He is a sensitive person" (no "sensible")' },
+      { nombre: 'Calco: "Hacer sentido" vs. "Make sense"', definicion: '"Make sense" no se traduce literalmente como "hacer sentido".', ejemplo: 'Esp: "Tiene sentido" / Eng: "It makes sense"' },
+      { nombre: 'Calco: "Aplicar para" vs. "Apply to" / "Apply for"', definicion: '"Apply to" (a algo) / "Apply for" (solicitar).', ejemplo: 'Esp: "Aplicar a una universidad" / Eng: "Apply to a university" (no "apply for")' },
+      { nombre: 'Calco: "Depender de" vs. "Depend on"', definicion: 'El verbo "depend" rige la preposición "on".', ejemplo: 'Esp: "Depende de ti" / Eng: "It depends on you"' },
+      { nombre: 'Calco: "Interesado en" vs. "Interested in"', definicion: 'En español e inglés se usa la misma preposición.', ejemplo: 'Esp: "Estoy interesado en" / Eng: "I am interested in"' },
+      { nombre: 'Calco: "Pensar de" vs. "Think of" (opinión) / "Think about" (reflexión)', definicion: 'Según el sentido, se usa "of" o "about".', ejemplo: 'Esp: "Pienso en ti" / Eng: "I think of you" (recuerdo) o "about you" (reflexión)' }
+    ];
+    bloqueVI.forEach((t, i) => TECNICAS.push({ id: 50+i+1, bloque: 'VI', ...t }));
+
+    // BLOQUE VII: Figuras retóricas - Imagen y comparación
+    const bloqueVII = [
+      { nombre: 'Símil (comparación explícita)', definicion: 'Comparación con "como" / "like" o "as".', ejemplo: 'Esp: "Brilla como el sol" / Eng: "Shines like the sun"' },
+      { nombre: 'Metáfora (identificación)', definicion: 'Identificación de un término con otro.', ejemplo: 'Esp: "Sus ojos son estrellas" / Eng: "Her eyes are stars"' },
+      { nombre: 'Personificación (atribución de cualidades humanas)', definicion: 'Dar rasgos humanos a objetos o animales.', ejemplo: 'Esp: "El viento susurra" / Eng: "The wind whispers"' },
+      { nombre: 'Hipérbole (exageración)', definicion: 'Exageración para enfatizar.', ejemplo: 'Esp: "Te he esperado un siglo" / Eng: "I\'ve waited for you a century"' },
+      { nombre: 'Sinestesia (mezcla de sentidos)', definicion: 'Mezcla de percepciones sensoriales.', ejemplo: 'Esp: "Color sordo" / Eng: "Deaf color"' },
+      { nombre: 'Analogía (comparación extensa)', definicion: 'Comparación de dos realidades con múltiples puntos en común.', ejemplo: 'Esp: "La vida es como un viaje..." / Eng: "Life is like a journey..."' },
+      { nombre: 'Epíteto (adjetivo calificativo)', definicion: 'Adjetivo que resalta una cualidad inherente.', ejemplo: 'Esp: "Blanca nieve" / Eng: "White snow"' },
+      { nombre: 'Metonimia (relación de contigüidad)', definicion: 'Sustitución de una palabra por otra con relación.', ejemplo: 'Esp: "El gobierno decidió" / Eng: "The government decided" (por sus miembros)' },
+      { nombre: 'Sinécdoque (la parte por el todo)', definicion: 'Designar el todo por la parte o viceversa.', ejemplo: 'Esp: "Cinco bocas que alimentar" / Eng: "Five mouths to feed"' },
+      { nombre: 'Ironía (decir lo contrario)', definicion: 'Expresión de lo contrario de lo que se piensa.', ejemplo: 'Esp: "Qué día tan hermoso" (lloviendo) / Eng: "What a beautiful day" (ironic)' }
+    ];
+    bloqueVII.forEach((t, i) => TECNICAS.push({ id: 60+i+1, bloque: 'VII', ...t }));
+
+    // BLOQUE VIII: Figuras retóricas - Repetición y contraste
+    const bloqueVIII = [
+      { nombre: 'Anáfora (repetición al inicio)', definicion: 'Repetición de una palabra al inicio de frases sucesivas.', ejemplo: 'Esp: "Temprano, temprano..." / Eng: "Early, early..."' },
+      { nombre: 'Epífora (repetición al final)', definicion: 'Repetición al final de frases o versos.', ejemplo: 'Esp: "Todo es sueño, todo es sueño" / Eng: "All is dream, all is dream"' },
+      { nombre: 'Paralelismo (estructura repetida)', definicion: 'Repetición de estructuras sintácticas similares.', ejemplo: 'Esp: "Ni el mar, ni el viento..." / Eng: "Neither the sea, nor the wind..."' },
+      { nombre: 'Quiasmo (orden cruzado)', definicion: 'Disposición cruzada de elementos paralelos.', ejemplo: 'Esp: "Cuando quiero reír, lloro" / Eng: "When I want to laugh, I cry"' },
+      { nombre: 'Asíndeton (omisión de conjunciones)', definicion: 'Omisión de conjunciones para dar rapidez.', ejemplo: 'Esp: "Vine, vi, vencí" / Eng: "I came, I saw, I conquered"' },
+      { nombre: 'Polisíndeton (repetición de conjunciones)', definicion: 'Uso repetido de conjunciones para dar énfasis.', ejemplo: 'Esp: "Y el sol, y la luna, y las estrellas" / Eng: "And the sun, and the moon, and the stars"' },
+      { nombre: 'Antítesis (contraposición de ideas)', definicion: 'Contraste de ideas opuestas.', ejemplo: 'Esp: "Eres todo para mí, pero nada para ti" / Eng: "You are everything to me, but nothing to you"' },
+      { nombre: 'Oxímoron (unión de contradictorios)', definicion: 'Unión de dos conceptos opuestos.', ejemplo: 'Esp: "Silencio atronador" / Eng: "Deafening silence"' },
+      { nombre: 'Paradoja (verdad aparentemente contradictoria)', definicion: 'Afirmación que encierra una verdad profunda.', ejemplo: 'Esp: "Solo sé que no sé nada" / Eng: "I only know that I know nothing"' },
+      { nombre: 'Calambur (juego de palabras)', definicion: 'Reagrupación de sílabas para crear doble sentido.', ejemplo: 'Esp: "A caballo regalado no le mires el diente" / Eng: "Don\'t look a gift horse in the mouth"' }
+    ];
+    bloqueVIII.forEach((t, i) => TECNICAS.push({ id: 70+i+1, bloque: 'VIII', ...t }));
+
+    // BLOQUE IX: Traducción y equivalencia retórica bilingüe
+    const bloqueIX = [
+      { nombre: 'Equivalencia de refranes', definicion: 'Traducción de dichos populares manteniendo el sentido.', ejemplo: 'Esp: "Más vale tarde que nunca" / Eng: "Better late than never"' },
+      { nombre: 'Equivalencia de frases hechas', definicion: 'Expresiones idiomáticas que no se traducen literalmente.', ejemplo: 'Esp: "Estar en las nubes" / Eng: "To have one\'s head in the clouds"' },
+      { nombre: 'Traducción de juegos de palabras', definicion: 'Mantener el doble sentido en la traducción es difícil.', ejemplo: 'Esp: "No es lo mismo..." / Eng: no siempre tiene equivalente.' },
+      { nombre: 'Uso de metáforas culturales', definicion: 'Metáforas que requieren adaptación cultural.', ejemplo: 'Esp: "Ser un pez en el agua" / Eng: "To be like a fish in water" (se entiende)' },
+      { nombre: 'Traducción de la ironía', definicion: 'La ironía debe transmitirse con el mismo tono.', ejemplo: 'Esp: "¡Menuda suerte!" / Eng: "What luck!" (sarcástico)' },
+      { nombre: 'Adaptación de la hipérbole', definicion: 'La exageración puede variar en intensidad.', ejemplo: 'Esp: "Me muero de hambre" / Eng: "I\'m starving"' },
+      { nombre: 'Equivalencia de preguntas retóricas', definicion: 'Preguntas que no esperan respuesta.', ejemplo: 'Esp: "¿Quién no ha soñado?" / Eng: "Who hasn\'t dreamed?"' },
+      { nombre: 'Traducción de exclamaciones', definicion: 'Expresiones enfáticas con matices culturales.', ejemplo: 'Esp: "¡Qué bonito!" / Eng: "How beautiful!"' },
+      { nombre: 'Adaptación del hipérbaton', definicion: 'El orden alterado debe tener sentido en inglés.', ejemplo: 'Esp: "De la montaña bajó" / Eng: "From the mountain came down" (poético)' },
+      { nombre: 'Equivalencia de la personificación', definicion: 'Atribuir rasgos humanos a objetos es común en ambas lenguas.', ejemplo: 'Esp: "La ciudad nunca duerme" / Eng: "The city never sleeps"' }
+    ];
+    bloqueIX.forEach((t, i) => TECNICAS.push({ id: 80+i+1, bloque: 'IX', ...t }));
+
+    // BLOQUE X: Sintaxis contrastiva avanzada
+    const bloqueX = [
+      { nombre: 'Condicionales reales vs. irreales', definicion: 'Diferencias en el uso de tiempos para condiciones reales e irreales.', ejemplo: 'Esp: "Si tengo tiempo, iré" (real) / Eng: "If I have time, I\'ll go" / "Si tuviera tiempo, iría" (irreal) / "If I had time, I would go"' },
+      { nombre: 'Voz pasiva con "se" vs. pasiva refleja', definicion: 'El "se" impersonal español y la pasiva refleja.', ejemplo: 'Esp: "Se dice que..." / Eng: "It is said that..." (pasiva impersonal)' },
+      { nombre: 'Question tags (¿verdad? / ¿no?)', definicion: 'Coletillas interrogativas en inglés; en español se usan "¿verdad?", "¿no?".', ejemplo: 'Esp: "Vienes, ¿verdad?" / Eng: "You\'re coming, aren\'t you?"' },
+      { nombre: 'Uso del infinitivo como sujeto', definicion: 'En español el infinitivo puede ser sujeto; en inglés se usa gerundio o "to + infinitive".', ejemplo: 'Esp: "Fumar es malo" / Eng: "Smoking is bad" (gerundio) o "To smoke is bad"' },
+      { nombre: 'Construcciones impersonales (hay, hace, etc.)', definicion: 'Verbos impersonales en español; en inglés se usan "there is", "it is".', ejemplo: 'Esp: "Hay mucha gente" / Eng: "There are many people" / "Hace frío" / "It is cold"' },
+      { nombre: 'Uso del gerundio en español vs. inglés', definicion: 'El gerundio español expresa acción en desarrollo; en inglés también.', ejemplo: 'Esp: "Está lloviendo" / Eng: "It is raining"' },
+      { nombre: 'Perífrasis de obligación (deber, tener que, haber de)', definicion: 'Expresar obligación en español e inglés.', ejemplo: 'Esp: "Debes estudiar" / Eng: "You must study" / "You have to study"' },
+      { nombre: 'Oraciones subordinadas de relativo', definicion: 'Uso de pronombres relativos (que, quien, cuyo) vs. "who, which, whose".', ejemplo: 'Esp: "El libro que leí" / Eng: "The book that I read"' },
+      { nombre: 'Oraciones de tiempo: cuando, mientras, etc.', definicion: 'Conjunciones temporales y uso de tiempos.', ejemplo: 'Esp: "Cuando llegue, te llamo" / Eng: "When I arrive, I\'ll call you"' },
+      { nombre: 'Oraciones de finalidad (para que, a fin de que)', definicion: 'Expresar propósito en español e inglés.', ejemplo: 'Esp: "Estudio para que me den el título" / Eng: "I study so that they give me the degree"' }
+    ];
+    bloqueX.forEach((t, i) => TECNICAS.push({ id: 90+i+1, bloque: 'X', ...t }));
+
+    // Ahora son exactamente 100
+
+    // ----------------------------------------------------------------
+    // 2. ESTADO Y ALMACENAMIENTO
+    // ----------------------------------------------------------------
+    const STORAGE_KEY = 'cuadernoContrastivo100_tecnicas';
+    let progreso = {};
+    let modoActual = 'explorar';
+    let bloqueFiltro = 'todos';
+    let voiceEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let utterance = null;
+    let fuenteActual = 'caveat';
+    let flashIndex = 0;
+    let flashList = [];
+
+    function cargarProgreso() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) progreso = JSON.parse(data);
+        else progreso = {};
+      } catch (e) { progreso = {}; }
+    }
+
+    function guardarProgreso() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progreso));
+      actualizarContador();
+    }
+
+    function toggleAprendida(id) {
+      if (progreso[id]) delete progreso[id];
+      else progreso[id] = true;
+      guardarProgreso();
+      renderizar();
+      if (modoActual === 'flashcards') mostrarFlashcard(flashIndex);
+    }
+
+    function actualizarContador() {
+      const total = TECNICAS.length;
+      const aprendidas = Object.keys(progreso).filter(k => progreso[k]).length;
+      document.getElementById('contadorAprendidas').textContent = `${aprendidas}/${total}`;
+    }
+
+    function getTecnicasFiltradas() {
+      let lista = TECNICAS;
+      if (bloqueFiltro !== 'todos') lista = lista.filter(t => t.bloque === bloqueFiltro);
+      return lista;
+    }
+
+    function leerTexto(texto) {
+      if (!voiceEnabled) return;
+      if (speechSynth.speaking) speechSynth.cancel();
+      utterance = new SpeechSynthesisUtterance(texto);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      speechSynth.speak(utterance);
+    }
+
+    function getClaseFuente() {
+      switch(fuenteActual) {
+        case 'tangerine': return 'fuente-tangerine';
+        case 'cookie': return 'fuente-cookie';
+        case 'garabato': return 'fuente-garabato';
+        default: return 'fuente-caveat';
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // 3. FLASHCARDS
+    // ----------------------------------------------------------------
+    function mostrarFlashcard(index) {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) {
+        document.getElementById('flashcardContainer').style.display = 'none';
+        return;
+      }
+      flashList = lista;
+      if (index >= lista.length) index = 0;
+      if (index < 0) index = lista.length - 1;
+      flashIndex = index;
+
+      const t = lista[index];
+      const aprendida = progreso[t.id] || false;
+
+      document.getElementById('flashBloque').textContent = t.bloque;
+      document.getElementById('flashNombre').textContent = t.nombre;
+      document.getElementById('flashBloqueBack').textContent = t.bloque;
+      document.getElementById('flashNombreBack').textContent = t.nombre;
+      document.getElementById('flashDefinicion').textContent = t.definicion;
+      const ej = document.getElementById('flashEjemplo');
+      ej.textContent = t.ejemplo;
+      ej.className = `ejemplo-cursiva ejemplo ${getClaseFuente()}`;
+
+      document.getElementById('flashContador').textContent = `${index+1} / ${lista.length}`;
+
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.remove('revelada');
+      document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear';
+
+      const firmarBtn = document.getElementById('flashFirmar');
+      if (aprendida) {
+        firmarBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Firmada';
+        firmarBtn.className = 'btn btn-success';
+      } else {
+        firmarBtn.innerHTML = '<i class="bi bi-pen"></i> Firmar';
+        firmarBtn.className = 'btn btn-outline-warning';
+      }
+      actualizarContador();
+    }
+
+    function flashVoltear() {
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.toggle('revelada');
+      const btn = document.getElementById('flashVoltear');
+      btn.innerHTML = flashcard.classList.contains('revelada') ? '<i class="bi bi-arrow-repeat"></i> Ocultar' : '<i class="bi bi-arrow-repeat"></i> Voltear';
+    }
+
+    function flashNext() { mostrarFlashcard(flashIndex + 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashPrev() { mostrarFlashcard(flashIndex - 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashFirmar() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      toggleAprendida(lista[flashIndex].id);
+      mostrarFlashcard(flashIndex);
+    }
+    function flashVoice() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      const t = lista[flashIndex];
+      leerTexto(`${t.nombre}: ${t.definicion}. Ejemplo: ${t.ejemplo}`);
+    }
+
+    // ----------------------------------------------------------------
+    // 4. RENDER PRINCIPAL
+    // ----------------------------------------------------------------
+    function renderizar() {
+      const grid = document.getElementById('gridTecnicas');
+      const flashContainer = document.getElementById('flashcardContainer');
+      const lista = getTecnicasFiltradas();
+      document.getElementById('resultCount').textContent = `${lista.length} técnicas`;
+
+      if (modoActual === 'flashcards') {
+        grid.style.display = 'none';
+        flashContainer.style.display = 'block';
+        if (lista.length > 0) mostrarFlashcard(0);
+        else flashContainer.innerHTML = `<div class="alert alert-warning">No hay técnicas en este bloque.</div>`;
+        return;
+      } else {
+        grid.style.display = 'flex';
+        flashContainer.style.display = 'none';
+      }
+
+      const claseFuente = getClaseFuente();
+
+      if (modoActual === 'explorar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card card-contrastivo p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓ Aprendida' : 'Pendiente'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="card-text definicion small">${t.definicion}</p>
+                <p class="card-text ejemplo-cursiva small ${claseFuente}"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <button class="btn btn-outline-indigo btn-sm btn-voice" data-id="${t.id}" title="Escuchar"><i class="bi bi-volume-up"></i></button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-indigo'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i> Firmar' : '<i class="bi bi-pen"></i> Firmar'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'practicar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card card-contrastivo p-3" data-practica-id="${t.id}">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓' : '?'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="card-text definicion small" style="filter:blur(4px);user-select:none;">${t.definicion}</p>
+                <p class="card-text ejemplo-cursiva small ${claseFuente}" style="filter:blur(4px);user-select:none;"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between mt-2">
+                  <button class="btn btn-outline-indigo btn-sm btn-revelar-practica" data-id="${t.id}"><i class="bi bi-eye"></i> Revelar</button>
+                  <button class="btn btn-sm btn-outline-info btn-detalle" data-id="${t.id}"><i class="bi bi-info-circle"></i> Detalle</button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-indigo'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i>' : '<i class="bi bi-pen"></i>'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'progreso') {
+        const aprendidas = TECNICAS.filter(t => progreso[t.id]);
+        const pendientes = TECNICAS.filter(t => !progreso[t.id]);
+        const pct = Math.round((aprendidas.length / TECNICAS.length) * 100);
+        grid.innerHTML = `
+          <div class="col-12">
+            <div class="card p-4" style="background-color:var(--card-bg); border-left:6px solid var(--indigo);">
+              <h5><i class="bi bi-bar-chart-fill me-2" style="color:var(--indigo);"></i>Tu progreso</h5>
+              <div class="progreso-bar mt-2"><div class="progress-fill" style="width:${pct}%;"></div></div>
+              <p class="mt-2"><strong>${aprendidas.length}</strong> de ${TECNICAS.length} técnicas aprendidas (${pct}%)</p>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <h6 class="text-success"><i class="bi bi-check-circle"></i> Aprendidas</h6>
+                  ${aprendidas.length ? aprendidas.map(t => `<span class="badge bg-success me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">Aún no has firmado ninguna.</p>'}
+                </div>
+                <div class="col-md-6">
+                  <h6 class="text-secondary"><i class="bi bi-hourglass-split"></i> Pendientes</h6>
+                  ${pendientes.length ? pendientes.map(t => `<span class="badge bg-secondary me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">¡Todo aprendido!</p>'}
+                </div>
+              </div>
+              <div class="firma-cursiva mt-3 text-end ${claseFuente}">— Tu cuaderno contrastivo</div>
+            </div>
+          </div>
+        `;
+      }
+
+      asignarEventos();
+      actualizarContador();
+    }
+
+    // ----------------------------------------------------------------
+    // 5. ASIGNACIÓN DE EVENTOS
+    // ----------------------------------------------------------------
+    function asignarEventos() {
+      document.querySelectorAll('.btn-firmar').forEach(btn => {
+        btn.removeEventListener('click', handleFirmar);
+        btn.addEventListener('click', handleFirmar);
+      });
+
+      document.querySelectorAll('.btn-voice').forEach(btn => {
+        btn.removeEventListener('click', handleVoice);
+        btn.addEventListener('click', handleVoice);
+      });
+
+      document.querySelectorAll('.btn-revelar-practica').forEach(btn => {
+        btn.removeEventListener('click', handleRevelarPractica);
+        btn.addEventListener('click', handleRevelarPractica);
+      });
+
+      document.querySelectorAll('.btn-detalle').forEach(btn => {
+        btn.removeEventListener('click', handleDetalle);
+        btn.addEventListener('click', handleDetalle);
+      });
+
+      document.querySelectorAll('.card-contrastivo[data-practica-id]').forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+        card.addEventListener('click', handleCardClick);
+      });
+    }
+
+    function handleFirmar(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      toggleAprendida(id);
+    }
+
+    function handleVoice(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+    }
+
+    function handleRevelarPractica(e) {
+      e.stopPropagation();
+      const card = this.closest('.card-contrastivo');
+      if (card) {
+        card.classList.toggle('revelado');
+        this.textContent = card.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+      }
+    }
+
+    function handleDetalle(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (!tec) return;
+      const modal = new bootstrap.Modal(document.getElementById('modalPractica'));
+      document.getElementById('modalPracticaBody').innerHTML = `
+        <h5>${tec.nombre}</h5>
+        <p><span class="badge-bloque">${tec.bloque}</span></p>
+        <p><strong>Definición:</strong> ${tec.definicion}</p>
+        <p class="${getClaseFuente()}"><strong>Ejemplo bilingüe:</strong> "${tec.ejemplo}"</p>
+      `;
+      document.getElementById('btnVoiceModal').dataset.id = tec.id;
+      modal.show();
+    }
+
+    function handleCardClick(e) {
+      if (e.target.closest('button')) return;
+      this.classList.toggle('revelado');
+      const btn = this.querySelector('.btn-revelar-practica');
+      if (btn) btn.textContent = this.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+    }
+
+    // ----------------------------------------------------------------
+    // 6. NAVEGACIÓN, FILTROS, FUENTES Y VOZ
+    // ----------------------------------------------------------------
+    function setModo(modo) {
+      modoActual = modo;
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => el.classList.remove('active'));
+      const activeLink = document.querySelector(`.navbar-custom .nav-link[data-modo="${modo}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      renderizar();
+    }
+
+    function setBloque(bloque) {
+      bloqueFiltro = bloque;
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => el.classList.remove('active'));
+      const activeBtn = document.querySelector(`.filtro-bloque .btn[data-bloque="${bloque}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderizar();
+    }
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      const status = document.getElementById('voiceStatus');
+      const btn = document.getElementById('btnVoiceToggle');
+      if (voiceEnabled) {
+        status.classList.remove('d-none');
+        btn.classList.add('btn-indigo');
+        btn.classList.remove('btn-outline-indigo');
+      } else {
+        status.classList.add('d-none');
+        btn.classList.remove('btn-indigo');
+        btn.classList.add('btn-outline-indigo');
+        if (speechSynth.speaking) speechSynth.cancel();
+      }
+    }
+
+    function cambiarFuente(valor) {
+      fuenteActual = valor;
+      renderizar();
+    }
+
+    // ----------------------------------------------------------------
+    // 7. INICIALIZACIÓN
+    // ----------------------------------------------------------------
+    function init() {
+      cargarProgreso();
+
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          setModo(this.dataset.modo);
+        });
+      });
+
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => {
+        el.addEventListener('click', function() {
+          setBloque(this.dataset.bloque);
+        });
+      });
+
+      document.getElementById('btnVoiceToggle').addEventListener('click', toggleVoice);
+
+      document.getElementById('fuenteCursiva').addEventListener('change', function(e) {
+        cambiarFuente(this.value);
+      });
+
+      // Flashcard eventos
+      document.getElementById('flashVoltear').addEventListener('click', flashVoltear);
+      document.getElementById('flashNext').addEventListener('click', flashNext);
+      document.getElementById('flashPrev').addEventListener('click', flashPrev);
+      document.getElementById('flashFirmar').addEventListener('click', flashFirmar);
+      document.getElementById('flashVoice').addEventListener('click', flashVoice);
+      document.getElementById('flashcard').addEventListener('click', function(e) {
+        if (e.target.closest('button')) return;
+        flashVoltear();
+      });
+
+      // Modal voice
+      document.getElementById('btnVoiceModal').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const tec = TECNICAS.find(t => t.id === id);
+        if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+      });
+
+      setModo('explorar');
+      setBloque('todos');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>

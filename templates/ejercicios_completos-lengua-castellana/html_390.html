@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Textolingüística del Castellano | Cuaderno de 100 técnicas universitario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --noche: #0a0a0c;
+            --espresso: #1c1713;
+            --pergamino: #ece3d5;
+            --pergamino-oscuro: #d4c9b5;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #ddb856;
+            --texto-oscuro: #2c241e;
+        }
+        body {
+            background: var(--noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-oscuro);
+            line-height: 1.55;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><filter id="grano"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grano)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.5;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .lms-app { display: flex; min-height: 100vh; position: relative; }
+        .sidebar-lux {
+            position: fixed;
+            top: 0;
+            left: -360px;
+            width: 360px;
+            height: 100vh;
+            background: #1a1512;
+            backdrop-filter: blur(6px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1100;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.2rem;
+            overflow-y: auto;
+            color: var(--pergamino);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar-lux.open { left: 0; }
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 2px;
+        }
+        .close-sidebar { background: none; border: none; color: var(--oro-pálido); font-size: 1.8rem; cursor: pointer; }
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d2620;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 6px;
+        }
+        .tech-index { list-style: none; }
+        .tech-index li {
+            margin-bottom: 0.7rem;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: 0.2s;
+        }
+        .tech-index li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .tech-index li:hover { border-left-color: var(--oro-antiguo); }
+        .main-lux {
+            flex: 1;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 20% 35%, rgba(160, 130, 80, 0.05) 1.5%, transparent 2%);
+            background-size: 35px 35px;
+        }
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a221d;
+            z-index: 1020;
+        }
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2da8f, var(--oro-antiguo));
+            transition: width 0.3s;
+        }
+        .hero-welcome {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--oro-antiguo);
+            background: rgba(245, 238, 225, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .hero-welcome h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--espresso);
+        }
+        .ornament-line {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 8px;
+            margin: 0.4rem 0;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1120;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .tech-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .tech-primary { flex: 3; min-width: 260px; }
+        .tech-aside {
+            flex: 1;
+            min-width: 230px;
+            background: #f4ede2;
+            padding: 1.5rem;
+            border-left: 3px solid var(--oro-antiguo);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        }
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.6rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .tech-title {
+            font-size: 1.9rem;
+            font-weight: 600;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .numero-gigante {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.1);
+            position: absolute;
+            right: 15px;
+            top: -15px;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'EB Garamond', serif;
+        }
+        .card { position: relative; margin-bottom: 2rem; }
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+        textarea {
+            width: 100%;
+            background: #fffef7;
+            border: 1px solid #cfc3ad;
+            padding: 0.9rem;
+            font-family: 'EB Garamond', serif;
+            margin-top: 0.6rem;
+            border-radius: 8px;
+        }
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: var(--oro-antiguo); color: var(--espresso); }
+        .btn-complete { background: var(--oro-antiguo); color: #1f1a16; border: none; }
+        .btn-show-answer { background: #2c2620; border-color: var(--oro-antiguo); margin-left: 0.5rem; }
+        .progress-unit { background: #cfc2ae; border-radius: 30px; height: 6px; margin: 0.7rem 0; }
+        .respuesta-correcta {
+            background: #e8ddcc;
+            border-left: 3px solid var(--oro-antiguo);
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .respuesta-correcta.visible { display: block; }
+        @media (max-width: 780px) {
+            .tech-layout { flex-direction: column; padding: 1rem; }
+            .hero-welcome h1 { font-size: 2rem; }
+            .sidebar-lux { width: 280px; left: -280px; }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggleBtn">≡</button>
+
+<div class="sidebar-lux" id="luxSidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice Textolingüística</span>
+        <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+    </div>
+    <input type="text" id="searchTech" class="search-box" placeholder="🔎 Buscar técnica (cohesión, coherencia, género, discurso)...">
+    <ul class="tech-index" id="techIndexList"></ul>
+    <div style="margin-top: 2rem; text-align: center; opacity: 0.5;">⁂ § ⚜</div>
+</div>
+
+<div class="main-lux">
+    <div class="gold-progress"><div class="gold-fill" id="globalGoldFill"></div></div>
+    <div class="hero-welcome">
+        <div class="ornament-line">⁂ § ⚜</div>
+        <h1>Textolingüística del Castellano <span style="font-size: 1.2rem;">estructura · cohesión · coherencia · análisis del discurso</span></h1>
+        <div class="stats-mini" id="statsPreview">Progreso: 0% · Técnicas completadas: 0/100</div>
+        <div class="ornament-line" style="font-size: 0.9rem;">⎯ el texto como unidad comunicativa ⎯</div>
+    </div>
+    <div id="dynamicTechView" class="tech-layout"></div>
+</div>
+
+<script>
+    // ========== DATOS COMPLETOS DE 100 TÉCNICAS DE TEXTOLINGÜÍSTICA ==========
+    const tecnicasTexto = [
+        {id:1, nombre:"Definición y objeto de la textolingüística", teoria:"La textolingüística estudia el texto como unidad comunicativa superior a la oración. Analiza propiedades: cohesión, coherencia, intencionalidad, aceptabilidad, informatividad, situacionalidad e intertextualidad.", ejemplo:"Un conjunto de oraciones como 'Juan llegó tarde. Abrió la puerta. Se sentó.' forma un texto por cohesión y coherencia.", ejercicio:"Explica la diferencia entre texto, oración y discurso.", respuesta:"Oración: unidad gramatical. Texto: unidad comunicativa con cohesión y coherencia. Discurso: texto en contexto situacional, con participantes e intención."},
+        {id:2, nombre:"Siete estándares de textualidad (Beaugrande & Dressler)", teoria:"Cohesión (relaciones gramaticales), coherencia (relaciones conceptuales), intencionalidad (actitud del productor), aceptabilidad (receptor), informatividad (grado de novedad), situacionalidad (contexto), intertextualidad (relación con otros textos).", ejemplo:"Un anuncio publicitario tiene cohesión (conectores), coherencia (mensaje lógico), intencionalidad (persuadir), aceptabilidad (comprensible), informatividad (novedad), situacionalidad (contexto de venta), intertextualidad (referencia a otros anuncios).", ejercicio:"Define los siete estándares con un ejemplo de cada uno.", respuesta:"Cohesión: 'El perro ladraba. Estaba furioso.' Coherencia: secuencia lógica. Intencionalidad: propósito. Aceptabilidad: disposición a interpretar. Informatividad: información nueva. Situacionalidad: adecuación al contexto. Intertextualidad: 'Ser o no ser...' (Shakespeare)."},
+        {id:3, nombre:"Cohesión textual: concepto y mecanismos", teoria:"La cohesión son marcas lingüísticas que conectan las partes del texto: referencia (anáfora), elipsis, sustitución léxica, recurrencia, conectores, tiempos verbales.", ejemplo:"Ejemplo: 'María compró un libro. Lo leyó en una tarde.' (anáfora con 'lo').", ejercicio:"Identifica mecanismos de cohesión en: 'Juan llegó tarde. Eso no le importó a nadie. Sin embargo, su jefe le llamó la atención.'", respuesta:"Anáfora: 'Eso' refiere a 'Juan llegó tarde'. Conector: 'Sin embargo' (adversativo). Referencia pronominal: 'su jefe', 'le'."},
+        {id:4, nombre:"Coherencia textual: estructura y sentido global", teoria:"La coherencia es la propiedad semántica que permite interpretar el texto como unidad. Se basa en organización lógica, progresión temática, ausencia de contradicciones, relaciones causales.", ejemplo:"Texto coherente: 'Me desperté tarde. Perdí el autobús. Llegué tarde al trabajo.'", ejercicio:"Evalúa la coherencia: 'Aprobé el examen. Estudié mucho. La gramática es difícil. Compré un coche.'", respuesta:"Incoherente: 'Compré un coche' no se relaciona con el tema anterior (estudio/aprobar). Hay salto temático."},
+        {id:5, nombre:"Intencionalidad y aceptabilidad textual", teoria:"Intencionalidad: propósito del emisor (informar, persuadir, entretener). Aceptabilidad: disposición del receptor a aceptar el texto como comunicativo, relevante y coherente.", ejemplo:"Carta de solicitud de empleo busca persuadir (intencionalidad); el seleccionador la lee asumiendo que es seria (aceptabilidad).", ejercicio:"¿Cómo se relacionan intencionalidad y aceptabilidad en un debate político?", respuesta:"El político quiere convencer; el público acepta escuchar, pero puede rechazar si es muy manipulador. La aceptabilidad no implica acuerdo."},
+        {id:6, nombre:"Informatividad y niveles de información", teoria:"Grado de información nueva o inesperada. Primer grado (esperable), segundo (algo novedoso), tercero (muy sorprendente). Equilibrio: ni demasiado predecible ni muy novedoso.", ejemplo:"Primer grado: 'El agua moja'. Segundo: 'El agua puede disolver metales'. Tercero: 'Un material moja al agua'.", ejercicio:"Clasifica la informatividad: 'Se ha descubierto una bacteria que oxida el oro.'", respuesta:"Tercer grado (muy novedoso, contradice que el oro es inerte)."},
+        {id:7, nombre:"Situacionalidad y contexto", teoria:"Adecuación del texto a la situación comunicativa: lugar, tiempo, participantes, propósito, medio (oral/escrito, formal/informal). Un texto puede ser coherente pero inapropiado.", ejemplo:"Decir '¡Qué calor!' en un correo formal a un cliente es inapropiado. En un chat con amigos es adecuado.", ejercicio:"¿Qué problemas de situacionalidad tendría usar jerga juvenil en una tesis doctoral?", respuesta:"La tesis doctoral exige lenguaje formal y técnico. La jerga juvenil sería inapropiada, restaría seriedad, violando la situacionalidad."},
+        {id:8, nombre:"Intertextualidad implícita y explícita", teoria:"Relación de un texto con otros textos previos: explícita (citas, referencias bibliográficas) o implícita (alusiones, parodias).", ejemplo:"Explícita: 'Como dijo Cervantes: «En un lugar de la Mancha...»'. Implícita: 'Su quijotismo lo llevó a luchar contra molinos'.", ejercicio:"Identifica intertextualidad en: 'Nuevo amanecer de la libertad, después de la larga noche de opresión'.", respuesta:"Alusión implícita a metáforas románticas y revolucionarias (discurso político del XIX)."},
+        {id:9, nombre:"Macroestructura y microestructura textual", teoria:"Macroestructura: organización global (introducción, desarrollo, conclusión). Microestructura: relaciones entre oraciones (cohesión, conectores). Ambas deben ser coherentes.", ejemplo:"Macroestructura de un ensayo: tesis, argumentos, conclusión. Microestructura: conectores como 'además', 'por tanto'.", ejercicio:"Analiza la macroestructura de un cuento breve conocido.", respuesta:"Planteamiento (situación inicial), nudo (conflicto), desenlace (resolución). Ejemplo: Caperucita Roja."},
+        {id:10, nombre:"Superestructura y tipos textuales", teoria:"Esquema formal según el tipo de texto: narrativa (inicio, nudo, desenlace), argumentativa (tesis, argumentos, conclusión), descriptiva (rasgos), explicativa (problema, causas, consecuencias).", ejemplo:"Superestructura argumentativa: introducción (tesis), desarrollo (argumentos), conclusión.", ejercicio:"Identifica la superestructura de un artículo de opinión.", respuesta:"Título (tesis sugerida), primer párrafo (tesis explícita), párrafos intermedios (argumentos), conclusión (reitera tesis)."},
+        {id:11, nombre:"Tópico y rema en la progresión textual", teoria:"Tópico (tema): información conocida. Rema (foco): información nueva. La progresión temática organiza tópicos y remas para lograr coherencia.", ejemplo:"'El español (tópico) es la segunda lengua materna (rema). Su expansión (tópico=rema anterior) se debe al crecimiento demográfico (rema).'", ejercicio:"Identifica tópico y rema en: 'La cohesión (T) es clave en el texto (R). Sus mecanismos (T2) incluyen conectores (R2).'", respuesta:"Primera: T='La cohesión', R='es clave en el texto'. Segunda: T='Sus mecanismos' (retoma parte de R), R='incluyen conectores'."},
+        {id:12, nombre:"Progresión temática lineal y constante", teoria:"Lineal: rema de una oración se convierte en tópico de la siguiente. Constante: mismo tópico con diferentes remas.", ejemplo:"Lineal: 'La semántica estudia el significado. Ese significado se organiza en campos.' Constante: 'El lenguaje es fascinante. El lenguaje nos define.'", ejercicio:"Clasifica: 'La gramática es el estudio de reglas. Esas reglas permiten construir oraciones. Las oraciones forman textos.'", respuesta:"Progresión lineal (el rema de cada oración se convierte en tópico de la siguiente)."},
+        {id:13, nombre:"Recurrencia y repetición léxica", teoria:"Mecanismo de cohesión que repite palabras clave (repetición exacta) o usa sinónimos, hiperónimos (recurrencia semántica). Evita monotonía manteniendo unidad temática.", ejemplo:"Repetición: 'El agua es vital. El agua permite la vida.' Recurrencia: 'El coche es rápido. Ese vehículo consume gasolina.'", ejercicio:"Reescribe evitando repetir 'coche': 'Compré un coche. El coche es rojo. El coche tiene cuatro puertas.'", respuesta:"'Compré un coche rojo. Este vehículo tiene cuatro puertas.'"},
+        {id:14, nombre:"Sustitución por proformas (pronombres, adverbios)", teoria:"Reemplazo de palabra o sintagma por proforma: pronombres (él, lo, le), demostrativos (este, ese), posesivos (su), adverbios (allí, entonces).", ejemplo:"'María estudia. Ella es aplicada.' 'No tengo bolígrafo, ¿me prestas uno?'", ejercicio:"Identifica proformas en: 'Juan llegó tarde. Eso enfadó a su jefe. Le llamó la atención.'", respuesta:"'Eso' (proforma oracional), 'su' (posesivo), 'Le' (pronombre CI)."},
+        {id:15, nombre:"Elipsis como recurso cohesivo", teoria:"Omisión de elementos sobreentendidos por el contexto: nominal (omisión del sustantivo), verbal (omisión del verbo), oracional.", ejemplo:"Elipsis nominal: 'Compré manzanas y peras. Las primeras son dulces; las segundas, jugosas.' Elipsis verbal: 'Unos estudian; otros, trabajan.'", ejercicio:"Reescribe con elipsis: 'María estudia lingüística y Juan estudia literatura. María es aplicada y Juan es talentoso.'", respuesta:"'María estudia lingüística y Juan, literatura. María es aplicada y Juan, talentoso.'"},
+        {id:16, nombre:"Conectores discursivos: adición y contraste", teoria:"Palabras o locuciones que señalan relaciones lógicas: adición (y, además, también), contraste (pero, sin embargo, aunque).", ejemplo:"Adición: 'Estudió mucho. Además, repasó.' Contraste: 'Estudió mucho, pero no aprobó.'", ejercicio:"Completa: 'Quería viajar, ___ no tenía dinero. ___, decidió ahorrar.'", respuesta:"'Quería viajar, **pero** no tenía dinero. **Por eso**, decidió ahorrar.'"},
+        {id:17, nombre:"Conectores causales, consecutivos y finales", teoria:"Causales (porque, ya que, puesto que), consecutivos (por tanto, así que, de modo que), finales (para que, a fin de que).", ejemplo:"Causa: 'No salí porque llovía.' Consecuencia: 'Llovía, así que no salí.' Finalidad: 'Ahorro para viajar.'", ejercicio:"Reescribe usando conector consecutivo: 'Estudió mucho. Aprobó el examen.'", respuesta:"'Estudió mucho, **por tanto** aprobó el examen.'"},
+        {id:18, nombre:"Conectores temporales y de orden", teoria:"Temporales sitúan eventos (cuando, mientras, después, antes, luego, finalmente). De orden estructuran el discurso (en primer lugar, por un lado, a continuación).", ejemplo:"Temporales: 'Primero llegó, luego se sentó.' Orden: 'Primero, analizaremos la cohesión; segundo, la coherencia.'", ejercicio:"Añade conectores de orden: 'Analizaremos la cohesión. Veremos los conectores. Concluiremos.'", respuesta:"'**Primero**, analizaremos la cohesión; **a continuación**, veremos los conectores; **finalmente**, concluiremos.'"},
+        {id:19, nombre:"Marcadores de reformulación y ejemplificación", teoria:"Reformulación (es decir, o sea, en otras palabras): nueva formulación del mismo contenido. Ejemplificación (por ejemplo, así, en concreto): casos que ilustran una idea.", ejemplo:"Reformulación: 'La deixis, es decir, el anclaje contextual.' Ejemplificación: 'Figuras semánticas: por ejemplo, la metáfora.'", ejercicio:"Reformula usando 'en otras palabras' y añade un ejemplo: 'La coherencia da sentido global al texto.'", respuesta:"'La coherencia da sentido global al texto. **En otras palabras**, un texto coherente tiene unidad. **Por ejemplo**, en una narración, la secuencia de eventos debe ser lógica.'"},
+        {id:20, nombre:"Marcadores de ordenación y secuencia", teoria:"Organizan la estructura: primero, segundo, tercero; por una parte, por otra parte; para empezar, para continuar, para finalizar.", ejemplo:"'Para empezar, definiremos el concepto. Por otra parte, analizaremos ejemplos. Finalmente, concluiremos.'", ejercicio:"Escribe un párrafo con tres argumentos usando marcadores de ordenación.", respuesta:"'**Primero**, la gramática es esencial. **Segundo**, el vocabulario enriquece. **Tercero**, la puntuación organiza. Por tanto, hay que estudiarlos.'"},
+        {id:21, nombre:"Tiempos verbales como mecanismo cohesivo", teoria:"La secuencia de tiempos verbales cohesiona al situar eventos en una línea temporal coherente. Pretérito: acciones puntuales; imperfecto: descripción; pluscuamperfecto: anterioridad.", ejemplo:"'Cuando llegó (pretérito), todos dormían (imperfecto). Ya habían cenado (pluscuamperfecto).'", ejercicio:"Corrige la secuencia temporal: 'Cuando llegó, todos duermen. Ya cenaron antes.'", respuesta:"'Cuando llegó, todos **dormían**. Ya **habían cenado** antes.'"},
+        {id:22, nombre:"Mantenimiento del registro y estilo", teoria:"Mantener un registro (formal, coloquial, técnico) y estilo consistente. Cambios abruptos afectan la cohesión.", ejemplo:"Incohesión: 'Agradezco a los presentes. Vosotros sois muy amables.' (mezcla de 'ustedes' y 'vosotros').", ejercicio:"¿Qué problema de registro hay en: 'El proyecto fue aprobado por unanimidad. Además, chévere, ¿no?'", respuesta:"Mezcla de registro formal ('aprobado por unanimidad') con coloquialismo juvenil ('chévere'). Ruptura estilística."},
+        {id:23, nombre:"Cohesión por isotopía semántica", teoria:"Recurrencia de rasgos semánticos que crean una línea temática homogénea (ej. texto sobre el mar usa 'olas', 'marea', 'navegante').", ejemplo:"Isotopía de justicia: 'El juez dictó sentencia. El abogado defendió. La ley fue aplicada.'", ejercicio:"Crea un texto de tres oraciones con isotopía de 'medicina'.", respuesta:"'El doctor examinó al paciente. La enfermedad fue diagnosticada. La curación requirió tratamiento.'"},
+        {id:24, nombre:"Figuras de repetición como recurso: anáfora", teoria:"Repetición de palabras al inicio de frases (anáfora) cohesiona y crea ritmo.", ejemplo:"Anáfora: 'El mar, el mar, el mar. Siempre el mar.'", ejercicio:"Crea una anáfora con la palabra 'lengua' en un texto argumentativo breve.", respuesta:"'**La lengua** nos define. **La lengua** nos permite transmitir cultura. **La lengua** es nuestra identidad.'"},
+        {id:25, nombre:"Puntuación como recurso cohesivo", teoria:"La puntuación (coma, punto, punto y coma, dos puntos) estructura el texto y cohesiona las oraciones.", ejemplo:"'Tres cosas necesita el viajero: agua, comida y descanso. Con ellas, puede seguir.'", ejercicio:"Puntúa: 'Llegué tarde al examen no había estudiado lo suficiente el profesor me miró con desaprobación reprobé.'", respuesta:"'Llegué tarde al examen. No había estudiado lo suficiente. El profesor me miró con desaprobación. Reprobé.'"},
+        {id:26, nombre:"Título y subtítulos como organizadores textuales", teoria:"Anuncian el contenido y organizan el texto en secciones. Facilitan la lectura y orientan al receptor.", ejemplo:"Estructura: '1. Introducción. 1.1 Antecedentes. 2. Metodología.'", ejercicio:"Diseña títulos y subtítulos para un ensayo sobre 'Evolución del español'.", respuesta:"'**Evolución del español**. 1. Orígenes: 1.1 Latín vulgar; 1.2 Influencias prerromanas. 2. Formación: 2.1 Condado de Castilla; 2.2 Reconquista.'"},
+        {id:27, nombre:"Párrafo como unidad de organización", teoria:"Unidad visual y conceptual que desarrolla una idea principal. Oración temática + oraciones de apoyo + cierre.", ejemplo:"'La cohesión es esencial. (oración temática) Por ejemplo, los conectores evitan ambigüedades. En conclusión, mejora la escritura.'", ejercicio:"Escribe un párrafo de cinco líneas sobre coherencia, con oración temática y ejemplos.", respuesta:"'**La coherencia da sentido global al texto.** Sin ella, sería un conjunto inconexo. **Por ejemplo**, si escribo 'Me levanté. Las nubes son blancas.', no hay relación. **Por tanto**, hay que revisarla.'"},
+        {id:28, nombre:"Estructura narrativa: planteamiento, nudo, desenlace", teoria:"Planteamiento (presentación), nudo (conflicto), desenlace (resolución). Típica de cuentos, novelas, películas.", ejemplo:"Planteamiento: 'Había una vez un lobo.' Nudo: 'Atacó a Caperucita.' Desenlace: 'Un leñador lo mató.'", ejercicio:"Identifica las partes en 'Los tres cerditos'.", respuesta:"Planteamiento: tres cerditos construyen casas. Nudo: el lobo sopla y derriba dos. Desenlace: el lobo cae por la chimenea."},
+        {id:29, nombre:"Estructura argumentativa: tesis, argumentos, conclusión", teoria:"Introducción (tesis), desarrollo (argumentos con ejemplos), conclusión (síntesis). Propia de ensayos, editoriales.", ejemplo:"Tesis: 'El español debe ser lengua vehicular.' Argumentos: unidad, cultura. Conclusión: 'Por tanto, es imprescindible.'", ejercicio:"Construye un mini ensayo argumentativo de tres párrafos sobre 'Leer clásicos'.", respuesta:"Tesis: 'Leer clásicos es esencial.' Argumento: 'Transmiten valores universales y amplían vocabulario.' Conclusión: 'Por tanto, deben ser lectura obligatoria.'"},
+        {id:30, nombre:"Estructura descriptiva: orden espacial y enumeración", teoria:"Organiza el espacio o apariencia con orden espacial (de arriba abajo, de cerca a lejos) o temático. Usa adjetivos, comparaciones.", ejemplo:"'La casa tenía jardín delantero. A la izquierda, una fuente; a la derecha, un árbol.'", ejercicio:"Describe tu habitación de cerca a lejos desde la puerta.", respuesta:"'Al entrar, a la izquierda un escritorio. Más adelante, la cama. Al fondo, la ventana.'"},
+        {id:31, nombre:"Estructura explicativa: problema, causas, consecuencias", teoria:"Presenta fenómeno, explica causas o mecanismos, describe consecuencias. Textos divulgativos, manuales.", ejemplo:"Problema: '¿Por qué llueve?' Causas: 'evaporación, condensación, precipitación.' Consecuencias: 'riega cultivos, puede inundar.'", ejercicio:"Escribe un texto explicativo sobre el cambio climático.", respuesta:"'**Problema**: aumento de temperatura global. **Causas**: emisión de gases invernadero. **Consecuencias**: deshielo de polos, sequías e inundaciones.'"},
+        {id:32, nombre:"Estructura dialogal: turnos y actos de habla", teoria:"Diálogo en narrativa, teatro, entrevistas: turnos de palabra, marcados con guiones o nombres. Actos de habla: asertivos, directivos, comisivos, expresivos, declarativos.", ejemplo:"'—¿Vienes? —preguntó Ana. —Sí —respondió Luis.'", ejercicio:"Escribe un diálogo de 4 turnos sobre leer un libro vs ver la película.", respuesta:"'—Prefiero ver la película. —dijo Ana. —Pero el libro tiene más detalles. —respondió Luis. —Es que leer me da pereza. —Son solo 200 páginas.'"},
+        {id:33, nombre:"Géneros discursivos (Bajtín)", teoria:"Tipos relativamente estables de enunciados, determinados por la esfera de comunicación. Cada género tiene tema, estilo y composición específicos.", ejemplo:"Género receta: instrucciones imperativas, lista de ingredientes, orden temporal. Noticia: titular, lead, cuerpo.", ejercicio:"Enumera tres géneros académicos y sus rasgos.", respuesta:"1. Artículo científico: resumen, metodología, resultados. 2. Reseña crítica: resumen, comentario, conclusión. 3. Tesis doctoral: índice, capítulos, bibliografía."},
+        {id:34, nombre:"Registros de habla (formal, coloquial, técnico)", teoria:"Formal: lenguaje cuidado, vocabulario preciso, subjuntivo, cortesía. Coloquial: relajación, muletillas, frases cortas. Técnico: tecnicismos, precisión.", ejemplo:"Formal: 'Le agradecería que me proporcionara la información.' Coloquial: 'Oye, ¿me puedes pasar los datos?'", ejercicio:"Transforma al registro coloquial: 'Sería conveniente que usted reconsiderara su decisión.'", respuesta:"'Más te vale que te lo pienses otra vez, ¿eh?'"},
+        {id:35, nombre:"Adecuación textual al contexto y destinatario", teoria:"Propiedad del texto que se ajusta a la situación comunicativa: nivel de conocimiento del destinatario, relación emisor-receptor, canal, propósito.", ejemplo:"Inadecuación: explicar relatividad a un niño con lenguaje técnico. Adecuado: usar analogías sencillas.", ejercicio:"Escribe dos versiones de 'Necesito que entregues el informe' para compañero y para jefe.", respuesta:"Para compañero: 'Oye, necesito el informe, ¿vale?' Para jefe: 'Por favor, ¿podría entregar el informe?'"},
+        {id:36, nombre:"Resumen y paráfrasis como transformaciones textuales", teoria:"Resumen: reducción conservando ideas principales, sin opiniones. Paráfrasis: reformulación con otras palabras, mismo sentido.", ejemplo:"Original: 'El calentamiento global provoca deshielo.' Resumen: 'El calentamiento derrite polos.' Paráfrasis: 'El derretimiento de polos se debe al calentamiento.'", ejercicio:"Resume y parafrasea: 'La puntuación organiza el discurso, evita ambigüedades y permite interpretar intenciones.'", respuesta:"Resumen: 'La puntuación evita ambigüedades.' Paráfrasis: 'Los signos de puntuación ordenan el texto, eliminan confusiones y facilitan entender al autor.'"},
+        {id:37, nombre:"Anáfora pronominal", teoria:"Relación de correferencia donde un pronombre (él, ella, lo, le, este, ese) remite a un antecedente previo.", ejemplo:"'Juan llegó tarde. **Él** se disculpó. **Su** jefe **le** llamó.' (Él=Juan; su=de Juan; le=a Juan).", ejercicio:"Identifica antecedentes: 'María compró un coche. **Lo** usaba. **Su** hermano **le** pidió que **lo** dejara.'", respuesta:"**Lo** (CD) = el coche. **Su** = de María. **le** = a María. **lo** = el coche."},
+        {id:38, nombre:"Catáfora (anticipación referencial)", teoria:"Expresión (pronombre, demostrativo) que anticipa un elemento que aparecerá después. Valor enfático.", ejemplo:"'**Esto** te digo: **no vuelvas más**. '**Lo** siguiente es clave: **estudia todos los días**.'", ejercicio:"Convierte a catafórica: 'Juan es inteligente. Eso se nota en sus notas.'", respuesta:"'**Eso** se nota en sus notas: **que Juan es inteligente**.'"},
+        {id:39, nombre:"Deixis personal (yo, tú, él) y función textual", teoria:"Remite a participantes: 1ª persona (hablante), 2ª (oyente), 3ª (entes externos). La elección cohesiona la relación autor-lector.", ejemplo:"En ensayo, 'nosotros' incluye al lector. En carta formal, 'usted' establece distancia.", ejercicio:"¿Por qué en textos científicos se evita el 'yo'?", respuesta:"Para objetividad y universalidad. 'Se observa' despersonaliza, evitando subjetividad. Es convención del género académico."},
+        {id:40, nombre:"Deixis espacial y temporal", teoria:"Espacial: 'aquí' (cerca del hablante), 'ahí' (cerca del oyente), 'allí' (lejos). Temporal: 'ahora', 'hoy', 'mañana', 'ayer', 'entonces'.", ejemplo:"'**Aquí** y **ahora** estamos reunidos. **Allí** en el pasado, las cosas eran diferentes.'", ejercicio:"Reescribe cambiando deícticos para narrador desde el futuro: 'Hoy estamos aquí. Mañana viajaremos.'", respuesta:"'**Entonces** estábamos **allí**. Al día siguiente viajaríamos.'"},
+        {id:41, nombre:"Deixis discursiva (anafórica y catafórica)", teoria:"Referencia a partes del propio texto. Anafórica: 'como vimos anteriormente', 'esto último'. Catafórica: 'a continuación', 'el siguiente ejemplo'.", ejemplo:"Anafórico: '**Lo anterior** demuestra.' Catafórico: '**Ahora veremos** la conclusión.'", ejercicio:"Escribe un párrafo con deixis discursiva anafórica y catafórica.", respuesta:"'**Como señalamos antes**, la cohesión es clave. **A continuación**, ejemplos de conectores.'"},
+        {id:42, nombre:"Mantenimiento de la referencia a lo largo del texto", teoria:"Usar un mismo referente con expresiones variadas (nombre, pronombre, sinónimo) sin perder claridad. Evitar ambigüedad pronominal.", ejemplo:"Ambigüedad: 'Juan habló con Pedro. **Él** llegó tarde.' (¿quién?). Para evitarlo: '... **Este** llegó tarde.'", ejercicio:"Corrige la ambigüedad: 'El perro persiguió al gato. **Él** se escondió debajo del coche.'", respuesta:"'El perro persiguió al gato. **Este** se escondió debajo del coche.' (Este = gato)."},
+        {id:43, nombre:"Elipsis referencial y recuperación del antecedente", teoria:"Omisión del sujeto u otro constituyente porque es recuperable del contexto. La recuperación es posible por concordancia verbal y contexto.", ejemplo:"'María llegó. Ø Se sentó. Ø Abrió el libro.' (sujeto elidido: María).", ejercicio:"Restaura elementos elididos: 'Juan entró. Ø Saludó a todos. Ø Se sentó.'", respuesta:"'Juan entró. **Juan** saludó a todos. **Juan** se sentó.'"},
+        {id:44, nombre:"Sustitución por proformas oracionales (ello, eso)", teoria:"Proformas (eso, ello, lo, esto) sustituyen a oraciones completas o eventos previos.", ejemplo:"'Aprobé el examen. **Eso** me motivó.' (Eso = 'aprobar el examen').", ejercicio:"Sustituye por proforma: 'El equipo ganó el campeonato. El hecho de que ganara fue inesperado.'", respuesta:"'El equipo ganó el campeonato. **Eso** fue inesperado.'"},
+        {id:45, nombre:"Uso de sinónimos para variación léxica", teoria:"Evita repetición tediosa y enriquece estilo. Sinonimia contextual es preferible a la absoluta.", ejemplo:"Repetición: 'El libro es largo. El libro es aburrido.' Con sinónimos: 'El tomo es extenso, la obra es tediosa.'", ejercicio:"Reescribe sustituyendo 'coche' por sinónimos: 'Compré un coche. El coche es rápido. El coche es rojo.'", respuesta:"'Compré un coche. El **automóvil** es rápido. El **vehículo** es rojo.'"},
+        {id:46, nombre:"Hiperónimos como recursos cohesivos", teoria:"Palabras de significado más general que reemplazan a hipónimos para evitar repeticiones.", ejemplo:"'Compré manzanas, peras y plátanos. **Las frutas** estaban maduras.' (fruta es hiperónimo).", ejercicio:"Sustituye enumeración por hiperónimo: 'En la tienda venden leche, queso, mantequilla. Todo eso es lácteo.'", respuesta:"'En la tienda venden leche, queso, mantequilla. **Los lácteos** se conservan en frío.'"},
+        {id:47, nombre:"Marcadores de comentario y valoración", teoria:"Expresan la actitud del hablante hacia lo dicho: afortunadamente, lamentablemente, por supuesto, desde mi punto de vista.", ejemplo:"'**Afortunadamente**, no hubo heridos. **Por desgracia**, los daños fueron cuantiosos.'", ejercicio:"Añade marcador de comentario: 'El examen fue difícil. Todos aprobaron.'", respuesta:"'El examen fue difícil; **sin embargo**, todos aprobaron.'"},
+        {id:48, nombre:"Metadiscursividad y comentarios sobre el propio texto", teoria:"Comentarios del emisor sobre la organización, intención o evaluación de su texto. Ayuda al lector a navegar.", ejemplo:"'**Como ya señalamos**, la cohesión es clave. **Ahora pasaremos a los ejemplos**.'", ejercicio:"Incorpora tres marcadores metadiscursivos a un párrafo sobre coherencia.", respuesta:"'**En primer lugar**, la coherencia da sentido global. **Conviene recordar** que sin ella el texto se fragmenta. **Como veremos**, hay que revisarla.'"},
+        {id:49, nombre:"Progresión temática lineal", teoria:"Rema de una oración se convierte en tema de la siguiente. Crea cadena de información que avanza.", ejemplo:"'El español (T) es lengua romance (R). Esa lengua romance (T2=R) se originó del latín (R2).'", ejercicio:"Continúa la progresión lineal: 'La cohesión (T) usa conectores (R). Los conectores (T2=R) pueden ser adversativos (R2).'", respuesta:"'Los conectores adversativos (T3=R2) indican contraste, como 'pero' (R3).'"},
+        {id:50, nombre:"Progresión temática constante", teoria:"Mismo tema se mantiene en varias oraciones, con diferentes remas. Desarrollo de un concepto desde múltiples perspectivas.", ejemplo:"'La gramática (T) estudia reglas (R1). La gramática (T) permite construir oraciones (R2).'", ejercicio:"Desarrolla tres oraciones con progresión constante sobre 'la puntuación'.", respuesta:"'La puntuación (T) organiza el discurso (R1). La puntuación (T) evita ambigüedades (R2). La puntuación (T) es esencial (R3).'"},
+        {id:51, nombre:"Progresión temática derivada (hiper-tema)", teoria:"Las oraciones parten de un hiper-tema y desarrollan aspectos diferentes, sin relación lineal. Común en descripciones.", ejemplo:"Hiper-tema: 'El español es lengua global.' Oraciones: 'Tiene 500M hablantes.' 'Es oficial en 21 países.'", ejercicio:"Construye cuatro oraciones con progresión derivada desde 'Beneficios de la lectura'.", respuesta:"'**Beneficios de la lectura**: mejora vocabulario, ejercita memoria, reduce estrés, fomenta empatía.'"},
+        {id:52, nombre:"Progresión mixta y rupturas", teoria:"Combina lineal, constante y derivada. Rupturas (cambio brusco de tema sin conector) provocan incoherencia.", ejemplo:"Ruptura: 'El español es romance. El cielo está azul. Tiene 500M hablantes.' (segunda oración no se relaciona).", ejercicio:"Identifica ruptura en: 'La cohesión usa conectores. También es importante la coherencia. Compré pan. Los conectores aditivos suman.'", respuesta:"Ruptura: 'Compré pan' (no se relaciona con el tema cohesión/coherencia)."},
+        {id:53, nombre:"Foco contrastivo y estructuras enfáticas", teoria:"Destaca un elemento frente a otro mediante estructuras hendidas (ser + foco + que), anteposición, marcadores (precisamente, justamente).", ejemplo:"Hendida: '**Fue Juan quien** llegó tarde, no Pedro.' Anteposición: '**A María** le di el regalo.'", ejercicio:"Reescribe para enfocar que fue el coche lo que compró: 'Juan compró el coche.'", respuesta:"'**Fue el coche lo que** compró Juan, no la moto.'"},
+        {id:54, nombre:"Tematización y rematización", teoria:"Tematización: elemento en posición inicial (tema). Rematización: información nueva al final (rema). Orden no marcado: tema → rema.", ejemplo:"No marcado: '**Juan** (tema) compró el coche (rema).' Marcado: '**El coche** (tema) lo compró Juan (rema).'", ejercicio:"Cambia el orden para tematizar el complemento: 'Aprobé el examen con esfuerzo.'", respuesta:"'**El examen** lo aprobé con esfuerzo.'"},
+        {id:55, nombre:"Tema y rema en textos dialógicos", teoria:"En diálogo, pregunta establece tema y solicita rema. La progresión es colaborativa.", ejemplo:"A: '¿**Dónde** (rema solicitado) compraste **el libro** (tema)?' B: '**Lo compré en la librería** (rema).'", ejercicio:"Analiza estructura temática: '—¿Quién llamó? —Llamó María.'", respuesta:"Tema presupuesto: 'alguien llamó'. Rema solicitado: 'quién'. Respuesta: 'María' completa el tema."},
+        {id:56, nombre:"Organización de la información en párrafos", teoria:"Párrafo efectivo presenta información con orden lógico: deductivo (general→particular), inductivo (particular→general), o cronológico.", ejemplo:"Deductivo: 'La contaminación afecta la salud. Las partículas irritan los pulmones.'", ejercicio:"Escribe párrafo inductivo sobre 'tecnología y comunicación'.", respuesta:"'Hoy enviamos mensajes instantáneos. Antes, las cartas tardaban semanas. **Por tanto, la tecnología ha acelerado la comunicación**.'"},
+        {id:57, nombre:"Continuidad temática y cambio de tópico", teoria:"Continuidad cuando tópico se repite o progresa linealmente. Cambio de tópico debe señalarse con marcadores o nuevo párrafo.", ejemplo:"Cambio marcado: '**Hasta aquí la cohesión. Ahora pasaremos a la coherencia**.'", ejercicio:"Señala cambio de tópico y marcador: 'La economía mejoró. **Por otro lado**, la educación sigue siendo un desafío.'", respuesta:"Tópico de 'economía' a 'educación'. Marcador: 'Por otro lado'."},
+        {id:58, nombre:"Información dada y nueva (principio de economía)", teoria:"La información nueva se introduce gradualmente basándose en información dada. Demasiada información nueva sin anclaje confunde.", ejemplo:"Inadecuado: 'El quokka es marsupial. Tiene población reducida. Es herbívoro.' Adecuado: 'El quokka es marsupial. **Este animal** tiene población reducida y es herbívoro.'", ejercicio:"Reescribe para mejorar dado-nuevo: 'La deixis es un concepto pragmático. La deixis personal incluye 'yo', 'tú'.'", respuesta:"'La deixis es un concepto pragmático. **Este concepto** se divide en personal ('yo', 'tú').'"},
+        {id:59, nombre:"Estructura temática en textos académicos", teoria:"Introducción (tema y objetivo), desarrollo (secciones), conclusiones. Progresión lineal y jerarquizada.", ejemplo:"Estructura: 1. Introducción, 2. Marco teórico, 3. Metodología, 4. Resultados, 5. Conclusiones.", ejercicio:"Diseña esquema temático para trabajo sobre 'Influencia del español en el inglés'.", respuesta:"1. Introducción. 2. Antecedentes históricos. 3. Préstamos léxicos (español→inglés). 4. Préstamos (inglés→español). 5. Conclusiones."},
+        {id:60, nombre:"Recapitulación y reformulación en textos argumentativos", teoria:"Recapitulación (resumen periódico) y reformulación (expresión con otras palabras) refuerzan comprensión y cohesión.", ejemplo:"Recapitulación: '**En resumen**, la cohesión se logra con conectores.' Reformulación: '**Dicho de otro modo**, un texto cohesionado es como un rompecabezas.'", ejercicio:"Añade recapitulación después de explicar tres tipos de conectores.", respuesta:"'**En definitiva**, los conectores aditivos suman, adversativos contrastan, causales explican. **Recapitulando**, dominarlos es clave.'"},
+        {id:61, nombre:"Tipos de textos: narración", teoria:"Cuenta eventos en secuencia temporal. Elementos: narrador, personajes, acciones. Estructura: planteamiento, nudo, desenlace.", ejemplo:"'Ayer fui al cine. Compré palomitas. La película era emocionante.'", ejercicio:"Escribe una breve narración sobre 'el día que aprendí algo nuevo'.", respuesta:"'El año pasado hice un curso de cerámica. No podía centrar el barro. Mi profesora me guió. Logré hacer una taza. Fue un logro enorme.'"},
+        {id:62, nombre:"Tipos de textos: descripción", teoria:"Representa objetos, personas, lugares mediante enumeración de cualidades. Puede ser objetiva o subjetiva.", ejemplo:"Objetiva: 'El átomo tiene núcleo y electrones.' Subjetiva: 'El atardecer pintaba el cielo de naranja.'", ejercicio:"Describe tu habitación de forma objetiva y luego subjetiva.", respuesta:"Objetiva: 'Mide 4x3m, cama contra pared izquierda, escritorio junto a ventana.' Subjetiva: 'Es un espacio acogedor, con paredes azul claro que transmiten calma.'"},
+        {id:63, nombre:"Tipos de textos: argumentación", teoria:"Persuade al receptor de una tesis mediante razones y evidencia. Estructura: tesis, argumentos, conclusión.", ejemplo:"Tesis: 'Leer un libro al mes es beneficioso.' Argumentos: 'Mejora concentración y reduce estrés.' Conclusión: 'Por tanto, debemos adoptarlo.'", ejercicio:"Escribe un breve argumento a favor de leer un libro al mes.", respuesta:"Tesis: 'Leer un libro al mes es beneficioso.' Argumento: 'Mejora la concentración y reduce el estrés.' Conclusión: 'Por tanto, deberíamos adoptar este hábito.'"},
+        {id:64, nombre:"Tipos de textos: exposición", teoria:"Explica conceptos, procesos o fenómenos de manera clara, sin persuadir. Propósito: informar o enseñar.", ejemplo:"Exposición: 'El agua hierve a 100 grados porque las moléculas ganan energía y se separan.'", ejercicio:"Explica el proceso de fotosíntesis en tres oraciones.", respuesta:"'La fotosíntesis produce alimento vegetal. Usan luz solar, agua y CO2 para fabricar glucosa y oxígeno. El oxígeno se libera.'"},
+        {id:65, nombre:"Tipos de textos: diálogo", teoria:"Reproduce conversación entre dos o más interlocutores, con alternancia de turnos. Propósito: interacción, caracterización.", ejemplo:"'—¿Vamos al cine? —propuse. —Mejor al teatro —respondió Ana.'", ejercicio:"Escribe diálogo de 6 turnos entre cliente y vendedor de libros.", respuesta:"'—Busco ciencia ficción. —Tenemos 'Dune' y 'Fundación'. —Me han hablado bien de 'Fundación'. —Es un clásico. —Pues la llevo. —Estupendo, pase por caja.'"},
+        {id:66, nombre:"Textos prescriptivos e instructivos", teoria:"Prescriptivos (normas, leyes) indican lo que se debe hacer. Instructivos (manuales, recetas) guían para realizar tareas. Verbos imperativos o perífrasis de obligación.", ejemplo:"Prescriptivo: 'Los ciudadanos deben respetar el semáforo.' Instructivo: 'Ponga el agua a hervir. Añada la pasta.'", ejercicio:"Escribe instrucción para preparar té (5 pasos).", respuesta:"'1. Hervir agua. 2. Colocar bolsita en taza. 3. Verter agua caliente. 4. Reposar 3 minutos. 5. Retirar bolsita.'"},
+        {id:67, nombre:"Textos predictivos y prospectivos", teoria:"Predictivos anticipan eventos futuros basados en datos. Prospectivos planifican escenarios. Usan futuro, condicional, marcadores modales.", ejemplo:"Predicción: 'El precio del petróleo subirá un 5%.' Prospectivo: 'En 2050, la población alcanzará los 9 mil millones.'", ejercicio:"Escribe predicción sobre el uso del español en internet en 10 años.", respuesta:"'El español podría convertirse en la segunda lengua más usada en internet, impulsado por el crecimiento en América Latina.'"},
+        {id:68, nombre:"Textos retóricos y persuasivos", teoria:"Recursos de persuasión: ethos (credibilidad), pathos (emociones), logos (razonamiento). Discursos políticos, publicidad.", ejemplo:"Ethos: 'Como experto en lingüística...' Pathos: 'Imagina un futuro sin educación...' Logos: 'Los datos muestran que...'", ejercicio:"Analiza ethos, pathos, logos en un eslogan publicitario.", respuesta:"Eslogan 'Porque tú lo vales' (L'Oréal): Ethos (marca conoce autoestima), Pathos (apela a autoestima), Logos (escaso, principalmente emocional)."},
+        {id:69, nombre:"Textos poéticos y función poética", teoria:"La función poética (Jakobson) se centra en el mensaje mismo, con recursos fónicos (rima), sintácticos (hipérbaton), semánticos (metáfora).", ejemplo:"Verso de Bécquer: 'Volverán las oscuras golondrinas en tu balcón sus nidos a colgar.' (hipérbaton, ritmo).", ejercicio:"Escribe un pareado (dos versos que rimen) sobre la lengua castellana.", respuesta:"'La lengua que hablo es mi hogar, / con sus palabras puedo soñar.'"},
+        {id:70, nombre:"Textos humorísticos y paródicos", teoria:"Humor explota ambigüedad, violación de máximas, exageración. Parodia imita estilo de género o autor para ridiculizar.", ejemplo:"Chiste: '¿Qué hace una abeja en el gimnasio? ¡Zum-ba!' Parodia: 'Según estudios no rigurosos, procrastinar es el arte de hacer nada.'", ejercicio:"Crea una parodia de un anuncio publicitario de champú.", respuesta:"'¿Tu cabello se cae? Nuestro champú no lo evitará, pero al menos olerás bien.'"},
+        {id:71, nombre:"Textos periodísticos: noticia, reportaje, editorial", teoria:"Noticia: pirámide invertida (lo más importante al inicio). Reportaje: más extenso y contextualizado. Editorial: opinión argumentativa.", ejemplo:"Noticia: 'El gobierno anunció subida de impuestos.' Reportaje: 'Entrevista con afectados.' Editorial: 'La subida es necesaria.'", ejercicio:"Escribe el lead de una noticia ficticia sobre un descubrimiento científico.", respuesta:"'Un equipo de investigadores descubrió una bacteria que degrada plástico en 48 horas, según estudio publicado hoy en 'Nature'.'"},
+        {id:72, nombre:"Textos digitales: correo, chat, foro", teoria:"Correo formal sigue pautas de carta. Chat: coloquial, abreviaturas, emoticonos. Foro: comentarios breves con citas anidadas.", ejemplo:"Chat: 'Hola, cmo estás? xq no contestas?' Correo formal: 'Estimado Sr.: Le escribo para...'", ejercicio:"Escribe correo breve para pedir prórroga a profesor.", respuesta:"'Estimado profesor: Solicito una prórroga de 3 días para entregar el trabajo. Atentamente, Ana.'"},
+        {id:73, nombre:"Géneros académicos: resumen, reseña, ensayo", teoria:"Resumen: condensa texto original. Reseña: describe y evalúa obra. Ensayo: reflexión personal argumentativa.", ejemplo:"Reseña: 'En 'Cien años', García Márquez narra la historia de los Buendía. La novela es magistral.'", ejercicio:"Escribe una oración de resumen de 'El Quijote' y una opinión para reseña.", respuesta:"Resumen: 'Narra las aventuras de un hidalgo que se vuelve caballero andante.' Reseña: 'Es una sátira profunda sobre la realidad y la locura. Recomiendo su lectura.'"},
+        {id:74, nombre:"Géneros laborales: CV, carta presentación, informe", teoria:"CV: esquemático (datos, formación, experiencia). Carta presentación: explica motivación. Informe: describe actividades y resultados.", ejemplo:"Carta presentación: 'Me postulo al cargo de... Adjunto CV. Mi experiencia me ha proporcionado las habilidades necesarias.'", ejercicio:"Escribe una frase para CV describiendo experiencia en atención al cliente.", respuesta:"'Tres años de experiencia en atención al cliente, con habilidades en resolución de quejas y comunicación efectiva.'"},
+        {id:75, nombre:"Géneros literarios: lírica, narrativa, drama", teoria:"Lírica (poesía): sentimientos, métrica, imágenes. Narrativa (cuento, novela): historias. Drama (teatro): diálogos, acotaciones.", ejemplo:"Lírica: rima XI de Bécquer. Narrativa: 'El aleph' de Borges. Drama: 'La casa de Bernarda Alba'.", ejercicio:"Clasifica: 'Juan abrió la puerta. Un escalofrío recorrió su espalda.'", respuesta:"Narrativo (cuento o novela): narrador, acción, personaje, descripción de sensación."},
+        {id:76, nombre:"Géneros publicitarios: eslogan, anuncio, cuña", teoria:"Eslogan: frase breve y memorable. Anuncio: desarrolla mensaje. Cuña: anuncio radiofónico breve. Usan rima, imperativos, lenguaje emocional.", ejemplo:"Eslogan: 'Just do it.' Anuncio: imagen de atleta con eslogan. Cuña: 'Pruebe el nuevo sabor.'", ejercicio:"Crea un eslogan para campaña de fomento de la lectura.", respuesta:"'Leer te da alas. ¡Vuela con un libro!'"},
+        {id:77, nombre:"Géneros epistolares: carta formal, correo electrónico", teoria:"Carta formal: lugar y fecha, saludo, cuerpo, despedida, firma. Correo puede ser más ágil.", ejemplo:"'Madrid, 15 de mayo. Estimado Sr.: Me dirijo a usted para... Atentamente.'", ejercicio:"Escribe cuerpo de carta formal solicitando información sobre un curso.", respuesta:"'Le agradecería me informara sobre los requisitos de admisión, el plan de estudios y las fechas de inscripción.'"},
+        {id:78, nombre:"Géneros digitales: blog, tweet, hilo", teoria:"Blog: entradas extensas con comentarios. Tweet: límite 280 caracteres, hashtags. Hilo: varios tweets enlazados.", ejemplo:"Tweet: 'Acabo de leer 'Cien años'. Obra maestra #literatura.' Hilo: '1/5 La novela comienza en Macondo...'", ejercicio:"Escribe un tweet (máx 280 caracteres) sobre la importancia de la gramática.", respuesta:"'La gramática no es reglas aburridas, es la arquitectura del pensamiento. ¡Comunica mejor! #gramática'"},
+        {id:79, nombre:"Géneros jurídicos: ley, sentencia, contrato", teoria:"Formalizados, lenguaje arcaico, latinismos, precisión. Ley: artículos. Sentencia: antecedentes, fundamentos, fallo. Contrato: cláusulas.", ejemplo:"Artículo de ley: 'Artículo 1. El presente reglamento tiene por objeto...'", ejercicio:"Escribe cláusula simple de contrato de préstamo de un libro.", respuesta:"'Cláusula primera: El prestamista entrega 'El Quijote'. El prestatario se compromete a devolverlo en 30 días.'"},
+        {id:80, nombre:"Géneros religiosos: oración, sermón, homilía", teoria:"Oración: lenguaje reverente, repetitivo. Sermón: discurso persuasivo con base bíblica. Homilía: explica pasajes de la Escritura.", ejemplo:"Oración: 'Padre nuestro que estás en los cielos...'", ejercicio:"Escribe una oración breve de agradecimiento (2-3 líneas).", respuesta:"'Gracias, Señor, por la salud, la familia y el pan de cada día. Guía mis pasos. Amén.'"},
+        {id:81, nombre:"Géneros periodísticos de opinión: columna, editorial, crítica", teoria:"Columna: firmada, estilo personal. Editorial: postura del periódico, sin firma. Crítica: evalúa obras artísticas.", ejemplo:"Columna: 'Desde mi ventana, observo cómo cambia la ciudad.' Editorial: 'El gobierno debe priorizar la educación.'", ejercicio:"Escribe una frase de crítica de una novela que acabas de leer.", respuesta:"'La novela me decepcionó; el final es apresurado y deja preguntas sin respuesta.'"},
+        {id:82, nombre:"Géneros audiovisuales: guion, storyboard, voice-over", teoria:"Guion: diálogos, acciones, escenas. Storyboard: viñetas para planificar rodaje. Voice-over: texto sobre imágenes.", ejemplo:"Guion: 'INT. CAFÉ - DÍA. JUAN: (tenso) Necesito decirte algo.'", ejercicio:"Escribe acotación y diálogo breve para escena de dos amigos discutiendo.", respuesta:"'INT. HABITACIÓN - NOCHE. Pedro entra furioso. PEDRO: ¿Por qué no me avisaste? LUIS: Lo olvidé.'"},
+        {id:83, nombre:"Géneros divulgativos: artículo, conferencia", teoria:"Artículo de divulgación: lenguaje accesible, analogías. Conferencia: guion con introducción, desarrollo, conclusión.", ejemplo:"Artículo: '¿Qué es el ADN? Imagina un libro de instrucciones dentro de tus células.'", ejercicio:"Escribe introducción de artículo divulgativo sobre 'cómo funciona la memoria'.", respuesta:"'¿Alguna vez has olvidado dónde dejaste las llaves? La memoria no es un archivo perfecto, sino un proceso reconstructivo.'"},
+        {id:84, nombre:"Géneros empresariales: memoria anual, acta, plan de negocio", teoria:"Memoria anual: resume actividad y resultados. Acta: registra acuerdos de reunión. Plan de negocio: objetivos y estrategias.", ejemplo:"Acta: 'En Madrid, siendo las 10:00 del día 15 de mayo, se reúnen los socios...'", ejercicio:"Escribe un punto del acta de una reunión de estudiantes.", respuesta:"'Tercero: Se acordó realizar una 'Semana del Libro' del 10 al 14 de junio. Se designó a Ana como coordinadora.'"},
+        {id:85, nombre:"Análisis del discurso: ideología y poder", teoria:"Estudia cómo los textos reflejan ideologías y relaciones de poder. Examina elección léxica, nominalización, presuposición, temas silenciados.", ejemplo:"Discurso político: 'debemos luchar contra la invasión de inmigrantes' (metáfora bélica).", ejercicio:"Analiza ideología implícita en: 'Los trabajadores deben adaptarse al mercado.'", respuesta:"Presupone que el trabajador es quien debe adaptarse, no el mercado. Ideología neoliberal."},
+        {id:86, nombre:"Análisis del discurso: ethos, pathos, logos", teoria:"Ethos (autoridad, honestidad), pathos (emociones), logos (argumentos lógicos). Los tres pilares de la persuasión.", ejemplo:"Ethos: 'Como científico del clima...' Pathos: 'Nuestros hijos heredarán un planeta destruido.' Logos: 'Las emisiones han aumentado un 50%.'", ejercicio:"Identifica ethos, pathos, logos en un discurso político conocido.", respuesta:"'Como presidente (ethos), he trabajado por ustedes. (pathos) Sufren por el alto costo de vida. (logos) La economía creció un 2%.'"},
+        {id:87, nombre:"Análisis del discurso: presuposiciones y topic control", teoria:"Presuposiciones: ideas dadas por supuestas. Topic control: capacidad de imponer el tema de conversación.", ejemplo:"'¿Por qué llegaste tarde otra vez?' presupone que llegó tarde y que es habitual.", ejercicio:"Identifica presuposición en: '¿Cree que su gestión ha sido un fracaso?'", respuesta:"Presupone que su gestión ha sido un fracaso. El entrevistado puede rechazar la presuposición."},
+        {id:88, nombre:"Análisis del discurso: modalidad y evidencialidad", teoria:"Modalidad: actitud del hablante (certeza, duda, obligación). Evidencialidad: fuente de la información.", ejemplo:"Certeza: 'Seguramente ganaremos.' Duda: 'Quizás ganemos.' Evidencial: 'Según el informe, ganamos.'", ejercicio:"Clasifica la modalidad en: 'Debes estudiar. Podría llover.'", respuesta:"'Debes estudiar' (deóntico: obligación). 'Podría llover' (epistémico: posibilidad)."},
+        {id:89, nombre:"Análisis del discurso: polifonía y voces", teoria:"Múltiples voces en un texto: discurso directo, indirecto, estilo indirecto libre. Revela intertextualidad y posición ideológica.", ejemplo:"Directo: 'Juan dijo: 'Voy a ganar'.' Indirecto: 'Juan dijo que iba a ganar.' Indirecto libre: 'Ganaría. No había duda.'", ejercicio:"Convierte a estilo indirecto libre: 'Ana pensó: «Es demasiado tarde. Nunca llegaré».'", respuesta:"'Era demasiado tarde. Nunca llegaría.'"},
+        {id:90, nombre:"Análisis del discurso: estrategias de cortesía", teoria:"Cortesía positiva (elogios, cercanía) y negativa (distancia, atenuación). Protegen la imagen pública (face).", ejemplo:"Positiva: 'Qué bien escribes, ¿me podrías ayudar?' Negativa: 'Disculpe la molestia, ¿podría revisar mi texto?'", ejercicio:"Identifica estrategia en: '¿Serías tan amable de cerrar la ventana?'", respuesta:"Cortesía negativa: condicional de cortesía ('serías tan amable'), pregunta indirecta, atenuación."},
+        {id:91, nombre:"Análisis del discurso: marcadores de identidad grupal", teoria:"Ciertas palabras, pronunciación o estructuras marcan pertenencia a un grupo (generacional, regional, social).", ejemplo:"Argentina: 'che', 'vos'. España: 'vale', 'tío'. México: 'güey', 'qué onda'.", ejercicio:"Identifica marcador dialectal en: 'Güey, ¿qué onda? Está bien padre.'", respuesta:"Mexicanismos: 'güey' (amigo), 'qué onda' (qué pasa), 'padre' (genial)."},
+        {id:92, nombre:"Análisis del discurso: metáforas conceptuales", teoria:"Las metáforas estructuran el pensamiento (Lakoff, Johnson): 'el amor es un viaje', 'el tiempo es dinero'.", ejemplo:"Discurso político: 'luchar contra la pobreza', 'batalla electoral' (metáfora bélica).", ejercicio:"Identifica metáfora en: 'El argumento de Juan es débil, no tiene fundamentos sólidos.'", respuesta:"Metáfora conceptual 'ARGUMENTAR ES CONSTRUIR': argumento 'débil' como edificio frágil, 'fundamentos' como cimientos."},
+        {id:93, nombre:"Análisis del discurso: violencia simbólica", teoria:"Discriminación por acento, uso de términos despectivos, imposición de la norma estándar como superior (Bourdieu).", ejemplo:"Estigmatizar el andaluz como 'inculto' es violencia simbólica.", ejercicio:"¿Qué violencia simbólica hay en: 'Tienes que hablar bien, no como los de barrio'?", respuesta:"Asume que el habla de barrio es 'mal' y la norma estándar es 'bien'. Deslegitima una variante dialectal. Dominación simbólica."},
+        {id:94, nombre:"Análisis del discurso: manipulación mediática", teoria:"Selección de noticias, encuadre, nominalización (ocultar agentes), eufemismos, repetición.", ejemplo:"'Se produjeron manifestaciones violentas' (voz pasiva, oculta agente).", ejercicio:"¿Cómo manipula 'Se produjeron manifestaciones violentas' vs 'La policía reprimió manifestaciones pacíficas'?", respuesta:"Primero oculta agente y atribuye violencia a manifestantes; segundo explicita agente (policía) y califica manifestaciones de pacíficas."},
+        {id:95, nombre:"Análisis del discurso: silencios y elipsis estratégicas", teoria:"Lo que no se dice es tan relevante como lo dicho. Silencios revelan temas tabú o información oculta.", ejemplo:"Respuesta evasiva: 'No tengo todos los datos para opinar.' (silencia la opinión).", ejercicio:"¿Qué silencia 'El ministerio estudiará el problema'?", respuesta:"Silencia cuándo, cómo, con qué recursos, y si habrá solución. 'Estudiará' es acción vaga que no compromete resultados."},
+        {id:96, nombre:"Análisis del discurso: ironía y doble voz", teoria:"Ironía por incongruencia entre lo dicho y la realidad, o eco burlón. Detectable por contexto y marcas prosódicas.", ejemplo:"En tormenta: '¡Qué hermoso día!' (ironía: crítica).", ejercicio:"Detecta ironía en: 'Eres todo un genio, has roto el jarrón más caro.'", respuesta:"'Eres todo un genio' es irónico porque romper el jarrón es un error, no una genialidad. Expresa enfado o sarcasmo."},
+        {id:97, nombre:"Análisis del discurso: argumentación falaz", teoria:"Falacias: ad hominem (ataque personal), falsa dicotomía (solo dos opciones), pendiente resbaladiza, petición de principio.", ejemplo:"Ad hominem: 'No le hagas caso, es un ignorante.'", ejercicio:"Identifica falacia: 'Si permitimos calculadora, luego querrán usarla en todos los exámenes y ya no aprenderán matemáticas.'", respuesta:"Pendiente resbaladiza (slippery slope): asume sin evidencia consecuencias extremas."},
+        {id:98, nombre:"Análisis del discurso: recursos persuasivos en publicidad", teoria:"Imperativo ('cómpralo'), segunda persona ('tú lo necesitas'), hipérbole ('el mejor'), testimonio de famosos, repetición, rima, preguntas retóricas.", ejemplo:"'Nuevo champú ProV, con biotina, para un cabello más fuerte. ¡Pruébalo ahora!'", ejercicio:"Analiza recursos persuasivos en 'Nuevo champú ProV. ¡Pruébalo ahora!'", respuesta:"Imperativo ('¡Pruébalo ahora!'), exclamación, apelación directa, urgencia ('ahora'), tecnicismo ('biotina') para ethos."},
+        {id:99, nombre:"Análisis del discurso multimodal", teoria:"Combina lenguaje con imágenes, sonidos, gestos, tipografía. Memes, publicidad, videos, redes sociales.", ejemplo:"Meme con imagen de persona confundida y texto 'cuando explican sintaxis'. La imagen aporta tono humorístico.", ejercicio:"Analiza un meme conocido: describe imagen y texto, y cómo se complementan.", respuesta:"Meme 'Distracted Boyfriend': imagen de hombre mirando a otra mujer. Texto: 'yo' mirando a 'gramática generativa' y 'sintaxis' como novia. Analogía entre infidelidad y cambio de interés lingüístico."},
+        {id:100, nombre:"Aplicaciones de la textolingüística: didáctica de la lengua", teoria:"Enseñar a escribir textos coherentes y cohesivos, analizar errores de progresión temática, diseñar secuencias basadas en géneros discursivos.", ejemplo:"Ejercicio: identificar conectores inadecuados y reemplazarlos.", ejercicio:"Diseña una actividad de aula para enseñar conectores causales a estudiantes de secundaria.", respuesta:"Actividad: entregar texto con causas y consecuencias desordenadas. Ordenar y añadir conectores causales (porque, ya que) y consecutivos (así que, por lo tanto). Luego escribir párrafo propio sobre estudio y aprobación usando al menos tres conectores."}
+    ];
+
+    let tecnicas = tecnicasTexto.map(t => ({ ...t, completada: false, respuestaUsuario: "" }));
+    let currentTechIdx = 0;
+
+    // localStorage functions
+    function guardarProgreso() {
+        let data = tecnicas.map(t => ({ completada: t.completada, respuestaUsuario: t.respuestaUsuario || "" }));
+        localStorage.setItem("textolinguistica_progreso", JSON.stringify(data));
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function cargarProgreso() {
+        let saved = localStorage.getItem("textolinguistica_progreso");
+        if (saved) {
+            let data = JSON.parse(saved);
+            for (let i = 0; i < tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuestaUsuario = data[i].respuestaUsuario || "";
+                }
+            }
+        }
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function actualizarEstadisticas() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = Math.round((completadas / 100) * 100);
+        const statsDiv = document.getElementById("statsPreview");
+        if (statsDiv) statsDiv.innerHTML = `Progreso: ${porcentaje}% · Técnicas completadas: ${completadas}/100 · ⚜ textolingüística`;
+        const goldFill = document.getElementById("globalGoldFill");
+        if (goldFill) goldFill.style.width = porcentaje + "%";
+    }
+
+    function actualizarBarraOro() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let pct = (completadas / 100) * 100;
+        document.getElementById("globalGoldFill").style.width = pct + "%";
+    }
+
+    function renderIndiceLateral() {
+        const busqueda = document.getElementById("searchTech")?.value.toLowerCase() || "";
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda) || (t.teoria && t.teoria.toLowerCase().includes(busqueda)));
+        const listaUl = document.getElementById("techIndexList");
+        if (!listaUl) return;
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.innerHTML = `${tech.nombre.substring(0, 52)}${tech.nombre.length > 52 ? "…" : ""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentTechIdx = tech.id - 1;
+                renderVistaTecnica();
+                if (window.innerWidth <= 800) document.getElementById("luxSidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+
+    function renderVistaTecnica() {
+        const t = tecnicas[currentTechIdx];
+        const container = document.getElementById("dynamicTechView");
+        if (!container) return;
+        const letraInicial = t.nombre.charAt(0);
+        container.innerHTML = `
+            <div class="tech-primary">
+                <div class="numero-gigante">${t.id}</div>
+                <div class="tech-title"><span class="capitular">${letraInicial}</span>${t.nombre.substring(1)}</div>
+                <div class="card"><h3>📜 Teoría textolingüística</h3><p>${t.teoria}</p></div>
+                <div class="card"><h3>❧ Ejemplo de análisis</h3><p>${t.ejemplo}</p></div>
+                <div class="card"><h3>✍️ Ejercicio de análisis</h3><p>${t.ejercicio}</p>
+                    <textarea id="respuestaTextAreaLux" rows="4" placeholder="Escribe aquí tu respuesta...">${t.respuestaUsuario || ""}</textarea>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-nav btn-show-answer" id="btnMostrarRespuesta">📖 Ver respuesta correcta</button>
+                    </div>
+                    <div id="respuestaCorrectaPanel" class="respuesta-correcta">
+                        <strong>✓ Respuesta modelo:</strong><br>${t.respuesta}
+                    </div>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="btnAnterior">← anterior</button>
+                    <button class="btn-nav btn-complete" id="btnCompletar">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="btnSiguiente">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-aside">
+                <div><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(tc=>tc.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:30px;"></div></div>
+                <p>${tecnicas.filter(tc=>tc.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color:#cfc3ad;">
+                <p><strong>📖 Técnica actual</strong><br>${t.nombre.split(':')[0]}</p>
+                <p><strong>🎨 Enfoque</strong><br>Cohesión · Coherencia · Género · Discurso</p>
+                <div class="ornament-line" style="font-size:1.2rem;">⁂ § ⚜</div>
+                <p style="margin-top:1rem; font-size:0.8rem;">“El texto es la unidad fundamental de comunicación” — Teun van Dijk</p>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextAreaLux");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentTechIdx].respuestaUsuario = e.target.value;
+                guardarProgreso();
+            });
+        }
+        const btnRespuesta = document.getElementById("btnMostrarRespuesta");
+        const panelRespuesta = document.getElementById("respuestaCorrectaPanel");
+        if (btnRespuesta && panelRespuesta) {
+            btnRespuesta.addEventListener("click", () => {
+                panelRespuesta.classList.toggle("visible");
+            });
+        }
+        document.getElementById("btnAnterior")?.addEventListener("click", () => {
+            if (currentTechIdx > 0) { currentTechIdx--; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnSiguiente")?.addEventListener("click", () => {
+            if (currentTechIdx < 99) { currentTechIdx++; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnCompletar")?.addEventListener("click", () => {
+            tecnicas[currentTechIdx].completada = !tecnicas[currentTechIdx].completada;
+            guardarProgreso();
+            renderVistaTecnica();
+            renderIndiceLateral();
+        });
+    }
+
+    const menuBtn = document.getElementById("menuToggleBtn");
+    const sidebar = document.getElementById("luxSidebar");
+    const closeBtn = document.getElementById("closeSidebarBtn");
+    menuBtn?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeBtn?.addEventListener("click", () => sidebar.classList.remove("open"));
+    const searchInput = document.getElementById("searchTech");
+    searchInput?.addEventListener("input", () => renderIndiceLateral());
+
+    function inicializar() {
+        cargarProgreso();
+        renderVistaTecnica();
+        window.addEventListener("beforeunload", () => guardarProgreso());
+    }
+    inicializar();
+</script>
+</body>
+</html>

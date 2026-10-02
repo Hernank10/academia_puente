@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Taller: 100 técnicas narrativas - Periodismo colombiano</title>
+    <!-- Bootstrap 5 CSS + Icons + JS Bundle -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <style>
+        body {
+            background: #f4f1ea;
+            font-family: 'Segoe UI', 'Georgia', serif;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        .card-header {
+            background-color: #2c3e2f;
+            color: white;
+        }
+        .btn-primary {
+            background-color: #8b5a2b;
+            border-color: #6b3e1a;
+        }
+        .btn-primary:hover {
+            background-color: #6b3e1a;
+        }
+        .btn-outline-secondary {
+            border-color: #8b5a2b;
+            color: #8b5a2b;
+        }
+        .btn-outline-secondary:hover {
+            background-color: #8b5a2b;
+            border-color: #8b5a2b;
+        }
+        .badge-bg {
+            background-color: #d9c2a7;
+            color: #3a2a1f;
+        }
+        .list-group-item {
+            background-color: #fffef7;
+        }
+        footer {
+            font-size: 0.85rem;
+            border-top: 1px solid #ddd;
+        }
+        .tecnica-nombre {
+            font-weight: 600;
+            color: #2c3e2f;
+        }
+        .pagination .page-link {
+            color: #8b5a2b;
+        }
+        .pagination .active .page-link {
+            background-color: #8b5a2b;
+            border-color: #8b5a2b;
+            color: white;
+        }
+        .modal-header {
+            background-color: #f1e7d8;
+            border-bottom: 1px solid #d4c3aa;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#"><i class="fas fa-feather-alt me-2"></i> Taller de Técnicas Narrativas</a>
+        <span class="navbar-text text-white-50 small">Periodismo literario colombiano</span>
+    </div>
+</nav>
+
+<div class="container mb-5">
+    <div class="row">
+        <div class="col-12">
+            <div class="alert alert-secondary bg-white border-start border-4 border-warning shadow-sm">
+                <i class="fas fa-book-open me-2"></i> <strong>100 técnicas</strong> desde la precisión léxica hasta el cierre resonante. Practica y aprende a escribir como los grandes cronistas.
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de opciones principales -->
+    <div class="row mb-4">
+        <div class="col-md-4 mb-2">
+            <button id="btnListar" class="btn btn-outline-secondary w-100"><i class="fas fa-list me-2"></i>Listado de técnicas</button>
+        </div>
+        <div class="col-md-4 mb-2">
+            <button id="btnPractica" class="btn btn-outline-secondary w-100"><i class="fas fa-pen-fancy me-2"></i>Modo práctica</button>
+        </div>
+        <div class="col-md-4 mb-2">
+            <button id="btnQuiz" class="btn btn-outline-secondary w-100"><i class="fas fa-question-circle me-2"></i>Modo quiz</button>
+        </div>
+    </div>
+
+    <!-- Área dinámica principal -->
+    <div id="contenidoPrincipal">
+        <!-- Por defecto muestra bienvenida -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-white text-dark fw-bold"><i class="fas fa-star-of-life me-2"></i>Bienvenido</div>
+            <div class="card-body text-center py-5">
+                <i class="fas fa-feather fa-3x text-muted mb-3"></i>
+                <h4>Domina las 100 técnicas del periodismo narrativo colombiano</h4>
+                <p>Selecciona una opción arriba: listado, práctica o quiz. Acumula aciertos y mejora tu escritura.</p>
+                <hr class="w-50 mx-auto">
+                <small class="text-muted">Inspirado en el ensayo de 100 técnicas · García Márquez, Salcedo Ramos, Patricia Nieto, etc.</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para ver detalle de técnica -->
+    <div class="modal fade" id="modalTecnica" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitulo">Técnica</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="modalCuerpo">
+                    ...
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white-50 py-3 mt-4">
+    <div class="container text-center">
+        <span>© 2025 Taller de narrativa periodística · 100 técnicas para contar la realidad</span>
+    </div>
+</footer>
+
+<script>
+    // ------------------------------------------------------------
+    // BASE DE DATOS DE 100 TÉCNICAS (extraídas y consolidadas)
+    // Cada técnica: id, nombre, descripcion, ejemplo
+    // ------------------------------------------------------------
+    const tecnicas = [
+        {id:1,nombre:"Precisión léxica",descripcion:"Elegir la palabra exacta que transmite la acción o emoción sin adjetivos superfluos.",ejemplo:"En lugar de 'perdió una pieza dental', Alberto Salcedo Ramos escribe 'escupió un diente'."},
+        {id:2,nombre:"Economía verbal",descripcion:"Eliminar palabras innecesarias; cada palabra debe tener una función.",ejemplo:"'El taxista barbudo' en lugar de 'el hombre que manejaba el taxi y que tenía barba'."},
+        {id:3,nombre:"Sintaxis hipotáctica",descripcion:"Uso de oraciones subordinadas y períodos largos para crear fluidez.",ejemplo:"Crónicas de viaje que enlazan causas y consecuencias con comas y 'que'."},
+        {id:4,nombre:"Sintaxis paratáctica",descripcion:"Oraciones cortas coordinadas o yuxtapuestas, ritmo de golpes.",ejemplo:"'Llegaron. Preguntaron por él. No estaba. Mataron a su hermano.'"},
+        {id:5,nombre:"Sonido (aliteración)",descripcion:"Repetición de sonidos consonánticos o vocálicos para musicalidad.",ejemplo:"'Sobre su saco sudado, el sol sembraba semillas de sal' (repetición de la 's')."},
+        {id:6,nombre:"Frase corta rítmica",descripcion:"Frases breves tras una escena violenta para imitar el impacto.",ejemplo:"'Lo mataron. No hubo más.' (Juan José Hoyos)"},
+        {id:7,nombre:"Yuxtaposición de frases",descripcion:"Colocar dos imágenes o acciones sin conector.",ejemplo:"'El disparo. El silencio. El cuerpo en el suelo.'"},
+        {id:8,nombre:"Orden marcado",descripcion:"Alterar el orden sintáctico para enfatizar.",ejemplo:"'De la oscuridad salió una mano'."},
+        {id:9,nombre:"Elipsis de palabras",descripcion:"Omitir términos sobreentendidos.",ejemplo:"'Él entró, ella salió.' (se omite 'y')"},
+        {id:10,nombre:"Nominalización controlada",descripcion:"Convertir verbos en sustantivos para dar peso.",ejemplo:"'El asesinato ocurrió al alba'."},
+        {id:11,nombre:"Símil",descripcion:"Comparación explícita usando 'como' o 'cual'.",ejemplo:"'La espera fue como masticar vidrio molido'."},
+        {id:12,nombre:"Metáfora",descripcion:"Identificación directa entre dos términos.",ejemplo:"'La ciudad era una úlcera abierta'."},
+        {id:13,nombre:"Paradoja",descripcion:"Unión de ideas contradictorias que revelan verdad.",ejemplo:"'En San Jacinto, la única industria que no cierra es la de los velorios'."},
+        {id:14,nombre:"Sinécdoque",descripcion:"La parte por el todo.",ejemplo:"'Un fusil entró en la tienda' (por un guerrillero)."},
+        {id:15,nombre:"Cliché renovado",descripcion:"Evitar o matizar expresiones gastadas.",ejemplo:"En lugar de 'lluvia de balas', 'la lluvia balaceaba los techos de zinc'."},
+        {id:16,nombre:"Metonimia",descripcion:"Designar algo con el nombre de otra cosa contigua.",ejemplo:"'La prensa lo difundió' (por los periodistas)."},
+        {id:17,nombre:"Personificación",descripcion:"Atribuir cualidades humanas a objetos.",ejemplo:"'El río Magdalena se tragó los cadáveres sin preguntas'."},
+        {id:18,nombre:"Hipérbole controlada",descripcion:"Exageración con intención expresiva.",ejemplo:"'El frío era tan intenso que las palabras se congelaban'."},
+        {id:19,nombre:"Lítotes",descripcion:"Afirmar negando lo contrario.",ejemplo:"'No era un día cualquiera' (para decir que fue horrible)."},
+        {id:20,nombre:"Imagen sensorial",descripcion:"Apelar a los cinco sentidos.",ejemplo:"Olor a pólvora, café, sudor y flores marchitas."},
+        {id:21,nombre:"Primera persona testigo",descripcion:"Narrador observador.",ejemplo:"'Vi cómo metían a mi hermano en la camioneta gris' (Patricia Nieto)."},
+        {id:22,nombre:"Primera persona protagonista",descripcion:"Narrador personaje principal.",ejemplo:"'Nací en una casa de bahareque, pero todo cambió...'"},
+        {id:23,nombre:"Segunda persona (usted)",descripcion:"Hablar directamente al lector.",ejemplo:"'Usted llegó a esa esquina sin saber que lo miraban'."},
+        {id:24,nombre:"Tercera omnisciente",descripcion:"Sabe pensamientos de todos.",ejemplo:"'Mientras Juan temía, María pensaba en su hijo.'"},
+        {id:25,nombre:"Tercera limitada",descripcion:"Accede a un solo personaje.",ejemplo:"Ver la masacre desde los ojos del niño escondido bajo la cama."},
+        {id:26,nombre:"Tercera objetiva",descripcion:"Solo acciones y diálogos.",ejemplo:"'Abrió la puerta. Sonó un disparo.'"},
+        {id:27,nombre:"Narrador poco fiable",descripcion:"El personaje narrador miente o está perturbado.",ejemplo:"Crónica de un sicópata sin corrección moralizante."},
+        {id:28,nombre:"Tono elegíaco",descripcion:"Lamento, duelo.",ejemplo:"Crónicas de desapariciones en la guerra."},
+        {id:29,nombre:"Tono irónico",descripcion:"Decir lo contrario con distancia crítica.",ejemplo:"Retrato de un político corrupto con falsos elogios."},
+        {id:30,nombre:"Tono neutro",descripcion:"Objetivo, sin adjetivos valorativos.",ejemplo:"Informe de datos duros dentro de una crónica."},
+        {id:31,nombre:"Tono épico",descripcion:"Registro grandioso para sobrevivientes.",ejemplo:"La travesía de un desplazado que cruzó la selva a pie."},
+        {id:32,nombre:"Cambio de tono",descripcion:"Transición suave entre tonos.",ejemplo:"De ironía a elegía cuando se revela tragedia."},
+        {id:33,nombre:"Narrador en segunda plural",descripcion:"Usar 'nosotros' para comunidad.",ejemplo:"'Nosotros, los que vivimos esa noche, nunca olvidaremos...'"},
+        {id:34,nombre:"Narrador múltiple",descripcion:"Alternancia de voces.",ejemplo:"Masacre contada por víctimas, victimarios y testigos."},
+        {id:35,nombre:"Narrador editorial",descripcion:"Periodista opina abiertamente.",ejemplo:"García Márquez: 'lo que sigue es un acto de fe'."},
+        {id:36,nombre:"Analepsis (flashback)",descripcion:"Salto al pasado.",ejemplo:"Abre con muerte, retrocede a la vida."},
+        {id:37,nombre:"Analepsis interna",descripcion:"Flashback breve dentro de escena.",ejemplo:"Mientras empujan al detenido, recuerda a su mujer."},
+        {id:38,nombre:"Elipsis temporal",descripcion:"Salto adelante en el tiempo.",ejemplo:"'Le ataron las manos. Tres días después apareció flotando'."},
+        {id:39,nombre:"Elipsis de lo indecible",descripcion:"Omitir violencia explícita.",ejemplo:"'Le vendaron los ojos. Luego, solo el ruido del río.'"},
+        {id:40,nombre:"In medias res",descripcion:"Comenzar en medio de la acción.",ejemplo:"'Cuando la camioneta se detuvo frente a su casa, Juan sabía que iba a morir'."},
+        {id:41,nombre:"Final resonante",descripcion:"Última frase que sigue vibrando.",ejemplo:"'La tierra de los colombianos es roja. No solo por el hierro.'"},
+        {id:42,nombre:"Final circular",descripcion:"Vuelve a la imagen inicial transformada.",ejemplo:"Empieza con niño mirando el mar; termina con el mismo hombre."},
+        {id:43,nombre:"Final abierto",descripcion:"Incertidumbre permanece.",ejemplo:"'Su madre sigue barriendo el umbral.'"},
+        {id:44,nombre:"Prolepsis (flashforward)",descripcion:"Anticipación del futuro.",ejemplo:"'Años después, su hijo también sería reclutado'."},
+        {id:45,nombre:"Estructura de muñeca rusa",descripcion:"Historia dentro de otra.",ejemplo:"Periodista entrevista a un viejo que cuenta otra historia."},
+        {id:46,nombre:"Caracterización por detalle físico",descripcion:"Rasgo corporal que revela carácter.",ejemplo:"'Sus uñas mordidas hasta la carne'."},
+        {id:47,nombre:"Caracterización por gesto recurrente",descripcion:"Tic que se repite.",ejemplo:"'Cada vez que mentía, se tocaba la nuca'."},
+        {id:48,nombre:"Caracterización por acción decisiva",descripcion:"Una acción define.",ejemplo:"'En medio del tiroteo, se arrodilló y pidió perdón'."},
+        {id:49,nombre:"Motivación humanizada",descripcion:"Deseos concretos, no abstractos.",ejemplo:"Robó para pagar cirugía de su hija, no por 'pobreza'."},
+        {id:50,nombre:"Arco de transformación",descripcion:"Cambio interior del personaje.",ejemplo:"Desplazado que entra con miedo y sale con rabia organizada."},
+        {id:51,nombre:"Antagonista concreto",descripcion:"Mal abstracto con rostro.",ejemplo:"'El capitán Rojas, bajo, olor a aguardiente, botas embarradas'."},
+        {id:52,nombre:"Personaje colectivo",descripcion:"Grupo como personaje.",ejemplo:"Los desplazados del Chocó."},
+        {id:53,nombre:"Retrato en espejo",descripcion:"Definir por contraste con otro.",ejemplo:"'Era el vivo retrato de su padre, pero sin la bondad'."},
+        {id:54,nombre:"Perfil por acumulación",descripcion:"Lista de hábitos.",ejemplo:"'Madrugaba, regaba las matas, prendía veladoras, esperaba'."},
+        {id:55,nombre:"Personaje arquetípico",descripcion:"Representante de una clase.",ejemplo:"La madre buscadora de desaparecidos."},
+        {id:56,nombre:"Subconversación",descripcion:"Lo que no se dice.",ejemplo:"'—¿Trajiste la plata? —No. —Entonces ya sabe.'"},
+        {id:57,nombre:"Idiolecto",descripcion:"Forma de hablar propia.",ejemplo:"Campesino: 'Pues, sabe, hágale, qué hubo, parce'."},
+        {id:58,nombre:"Verbos de dicción",descripcion:"Usar 'susurró', 'escupió', etc.",ejemplo:"'—No me mates —alcanzó a decir antes de caer'."},
+        {id:59,nombre:"Diálogo interior",descripcion:"Pensamientos en cursiva.",ejemplo:"'*Quédate quieto*, se repitió.'"},
+        {id:60,nombre:"Diálogo en eco",descripcion:"Repetir palabras del otro.",ejemplo:"'—Váyase. —¿Que me vaya? —Eso dije.'"},
+        {id:61,nombre:"Monólogo interior",descripcion:"Flujo de conciencia.",ejemplo:"'El bus no llega si llega me matan no debo pensar eso...'"},
+        {id:62,nombre:"Escena muda",descripcion:"Diálogo sin palabras.",ejemplo:"Miradas, gesto, puerta que se cierra."},
+        {id:63,nombre:"Diálogo truncado",descripcion:"Interrupción en momento crítico.",ejemplo:"'—Lo que pasa es que yo... —¡Cállate!'"},
+        {id:64,nombre:"Cita directa libre",descripcion:"Sin verbo introductorio.",ejemplo:"Silencio. 'Aquí no ha pasado nada.' Silencio."},
+        {id:65,nombre:"Diálogo superpuesto",descripcion:"Dos voces a la vez.",ejemplo:"'—¡Sal de ahí! —Pero yo— ¡No discutas!'"},
+        {id:66,nombre:"Descripción funcional",descripcion:"Solo elementos relevantes.",ejemplo:"Describir callejones y oscuridad si habrá ataque."},
+        {id:67,nombre:"Pathetic fallacy",descripcion:"Naturaleza con emociones humanas.",ejemplo:"'La lluvia no cesaba, como si el cielo llorara a los muertos'."},
+        {id:68,nombre:"Atmósfera sensorial",descripcion:"Olores, sonidos, temperatura.",ejemplo:"Pólvora, sudor, flores marchitas, calor de la selva."},
+        {id:69,nombre:"Espacio psicológico",descripcion:"Espacio refleja estado mental.",ejemplo:"'La celda se encogía día a día'."},
+        {id:70,nombre:"Contraste térmico",descripcion:"Cambio abrupto de registro.",ejemplo:"'El verdugo pidió un tinto con dos de azúcar'."},
+        {id:71,nombre:"Cliffhanger",descripcion:"Cortar en máxima tensión.",ejemplo:"'Una voz dijo: Sabemos dónde vives.' (salta a infancia)."},
+        {id:72,nombre:"Suspense de información",descripcion:"Dosificar datos.",ejemplo:"Primero tres hombres, luego acento extranjero, luego uno era el de la foto."},
+        {id:73,nombre:"Tempo de escena",descripcion:"Cámara lenta en momentos clave.",ejemplo:"El disparo que tarda tres párrafos."},
+        {id:74,nombre:"Tempo de resumen",descripcion:"Acelerar tiempo narrativo.",ejemplo:"'De 1998 a 2002, el pueblo fue un infierno'."},
+        {id:75,nombre:"Falso clímax",descripcion:"Tensión que se resuelve en falso.",ejemplo:"Abre, no hay nadie; respira; entonces suena tiro."},
+        {id:76,nombre:"Leit-motiv",descripcion:"Frase o imagen repetida simbólicamente.",ejemplo:"'La arepa todavía estaba caliente'."},
+        {id:77,nombre:"Punto de vista múltiple",descripcion:"Alternancia de perspectivas.",ejemplo:"Masacre contada por víctimas, victimarios, testigos."},
+        {id:78,nombre:"Correlato objetivo",descripcion:"Emoción expresada en objetos.",ejemplo:"Una silla vacía, zapatos pequeños colgados."},
+        {id:79,nombre:"Anacronía",descripcion:"Desorden temporal deliberado.",ejemplo:"Comenzar con el final, saltar al principio."},
+        {id:80,nombre:"Prolepsis",descripcion:"Anticipación breve del futuro.",ejemplo:"'Años después, su hijo también sería reclutado'."},
+        {id:81,nombre:"Hipérbole controlada",descripcion:"Exageración con intención.",ejemplo:"'El frío congelaba las palabras'."},
+        {id:82,nombre:"Lítotes",descripcion:"Afirmar negando lo contrario.",ejemplo:"'No era un día cualquiera'."},
+        {id:83,nombre:"Retrato en espejo",descripcion:"Personaje definido por otro.",ejemplo:"'Era el vivo retrato de su padre, pero sin bondad'."},
+        {id:84,nombre:"Perfil por acumulación",descripcion:"Lista de acciones/hábitos.",ejemplo:"Madrugaba, regaba, prendía veladoras, esperaba."},
+        {id:85,nombre:"Escena muda",descripcion:"Diálogo sin palabras.",ejemplo:"Miradas y gestos."},
+        {id:86,nombre:"Diálogo en eco",descripcion:"Repetir lo último del otro.",ejemplo:"'—Váyase. —¿Que me vaya?'"},
+        {id:87,nombre:"Monólogo interior",descripcion:"Flujo sin orden.",ejemplo:"'El bus no llega si llega me matan...'"},
+        {id:88,nombre:"Elipsis temporal",descripcion:"Salto de tiempo.",ejemplo:"'Diez años después, el pueblo ya no existía'."},
+        {id:89,nombre:"Elipsis espacial",descripcion:"Salto de lugar sin transición.",ejemplo:"'En Bogotá cerraron el caso. En Tumaco, su madre seguía buscando'."},
+        {id:90,nombre:"Falso documental",descripcion:"Citas de documentos ficticios.",ejemplo:"'El informe oficial decía: no hubo irregularidades'."},
+        {id:91,nombre:"Nota al pie narrativa",descripcion:"Acotación del autor fuera del flujo.",ejemplo:"Un asterisco con dato macabro."},
+        {id:92,nombre:"Catálogo",descripcion:"Lista de elementos.",ejemplo:"'Mataron a profesores, estudiantes, campesinos, perros, gallinas...'"},
+        {id:93,nombre:"Ritmo ternario",descripcion:"Estructura de tres elementos.",ejemplo:"'Llegaron, vieron, desaparecieron'."},
+        {id:94,nombre:"Quiasmo",descripcion:"Inversión simétrica.",ejemplo:"'Cuando él quiso salir, el pueblo ya lo había matado simbólicamente'."},
+        {id:95,nombre:"Paralelismo",descripcion:"Repetición de estructura.",ejemplo:"'Unos huyeron al monte. Otros se echaron al río. Unos pocos se quedaron'."},
+        {id:96,nombre:"Contraste térmico",descripcion:"Cambio abrupto de registro.",ejemplo:"'El verdugo pidió un tinto con dos de azúcar'."},
+        {id:97,nombre:"Suspense dramático",descripcion:"Lector sabe más que el personaje.",ejemplo:"Entra a casa con francotirador que el lector ya sabe."},
+        {id:98,nombre:"Suspense vicario",descripcion:"Personaje sabe más que el lector.",ejemplo:"El personaje sonríe al ver algo aún no revelado."},
+        {id:99,nombre:"Falso clímax",descripcion:"Tensión falsa resuelta.",ejemplo:"Abre, no hay nadie; respira; entonces tiro."},
+        {id:100,nombre:"Cierre resonante",descripcion:"Última frase que perdura.",ejemplo:"'La tierra de los colombianos es roja. No solo por el hierro.'"}
+    ];
+
+    // Estadísticas de práctica/quiz
+    let estadisticas = { intentos: 0, aciertos: 0 };
+
+    // Utilidad: normalizar texto (quitar acentos, minúsculas)
+    function normalizar(texto) {
+        return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+    }
+
+    // Mostrar contenido principal
+    const contenidoDiv = document.getElementById('contenidoPrincipal');
+
+    // --- LISTADO PAGINADO ---
+    let paginaActual = 1;
+    const itemsPorPagina = 20;
+
+    function renderListado(pagina) {
+        const total = tecnicas.length;
+        const inicio = (pagina - 1) * itemsPorPagina;
+        const fin = Math.min(inicio + itemsPorPagina, total);
+        const paginasTotales = Math.ceil(total / itemsPorPagina);
+        let html = `<div class="card shadow-sm">
+            <div class="card-header bg-dark text-white"><i class="fas fa-list-ul me-2"></i>Listado de técnicas (${total}) - Página ${pagina} de ${paginasTotales}</div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">`;
+        for (let i = inicio; i < fin; i++) {
+            const t = tecnicas[i];
+            html += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span><span class="badge bg-secondary me-2">${t.id}</span> <strong>${t.nombre}</strong></span>
+                        <button class="btn btn-sm btn-outline-primary verDetalleBtn" data-id="${t.id}"><i class="fas fa-eye"></i> Ver detalle</button>
+                    </li>`;
+        }
+        html += `</ul></div><div class="card-footer d-flex justify-content-between align-items-center">
+                    <button class="btn btn-secondary btn-sm" id="prevPageBtn" ${pagina===1?'disabled':''}>Anterior</button>
+                    <span>Página ${pagina} / ${paginasTotales}</span>
+                    <button class="btn btn-secondary btn-sm" id="nextPageBtn" ${pagina===paginasTotales?'disabled':''}>Siguiente</button>
+                </div></div>`;
+        contenidoDiv.innerHTML = html;
+
+        document.getElementById('prevPageBtn')?.addEventListener('click', () => {
+            if (pagina > 1) renderListado(pagina-1);
+        });
+        document.getElementById('nextPageBtn')?.addEventListener('click', () => {
+            if (pagina < paginasTotales) renderListado(pagina+1);
+        });
+        document.querySelectorAll('.verDetalleBtn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = parseInt(btn.getAttribute('data-id'));
+                const tecnica = tecnicas.find(t => t.id === id);
+                if (tecnica) {
+                    document.getElementById('modalTitulo').innerText = tecnica.nombre;
+                    document.getElementById('modalCuerpo').innerHTML = `<p><strong>Descripción:</strong> ${tecnica.descripcion}</p><p><strong>Ejemplo:</strong> ${tecnica.ejemplo}</p>`;
+                    new bootstrap.Modal(document.getElementById('modalTecnica')).show();
+                }
+            });
+        });
+    }
+
+    // --- MODO PRÁCTICA ---
+    let practicaActual = null;
+    function iniciarPractica() {
+        practicaActual = tecnicas[Math.floor(Math.random() * tecnicas.length)];
+        let html = `<div class="card shadow-sm">
+            <div class="card-header bg-success text-white"><i class="fas fa-pen-fancy me-2"></i>Modo práctica</div>
+            <div class="card-body">
+                <p class="lead">Lee la definición y escribe el nombre de la técnica.</p>
+                <div class="alert alert-info">Definición: <strong>${practicaActual.descripcion}</strong></div>
+                <div class="mb-3">
+                    <label class="form-label">Tu respuesta:</label>
+                    <input type="text" id="respuestaPractica" class="form-control" placeholder="Escribe aquí...">
+                </div>
+                <button id="verificarPracticaBtn" class="btn btn-primary">Verificar</button>
+                <button id="siguientePracticaBtn" class="btn btn-outline-secondary">Siguiente técnica</button>
+                <div id="feedbackPractica" class="mt-3"></div>
+            </div>
+        </div>`;
+        contenidoDiv.innerHTML = html;
+
+        document.getElementById('verificarPracticaBtn').addEventListener('click', () => {
+            const respuesta = document.getElementById('respuestaPractica').value;
+            const normalizadaResp = normalizar(respuesta);
+            const normalizadaTec = normalizar(practicaActual.nombre);
+            const feedback = document.getElementById('feedbackPractica');
+            estadisticas.intentos++;
+            if (normalizadaResp === normalizadaTec) {
+                estadisticas.aciertos++;
+                feedback.innerHTML = '<div class="alert alert-success">✅ ¡Correcto! Bien hecho.</div>';
+            } else {
+                feedback.innerHTML = `<div class="alert alert-danger">❌ Incorrecto. La respuesta correcta era: <strong>${practicaActual.nombre}</strong><br><small>${practicaActual.ejemplo}</small></div>`;
+            }
+            document.getElementById('verificarPracticaBtn').disabled = true;
+        });
+        document.getElementById('siguientePracticaBtn').addEventListener('click', () => {
+            iniciarPractica();
+        });
+    }
+
+    // --- MODO QUIZ (opción múltiple) ---
+    let quizActual = null;
+    let opcionesQuiz = [];
+    function generarQuiz() {
+        const correcta = tecnicas[Math.floor(Math.random() * tecnicas.length)];
+        // Elegir 3 técnicas distintas como distractores
+        let otras = tecnicas.filter(t => t.id !== correcta.id);
+        let dist = [];
+        while (dist.length < 3 && otras.length > 0) {
+            let rand = Math.floor(Math.random() * otras.length);
+            if (!dist.includes(otras[rand].nombre)) dist.push(otras[rand].nombre);
+            otras.splice(rand,1);
+        }
+        if (dist.length < 3) dist = ["Elipsis", "Símil", "Metáfora"]; // fallback
+        opcionesQuiz = [correcta.nombre, ...dist];
+        opcionesQuiz = opcionesQuiz.sort(() => Math.random() - 0.5);
+        quizActual = correcta;
+        return { correcta, opciones: opcionesQuiz };
+    }
+
+    function renderQuiz() {
+        const { correcta, opciones } = generarQuiz();
+        let html = `<div class="card shadow-sm">
+            <div class="card-header bg-warning text-dark"><i class="fas fa-question-circle me-2"></i>Modo quiz - Opción múltiple</div>
+            <div class="card-body">
+                <p class="lead">¿A qué técnica pertenece la siguiente definición?</p>
+                <div class="alert alert-secondary">${correcta.descripcion}</div>
+                <div class="mb-3">
+                    ${opciones.map((opt, idx) => `<div class="form-check"><input class="form-check-input" type="radio" name="quizOpcion" value="${opt}" id="opt${idx}"><label class="form-check-label" for="opt${idx}">${opt}</label></div>`).join('')}
+                </div>
+                <button id="verificarQuizBtn" class="btn btn-primary">Responder</button>
+                <button id="siguienteQuizBtn" class="btn btn-outline-secondary">Siguiente pregunta</button>
+                <div id="feedbackQuiz" class="mt-3"></div>
+            </div>
+        </div>`;
+        contenidoDiv.innerHTML = html;
+        document.getElementById('verificarQuizBtn').addEventListener('click', () => {
+            const seleccionado = document.querySelector('input[name="quizOpcion"]:checked');
+            if (!seleccionado) {
+                document.getElementById('feedbackQuiz').innerHTML = '<div class="alert alert-warning">Selecciona una opción.</div>';
+                return;
+            }
+            const respuestaUsuario = seleccionado.value;
+            estadisticas.intentos++;
+            if (normalizar(respuestaUsuario) === normalizar(correcta.nombre)) {
+                estadisticas.aciertos++;
+                document.getElementById('feedbackQuiz').innerHTML = '<div class="alert alert-success">✅ ¡Correcto!</div>';
+            } else {
+                document.getElementById('feedbackQuiz').innerHTML = `<div class="alert alert-danger">❌ Incorrecto. La respuesta correcta es: ${correcta.nombre}</div>`;
+            }
+            document.getElementById('verificarQuizBtn').disabled = true;
+        });
+        document.getElementById('siguienteQuizBtn').addEventListener('click', () => {
+            renderQuiz();
+        });
+    }
+
+    // --- ESTADÍSTICAS ---
+    function mostrarEstadisticas() {
+        let porcentaje = estadisticas.intentos === 0 ? 0 : (estadisticas.aciertos / estadisticas.intentos * 100).toFixed(1);
+        let html = `<div class="card shadow-sm">
+            <div class="card-header bg-info text-white"><i class="fas fa-chart-line me-2"></i>Estadísticas de aprendizaje</div>
+            <div class="card-body">
+                <p><strong>Intentos totales:</strong> ${estadisticas.intentos}</p>
+                <p><strong>Aciertos:</strong> ${estadisticas.aciertos}</p>
+                <p><strong>Porcentaje de acierto:</strong> ${porcentaje}%</p>
+                <button id="reiniciarStatsBtn" class="btn btn-danger">Reiniciar estadísticas</button>
+                <button id="volverMenuBtn" class="btn btn-secondary">Volver al menú</button>
+            </div>
+        </div>`;
+        contenidoDiv.innerHTML = html;
+        document.getElementById('reiniciarStatsBtn')?.addEventListener('click', () => {
+            estadisticas = { intentos: 0, aciertos: 0 };
+            mostrarEstadisticas();
+        });
+        document.getElementById('volverMenuBtn')?.addEventListener('click', () => {
+            mostrarBienvenida();
+        });
+    }
+
+    function mostrarBienvenida() {
+        contenidoDiv.innerHTML = `<div class="card shadow-sm">
+            <div class="card-header bg-white text-dark fw-bold"><i class="fas fa-star-of-life me-2"></i>Bienvenido</div>
+            <div class="card-body text-center py-5">
+                <i class="fas fa-feather fa-3x text-muted mb-3"></i>
+                <h4>Domina las 100 técnicas del periodismo narrativo colombiano</h4>
+                <p>Selecciona una opción arriba: listado, práctica o quiz. Acumula aciertos y mejora tu escritura.</p>
+                <hr class="w-50 mx-auto">
+                <small class="text-muted">Inspirado en el ensayo de 100 técnicas · García Márquez, Salcedo Ramos, Patricia Nieto, etc.</small>
+            </div>
+        </div>`;
+    }
+
+    // Eventos del menú principal
+    document.getElementById('btnListar').addEventListener('click', () => renderListado(1));
+    document.getElementById('btnPractica').addEventListener('click', iniciarPractica);
+    document.getElementById('btnQuiz').addEventListener('click', renderQuiz);
+    // Añadimos un botón de estadísticas (no estaba en el diseño original, pero lo añado como extra en navbar? Voy a agregar un botón en la zona de menú para estadísticas)
+    // Mejor agrego una fila adicional en el panel de opciones principales.
+    const panelOpciones = document.querySelector('.row.mb-4');
+    const colStats = document.createElement('div');
+    colStats.className = 'col-md-4 mb-2';
+    colStats.innerHTML = '<button id="btnEstadisticas" class="btn btn-outline-secondary w-100"><i class="fas fa-chart-simple me-2"></i>Estadísticas</button>';
+    panelOpciones.appendChild(colStats);
+    document.getElementById('btnEstadisticas').addEventListener('click', mostrarEstadisticas);
+
+    // Inicializar bienvenida
+    mostrarBienvenida();
+</script>
+</body>
+</html>

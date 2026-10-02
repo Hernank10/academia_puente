@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Flota Podcast · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🎙️ FLOTA PODCAST<small>100 TÉCNICAS · PODCASTING</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="contenido" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Contenido <span class="badge-personaje bg-dorado">Guion</span></a>
+        <a class="nav-link" data-section="voz" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Voz <span class="badge-personaje bg-azul">Locución</span></a>
+        <a class="nav-link" data-section="tecnica" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Técnica <span class="badge-personaje bg-verde">Producción</span></a>
+        <a class="nav-link" data-section="entrevista" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Entrevista <span class="badge-personaje bg-purpura">Diálogo</span></a>
+        <a class="nav-link" data-section="marketing" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Marketing <span class="badge-personaje bg-rojo">Crecimiento</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🎙️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Podcasting</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Podcasting universal</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área del podcasting:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Contenido</strong> – Guion, estructura, narrativa, temas, formatos.</li>
+                    <li><strong style="color:var(--neon-azul);">Voz</strong> – Locución, tono, ritmo, dicción, entonación.</li>
+                    <li><strong style="color:var(--neon-verde);">Técnica</strong> – Producción, edición, música, sonido, equipos.</li>
+                    <li><strong style="color:var(--neon-purpura);">Entrevista</strong> – Diálogo, preguntas, escucha, improvisación.</li>
+                    <li><strong style="color:var(--neon-rojo);">Marketing</strong> – Crecimiento, distribución, monetización, comunidad.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-contenido" class="section-content" style="display:none;"></div>
+        <div id="section-voz" class="section-content" style="display:none;"></div>
+        <div id="section-tecnica" class="section-content" style="display:none;"></div>
+        <div id="section-entrevista" class="section-content" style="display:none;"></div>
+        <div id="section-marketing" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    contenido: {
+        nombre: "Contenido", color: "dorado", icono: "bi-robot",
+        especialidad: "Guion, estructura, narrativa, temas, formatos",
+        tecnicas: [
+            { titulo: "El gancho inicial", teoria: "Los primeros 30 segundos son cruciales. Debes captar la atención del oyente con una pregunta, una historia o una declaración impactante.", recurso: "Gancho", ejemplo: "El podcast 'Radio Ambulante' comienza con una frase que genera curiosidad inmediata.", ejercicio: "Escribe un gancho para tu podcast.", reto: "Graba los primeros 30 segundos de tu podcast." },
+            { titulo: "La estructura de tres actos", teoria: "Todo episodio debe tener un principio, un desarrollo y un final. El principio presenta el tema, el desarrollo lo explora y el final cierra con una reflexión.", recurso: "3 actos", ejemplo: "'El hilo' estructura cada episodio en tres actos claros.", ejercicio: "Diseña la estructura de un episodio.", reto: "Escribe un guion con tres actos." },
+            { titulo: "El arco narrativo", teoria: "Un buen podcast tiene un arco narrativo que mantiene el interés del oyente durante todo el episodio.", recurso: "Arco narrativo", ejemplo: "'Serial' es un ejemplo de arco narrativo perfecto.", ejercicio: "Diseña un arco narrativo para tu episodio.", reto: "Escribe un episodio con arco narrativo." },
+            { titulo: "El tema central", teoria: "Cada episodio debe tener un tema central claro que guíe toda la narrativa.", recurso: "Tema central", ejemplo: "'La Brecha' tiene un tema central claro en cada episodio.", ejercicio: "Define el tema central de tu episodio.", reto: "Escribe un episodio sobre un tema central." },
+            { titulo: "La narrativa personal", teoria: "Los podcasts que funcionan mejor son aquellos que cuentan historias personales, que conectan con la audiencia.", recurso: "Narrativa personal", ejemplo: "'El podcast de Alex Fidalgo' es un ejemplo de narrativa personal.", ejercicio: "Escribe una historia personal para tu podcast.", reto: "Graba un episodio con narrativa personal." },
+            { titulo: "El formato del podcast", teoria: "Elige un formato: entrevistas, monólogos, narrativa, mesa redonda, documental.", recurso: "Formato", ejemplo: "'The Daily' de NYT usa el formato de entrevista.", ejercicio: "Elige un formato para tu podcast.", reto: "Graba un episodio en el formato elegido." },
+            { titulo: "La investigación", teoria: "La investigación es la base de un buen podcast. Debes conocer el tema a fondo.", recurro: "Investigación", ejemplo: "'Caso 63' se basa en una investigación profunda.", ejercicio: "Investiga un tema para tu podcast.", reto: "Escribe un episodio basado en investigación." },
+            { titulo: "El guion escrito", teoria: "El guion escrito es la base del podcast. Debe ser claro, conciso y con ritmo.", recurso: "Guion escrito", ejemplo: "'Radio Ambulante' tiene guiones muy trabajados.", ejercicio: "Escribe un guion para tu episodio.", reto: "Graba un episodio siguiendo tu guion." },
+            { titulo: "La improvisación", teoria: "La improvisación puede ser una herramienta valiosa para dar naturalidad al podcast.", recurso: "Improvisación", ejemplo: "'The Joe Rogan Experience' es un ejemplo de improvisación.", ejercicio: "Improvisa un minuto de podcast.", reto: "Graba un episodio con improvisación." },
+            { titulo: "La narrativa de suspense", teoria: "El suspense mantiene al oyente enganchado. Introduce preguntas que se responden más tarde.", recurso: "Suspense", ejemplo: "'Serial' es un ejemplo de suspense perfecto.", ejercicio: "Escribe un episodio con suspense.", reto: "Graba un episodio con suspense." },
+            { titulo: "El cierre con impacto", teoria: "El final del episodio debe ser memorable, dejar una reflexión o un llamado a la acción.", recurso: "Cierre", ejemplo: "'El hilo' termina con una reflexión que invita a la reflexión.", ejercicio: "Escribe un cierre para tu episodio.", reto: "Graba un episodio con cierre impactante." },
+            { titulo: "El resumen episódico", teoria: "Al final del episodio, haz un resumen de los puntos clave para fijar las ideas.", recurso: "Resumen", ejemplo: "'The Daily' de NYT hace un resumen al final.", ejercicio: "Escribe un resumen para tu episodio.", reto: "Graba un episodio con resumen." },
+            { titulo: "El teaser", teoria: "El teaser es un avance del próximo episodio que mantiene el interés de la audiencia.", recurso: "Teaser", ejemplo: "'Serial' usa teasers efectivos.", ejercicio: "Escribe un teaser para tu próximo episodio.", reto: "Graba un teaser." },
+            { titulo: "La continuidad", teoria: "Mantén una continuidad entre episodios, con referencias y llamados al episodio anterior.", recurso: "Continuidad", ejemplo: "'El hilo' tiene continuidad entre episodios.", ejercicio: "Escribe una continuidad para tu podcast.", reto: "Graba un episodio con continuidad." },
+            { titulo: "La diversidad de formatos", teoria: "Experimenta con diferentes formatos para mantener la frescura del podcast.", recurso: "Diversidad", ejemplo: "'Radio Ambulante' experimenta con formatos.", ejercicio: "Diseña un formato experimental.", reto: "Graba un episodio con formato experimental." },
+            { titulo: "La adaptación al público", teoria: "Conoce a tu audiencia y adapta el contenido a sus intereses y necesidades.", recurso: "Adaptación", ejemplo: "'The Joe Rogan Experience' se adapta a su audiencia.", ejercicio: "Investiga a tu audiencia.", reto: "Crea un episodio adaptado a tu audiencia." },
+            { titulo: "La colaboración", teoria: "Colaborar con otros creadores puede ampliar tu audiencia y enriquecer el contenido.", recurso: "Colaboración", ejemplo: "'El podcast de Alex Fidalgo' colabora con otros.", ejercicio: "Contacta a un colaborador.", reto: "Graba un episodio con un colaborador." },
+            { titulo: "La retroalimentación", teoria: "Escucha a tu audiencia y utiliza su retroalimentación para mejorar.", recurso: "Retroalimentación", ejemplo: "'The Daily' de NYT escucha a su audiencia.", ejercicio: "Pide retroalimentación a tu audiencia.", reto: "Graba un episodio basado en la retroalimentación." },
+            { titulo: "La emoción como motor", teoria: "La emoción es el motor del podcast. Conecta emocionalmente con la audiencia.", recurso: "Emoción", ejemplo: "'Radio Ambulante' conecta emocionalmente.", ejercicio: "Escribe un episodio con emoción.", reto: "Graba un episodio emocional." },
+            { titulo: "La autenticidad", teoria: "La autenticidad es la clave del éxito. Sé tú mismo y conecta con tu audiencia.", recurso: "Autenticidad", ejemplo: "'The Joe Rogan Experience' es auténtico.", ejercicio: "Escribe un episodio auténtico.", reto: "Graba un episodio con autenticidad." }
+        ]
+    },
+    voz: {
+        nombre: "Voz", color: "azul", icono: "bi-robot",
+        especialidad: "Locución, tono, ritmo, dicción, entonación",
+        tecnicas: [
+            { titulo: "La respiración diafragmática", teoria: "La respiración diafragmática es la base de una buena locución. Permite un mayor control del tono y el volumen.", recurso: "Respiración", ejemplo: "Los grandes locutores como Juan Carlos Calderón usan la respiración diafragmática.", ejercicio: "Practica la respiración diafragmática.", reto: "Graba un episodio usando la respiración diafragmática." },
+            { titulo: "La dicción clara", teoria: "La dicción clara es fundamental para que el oyente entienda cada palabra.", recurso: "Dicción", ejemplo: "Los locutores de 'Radio Ambulante' tienen una dicción clara.", ejercicio: "Practica la dicción con trabalenguas.", reto: "Graba un episodio con dicción clara." },
+            { titulo: "El tono adecuado", teoria: "El tono de voz debe adaptarse al contenido y a la audiencia. Un tono monótono aburre.", recurso: "Tono", ejemplo: "'The Joe Rogan Experience' tiene un tono variado.", ejercicio: "Practica diferentes tonos de voz.", reto: "Graba un episodio con tono variado." },
+            { titulo: "El ritmo de la voz", teoria: "El ritmo de la voz debe ser variado: a veces rápido, a veces lento, para mantener el interés.", recurso: "Ritmo", ejemplo: "'El hilo' tiene un ritmo dinámico.", ejercicio: "Practica diferentes ritmos de voz.", reto: "Graba un episodio con ritmo variado." },
+            { titulo: "La entonación", teoria: "La entonación es la melodía de la voz. Debe ser expresiva y variada.", recurso: "Entonación", ejemplo: "'The Daily' de NYT tiene una entonación clara.", ejercicio: "Practica la entonación con diferentes frases.", reto: "Graba un episodio con entonación expresiva." },
+            { titulo: "La pausa", teoria: "La pausa es una herramienta poderosa. Da tiempo al oyente para procesar la información.", recurso: "Pausa", ejemplo: "'Radio Ambulante' usa pausas estratégicas.", ejercicio: "Practica el uso de pausas.", reto: "Graba un episodio con pausas." },
+            { titulo: "La proyección de la voz", teoria: "La proyección de la voz es la capacidad de lanzar la voz sin forzarla. Es esencial para grabar sin micrófono.", recurso: "Proyección", ejemplo: "Los actores de voz usan la proyección.", ejercicio: "Practica la proyección de la voz.", reto: "Graba un episodio con proyección." },
+            { titulo: "El calentamiento vocal", teoria: "El calentamiento vocal prepara las cuerdas vocales para la grabación.", recurso: "Calentamiento", ejemplo: "Los locutores profesionales calientan la voz.", ejercicio: "Realiza un calentamiento vocal.", reto: "Graba un episodio después de calentar la voz." },
+            { titulo: "La modulación", teoria: "La modulación es la variación del tono y el volumen para dar expresividad a la voz.", recurso: "Modulación", ejemplo: "'El podcast de Alex Fidalgo' modula la voz.", ejercicio: "Practica la modulación.", reto: "Graba un episodio con modulación." },
+            { titulo: "La naturalidad", teoria: "La naturalidad es clave. No suenes como si estuvieras leyendo un texto.", recurso: "Naturalidad", ejemplo: "'The Joe Rogan Experience' es natural.", ejercicio: "Graba un episodio de forma natural.", reto: "Graba un episodio con naturalidad." },
+            { titulo: "La conexión con el oyente", teoria: "La voz debe crear una conexión emocional con el oyente, como si estuvieras hablando con un amigo.", recurso: "Conexión", ejemplo: "'Radio Ambulante' conecta con el oyente.", ejercicio: "Habla como si estuvieras con un amigo.", reto: "Graba un episodio con conexión." },
+            { titulo: "La variación de volumen", teoria: "El volumen debe variar para dar énfasis y dinamismo.", recurso: "Volumen", ejemplo: "'The Daily' de NYT varía el volumen.", ejercicio: "Practica la variación de volumen.", reto: "Graba un episodio con variación de volumen." },
+            { titulo: "La claridad en la pronunciación", teoria: "La pronunciación clara evita malentendidos y mejora la experiencia del oyente.", recurso: "Pronunciación", ejemplo: "Los locutores de 'Radio Ambulante' tienen buena pronunciación.", ejercicio: "Practica la pronunciación.", reto: "Graba un episodio con pronunciación clara." },
+            { titulo: "La emoción en la voz", teoria: "La emoción en la voz transmite sentimientos y conecta con el oyente.", recurso: "Emoción vocal", ejemplo: "'El hilo' transmite emoción con la voz.", ejercicio: "Practica la emoción en la voz.", reto: "Graba un episodio con emoción vocal." },
+            { titulo: "La flexibilidad vocal", teoria: "La flexibilidad vocal permite adaptar la voz a diferentes situaciones y personajes.", recurso: "Flexibilidad vocal", ejemplo: "Los actores de voz tienen flexibilidad vocal.", ejercicio: "Practica la flexibilidad vocal.", reto: "Graba un episodio con flexibilidad vocal." },
+            { titulo: "El uso del micrófono", teoria: "El uso correcto del micrófono mejora la calidad del audio. La distancia y la posición son clave.", recurso: "Micrófono", ejemplo: "Los profesionales usan el micrófono correctamente.", ejercicio: "Practica el uso del micrófono.", reto: "Graba un episodio con el micrófono adecuado." },
+            { titulo: "La eliminación de vicios", teoria: "Elimina vicios como las muletillas ('este', 'o sea') que distraen al oyente.", recurso: "Vicios", ejemplo: "Los buenos locutores evitan muletillas.", ejercicio: "Graba un episodio y elimina las muletillas.", reto: "Graba un episodio sin muletillas." },
+            { titulo: "La lectura en voz alta", teoria: "Lee en voz alta para mejorar la dicción y la entonación.", recurso: "Lectura en voz alta", ejemplo: "Los locutores profesionales leen en voz alta.", ejercicio: "Lee un texto en voz alta.", reto: "Graba la lectura de un texto." },
+            { titulo: "La grabación de prueba", teoria: "Graba una prueba para escuchar y mejorar tu voz antes de la grabación final.", recurso: "Prueba de grabación", ejemplo: "Los profesionales graban pruebas.", ejercicio: "Graba una prueba de voz.", reto: "Mejora tu voz basándote en la prueba." },
+            { titulo: "El cuidado de la voz", teoria: "Cuida tu voz: hidrátate, descansa y evita forzarla.", recurso: "Cuidado vocal", ejemplo: "Los locutores profesionales cuidan su voz.", ejercicio: "Hidrátate antes de grabar.", reto: "Mantén una rutina de cuidado vocal." }
+        ]
+    },
+    tecnica: {
+        nombre: "Técnica", color: "verde", icono: "bi-robot",
+        especialidad: "Producción, edición, música, sonido, equipos",
+        tecnicas: [
+            { titulo: "La elección del micrófono", teoria: "Elige un micrófono de calidad que se adapte a tu voz y a tu entorno de grabación.", recurso: "Micrófono", ejemplo: "Los podcasts profesionales usan micrófonos como el Shure SM7B.", ejercicio: "Investiga micrófonos para podcast.", reto: "Compra o prueba un micrófono profesional." },
+            { titulo: "El aislamiento acústico", teoria: "El aislamiento acústico reduce el ruido ambiental y mejora la calidad del audio.", recurso: "Aislamiento", ejemplo: "Los estudios profesionales están aislados acústicamente.", ejercicio: "Acondiciona tu espacio de grabación.", reto: "Graba un episodio en un espacio aislado." },
+            { titulo: "La edición de audio", teoria: "La edición de audio elimina errores, ruidos y mejora la calidad del sonido.", recurso: "Edición", ejemplo: "Los podcasts profesionales usan editores de audio como Audacity o Adobe Audition.", ejercicio: "Edita un episodio de podcast.", reto: "Edita un episodio profesionalmente." },
+            { titulo: "La música de fondo", teoria: "La música de fondo crea atmósfera y refuerza la narrativa del podcast.", recurso: "Música", ejemplo: "'Radio Ambulante' usa música de fondo de manera efectiva.", ejercicio: "Elige música de fondo para tu episodio.", reto: "Graba un episodio con música de fondo." },
+            { titulo: "El sonido ambiente", teoria: "El sonido ambiente crea inmersión y realismo en el podcast.", recurso: "Sonido ambiente", ejemplo: "'El hilo' usa sonido ambiente.", ejercicio: "Graba sonido ambiente para tu podcast.", reto: "Graba un episodio con sonido ambiente." },
+            { titulo: "La mezcla de audio", teoria: "La mezcla de audio equilibra los niveles de voz, música y sonido ambiente.", recurso: "Mezcla", ejemplo: "Los podcasts profesionales mezclan el audio.", ejercicio: "Mezcla el audio de un episodio.", reto: "Graba un episodio con mezcla profesional." },
+            { titulo: "La masterización", teoria: "La masterización es el proceso final que da cohesión y volumen al audio.", recurso: "Masterización", ejemplo: "Los podcasts profesionales masterizan el audio.", ejercicio: "Masteriza un episodio de podcast.", reto: "Graba un episodio masterizado." },
+            { titulo: "El ecualizador", teoria: "El ecualizador ajusta las frecuencias del audio para mejorar la claridad y el tono.", recurso: "Ecualizador", ejemplo: "Los profesionales usan el ecualizador.", ejercicio: "Aplica un ecualizador a tu voz.", reto: "Graba un episodio con ecualización." },
+            { titulo: "El compresor", teoria: "El compresor reduce el rango dinámico del audio, haciendo que la voz sea más consistente.", recurso: "Compresor", ejemplo: "Los podcasts profesionales usan compresores.", ejercicio: "Aplica un compresor a tu voz.", reto: "Graba un episodio con compresión." },
+            { titulo: "El eliminador de ruido", teoria: "El eliminador de ruido reduce el ruido de fondo sin afectar la voz.", recurso: "Eliminador de ruido", ejemplo: "Los profesionales usan eliminadores de ruido.", ejercicio: "Elimina el ruido de un episodio.", reto: "Graba un episodio sin ruido." },
+            { titulo: "La grabación en remoto", teoria: "La grabación en remoto permite grabar entrevistas con invitados que están en otros lugares.", recurso: "Grabación en remoto", ejemplo: "Los podcasts usan herramientas como Zencastr o Squadcast.", ejercicio: "Graba una entrevista en remoto.", reto: "Graba un episodio en remoto." },
+            { titulo: "El formato de audio", teoria: "Elige el formato de audio adecuado: MP3 es el más común para podcasts.", recurso: "Formato de audio", ejemplo: "La mayoría de los podcasts usan MP3.", ejercicio: "Exporta tu episodio en MP3.", reto: "Graba un episodio en MP3." },
+            { titulo: "La calidad del audio", teoria: "La calidad del audio es clave para la experiencia del oyente. Graba en alta calidad.", recurso: "Calidad de audio", ejemplo: "Los podcasts profesionales graban en alta calidad.", ejercicio: "Graba en alta calidad.", reto: "Graba un episodio en alta calidad." },
+            { titulo: "La edición de errores", teoria: "Elimina errores, pausas largas y ruidos durante la edición para mejorar el flujo del episodio.", recurso: "Edición de errores", ejemplo: "Los profesionales editan los errores.", ejercicio: "Edita un episodio eliminando errores.", reto: "Graba un episodio sin errores." },
+            { titulo: "El intro y el outro", teoria: "El intro y el outro son los momentos clave del podcast. Deben ser profesionales y consistentes.", recurso: "Intro/Outro", ejemplo: "Los podcasts profesionales tienen intro y outro.", ejercicio: "Crea un intro y un outro para tu podcast.", reto: "Graba un episodio con intro y outro." },
+            { titulo: "La identidad sonora", teoria: "La identidad sonora es la firma del podcast: música, efectos y estilo que lo hacen único.", recurso: "Identidad sonora", ejemplo: "'Radio Ambulante' tiene una identidad sonora.", ejercicio: "Crea una identidad sonora para tu podcast.", reto: "Graba un episodio con identidad sonora." },
+            { titulo: "La accesibilidad", teoria: "Asegúrate de que tu podcast sea accesible: transcripciones, subtítulos y formatos inclusivos.", recurso: "Accesibilidad", ejemplo: "Algunos podcasts ofrecen transcripciones.", ejercicio: "Crea una transcripción de tu episodio.", reto: "Graba un episodio accesible." },
+            { titulo: "El equipo de grabación", teoria: "Invierte en un buen equipo de grabación: micrófono, auriculares, interfaz de audio.", recurso: "Equipo", ejemplo: "Los profesionales usan equipos de calidad.", ejercicio: "Investiga equipos de grabación.", reto: "Adquiere un equipo de grabación básico." },
+            { titulo: "El software de edición", teoria: "Elige un software de edición que se adapte a tus necesidades: Audacity, Adobe Audition, GarageBand.", recurso: "Software", ejemplo: "Audacity es un software gratuito muy popular.", ejercicio: "Elige un software de edición.", reto: "Edita un episodio con tu software." },
+            { titulo: "La publicación del podcast", teoria: "Publica tu podcast en plataformas como Spotify, Apple Podcasts, Google Podcasts.", recurro: "Publicación", ejemplo: "Los podcasts se publican en múltiples plataformas.", ejercicio: "Publica tu podcast en una plataforma.", reto: "Graba un episodio y publícalo." }
+        ]
+    },
+    entrevista: {
+        nombre: "Entrevista", color: "purpura", icono: "bi-robot",
+        especialidad: "Diálogo, preguntas, escucha, improvisación",
+        tecnicas: [
+            { titulo: "La preparación de preguntas", teoria: "Prepara preguntas abiertas que permitan al invitado desarrollar sus ideas.", recurso: "Preguntas", ejemplo: "'The Daily' de NYT prepara preguntas cuidadosamente.", ejercicio: "Prepara preguntas para tu invitado.", reto: "Graba una entrevista con preguntas preparadas." },
+            { titulo: "La escucha activa", teoria: "Escucha activamente al invitado para poder hacer preguntas de seguimiento relevantes.", recurso: "Escucha activa", ejemplo: "Los buenos entrevistadores escuchan activamente.", ejercicio: "Practica la escucha activa.", reto: "Graba una entrevista con escucha activa." },
+            { titulo: "La improvisación", teoria: "La improvisación permite adaptarse a las respuestas del invitado y hacer preguntas inesperadas.", recurso: "Improvisación", ejemplo: "'The Joe Rogan Experience' se basa en la improvisación.", ejercicio: "Practica la improvisación en una entrevista.", reto: "Graba una entrevista improvisada." },
+            { titulo: "La empatía con el invitado", teoria: "La empatía crea un ambiente de confianza que permite al invitado abrirse.", recurso: "Empatía", ejemplo: "Los buenos entrevistadores son empáticos.", ejercicio: "Practica la empatía en una conversación.", reto: "Graba una entrevista con empatía." },
+            { titulo: "La conexión con el invitado", teoria: "Conecta con tu invitado a nivel personal para crear una conversación auténtica.", recurso: "Conexión", ejemplo: "Los grandes entrevistadores conectan con sus invitados.", ejercicio: "Conecta con tu invitado.", reto: "Graba una entrevista con conexión." },
+            { titulo: "El respeto por el invitado", teoria: "Trata a tu invitado con respeto, escuchando sus opiniones sin interrumpir.", recurso: "Respeto", ejemplo: "Los buenos entrevistadores respetan a sus invitados.", ejercicio: "Practica el respeto en una conversación.", reto: "Graba una entrevista con respeto." },
+            { titulo: "La diversidad de invitados", teoria: "Invita a personas con diferentes perspectivas para enriquecer el podcast.", recurso: "Diversidad", ejemplo: "'The Daily' de NYT tiene invitados diversos.", ejercicio: "Invita a una persona con una perspectiva diferente.", reto: "Graba una entrevista con un invitado diverso." },
+            { titulo: "La duración de la entrevista", teoria: "La duración de la entrevista debe ser adecuada al contenido y al interés del oyente.", recurso: "Duración", ejemplo: "Las entrevistas suelen durar entre 30 y 60 minutos.", ejercicio: "Define la duración de tu entrevista.", reto: "Graba una entrevista de duración adecuada." },
+            { titulo: "El inicio de la entrevista", teoria: "El inicio de la entrevista debe ser cálido y relajado para que el invitado se sienta cómodo.", recurso: "Inicio", ejemplo: "Los buenos entrevistadores comienzan con calidez.", ejercicio: "Practica el inicio de una entrevista.", reto: "Graba una entrevista con un inicio cálido." },
+            { titulo: "El cierre de la entrevista", teoria: "El cierre de la entrevista debe ser agradecido y dejar una buena impresión.", recurso: "Cierre", ejemplo: "Los buenos entrevistadores cierran con agradecimiento.", ejercicio: "Practica el cierre de una entrevista.", reto: "Graba una entrevista con un cierre agradecido." },
+            { titulo: "Las preguntas de seguimiento", teoria: "Las preguntas de seguimiento profundizan en las respuestas del invitado y enriquecen la entrevista.", recurso: "Preguntas de seguimiento", ejemplo: "Los buenos entrevistadores hacen preguntas de seguimiento.", ejercicio: "Practica las preguntas de seguimiento.", reto: "Graba una entrevista con preguntas de seguimiento." },
+            { titulo: "La preparación del invitado", teoria: "Informa al invitado sobre el tema y el formato de la entrevista para que se sienta preparado.", recurso: "Preparación del invitado", ejemplo: "Los profesionales preparan a sus invitados.", ejercicio: "Prepara a tu invitado para la entrevista.", reto: "Graba una entrevista con un invitado preparado." },
+            { titulo: "La grabación de la entrevista", teoria: "Asegúrate de que la grabación sea de alta calidad y que no haya interrupciones.", recurso: "Grabación de la entrevista", ejemplo: "Los profesionales graban en alta calidad.", ejercicio: "Graba una entrevista en alta calidad.", reto: "Graba una entrevista profesional." },
+            { titulo: "La edición de la entrevista", teoria: "Edita la entrevista para eliminar silencios largos, errores y ruidos.", recurso: "Edición de la entrevista", ejemplo: "Los profesionales editan las entrevistas.", ejercicio: "Edita una entrevista.", reto: "Graba una entrevista editada." },
+            { titulo: "La mezcla de la entrevista", teoria: "Mezcla la entrevista para equilibrar la voz del entrevistador y el invitado.", recurso: "Mezcla de la entrevista", ejemplo: "Los profesionales mezclan las entrevistas.", ejercicio: "Mezcla una entrevista.", reto: "Graba una entrevista mezclada." },
+            { titulo: "El resumen de la entrevista", teoria: "Al final de la entrevista, haz un resumen de los puntos clave para el oyente.", recurso: "Resumen de la entrevista", ejemplo: "Algunos podcasts hacen un resumen al final.", ejercicio: "Escribe un resumen de una entrevista.", reto: "Graba una entrevista con resumen." },
+            { titulo: "La evaluación de la entrevista", teoria: "Evalúa la entrevista para mejorar en futuras grabaciones.", recurso: "Evaluación", ejemplo: "Los profesionales evalúan sus entrevistas.", ejercicio: "Evalúa una entrevista que hayas grabado.", reto: "Graba una entrevista mejorada." },
+            { titulo: "La publicación de la entrevista", teoria: "Publica la entrevista en las plataformas de podcasting.", recurso: "Publicación de la entrevista", ejemplo: "Los podcasts se publican en múltiples plataformas.", ejercicio: "Publica una entrevista.", reto: "Graba una entrevista y publícala." },
+            { titulo: "La promoción de la entrevista", teoria: "Promociona la entrevista en redes sociales y otras plataformas para llegar a más oyentes.", recurso: "Promoción", ejemplo: "Los podcasts promocionan sus entrevistas.", ejercicio: "Promociona una entrevista.", reto: "Graba una entrevista y promociónala." },
+            { titulo: "El feedback de la entrevista", teoria: "Pide feedback a tus oyentes sobre la entrevista para mejorar.", recurro: "Feedback", ejemplo: "Los podcasts piden feedback a su audiencia.", ejercicio: "Pide feedback sobre tu entrevista.", reto: "Graba una entrevista basada en el feedback." }
+        ]
+    },
+    marketing: {
+        nombre: "Marketing", color: "rojo", icono: "bi-robot",
+        especialidad: "Crecimiento, distribución, monetización, comunidad",
+        tecnicas: [
+            { titulo: "La distribución en plataformas", teoria: "Distribuye tu podcast en múltiples plataformas: Spotify, Apple Podcasts, Google Podcasts.", recurso: "Distribución", ejemplo: "Los podcasts se distribuyen en varias plataformas.", ejercicio: "Distribuye tu podcast en 3 plataformas.", reto: "Graba un episodio y distribúyelo." },
+            { titulo: "El SEO para podcasts", teoria: "Optimiza el título, la descripción y las etiquetas de tu podcast para mejorar su visibilidad en los buscadores.", recurso: "SEO", ejemplo: "Los podcasts usan SEO para mejorar su visibilidad.", ejercicio: "Optimiza el SEO de tu podcast.", reto: "Graba un episodio con SEO optimizado." },
+            { titulo: "Las redes sociales", teoria: "Promociona tu podcast en redes sociales para llegar a más oyentes.", recurso: "Redes sociales", ejemplo: "Los podcasts usan redes sociales para promocionarse.", ejercicio: "Promociona tu podcast en redes sociales.", reto: "Graba un episodio y promociónalo en redes." },
+            { titulo: "La comunidad de oyentes", teoria: "Crea una comunidad de oyentes a través de grupos de Facebook, Discord o Telegram.", recurso: "Comunidad", ejemplo: "Los podcasts crean comunidades de oyentes.", ejercicio: "Crea una comunidad para tu podcast.", reto: "Graba un episodio para tu comunidad." },
+            { titulo: "La monetización", teoria: "Monetiza tu podcast a través de publicidad, patrocinios, donaciones o contenido premium.", recurso: "Monetización", ejemplo: "Los podcasts se monetizan de diversas formas.", ejercicio: "Explora formas de monetización.", reto: "Graba un episodio y monetízalo." },
+            { titulo: "El email marketing", teoria: "Usa el email marketing para mantener a tus oyentes informados sobre nuevos episodios.", recurso: "Email marketing", ejemplo: "Los podcasts usan email marketing.", ejercicio: "Crea una lista de correo para tu podcast.", reto: "Graba un episodio y promociónalo por email." },
+            { titulo: "El branding del podcast", teoria: "Crea una identidad visual y sonora para tu podcast que sea reconocible.", recurso: "Branding", ejemplo: "Los podcasts tienen un branding reconocible.", ejercicio: "Crea un branding para tu podcast.", reto: "Graba un episodio con branding." },
+            { titulo: "La colaboración con otros podcasts", teoria: "Colabora con otros podcasts para cruzar audiencias.", recurro: "Colaboración", ejemplo: "Los podcasts colaboran entre sí.", ejercicio: "Contacta a otro podcast para colaborar.", reto: "Graba un episodio en colaboración." },
+            { titulo: "La participación en eventos", teoria: "Participa en eventos y conferencias para dar a conocer tu podcast.", recurso: "Eventos", ejemplo: "Los podcasts participan en eventos.", ejercicio: "Participa en un evento relacionado con podcasts.", reto: "Graba un episodio sobre tu experiencia." },
+            { titulo: "El análisis de métricas", teoria: "Analiza las métricas de tu podcast para entender a tu audiencia y mejorar.", recurso: "Métricas", ejemplo: "Los podcasts analizan métricas.", ejercicio: "Analiza las métricas de tu podcast.", reto: "Graba un episodio basado en métricas." },
+            { titulo: "La adaptación al algoritmo", teoria: "Adapta tu contenido al algoritmo de las plataformas para mejorar la visibilidad.", recurso: "Algoritmo", ejemplo: "Los podcasts se adaptan a los algoritmos.", ejercicio: "Investiga el algoritmo de las plataformas.", reto: "Graba un episodio adaptado al algoritmo." },
+            { titulo: "La programación regular", teoria: "Mantén una programación regular para fidelizar a tu audiencia.", recurso: "Programación", ejemplo: "Los podcasts tienen una programación regular.", ejercicio: "Crea un calendario de publicación.", reto: "Graba un episodio y publícalo regularmente." },
+            { titulo: "La calidad sobre la cantidad", teoria: "Prioriza la calidad sobre la cantidad. Un buen episodio vale más que muchos episodios mediocres.", recurso: "Calidad", ejemplo: "Los podcasts exitosos priorizan la calidad.", ejercicio: "Enfócate en la calidad de tu episodio.", reto: "Graba un episodio de alta calidad." },
+            { titulo: "La promoción cruzada", teoria: "Promociona tu podcast en otros canales: blogs, newsletters, redes sociales.", recurso: "Promoción cruzada", ejemplo: "Los podcasts usan promoción cruzada.", ejercicio: "Promociona tu podcast en otros canales.", reto: "Graba un episodio y promociónalo." },
+            { titulo: "La retroalimentación de los oyentes", teoria: "Escucha a tus oyentes y utiliza su retroalimentación para mejorar.", recurso: "Retroalimentación", ejemplo: "Los podcasts escuchan a sus oyentes.", ejercicio: "Pide retroalimentación a tus oyentes.", reto: "Graba un episodio basado en la retroalimentación." },
+            { titulo: "La innovación en el formato", teoria: "Innovar en el formato puede diferenciarte de otros podcasts.", recurso: "Innovación", ejemplo: "Los podcasts innovan en el formato.", ejercicio: "Diseña un formato innovador.", reto: "Graba un episodio con formato innovador." },
+            { titulo: "La constancia", teoria: "La constancia es clave para construir una audiencia fiel.", recurso: "Constancia", ejemplo: "Los podcasts exitosos son constantes.", ejercicio: "Mantén la constancia en tu podcast.", reto: "Graba un episodio semanalmente." },
+            { titulo: "La pasión por el tema", teoria: "La pasión por el tema se transmite a la audiencia y hace que el podcast sea auténtico.", recurso: "Pasión", ejemplo: "Los podcasts exitosos son apasionados.", ejercicio: "Habla con pasión sobre tu tema.", reto: "Graba un episodio con pasión." },
+            { titulo: "La autenticidad", teoria: "La autenticidad es clave para conectar con la audiencia.", recurso: "Autenticidad", ejemplo: "Los podcasts auténticos conectan.", ejercicio: "Sé auténtico en tu podcast.", reto: "Graba un episodio auténtico." },
+            { titulo: "El legado del podcast", teoria: "Un podcast puede ser un legado que perdure en el tiempo y deje huella en la audiencia.", recurso: "Legado", ejemplo: "Algunos podcasts se convierten en legados.", ejercicio: "Reflexiona sobre el legado de tu podcast.", reto: "Graba un episodio que sea un legado." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['contenido','voz','tecnica','entrevista','marketing'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_podcast_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

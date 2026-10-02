@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Semántica Cognitiva y Percepción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-secondary: #111122;
+            --cyan: #00f0ff;
+            --violet: #b000ff;
+            --cyan-glow: 0 0 15px rgba(0,240,255,0.3);
+            --violet-glow: 0 0 20px rgba(176,0,255,0.4);
+            --text-cyan: #a0faff;
+            --text-violet: #d9a0ff;
+            --card-bg: rgba(18,18,40,0.7);
+            --border-cyan: 1px solid rgba(0,240,255,0.2);
+            --border-violet: 1px solid rgba(176,0,255,0.2);
+        }
+        body {
+            background: var(--bg-primary);
+            color: #e0e0ff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.03) 0%, transparent 60%),
+                              radial-gradient(circle at 80% 70%, rgba(176,0,255,0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }
+        .app-container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.8rem; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            padding: 1.2rem 2rem; background: var(--card-bg); border: var(--border-cyan); border-radius: 18px;
+            backdrop-filter: blur(8px); box-shadow: var(--cyan-glow);
+        }
+        .brand { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px var(--cyan)); }
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,240,255,0.2); letter-spacing: 2px;
+        }
+        .brand span { font-size: 0.9rem; color: var(--text-cyan); font-weight: 300; letter-spacing: 4px; -webkit-text-fill-color: var(--text-cyan); background: none; margin-left: 0.5rem; opacity: 0.7; }
+        .stats { display: flex; gap: 2rem; font-family: 'Orbitron', monospace; font-weight: 600; font-size: 0.8rem; color: var(--text-cyan); }
+        .stats-item { display: flex; align-items: center; gap: 0.4rem; }
+        .stats-item .num { color: #fff; font-weight: 700; font-size: 1.1rem; min-width: 1.8rem; text-align: center; }
+        .stats-item .label { color: rgba(160,250,255,0.6); font-weight: 300; }
+        .stats-item .highlight { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .vector-row {
+            display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
+            padding: 0.8rem 1rem; background: rgba(0,0,0,0.3); border-radius: 60px; border: var(--border-violet);
+            backdrop-filter: blur(4px);
+        }
+        .vector-avatar {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.3rem 1.2rem; border-radius: 40px; cursor: pointer; transition: all 0.3s ease;
+            background: transparent; border: 1px solid transparent; opacity: 0.5;
+        }
+        .vector-avatar.active { opacity: 1; background: rgba(176,0,255,0.12); border-color: var(--violet); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .vector-avatar:hover { opacity: 0.9; transform: scale(1.05); }
+        .vector-avatar .icon { font-size: 2.2rem; filter: drop-shadow(0 0 8px var(--cyan)); }
+        .vector-avatar .name { font-size: 0.6rem; font-weight: 600; color: var(--text-cyan); letter-spacing: 1px; text-transform: uppercase; font-family: 'Orbitron', monospace; }
+        .vector-avatar.active .name { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .blocks-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
+        .block-tab {
+            padding: 0.3rem 1.2rem; border-radius: 30px; background: rgba(0,240,255,0.05);
+            border: 1px solid rgba(0,240,255,0.1); color: rgba(160,250,255,0.5);
+            font-family: 'Orbitron', monospace; font-size: 0.65rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; letter-spacing: 0.5px;
+        }
+        .block-tab.active { background: rgba(176,0,255,0.15); border-color: var(--violet); color: #fff; box-shadow: 0 0 20px rgba(176,0,255,0.15); }
+        .block-tab .badge { background: rgba(0,240,255,0.2); border-radius: 20px; padding: 0 0.5rem; margin-left: 0.4rem; font-size: 0.55rem; color: var(--text-cyan); }
+        .block-tab.active .badge { background: rgba(176,0,255,0.3); color: var(--text-violet); }
+        .lesson-card {
+            background: var(--card-bg); border: var(--border-cyan); border-radius: 24px;
+            padding: 2rem 2.5rem; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,240,255,0.05);
+        }
+        .lesson-header {
+            display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+            margin-bottom: 1.8rem; border-bottom: 1px solid rgba(0,240,255,0.08); padding-bottom: 0.8rem;
+        }
+        .lesson-header h2 {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .lesson-header .counter { font-size: 0.8rem; color: var(--text-cyan); font-weight: 300; opacity: 0.7; }
+        .theory-box {
+            background: rgba(0,240,255,0.04); border-left: 3px solid var(--cyan);
+            padding: 1.2rem 1.8rem; border-radius: 12px; margin-bottom: 1.5rem;
+        }
+        .theory-box .root { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 30px rgba(0,240,255,0.2); }
+        .theory-box .meaning { font-size: 1.1rem; margin-top: 0.3rem; color: #c8c8ff; }
+        .theory-box .origin { font-size: 0.9rem; color: rgba(160,250,255,0.5); margin-top: 0.2rem; font-style: italic; }
+        .example-holo {
+            background: rgba(176,0,255,0.06); border: 1px solid rgba(176,0,255,0.2);
+            border-radius: 16px; padding: 1.2rem 1.8rem; margin-bottom: 1.8rem;
+            box-shadow: 0 0 30px rgba(176,0,255,0.08); position: relative; overflow: hidden;
+        }
+        .example-holo::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(176,0,255,0.05), transparent, rgba(0,240,255,0.05), transparent);
+            animation: rotateHolo 12s linear infinite;
+        }
+        @keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .example-holo .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-violet); font-weight: 600; position: relative; z-index: 1; }
+        .example-holo .word { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 0 25px rgba(176,0,255,0.5); position: relative; z-index: 1; }
+        .example-holo .breakdown { font-size: 1.1rem; color: var(--text-cyan); position: relative; z-index: 1; font-weight: 300; letter-spacing: 1px; }
+        .example-holo .breakdown span { color: var(--violet); font-weight: 600; }
+        .exercise-area { margin-top: 1.5rem; padding: 1.2rem 1.8rem; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(0,240,255,0.08); }
+        .exercise-area .question { font-size: 1rem; font-weight: 500; margin-bottom: 1rem; color: #d0d0ff; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .opt-btn {
+            padding: 0.7rem 1.2rem; border-radius: 12px; background: rgba(0,240,255,0.04);
+            border: 1px solid rgba(0,240,255,0.1); color: #b0b0ff; font-family: 'Rajdhani', sans-serif;
+            font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; text-align: left;
+        }
+        .opt-btn:hover:not(:disabled) { background: rgba(0,240,255,0.1); border-color: var(--cyan); color: #fff; transform: scale(1.01); }
+        .opt-btn.correct { background: rgba(0,240,255,0.2); border-color: var(--cyan); color: #fff; box-shadow: 0 0 25px rgba(0,240,255,0.15); }
+        .opt-btn.wrong { background: rgba(255,0,100,0.15); border-color: #ff0055; color: #ff88aa; }
+        .opt-btn:disabled { cursor: default; opacity: 0.7; }
+        .feedback { margin-top: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 500; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: rgba(0,240,255,0.08); color: var(--text-cyan); border: 1px solid rgba(0,240,255,0.2); }
+        .feedback.wrong { background: rgba(255,0,100,0.08); color: #ff88aa; border: 1px solid rgba(255,0,100,0.2); }
+        .nav-buttons {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: rgba(0,240,255,0.08); border: 1px solid var(--cyan); color: var(--text-cyan);
+            padding: 0.5rem 1.8rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-btn:hover:not(:disabled) { background: rgba(0,240,255,0.2); box-shadow: 0 0 25px rgba(0,240,255,0.2); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .voice-btn {
+            background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet);
+            padding: 0.5rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .voice-btn:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .terminal-box {
+            margin-top: 1.8rem; background: #050510; border: 1px solid rgba(0,240,255,0.1);
+            border-radius: 16px; padding: 1.2rem 1.8rem; font-family: 'Rajdhani', monospace;
+        }
+        .terminal-box .term-header { display: flex; justify-content: space-between; color: rgba(160,250,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,240,255,0.05); padding-bottom: 0.4rem; margin-bottom: 0.8rem; }
+        .terminal-input-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+        .terminal-input-row input { flex: 1; background: transparent; border: none; border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-cyan); font-family: 'Rajdhani', monospace; font-size: 1rem; padding: 0.4rem 0.2rem; outline: none; transition: border 0.3s; min-width: 150px; }
+        .terminal-input-row input:focus { border-bottom-color: var(--violet); }
+        .terminal-input-row button { background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet); padding: 0.3rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px; }
+        .terminal-input-row button:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .term-output { margin-top: 0.8rem; padding: 0.8rem; background: rgba(0,0,0,0.4); border-radius: 10px; min-height: 2.5rem; color: #a0c0ff; font-size: 0.9rem; border-left: 2px solid var(--cyan); opacity: 0.7; transition: all 0.3s; }
+        .term-output.populated { opacity: 1; border-left-color: var(--violet); }
+        @media (max-width: 700px) {
+            body { padding: 0.8rem; }
+            .header { flex-direction: column; align-items: stretch; gap: 0.8rem; padding: 1rem; }
+            .brand h1 { font-size: 1.3rem; }
+            .stats { justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+            .lesson-card { padding: 1.2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .vector-avatar .icon { font-size: 1.6rem; }
+            .vector-avatar { padding: 0.2rem 0.8rem; }
+            .example-holo .word { font-size: 1.3rem; }
+            .theory-box .root { font-size: 1.4rem; }
+            .blocks-nav { justify-content: center; }
+            .block-tab { font-size: 0.55rem; padding: 0.2rem 0.8rem; }
+            .terminal-input-row { flex-wrap: wrap; }
+            .terminal-input-row input { min-width: 100%; }
+            .nav-buttons { flex-direction: column; align-items: stretch; }
+            .nav-btn, .voice-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="header">
+        <div class="brand">
+            <span class="brand-icon">🧠</span>
+            <h1>Archivo de Vector <span>· Cognición & Percepción</span></h1>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><span class="label">aciertos</span><span class="num" id="scoreDisplay">0</span></div>
+            <div class="stats-item"><span class="label">racha</span><span class="num highlight" id="streakDisplay">0</span></div>
+            <div class="stats-item"><span class="label">progreso</span><span class="num" id="progressDisplay">0/10</span></div>
+        </div>
+    </header>
+    <div class="vector-row" id="vectorRow">
+        <div class="vector-avatar active" data-state="0"><span class="icon">📁</span><span class="name">Archivo</span></div>
+        <div class="vector-avatar" data-state="1"><span class="icon">🕰️</span><span class="name">Biblioteca</span></div>
+        <div class="vector-avatar" data-state="2"><span class="icon">📡</span><span class="name">En transmisión</span></div>
+        <div class="vector-avatar" data-state="3"><span class="icon">🏛️</span><span class="name">Coordenada Roma</span></div>
+        <div class="vector-avatar" data-state="4"><span class="icon">🏺</span><span class="name">Coordenada Grecia</span></div>
+    </div>
+    <div class="blocks-nav" id="blocksNav"></div>
+    <div class="lesson-card">
+        <div class="lesson-header">
+            <h2 id="blockTitle">Verbos de percepción visual</h2>
+            <span class="counter" id="lessonCounter">1 / 10</span>
+        </div>
+        <div class="theory-box">
+            <div class="root" id="rootDisplay">ver</div>
+            <div class="meaning" id="meaningDisplay">percibir con la vista</div>
+            <div class="origin" id="originDisplay">🔹 verbo de percepción visual</div>
+        </div>
+        <div class="example-holo">
+            <div class="label">⬡ proyección cognitiva</div>
+            <div class="word" id="exampleWord">Veo el mar desde la ventana</div>
+            <div class="breakdown" id="exampleBreakdown"><span>veo</span> (percepción visual) + <span>el mar</span> (objeto percibido)</div>
+        </div>
+        <div class="exercise-area">
+            <div class="question" id="questionText">¿Qué tipo de percepción expresa el verbo "ver"?</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+            <div>
+                <button class="nav-btn" id="prevBtn">◀ Anterior</button>
+                <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+            </div>
+            <button class="voice-btn" id="voiceBtn">🔊 Escuchar</button>
+        </div>
+    </div>
+    <div class="terminal-box">
+        <div class="term-header"><span>✦ terminal de práctica</span><span>escribe tu propia frase perceptiva</span></div>
+        <div class="terminal-input-row">
+            <input type="text" id="termInput" placeholder="ej. 'Siento el aroma del café'..." autocomplete="off" />
+            <button id="termBtn">➤ enviar</button>
+        </div>
+        <div class="term-output" id="termOutput">⏺ esperando tu creación...</div>
+    </div>
+</div>
+<script>
+(function() {
+    // ================================================================
+    //  100 TÉCNICAS · SEMÁNTICA COGNITIVA Y VERBOS DE PERCEPCIÓN
+    // ================================================================
+    const BLOCKS = [
+        {
+            name: 'Verbos de percepción visual',
+            items: [
+                { root: 'ver', meaning: 'percibir con la vista', example: 'Veo el mar desde la ventana', breakdown: 'percepción visual directa' },
+                { root: 'mirar', meaning: 'dirigir la vista hacia algo', example: 'Miro el horizonte', breakdown: 'acción visual intencionada' },
+                { root: 'observar', meaning: 'examinar con atención', example: 'Observo los detalles del cuadro', breakdown: 'percepción visual analítica' },
+                { root: 'contemplar', meaning: 'mirar con admiración', example: 'Contemplo el atardecer', breakdown: 'percepción visual estética' },
+                { root: 'divisar', meaning: 'ver a lo lejos', example: 'Diviso una figura en la montaña', breakdown: 'percepción visual lejana' },
+                { root: 'ojear', meaning: 'mirar superficialmente', example: 'Ojeo el periódico', breakdown: 'percepción visual rápida' },
+                { root: 'espiar', meaning: 'mirar a escondidas', example: 'Espía por la ventana', breakdown: 'percepción visual oculta' },
+                { root: 'vigilar', meaning: 'observar con atención', example: 'Vigila la entrada', breakdown: 'percepción visual de seguridad' },
+                { root: 'atisbar', meaning: 'ver con dificultad', example: 'Atisbo una luz en la distancia', breakdown: 'percepción visual borrosa' },
+                { root: 'visualizar', meaning: 'formar imagen mental', example: 'Visualizo el proyecto terminado', breakdown: 'percepción visual mental' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción auditiva',
+            items: [
+                { root: 'oir', meaning: 'percibir con el oído', example: 'Oigo la música a lo lejos', breakdown: 'percepción auditiva directa' },
+                { root: 'escuchar', meaning: 'prestar atención a lo que se oye', example: 'Escucho atentamente la conferencia', breakdown: 'percepción auditiva intencionada' },
+                { root: 'prestar oído', meaning: 'escuchar con atención', example: 'Presto oído a sus consejos', breakdown: 'percepción auditiva enfática' },
+                { root: 'entender', meaning: 'captar el significado de lo oído', example: 'Entiendo lo que dices', breakdown: 'percepción auditiva cognitiva' },
+                { root: 'percibir', meaning: 'captar por los sentidos', example: 'Percibo un ruido extraño', breakdown: 'percepción sensorial general' },
+                { root: 'captar', meaning: 'recibir una impresión', example: 'Capto su tono de voz', breakdown: 'percepción auditiva matizada' },
+                { root: 'sonsacar', meaning: 'lograr información escuchando', example: 'Le sonsaco la verdad', breakdown: 'percepción auditiva estratégica' },
+                { root: 'interceptar', meaning: 'captar una comunicación', example: 'Intercepto su conversación', breakdown: 'percepción auditiva furtiva' },
+                { root: 'aguzar el oído', meaning: 'esforzarse por oír', example: 'Aguzo el oído para oír mejor', breakdown: 'percepción auditiva intensa' },
+                { root: 'escuchar a escondidas', meaning: 'oir sin ser visto', example: 'Escucho a escondidas su charla', breakdown: 'percepción auditiva oculta' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción táctil',
+            items: [
+                { root: 'tocar', meaning: 'sentir con el tacto', example: 'Toco la superficie rugosa', breakdown: 'percepción táctil directa' },
+                { root: 'palpar', meaning: 'tocar con cuidado', example: 'Palpo el tejido para sentir su textura', breakdown: 'percepción táctil exploratoria' },
+                { root: 'acariciar', meaning: 'tocar suavemente', example: 'Acaricio el pelaje del gato', breakdown: 'percepción táctil afectuosa' },
+                { root: 'rozar', meaning: 'tocar ligeramente', example: 'Rozó mi mano al pasar', breakdown: 'percepción táctil leve' },
+                { root: 'apretar', meaning: 'ejercer presión con la mano', example: 'Aprieto el puño con fuerza', breakdown: 'percepción táctil de presión' },
+                { root: 'agarrar', meaning: 'tomar con la mano', example: 'Agarro el vaso con cuidado', breakdown: 'percepción táctil de aprehensión' },
+                { root: 'frotar', meaning: 'pasar repetidamente la mano', example: 'Froto la madera para pulirla', breakdown: 'percepción táctil de rozamiento' },
+                { root: 'sobar', meaning: 'tocar repetidamente', example: 'Soba la tela suavemente', breakdown: 'percepción táctil repetitiva' },
+                { root: 'manosear', meaning: 'tocar sin cuidado', example: 'Manosea el objeto', breakdown: 'percepción táctil descuidada' },
+                { root: 'tienta', meaning: 'tocar para reconocer', example: 'Tiento el camino en la oscuridad', breakdown: 'percepción táctil exploradora' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción olfativa',
+            items: [
+                { root: 'oler', meaning: 'percibir con el olfato', example: 'Huelo el aroma de las flores', breakdown: 'percepción olfativa directa' },
+                { root: 'olfatear', meaning: 'oler con atención', example: 'El perro olfatea el suelo', breakdown: 'percepción olfativa exploratoria' },
+                { root: 'aspirar', meaning: 'inhalar para oler', example: 'Aspiro el perfume', breakdown: 'percepción olfativa intencionada' },
+                { root: 'snifar', meaning: 'oler ruidosamente', example: 'Snifa el aire', breakdown: 'percepción olfativa ruidosa' },
+                { root: 'percibir', meaning: 'captar por el olfato', example: 'Percibo un olor a quemado', breakdown: 'percepción olfativa general' },
+                { root: 'sentir el olor', meaning: 'detectar un aroma', example: 'Siento el olor a pan recién horneado', breakdown: 'percepción olfativa personal' },
+                { root: 'oler a', meaning: 'tener un olor determinado', example: 'Huele a hierba recién cortada', breakdown: 'percepción olfativa de cualidad' },
+                { root: 'fragar', meaning: 'oler a algo en particular', example: 'El ambiente fragaba a mar', breakdown: 'percepción olfativa poética' },
+                { root: 'olfatear el peligro', meaning: 'detectar algo malo', example: 'Olfateo el peligro en el aire', breakdown: 'percepción olfativa figurada' },
+                { root: 'perfumar', meaning: 'oler bien', example: 'El jardín perfuma toda la casa', breakdown: 'percepción olfativa agradable' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción gustativa',
+            items: [
+                { root: 'gustar', meaning: 'percibir el sabor', example: 'Me gusta el chocolate', breakdown: 'percepción gustativa de placer' },
+                { root: 'probar', meaning: 'degustar para conocer el sabor', example: 'Pruebo la sopa', breakdown: 'percepción gustativa exploratoria' },
+                { root: 'saborear', meaning: 'disfrutar del sabor', example: 'Saboreo el vino lentamente', breakdown: 'percepción gustativa deliberada' },
+                { root: 'degustar', meaning: 'probar con atención', example: 'Degusto el plato exquisito', breakdown: 'percepción gustativa formal' },
+                { root: 'tragar', meaning: 'pasar por la garganta', example: 'Trago el medicamento', breakdown: 'percepción gustativa de paso' },
+                { root: 'masticar', meaning: 'triturar con los dientes', example: 'Mastico bien la comida', breakdown: 'percepción gustativa mecánica' },
+                { root: 'chupar', meaning: 'succionar con la boca', example: 'Chupo un caramelo', breakdown: 'percepción gustativa lenta' },
+                { root: 'lamer', meaning: 'pasar la lengua', example: 'Lamo el helado', breakdown: 'percepción gustativa superficial' },
+                { root: 'engullir', meaning: 'comer rápidamente', example: 'Engulle la comida sin saborearla', breakdown: 'percepción gustativa rápida' },
+                { root: 'paladear', meaning: 'saborear con deleite', example: 'Paladeo el vino añejo', breakdown: 'percepción gustativa refinada' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción cognitiva general',
+            items: [
+                { root: 'pensar', meaning: 'formar ideas en la mente', example: 'Pienso en el futuro', breakdown: 'proceso cognitivo básico' },
+                { root: 'creer', meaning: 'tener por cierto', example: 'Creo que es verdad', breakdown: 'cognición de creencia' },
+                { root: 'saber', meaning: 'tener conocimiento', example: 'Sé la respuesta', breakdown: 'cognición de conocimiento' },
+                { root: 'comprender', meaning: 'entender el significado', example: 'Comprendo la situación', breakdown: 'cognición de entendimiento' },
+                { root: 'recordar', meaning: 'traer a la memoria', example: 'Recuerdo su nombre', breakdown: 'cognición de memoria' },
+                { root: 'olvidar', meaning: 'perder de la memoria', example: 'Olvido su dirección', breakdown: 'cognición de pérdida' },
+                { root: 'imaginar', meaning: 'formar imágenes mentales', example: 'Imagino el paisaje', breakdown: 'cognición creativa' },
+                { root: 'suponer', meaning: 'dar por cierto sin prueba', example: 'Supongo que vendrá', breakdown: 'cognición hipotética' },
+                { root: 'dudar', meaning: 'no estar seguro', example: 'Dudo de su honestidad', breakdown: 'cognición de incertidumbre' },
+                { root: 'reflexionar', meaning: 'pensar detenidamente', example: 'Reflexiono sobre mis decisiones', breakdown: 'cognición profunda' }
+            ]
+        },
+        {
+            name: 'Metáforas cognitivas (percepción → cognición)',
+            items: [
+                { root: 'ver → entender', meaning: 'la percepción visual como comprensión', example: 'Ya veo lo que quieres decir', breakdown: 'metáfora de entendimiento' },
+                { root: 'oír → entender', meaning: 'la percepción auditiva como comprensión', example: 'Te oigo, tienes razón', breakdown: 'metáfora de comprensión' },
+                { root: 'tocar → entender', meaning: 'el tacto como comprensión', example: 'No termino de tocar el asunto', breakdown: 'metáfora de comprensión' },
+                { root: 'saber → conocer', meaning: 'el gusto como conocimiento', example: 'Sabe a gloria', breakdown: 'metáfora de conocimiento' },
+                { root: 'oler → saber', meaning: 'el olfato como intuición', example: 'Huelo un problema', breakdown: 'metáfora de intuición' },
+                { root: 'mirar → evaluar', meaning: 'la vista como juicio', example: 'Míralo con buenos ojos', breakdown: 'metáfora de evaluación' },
+                { root: 'escuchar → atender', meaning: 'el oído como atención', example: 'Escucha a tu corazón', breakdown: 'metáfora de atención' },
+                { root: 'palpar → investigar', meaning: 'el tacto como indagación', example: 'Palpa el terreno antes de decidir', breakdown: 'metáfora de investigación' },
+                { root: 'gustar → preferir', meaning: 'el gusto como elección', example: 'Me gusta más esta opción', breakdown: 'metáfora de preferencia' },
+                { root: 'oler → detectar', meaning: 'el olfato como detección', example: 'Olió el peligro desde lejos', breakdown: 'metáfora de detección' }
+            ]
+        },
+        {
+            name: 'Verbos de percepción emotiva',
+            items: [
+                { root: 'sentir', meaning: 'experimentar una emoción', example: 'Siento alegría', breakdown: 'percepción emocional directa' },
+                { root: 'percibir', meaning: 'captar una emoción', example: 'Percibo su tristeza', breakdown: 'percepción emocional empática' },
+                { root: 'notar', meaning: 'percibir un cambio emocional', example: 'Noto su nerviosismo', breakdown: 'percepción emocional sutil' },
+                { root: 'intuir', meaning: 'percibir sin razón explícita', example: 'Intuyo que está enfadado', breakdown: 'percepción emocional intuitiva' },
+                { root: 'presagiar', meaning: 'percibir un futuro emocional', example: 'Presagio una discusión', breakdown: 'percepción emocional predictiva' },
+                { root: 'adivinar', meaning: 'percibir sin datos', example: 'Adivino su tristeza', breakdown: 'percepción emocional adivinatoria' },
+                { root: 'conjeturar', meaning: 'percibir por inferencia', example: 'Conjeturo que está feliz', breakdown: 'percepción emocional inferencial' },
+                { root: 'sospechar', meaning: 'percibir con desconfianza', example: 'Sospecho que me miente', breakdown: 'percepción emocional desconfiada' },
+                { root: 'creer', meaning: 'percibir como verdadero', example: 'Creo que me quiere', breakdown: 'percepción emocional creencial' },
+                { root: 'imaginar', meaning: 'percibir emocionalmente', example: 'Imagino su reacción', breakdown: 'percepción emocional creativa' }
+            ]
+        },
+        {
+            name: 'Estrategias de focalización perceptiva',
+            items: [
+                { root: 'enfocar', meaning: 'dirigir la atención perceptiva', example: 'Enfoco mi mirada en el objetivo', breakdown: 'focalización visual' },
+                { root: 'concentrarse', meaning: 'centrar la percepción', example: 'Me concentro en su voz', breakdown: 'focalización auditiva' },
+                { root: 'aguzar', meaning: 'intensificar un sentido', example: 'Aguzo el oído', breakdown: 'intensificación sensorial' },
+                { root: 'fijar la vista', meaning: 'mirar fijamente', example: 'Fijo la vista en el horizonte', breakdown: 'focalización visual intensa' },
+                { root: 'prestar atención', meaning: 'centrar la percepción', example: 'Presto atención a sus palabras', breakdown: 'focalización auditiva' },
+                { root: 'poner los cinco sentidos', meaning: 'percibir con todos los sentidos', example: 'Pongo los cinco sentidos en la experiencia', breakdown: 'percepción plena' },
+                { root: 'observar con lupa', meaning: 'examinar minuciosamente', example: 'Observo con lupa los detalles', breakdown: 'percepción visual amplificada' },
+                { root: 'escuchar con el corazón', meaning: 'percibir emocionalmente', example: 'Escucho con el corazón', breakdown: 'percepción emocional' },
+                { root: 'saborear con los ojos', meaning: 'percibir visualmente como un gusto', example: 'Saboreo con los ojos el paisaje', breakdown: 'percepción sinestésica' },
+                { root: 'oler el ambiente', meaning: 'percibir el contexto', example: 'Huelo el ambiente', breakdown: 'percepción contextual' }
+            ]
+        },
+        {
+            name: 'Recursos cognitivos avanzados',
+            items: [
+                { root: 'sinestesia', meaning: 'mezcla de percepciones sensoriales', example: 'Sabor a luz', breakdown: 'cruce de sentidos' },
+                { root: 'prosopopeya', meaning: 'atribuir percepción a objetos', example: 'El sol nos mira', breakdown: 'percepción figurada' },
+                { root: 'metáfora perceptiva', meaning: 'usar un sentido para otro', example: 'Te escucho con los ojos', breakdown: 'metáfora sensorial' },
+                { root: 'analogía perceptiva', meaning: 'comparación de percepciones', example: 'Ver es como tocar', breakdown: 'analogía sensorial' },
+                { root: 'percepción holística', meaning: 'percibir el conjunto', example: 'Veo el bosque y los árboles', breakdown: 'percepción global' },
+                { root: 'percepción selectiva', meaning: 'percibir solo ciertos estímulos', example: 'Solo veo lo que quiero ver', breakdown: 'percepción filtrada' },
+                { root: 'percepción subliminal', meaning: 'percepción inconsciente', example: 'Lo vi sin darme cuenta', breakdown: 'percepción subconsciente' },
+                { root: 'percepción ilusoria', meaning: 'percepción distorsionada', example: 'La arena parecía agua', breakdown: 'percepción engañosa' },
+                { root: 'percepción anticipatoria', meaning: 'percibir antes de que ocurra', example: 'Veo venir el problema', breakdown: 'percepción predictiva' },
+                { root: 'percepción retrospectiva', meaning: 'recordar una percepción pasada', example: 'Recuerdo haberlo visto', breakdown: 'percepción recordada' }
+            ]
+        }
+    ];
+
+    // ================================================================
+    //  ESTADO Y DOM
+    // ================================================================
+    let currentBlock = 0, currentLesson = 0, score = 0, streak = 0, answered = false;
+    const blocksNav = document.getElementById('blocksNav');
+    const blockTitle = document.getElementById('blockTitle');
+    const lessonCounter = document.getElementById('lessonCounter');
+    const rootDisplay = document.getElementById('rootDisplay');
+    const meaningDisplay = document.getElementById('meaningDisplay');
+    const originDisplay = document.getElementById('originDisplay');
+    const exampleWord = document.getElementById('exampleWord');
+    const exampleBreakdown = document.getElementById('exampleBreakdown');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const streakDisplay = document.getElementById('streakDisplay');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const termInput = document.getElementById('termInput');
+    const termBtn = document.getElementById('termBtn');
+    const termOutput = document.getElementById('termOutput');
+    const vectorAvatars = document.querySelectorAll('.vector-avatar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const voiceBtn = document.getElementById('voiceBtn');
+
+    function getLesson(b, l) { return BLOCKS[b].items[l]; }
+    function getCurrentLesson() { return getLesson(currentBlock, currentLesson); }
+    function shuffleArray(arr) { for (let i = arr.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+    function renderBlockTabs() {
+        blocksNav.innerHTML = '';
+        BLOCKS.forEach((block, idx) => {
+            const tab = document.createElement('div');
+            tab.className = 'block-tab' + (idx === currentBlock ? ' active' : '');
+            tab.innerHTML = `${block.name} <span class="badge">${block.items.length}</span>`;
+            tab.dataset.idx = idx;
+            tab.addEventListener('click', () => { currentBlock = idx; currentLesson = 0; renderAll(); });
+            blocksNav.appendChild(tab);
+        });
+    }
+
+    function renderLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        blockTitle.textContent = BLOCKS[currentBlock].name;
+        lessonCounter.textContent = `${currentLesson + 1} / ${BLOCKS[currentBlock].items.length}`;
+        rootDisplay.textContent = lesson.root;
+        meaningDisplay.textContent = lesson.meaning;
+        originDisplay.textContent = `🔹 función: ${lesson.breakdown.split('→')[0].trim()}`;
+        exampleWord.textContent = lesson.example;
+        exampleBreakdown.innerHTML = lesson.breakdown.replace(/\b(\w+)\b/g, m => `<span>${m}</span>`);
+        generateExercise(lesson);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        answered = false;
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = false);
+        let done = 0;
+        for (let i = 0; i < currentBlock; i++) done += BLOCKS[i].items.length;
+        done += currentLesson;
+        const total = BLOCKS.reduce((a,b) => a + b.items.length, 0);
+        progressDisplay.textContent = `${Math.min(Math.floor((done/total)*10), 10)}/10`;
+        prevBtn.disabled = (currentBlock === 0 && currentLesson === 0);
+        const lastBlock = BLOCKS.length - 1;
+        const lastLesson = BLOCKS[lastBlock].items.length - 1;
+        nextBtn.disabled = (currentBlock === lastBlock && currentLesson === lastLesson);
+    }
+
+    function generateExercise(lesson) {
+        const all = []; BLOCKS.forEach(b => b.items.forEach(it => all.push({ root: it.root, meaning: it.meaning })));
+        const correct = lesson.meaning;
+        let wrongs = all.filter(m => m.meaning !== correct && m.root !== lesson.root);
+        shuffleArray(wrongs);
+        wrongs = wrongs.slice(0, 3);
+        const options = [correct, ...wrongs.map(w => w.meaning)];
+        shuffleArray(options);
+        questionText.textContent = `¿Qué expresa "${lesson.root}"?`;
+        optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.textContent = opt;
+            btn.dataset.value = opt;
+            btn.addEventListener('click', () => handleOptionClick(btn, correct));
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function handleOptionClick(btn, correct) {
+        if (answered) return;
+        const selected = btn.dataset.value;
+        const isCorrect = selected === correct;
+        answered = true;
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score++; streak++;
+            feedback.className = 'feedback show correct';
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+        } else {
+            btn.classList.add('wrong');
+            streak = 0;
+            allBtns.forEach(b => { if (b.dataset.value === correct) b.classList.add('correct'); });
+            feedback.className = 'feedback show wrong';
+            feedback.textContent = `❌ No. La respuesta correcta es "${correct}".`;
+        }
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    function goToLesson(b, l) {
+        if (b < 0 || b >= BLOCKS.length) return;
+        if (l < 0 || l >= BLOCKS[b].items.length) return;
+        currentBlock = b; currentLesson = l; renderAll();
+    }
+    function nextLesson() {
+        if (currentLesson < BLOCKS[currentBlock].items.length - 1) goToLesson(currentBlock, currentLesson + 1);
+        else if (currentBlock < BLOCKS.length - 1) goToLesson(currentBlock + 1, 0);
+    }
+    function prevLesson() {
+        if (currentLesson > 0) goToLesson(currentBlock, currentLesson - 1);
+        else if (currentBlock > 0) goToLesson(currentBlock - 1, BLOCKS[currentBlock - 1].items.length - 1);
+    }
+
+    function speakLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        const text = `${lesson.root}. Significado: ${lesson.meaning}. Ejemplo: ${lesson.example}. Desglose: ${lesson.breakdown}`;
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else alert('Tu navegador no soporta síntesis de voz.');
+    }
+
+    function handleTerminal() {
+        const val = termInput.value.trim();
+        if (!val) {
+            termOutput.textContent = '⏺ escribe una frase con verbo de percepción...';
+            termOutput.classList.remove('populated');
+            return;
+        }
+        let found = false, msg = `🔍 "${val}" → `;
+        for (const block of BLOCKS) {
+            for (const item of block.items) {
+                const rootClean = item.root.replace(/[()]/g, '').trim();
+                if (val.toLowerCase().includes(rootClean.toLowerCase()) ||
+                    item.example.toLowerCase().includes(val.toLowerCase().replace(/[()]/g, ''))) {
+                    msg += `relacionado con "${item.root}" (${item.meaning}). `;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        if (!found) msg += 'no se reconoció un verbo de percepción concreto, pero tu creatividad cuenta. 🧠';
+        termOutput.textContent = msg;
+        termOutput.classList.add('populated');
+        termInput.value = '';
+    }
+
+    function renderAll() {
+        renderBlockTabs();
+        renderLesson();
+        vectorAvatars.forEach((el, idx) => el.classList.toggle('active', idx === (currentBlock % 5)));
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    // Eventos
+    prevBtn.addEventListener('click', prevLesson);
+    nextBtn.addEventListener('click', nextLesson);
+    voiceBtn.addEventListener('click', speakLesson);
+    termBtn.addEventListener('click', handleTerminal);
+    termInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleTerminal(); });
+    vectorAvatars.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+            currentBlock = idx % BLOCKS.length;
+            currentLesson = 0;
+            renderAll();
+        });
+    });
+
+    renderAll();
+    setTimeout(() => {
+        termOutput.textContent = '⏳ Vector activo. Explora verbos de percepción y semántica cognitiva del castellano.';
+        termOutput.classList.add('populated');
+    }, 500);
+})();
+</script>
+</body>
+</html>

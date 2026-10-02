@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Gramática Generativa Transformacional | 100 técnicas del castellano - Árboles + Voz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fef7e8 0%, #f2ead8 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #2c2418;
+        }
+
+        .container {
+            max-width: 1500px;
+            margin: 0 auto;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid #b87333;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #8b4513, #c97e3a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.5px;
+            font-weight: 800;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            color: #5e3a1f;
+            margin-top: 0.5rem;
+            font-style: italic;
+        }
+
+        .stats-progress {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            background: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 60px;
+            margin: 1.5rem 0 2rem;
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
+            gap: 1rem;
+        }
+
+        .badge {
+            background: #b87333;
+            color: white;
+            padding: 0.3rem 1rem;
+            border-radius: 40px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .progress-area {
+            display: flex;
+            gap: 1.5rem;
+            align-items: baseline;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            width: 180px;
+            height: 8px;
+            background-color: #e0cfbc;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #b87333;
+            border-radius: 10px;
+            transition: width 0.3s;
+        }
+
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .filter-bar input {
+            flex: 2;
+            min-width: 220px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .filter-bar input:focus {
+            box-shadow: 0 0 0 3px rgba(184, 115, 51, 0.3);
+        }
+
+        .filter-bar select {
+            padding: 12px 18px;
+            border-radius: 50px;
+            border: none;
+            background: white;
+            font-weight: 500;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 2rem;
+            overflow: hidden;
+            box-shadow: 0 12px 24px -12px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #e2cfb5;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 24px 32px -16px rgba(0, 0, 0, 0.25);
+        }
+
+        .card-header {
+            background: #f8efe2;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e2cfb5;
+        }
+
+        .card-header h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #7b3f1a;
+        }
+
+        .category-tag {
+            display: inline-block;
+            background: #dcc8ae;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+            color: #3f2a16;
+        }
+
+        .card-body {
+            padding: 1.2rem 1.5rem;
+            flex-grow: 1;
+        }
+
+        .teoria {
+            background: #fef6ea;
+            padding: 0.7rem;
+            border-radius: 20px;
+            margin-bottom: 0.8rem;
+            font-size: 0.9rem;
+            border-left: 5px solid #b87333;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .ejemplo {
+            background: #f4eadc;
+            padding: 0.5rem 0.8rem;
+            border-radius: 16px;
+            margin: 0.7rem 0;
+            font-family: 'Courier New', monospace;
+            color: #2e5c2e;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .btn-speak {
+            background: #b87333;
+            border: none;
+            color: white;
+            border-radius: 50px;
+            padding: 4px 12px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: 0.1s;
+        }
+        .btn-speak:hover {
+            background: #9a551f;
+        }
+
+        .ejercicio-area {
+            background: #f8f0e6;
+            padding: 0.7rem;
+            border-radius: 20px;
+            margin: 0.8rem 0;
+        }
+
+        .ejercicio-text {
+            font-style: italic;
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin: 0.5rem 0;
+        }
+
+        .input-group input {
+            flex: 2;
+            padding: 8px 12px;
+            border: 1px solid #cfbc9f;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            outline: none;
+        }
+
+        .check-btn {
+            background: #b87333;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+
+        .check-btn:hover {
+            background: #9a551f;
+        }
+
+        .feedback {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            font-weight: 500;
+        }
+
+        .feedback.correct {
+            color: #2b6e2b;
+        }
+        .feedback.incorrect {
+            color: #b13e3e;
+        }
+
+        .status-icon {
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-left: 8px;
+        }
+
+        .reset-card-btn {
+            margin-top: 8px;
+            background: none;
+            border: none;
+            color: #9a6e42;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-decoration: underline;
+        }
+
+        .footer-note {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #7c6346;
+            border-top: 1px solid #e2cfb5;
+            padding-top: 2rem;
+        }
+        @media (max-width: 700px) {
+            .stats-progress { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="hero">
+        <h1>🌳 Gramática Generativa Transformacional · 100 técnicas del castellano</h1>
+        <p>Estructura profunda → superficial · Reglas de reescritura · Árboles sintácticos · Morfología · Formación de palabras</p>
+    </div>
+    <div class="stats-progress">
+        <span>📚 Inventario: <strong id="totalCount">100</strong> entradas</span>
+        <div class="progress-area">
+            <span>🏆 Progreso global:</span>
+            <div class="progress-bar-container">
+                <div class="progress-fill" id="globalProgressFill"></div>
+            </div>
+            <span id="progressPercent">0%</span>
+        </div>
+        <span class="badge">🔊 Lector de voz · ✍️ Ejercicios transformacionales</span>
+    </div>
+    <div class="filter-bar">
+        <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre, categoría o concepto...">
+        <select id="categorySelect">
+            <option value="all">📌 Todas las categorías</option>
+            <option value="Estructura arbórea">🌳 Estructura arbórea (constituyentes, reglas de reescritura)</option>
+            <option value="Transformaciones">🔄 Transformaciones sintácticas</option>
+            <option value="Flexión">🎭 Morfología flexiva</option>
+            <option value="Derivación">⚙️ Derivación (prefijación, sufijación, interfijación, parasíntesis)</option>
+            <option value="Formación de palabras">🧩 Formación de palabras</option>
+            <option value="Clases de palabras">📂 Clases de palabras</option>
+            <option value="Accidentes gramaticales">⚡ Accidentes gramaticales</option>
+            <option value="Morfemática">🧬 Morfemática (lexema, morfema, alomorfo, raíz, base)</option>
+            <option value="Sufijos apreciativos">✨ Sufijos apreciativos</option>
+        </select>
+    </div>
+    <div id="cardsContainer" class="cards-grid"></div>
+    <div class="footer-note">
+        ✅ Enfoque generativo-transformacional (Chomsky): estructura profunda, reglas de reescritura (SN → Det N), transformaciones (pasiva, interrogación, etc.).<br>
+        🧠 Incluye morfología flexiva/derivativa, clases de palabras, formación léxica, accidentes gramaticales y morfemática.
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 100 TÉCNICAS DE GRAMÁTICA GENERATIVA TRANSFORMACIONAL + MORFOLOGÍA
+    // Reglas de reescritura (frase nominal, verbal), estructura arbórea,
+    // transformaciones (pasiva, negación, interrogación, relativización),
+    // más toda la morfología del español.
+    // --------------------------------------------------------------
+    const techniques = [];
+
+    function add(id, name, category, teoria, ejemplo, ejercicio, suggestedAnswer) {
+        techniques.push({ id, name, category, teoria, ejemplo, ejercicio, suggestedAnswer });
+    }
+
+    // ========= 1. ESTRUCTURA ARBÓREA Y REGLAS DE REESCRITURA =========
+    add(1, "Regla de reescritura O → SN SV", "Estructura arbórea", "La oración se expande en sintagma nominal (sujeto) y sintagma verbal (predicado).", "O → SN SV", "Escribe la regla de expansión del SN", "SN → Det N (o SN → (Det) (Adj) N)");
+    add(2, "Estructura arbórea básica (Oración)", "Estructura arbórea", "Representación jerárquica de constituyentes mediante árbol sintáctico.", "O(SN(Sustantivo) SV(Verbo SN))", "En el árbol de 'El niño corre', ¿qué categoría es 'corre'?", "Verbo (V)");
+    add(3, "Regla SN → Det N", "Estructura arbórea", "El sintagma nominal se expande en determinante y nombre.", "SN → Det N (Ej: el libro)", "Expande la regla para 'la casa'", "Det: la, N: casa");
+    add(4, "Regla SV → V (SN) (SP)", "Estructura arbórea", "El sintagma verbal se expande en verbo + opcionalmente SN (CD) y SP.", "SV → V SN (Ej: come manzanas)", "¿Qué constituyentes hay en SV de 'Juan lee un libro'?", "V (lee) + SN (un libro)");
+    add(5, "Regla SP → Prep SN", "Estructura arbórea", "Sintagma preposicional: preposición + sintagma nominal.", "SP → Prep SN (Ej: en la casa)", "En 'con mi amigo', ¿cuál es la preposición?", "con");
+    add(6, "Nodo terminal y no terminal", "Estructura arbórea", "Nodos terminales: palabras; nodos no terminales: categorías (O, SN, SV).", "En el árbol, 'perro' es terminal, 'SN' es no terminal.", "¿El nodo 'Verbo' es terminal?", "no, sus hijas sí (la palabra específica)");
+    add(7, "Árbol de constituyentes de 'El gato duerme'", "Estructura arbórea", "Representación: O(SN(Det El, N gato) SV(V duerme)).", "Dibuja mentalmente: O raíz, SN a la izquierda, SV a la derecha.", "¿Cuál es el núcleo del SN en 'La casa blanca'?", "casa");
+    add(8, "Regla recursiva (SN → SN SP)", "Estructura arbórea", "El SN puede contener otro SN dentro de un SP (complemento del nombre).", "El libro de Juan (SN(SN El libro) SP(de Juan))", "Analiza 'la casa de María' en regla recursiva", "SN → SN SP");
+    add(9, "Regla de adjunción de adjetivo", "Estructura arbórea", "SN → Det (Adj) N", "El perro grande (Det El, Adj grande, N perro)", "Expande SN para 'un viejo árbol'", "Det un, Adj viejo, N árbol");
+    add(10, "Nodo S' (oración subordinada)", "Estructura arbórea", "Estructura para subordinadas: S' → COMP S (COMP = complementizador 'que').", "Creo [S' [COMP que] [S Juan viene]]", "En 'Dice que viene', ¿qué categoría es 'que'?", "COMP (complementizador)");
+    
+    // ========= 2. TRANSFORMACIONES SINTÁCTICAS =========
+    add(11, "Transformación pasiva", "Transformaciones", "Convierte estructura activa en pasiva: SN2 + ser + participio + por + SN1.", "Activa: Juan rompió el jarrón → Pasiva: El jarrón fue roto por Juan.", "Transforma a pasiva: 'El viento derribó el árbol'", "El árbol fue derribado por el viento");
+    add(12, "Transformación negativa", "Transformaciones", "Inserta 'no' delante del verbo.", "Afirmativa: María estudia → Negativa: María no estudia.", "Niega: 'Ellos han llegado'", "Ellos no han llegado");
+    add(13, "Transformación interrogativa total", "Transformaciones", "Invierte sujeto y verbo o añade entonación.", "Tú comes → ¿Comes tú?", "Interroga: 'Pedro vive aquí'", "¿Vive Pedro aquí?");
+    add(14, "Transformación interrogativa parcial", "Transformaciones", "Introduce elemento Q (qué, quién, dónde) al inicio.", "Juan compró un libro → ¿Qué compró Juan?", "Formula pregunta por el sujeto: 'María canta'", "¿Quién canta?");
+    add(15, "Transformación de topicalización", "Transformaciones", "Desplaza un constituyente al inicio.", "Compré ese libro → Ese libro lo compré.", "Topicaliza el objeto en 'Ví a Juan'", "A Juan lo vi");
+    add(16, "Transformación de relativización", "Transformaciones", "Convierte dos oraciones en una con nexo relativo.", "El hombre es alto. El hombre habla → El hombre que habla es alto.", "Une mediante relativo: 'La casa es bonita. Vivo en la casa'", "La casa en que vivo es bonita");
+    add(17, "Transformación de extraposición", "Transformaciones", "Desplaza cláusula sujeto al final.", "Que vengas me alegra → Me alegra que vengas.", "Extrae sujeto: 'Estudiar es útil'", "Es útil estudiar");
+    add(18, "Transformación de pasiva refleja", "Transformaciones", "Se + verbo activo en 3ª persona.", "Venden casas → Se venden casas.", "Convierte a pasiva refleja: 'Alquilan pisos'", "Se alquilan pisos");
+    add(19, "Transformación de clefting (frase hendida)", "Transformaciones", "Ser + elemento focalizado + que/el que.", "Juan rompió la ventana → Fue Juan quien rompió la ventana.", "Enfatiza objeto: 'Compré el coche'", "Fue el coche lo que compré");
+    add(20, "Transformación de subjuntivación desiderativa", "Transformaciones", "Introduce 'ojalá' + subjuntivo.", "Deseo que vengas → Ojalá vengas.", "Transforma: 'Espero que llueva'", "Ojalá llueva");
+    
+    // ========= 3. MORFOLOGÍA FLEXIVA =========
+    add(21, "Flexión de género (sustantivos)", "Flexión", "Los sustantivos varían de género con -o/-a u otras marcas.", "niño/niña, poeta/poetisa", "Femenino de 'actor'", "actriz");
+    add(22, "Flexión de número (plural)", "Flexión", "Se forma con -s, -es o invariables.", "árbol/árboles, crisis/crisis", "Plural de 'jabalí'", "jabalíes/jabalís");
+    add(23, "Conjugación: pretérito perfecto simple", "Flexión", "Acción pasada puntual: -é, -aste, -ó, -amos, -asteis, -aron.", "canté, comiste, vivió", "Conjuga 'escribir' en 1ª persona singular", "escribí");
+    add(24, "Modo subjuntivo presente", "Flexión", "Expresa deseo, duda, posibilidad.", "Espero que venga", "Conjuga 'temer' en 3ª persona singular presente subjuntivo", "tema");
+    add(25, "Aspecto perfectivo/imperfectivo", "Flexión", "Perfectivo: terminado; imperfectivo: en desarrollo.", "Canté / Cantaba", "Aspecto de 'había comido'", "perfectivo");
+    add(26, "Persona gramatical verbal", "Flexión", "Desinencias 1ª, 2ª, 3ª persona.", "hablo, hablas, habla", "Persona de 'decían'", "3ª del plural");
+    add(27, "Futuro de indicativo", "Flexión", "-é, -ás, -á, -emos, -éis, -án.", "hablaré, comerás", "Futuro de 'poner' en 2ª persona singular", "pondrás");
+    add(28, "Condicional simple", "Flexión", "Expresa hipótesis: -ía, -ías, -ía, -íamos, -íais, -ían.", "cantaría, comerías", "Condicional de 'vivir' para él/ella", "viviría");
+    add(29, "Imperativo afirmativo", "Flexión", "Modo para mandatos.", "¡Canta! ¡Comed!", "Imperativo de 'venir' para vosotros", "venid");
+    add(30, "Voz pasiva (ser + participio)", "Flexión", "El sujeto recibe la acción.", "El árbol fue derribado por el viento", "Transforma a pasiva: 'El viento derribó el árbol'", "El árbol fue derribado por el viento");
+    
+    // ========= 4. DERIVACIÓN =========
+    add(31, "Prefijación (negación in- des- anti- )", "Derivación", "Prefijos con significado negativo o reversivo.", "inútil, deshacer", "Aplica prefijo 're-' a 'hacer'", "rehacer");
+    add(32, "Sufijación -ción / -sión", "Derivación", "Forma sustantivos abstractos deverbales.", "actuación, decisión", "Sustantivo de 'decidir'", "decisión");
+    add(33, "Interfijación (epéntesis)", "Derivación", "Inserción de segmento no morfemático: -c-, -it-, -iz-", "cafecito (café+c+ito)", "Interfijo en 'polvareda'", "-ar-");
+    add(34, "Parasíntesis (prefijo+sufijo simultáneo)", "Derivación", "Se añaden prefijo y sufijo a la vez; sin uno no existe.", "entristecer (en-+triste+-ecer)", "Parasíntesis en 'apiedrar'", "a-+piedra+-ar");
+    add(35, "Sufijos aumentativos (-ón, -azo)", "Derivación", "Denotan gran tamaño o intensidad.", "cabezón, librazo", "Aumentativo de 'coche'", "cochezote");
+    add(36, "Sufijo apreciativo diminutivo (-ito, -illo)", "Sufijos apreciativos", "Expresa tamaño pequeño o afecto.", "perrito, mesilla", "Diminutivo de 'flor'", "florecita");
+    add(37, "Sufijo despectivo -ucho / -aco", "Derivación", "Indica desprecio.", "pueblucho, medicucho", "Despectivo de 'casa'", "casucha");
+    add(38, "Sufijo -ble (posibilidad)", "Derivación", "Adjetivos deverbales.", "amable, temible", "Adjetivo de 'comprender'", "comprensible");
+    add(39, "Sufijo -dor (agente)", "Derivación", "Forma sustantivos agentivos.", "trabajador, jugador", "Agente de 'navegar'", "navegador");
+    add(40, "Prefijo super- (exceso)", "Derivación", "Grado extremo.", "superfino, superpoderoso", "Forma con 'ultra-' a partir de 'rápido'", "ultrarrápido");
+    
+    // ========= 5. CLASES DE PALABRAS =========
+    add(41, "Sustantivos concretos y abstractos", "Clases de palabras", "Concretos: entidades físicas; abstractos: conceptos.", "mesa (concreto), libertad (abstracto)", "Clasifica 'esperanza'", "abstracto");
+    add(42, "Adjetivos calificativos", "Clases de palabras", "Expresan cualidades.", "grande, azul", "Adjetivo en 'mujer hermosa'", "hermosa");
+    add(43, "Verbos copulativos", "Clases de palabras", "Ser, estar, parecer. Unen sujeto con atributo.", "Ella es doctora", "Verbo copulativo en 'Luisa parece cansada'", "parece");
+    add(44, "Adverbios de modo", "Clases de palabras", "Terminados en -mente o invariables.", "rápidamente, bien", "Adverbio de 'feliz'", "felizmente");
+    add(45, "Preposiciones", "Clases de palabras", "Relacionan términos: a, ante, bajo, con, contra, de, desde, en, entre, hacia, hasta, para, por, según, sin, so, sobre, tras.", "Voy a Madrid", "Preposición que indica destino", "a");
+    add(46, "Conjunciones coordinantes", "Clases de palabras", "y, e, ni, o, u, pero, sino, mas.", "Juan y Pedro", "Adversativa en 'Quiero ir ___ no puedo'", "pero");
+    add(47, "Conjunciones subordinantes", "Clases de palabras", "que, porque, aunque, si.", "Dijo que vendría", "Causal: 'Llegó tarde ___ había tráfico'", "porque");
+    add(48, "Determinantes demostrativos", "Clases de palabras", "este, ese, aquel, etc.", "Ese libro", "Determinante en 'Aquellos días'", "aquellos");
+    add(49, "Pronombres personales átonos", "Clases de palabras", "me, te, se, lo, la, le, nos, os, los, las, les.", "Se lo di", "Pronombre acusativo para 'el libro'", "lo");
+    add(50, "Interjecciones", "Clases de palabras", "Expresan emociones: ¡ay!, ¡oh!, ¡caramba!", "¡Ay! Me duele", "Interjección de sorpresa", "¡vaya!");
+    
+    // ========= 6. FORMACIÓN DE PALABRAS =========
+    add(51, "Composición propia (sust+adj)", "Formación de palabras", "Unión de dos lexemas.", "pelirrojo (pelo+rojo)", "Analiza 'cortafuegos'", "verbo + sustantivo");
+    add(52, "Composición yuxtapuesta", "Formación de palabras", "Palabras unidas sin fusión gráfica.", "coche cama, hombre rana", "Ejemplo de compuesto yuxtapuesto", "papel moneda");
+    add(53, "Acronimia", "Formación de palabras", "Formación con iniciales o sílabas.", "OTAN, RENFE", "Significado de 'RENFE'", "Red Nacional de Ferrocarriles Españoles");
+    add(54, "Siglación", "Formación de palabras", "Abreviatura con letras iniciales.", "DGT, IVA", "Significado de 'IVA'", "Impuesto sobre el Valor Añadido");
+    add(55, "Composición culta (grecolatina)", "Formación de palabras", "Raíces griegas o latinas.", "biología, hidroavión", "Forma palabra con 'tele-' y 'visor'", "televisor");
+    
+    // ========= 7. ACCIDENTES GRAMATICALES =========
+    add(56, "Accidente de género", "Accidentes gramaticales", "Propiedad inherente de sustantivos.", "el mar / la mar", "Femenino de 'el poeta'", "la poetisa");
+    add(57, "Número gramatical", "Accidentes gramaticales", "Singular o plural.", "detalle → detalles", "Plural de 'jabalí'", "jabalíes");
+    add(58, "Persona verbal", "Accidentes gramaticales", "1ª, 2ª, 3ª persona.", "soy, eres, es", "Persona de 'corrieron'", "3ª plural");
+    add(59, "Tiempo absoluto", "Accidentes gramaticales", "Presente, pasado, futuro.", "como, comí, comeré", "Tiempo de 'había soñado'", "pretérito pluscuamperfecto");
+    add(60, "Modo verbal", "Accidentes gramaticales", "Indicativo, subjuntivo, imperativo.", "Creo que viene / Ojalá venga", "Modo en '¡Ven aquí!'", "imperativo");
+    add(61, "Grado del adjetivo", "Accidentes gramaticales", "Positivo, comparativo, superlativo.", "alto, más alto que, altísimo", "Superlativo de 'fuerte'", "fortísimo");
+    
+    // ========= 8. ANÁLISIS MORFEMÁTICO =========
+    add(62, "Lexema o raíz", "Morfemática", "Núcleo semántico irreducible.", "cant- en 'cantamos'", "Lexema de 'floristería'", "flor-");
+    add(63, "Morfema flexivo de tiempo", "Morfemática", "Desinencia que aporta tiempo.", "cantaba: -ba", "Morfema de futuro en 'comerás'", "-ás");
+    add(64, "Morfema derivativo (prefijo)", "Morfemática", "Unidad antepuesta que modifica significado.", "des- + hacer = deshacer", "Prefijo en 'inexacto'", "in-");
+    add(65, "Alomorfo de plural", "Morfemática", "Variantes: -s, -es, cero.", "soles, crisis", "Alomorfo plural de 'lunes'", "cero");
+    add(66, "Alomorfo de género femenino", "Morfemática", "Variantes -a, -isa, -ina, -triz.", "actriz, princesa", "Alomorfo en 'emperatriz'", "-triz");
+    add(67, "Tema verbal", "Morfemática", "Raíz + vocal temática.", "cant-a-", "Tema de 'partir' en presente", "part- (vocal i)");
+    add(68, "Base morfológica", "Morfemática", "Elemento sobre el que actúan reglas derivacionales.", "claro → claridad", "Base de 'fortalecer'", "fort- (de fuerte)");
+    add(69, "Interfijo o infijo", "Morfemática", "Elemento sin significado léxico.", "humareda (-ar-)", "Interfijo en 'huesecillo'", "-ec-");
+    add(70, "Morfema cero (∅)", "Morfemática", "Categoría sin marca explícita.", "singular en 'mesa'", "Marca de singular en 'cactus'", "morfema cero");
+    add(71, "Supletismo", "Morfemática", "Reemplazo completo de la raíz.", "ir → voy, fui", "Forma supletiva de 'bueno' en comparativo", "mejor");
+    
+    // ========= 9. MÁS TRANSFORMACIONES Y ESTRUCTURAS (hasta 100) =========
+    add(72, "Transformación de negación con 'nadie'", "Transformaciones", "Negación con cuantificadores negativos.", "Alguien vino → Nadie vino.", "Niega: 'Algún estudiante aprobó'", "Ningún estudiante aprobó");
+    add(73, "Transformación de oración exclamativa", "Transformaciones", "Anteposición de qué/cuánto + verbo.", "Eres inteligente → ¡Qué inteligente eres!", "Transforma en exclamativa: 'Hace buen día'", "¡Qué buen día hace!");
+    add(74, "Perífrasis transformacional (ir a + infinitivo)", "Transformaciones", "Futuro perifrástico.", "Estudio → Voy a estudiar.", "Transforma 'Llegaré' a perífrasis", "Voy a llegar");
+    add(75, "Transformación de gerundio progresivo", "Transformaciones", "estar + gerundio.", "Trabaja → Está trabajando.", "Cambia a progresivo: 'Leo'", "Estoy leyendo");
+    add(76, "Transformación de pronombres enclíticos", "Transformaciones", "Pronombres átonos pospuestos al verbo.", "Dime la verdad → Dímela.", "Añade enclítico: 'Decir + lo'", "Decirlo");
+    add(77, "Transformación de impersonal con 'se'", "Transformaciones", "Se + verbo en singular sin sujeto.", "La gente vive bien aquí → Se vive bien aquí.", "Convierte en impersonal: 'Los ciudadanos protestan'", "Se protesta");
+    add(78, "Regla de movimiento de núcleo (V → T)", "Estructura arbórea", "El verbo se mueve a la posición de Tiempo en ciertas estructuras.", "En interrogativas: ¿[T [V] ]?", "Ejemplo de movimiento de verbo en '¿Comes?'", "Verbo 'comes' al inicio");
+    add(79, "Estructura de complementizador (S')", "Estructura arbórea", "S' = COMP + S. El complementizador 'que' introduce subordinadas.", "Creo [que S[María viene]]", "En 'Dijo que sí', ¿qué categoría es 'que'?", "COMP");
+    add(80, "Regla de proyección X-barra (SN → N' / N' → N)", "Estructura arbórea", "Teoría de la X-barra: N'', N', N. Nivel intermedio N' para modificadores.", "El libro de Juan (N' [N libro] [SP de Juan])", "En 'casa grande', ¿cuál es el N'?", "casa grande (N')");
+    add(81, "Estructura arbórea de 'El perro grande ladra'", "Estructura arbórea", "O(SN(Det El, N' (Adj grande, N perro)) SV(V ladra)).", "Ubica el adjetivo 'grande' en el árbol", "dentro de N' como adjunto a N");
+    add(82, "Transformación de relativización sin antecedente", "Transformaciones", "Relativo con 'quien' sin nombre previo.", "Los que estudian aprueban.", "Escribe equivalente con 'quienes'", "Quienes estudian aprueban");
+    add(83, "Transformación de subordinada con 'sin que'", "Transformaciones", "Negación de subordinada con 'sin que' + subjuntivo.", "No vino sin que lo supiéramos.", "Completa: 'Salió sin que ___ (ver) nadie'", "viera");
+    add(84, "Transformación de anteposición de atributo", "Transformaciones", "Atributo al inicio para énfasis.", "Es interesante el libro → Interesante es el libro.", "Antepone atributo: 'Es bonita la casa'", "Bonita es la casa");
+    add(85, "Oración enfocada con 'lo que'", "Transformaciones", "Estructura focalizadora 'lo que' + verbo + ser.", "Compré un coche → Lo que compré fue un coche.", "Enfatiza sujeto: 'Juan ganó'", "El que ganó fue Juan");
+    add(86, "Derivación con sufijo -ero (profesión)", "Derivación", "Forma sustantivos de oficio.", "pan → panadero", "Oficio de 'caja'", "cajero");
+    add(87, "Prefijo mono- (único)", "Formación de palabras", "Indica unicidad.", "monolito, monótono", "Mono- + 'cromático'", "monocromático");
+    add(88, "Sufijo -ancia / -encia", "Derivación", "Cualidad o estado.", "importancia, dependencia", "Sustantivo de 'confiar'", "confianza");
+    add(89, "Interfijo -it- (diminutivo)", "Morfemática", "Interfijo frecuente en diminutivos.", "abuelito (abuel+it+o)", "Interfijo en 'jovencito'", "-enc-");
+    add(90, "Prefijo ex- (anterioridad)", "Derivación", "Indica antigüedad en un cargo.", "exmarido, expresidente", "Palabra con ex- + 'alumno'", "exalumno");
+    add(91, "Oración desiderativa con 'ojalá'", "Transformaciones", "Deseo con subjuntivo.", "Espero que llueva → Ojalá llueva.", "Transforma: 'Deseo que tengas suerte'", "Ojalá tengas suerte");
+    add(92, "Futuro de subjuntivo (transformación arcaica)", "Flexión", "En desuso en lengua moderna.", "Si así fuere...", "Futuro subjuntivo de 'ser'", "fuere");
+    add(93, "Gerundio compuesto transformacional", "Flexión", "habiendo + participio.", "Habiendo comido, salió.", "Gerundio compuesto de 'hablar'", "habiendo hablado");
+    add(94, "Oración adversativa con 'sino'", "Transformaciones", "Corrige un enunciado negativo.", "No es alto, sino bajo.", "Completa: 'No estudió, ___ durmió'", "sino");
+    add(95, "Complemento de régimen preposicional (CRV)", "Estructura arbórea", "Exigido por el verbo (verbos preposicionales).", "Carecer de, arrepentirse de", "CRV en 'Se acordó de nosotros'", "de nosotros");
+    add(96, "Subordinada adverbial consecutiva", "Transformaciones", "Consecuencia: así que, por tanto.", "Estudió mucho, así que aprobó.", "Escribe consecutiva con 'de modo que'", "Llovió mucho, de modo que nos mojamos");
+    add(97, "Oración impersonal meteorológica", "Transformaciones", "Verbos atmosféricos sin sujeto.", "Llueve mucho.", "¿Sujeto de 'Graniza'?", "No tiene (impersonal)");
+    add(98, "Verbo pronominal transformacional", "Accidentes gramaticales", "Verbo con se reflexivo/marcado.", "Se arrepintió.", "Analiza 'Se durmió'", "pronominal con valor reflexivo");
+    add(99, "Alternancia vocálica (diptongación)", "Morfemática", "Cambio vocálico en la raíz.", "contar → cuento", "Alternancia en 'dormir'", "duermo (o→ue)");
+    add(100, "Estructura profunda y superficial (transformación final)", "Transformaciones", "La estructura profunda (significado) se transforma en superficial (forma).", "Profunda: Juan rompió el jarrón → Superficial pasiva: El jarrón fue roto por Juan.", "¿Qué transformación relaciona 'María lava los platos' con 'Los platos son lavados por María'?", "pasiva");
+
+    // ---------------------- PROGRESO LOCALSTORAGE ----------------------
+    let userProgress = JSON.parse(localStorage.getItem('genTransfProgress')) || {};
+    
+    function updateGlobalProgress() {
+        const total = techniques.length;
+        let completed = 0;
+        for (let i = 0; i < total; i++) {
+            if (userProgress[i+1] === true) completed++;
+        }
+        const percent = Math.round((completed / total) * 100);
+        const fillBar = document.getElementById('globalProgressFill');
+        const percentSpan = document.getElementById('progressPercent');
+        if (fillBar) fillBar.style.width = percent + '%';
+        if (percentSpan) percentSpan.innerText = percent + '%';
+    }
+    
+    function setCardStatus(cardId, isCorrect) {
+        const statusSpan = document.getElementById(`status-${cardId}`);
+        if (statusSpan) {
+            if (isCorrect) {
+                statusSpan.innerHTML = ' ✅';
+                statusSpan.style.color = '#2b6e2b';
+            } else {
+                statusSpan.innerHTML = '';
+            }
+        }
+        userProgress[cardId] = isCorrect;
+        localStorage.setItem('genTransfProgress', JSON.stringify(userProgress));
+        updateGlobalProgress();
+    }
+    
+    function checkAnswer(cardId, userAnswer, correctAnswer, inputElement, feedbackElement) {
+        const normalizedUser = userAnswer.trim().toLowerCase().replace(/[¿¡]/g, '');
+        const normalizedCorrect = correctAnswer.trim().toLowerCase().replace(/[¿¡]/g, '');
+        const isOk = normalizedUser === normalizedCorrect;
+        if (isOk) {
+            feedbackElement.innerHTML = '✓ ¡Correcto!';
+            feedbackElement.className = 'feedback correct';
+            setCardStatus(cardId, true);
+        } else {
+            feedbackElement.innerHTML = `✗ Incorrecto. Respuesta sugerida: "${correctAnswer}"`;
+            feedbackElement.className = 'feedback incorrect';
+            setCardStatus(cardId, false);
+        }
+        inputElement.disabled = true;
+        inputElement.style.backgroundColor = '#f0f0f0';
+    }
+    
+    function resetCard(cardId, inputElement, feedbackElement) {
+        inputElement.disabled = false;
+        inputElement.value = '';
+        inputElement.style.backgroundColor = 'white';
+        feedbackElement.innerHTML = '';
+        feedbackElement.className = 'feedback';
+        userProgress[cardId] = false;
+        localStorage.setItem('genTransfProgress', JSON.stringify(userProgress));
+        updateGlobalProgress();
+        const statusSpan = document.getElementById(`status-${cardId}`);
+        if (statusSpan) statusSpan.innerHTML = '';
+    }
+    
+    function speakText(text) {
+        if ('speechSynthesis' in window) {
+            speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            speechSynthesis.speak(utterance);
+        } else {
+            alert("Tu navegador no soporta síntesis de voz.");
+        }
+    }
+    
+    // Renderizado
+    document.getElementById('totalCount').innerText = techniques.length;
+    const container = document.getElementById('cardsContainer');
+    const searchInput = document.getElementById('searchInput');
+    const categorySelect = document.getElementById('categorySelect');
+    
+    function renderCards() {
+        const searchTerm = searchInput.value.toLowerCase();
+        const selectedCat = categorySelect.value;
+        const filtered = techniques.filter(t => {
+            const matchSearch = t.name.toLowerCase().includes(searchTerm) ||
+                                t.category.toLowerCase().includes(searchTerm) ||
+                                t.teoria.toLowerCase().includes(searchTerm);
+            const matchCat = selectedCat === 'all' || t.category === selectedCat;
+            return matchSearch && matchCat;
+        });
+        
+        if (filtered.length === 0) {
+            container.innerHTML = `<div style="grid-column:1/-1; text-align:center;padding:3rem;">🔍 No hay técnicas con esos filtros.</div>`;
+            return;
+        }
+        
+        container.innerHTML = filtered.map(item => {
+            const isCompleted = userProgress[item.id] === true;
+            return `
+            <div class="card">
+                <div class="card-header">
+                    <h3>#${item.id} · ${item.name} <span id="status-${item.id}" class="status-icon">${isCompleted ? '✅' : ''}</span></h3>
+                    <span class="category-tag">${item.category}</span>
+                </div>
+                <div class="card-body">
+                    <div class="teoria">
+                        <span>📘 ${item.teoria}</span>
+                        <button class="btn-speak" data-teoria="${item.teoria.replace(/"/g, '&quot;')}">🔊 Leer teoría</button>
+                    </div>
+                    <div class="ejemplo">
+                        <span>💡 ${item.ejemplo}</span>
+                        <button class="btn-speak-ejemplo" data-ejemplo="${item.ejemplo.replace(/"/g, '&quot;')}">🔊 Leer ejemplo</button>
+                    </div>
+                    <div class="ejercicio-area">
+                        <div class="ejercicio-text">✏️ Ejercicio: ${item.ejercicio}</div>
+                        <div class="input-group">
+                            <input type="text" id="input-${item.id}" placeholder="Escribe tu respuesta..." ${isCompleted ? 'disabled' : ''}>
+                            <button class="check-btn" data-id="${item.id}" ${isCompleted ? 'disabled' : ''}>Comprobar</button>
+                        </div>
+                        <div id="feedback-${item.id}" class="feedback"></div>
+                        <button class="reset-card-btn" data-reset="${item.id}">⟳ Reiniciar ejercicio</button>
+                    </div>
+                </div>
+            </div>
+            `;
+        }).join('');
+        
+        document.querySelectorAll('.btn-speak').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const text = btn.getAttribute('data-teoria');
+                if (text) speakText(text);
+            });
+        });
+        document.querySelectorAll('.btn-speak-ejemplo').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const text = btn.getAttribute('data-ejemplo');
+                if (text) speakText(text);
+            });
+        });
+        
+        techniques.forEach(t => {
+            const btn = document.querySelector(`.check-btn[data-id="${t.id}"]`);
+            const resetBtn = document.querySelector(`.reset-card-btn[data-reset="${t.id}"]`);
+            const inputEl = document.getElementById(`input-${t.id}`);
+            const feedbackEl = document.getElementById(`feedback-${t.id}`);
+            if (btn && inputEl && feedbackEl) {
+                btn.addEventListener('click', () => {
+                    if (!inputEl.disabled) {
+                        checkAnswer(t.id, inputEl.value, t.suggestedAnswer, inputEl, feedbackEl);
+                        btn.disabled = true;
+                    }
+                });
+            }
+            if (resetBtn && inputEl && feedbackEl) {
+                resetBtn.addEventListener('click', () => {
+                    resetCard(t.id, inputEl, feedbackEl);
+                    const checkBtn = document.querySelector(`.check-btn[data-id="${t.id}"]`);
+                    if (checkBtn) checkBtn.disabled = false;
+                });
+            }
+        });
+    }
+    
+    searchInput.addEventListener('input', renderCards);
+    categorySelect.addEventListener('change', renderCards);
+    renderCards();
+    updateGlobalProgress();
+</script>
+</body>
+</html>

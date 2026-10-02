@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚗 Flota Automotriz · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🚗 FLOTA AUTOMOTRIZ<small>100 TÉCNICAS · AUTOMÓVILES</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="motorcar" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Motorcar <span class="badge-personaje bg-dorado">Motor</span></a>
+        <a class="nav-link" data-section="transcar" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Transcar <span class="badge-personaje bg-azul">Transmisión</span></a>
+        <a class="nav-link" data-section="frenocar" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Frenocar <span class="badge-personaje bg-verde">Frenos</span></a>
+        <a class="nav-link" data-section="chasis" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Chasis <span class="badge-personaje bg-purpura">Suspensión</span></a>
+        <a class="nav-link" data-section="electrocar" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Electrocar <span class="badge-personaje bg-rojo">Eléctrico</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🚗</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Mecánica automotriz</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Mecánica automotriz en Colombia</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la mecánica automotriz:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Motorcar</strong> – Motores y componentes internos.</li>
+                    <li><strong style="color:var(--neon-azul);">Transcar</strong> – Transmisión, embrague, caja de cambios, diferencial.</li>
+                    <li><strong style="color:var(--neon-verde);">Frenocar</strong> – Frenos y seguridad: ABS, ESP, pastillas.</li>
+                    <li><strong style="color:var(--neon-purpura);">Chasis</strong> – Suspensión, dirección, ruedas y chasis.</li>
+                    <li><strong style="color:var(--neon-rojo);">Electrocar</strong> – Sistema eléctrico, electrónica, mantenimiento y normativa.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-motorcar" class="section-content" style="display:none;"></div>
+        <div id="section-transcar" class="section-content" style="display:none;"></div>
+        <div id="section-frenocar" class="section-content" style="display:none;"></div>
+        <div id="section-chasis" class="section-content" style="display:none;"></div>
+        <div id="section-electrocar" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    motorcar: {
+        nombre: "Motorcar", color: "dorado", icono: "bi-robot",
+        especialidad: "Motores y componentes internos",
+        tecnicas: [
+            { titulo: "Motor de combustión interna (4 tiempos)", teoria: "El motor de combustión interna de 4 tiempos convierte la energía química del combustible en energía mecánica mediante cuatro fases: admisión, compresión, explosión y escape.", ejemplo: "La mayoría de los automóviles usan motores de 4 tiempos.", ejercicio: "¿Cuáles son las cuatro fases del motor de 4 tiempos?", reto: "Investiga la diferencia entre motores de 4 y 2 tiempos." },
+            { titulo: "Motor diésel vs gasolina", teoria: "El motor diésel enciende el combustible por compresión (sin bujías), mientras que el motor de gasolina enciende con chispa. El diésel es más eficiente pero más ruidoso.", ejemplo: "Los vehículos pesados usan diésel; los turismos suelen usar gasolina.", ejercicio: "¿Qué diferencia hay entre un motor diésel y uno de gasolina?", reto: "Investiga las ventajas y desventajas de cada tipo." },
+            { titulo: "Motor turboalimentado", teoria: "El turboalimentador utiliza los gases de escape para girar una turbina que comprime el aire de admisión, aumentando la potencia del motor.", ejemplo: "Los motores turbo son comunes en vehículos modernos y ofrecen mayor potencia con menor cilindrada.", ejercicio: "¿Cómo funciona un turboalimentador?", reto: "Investiga la diferencia entre turbo y supercargador." },
+            { titulo: "Cilindros y pistones", teoria: "Los cilindros son las cámaras donde ocurre la combustión. Los pistones se mueven dentro de ellos, transformando la presión en movimiento.", ejemplo: "Un motor de 4 cilindros en línea es muy común en automóviles.", ejercicio: "¿Qué función tienen los cilindros y pistones?", reto: "Investiga las configuraciones de cilindros (en línea, V, boxer)." },
+            { titulo: "Culata y válvulas", teoria: "La culata cierra los cilindros y contiene las válvulas de admisión y escape, que controlan el flujo de gases.", ejemplo: "Los motores modernos tienen 4 válvulas por cilindro (2 de admisión, 2 de escape).", ejercicio: "¿Qué función tienen las válvulas en el motor?", reto: "Investiga el sistema de distribución variable." },
+            { titulo: "Biela y cigüeñal", teoria: "La biela conecta el pistón al cigüeñal, transformando el movimiento lineal en rotatorio. El cigüeñal es el eje que impulsa la transmisión.", ejemplo: "El cigüeñal está montado sobre cojinetes de bancada.", ejercicio: "¿Cómo transforma el cigüeñal el movimiento del pistón?", reto: "Investiga el equilibrio del cigüeñal." },
+            { titulo: "Sistema de lubricación", teoria: "El sistema de lubricación reduce la fricción entre las piezas móviles, dispersa el calor y limpia el motor. Incluye el cárter, la bomba de aceite y el filtro.", ejemplo: "El aceite debe cambiarse según el manual del fabricante (generalmente cada 5,000-10,000 km).", ejercicio: "¿Qué función tiene el sistema de lubricación?", reto: "Investiga los tipos de aceite de motor." },
+            { titulo: "Sistema de refrigeración", teoria: "El sistema de refrigeración mantiene la temperatura del motor en un rango óptimo. Incluye el radiador, termostato, bomba de agua y ventilador.", ejemplo: "El refrigerante debe cambiarse cada 2-3 años.", ejercicio: "¿Qué componentes tiene el sistema de refrigeración?", reto: "Investiga cómo funciona el termostato." },
+            { titulo: "Sistema de combustible", teoria: "El sistema de combustible suministra la mezcla de aire y combustible al motor. Incluye el tanque, la bomba, el filtro y los inyectores o carburador.", ejemplo: "La inyección electrónica es el sistema estándar en vehículos modernos.", ejercicio: "¿Qué componentes tiene el sistema de combustible?", reto: "Investiga la diferencia entre inyección directa e indirecta." },
+            { titulo: "Sistema de encendido", teoria: "El sistema de encendido produce la chispa que enciende la mezcla en el cilindro. Incluye la batería, la bobina, el distribuidor (en sistemas antiguos) y las bujías.", ejemplo: "Las bujías deben reemplazarse según el manual del fabricante.", ejercicio: "¿Qué componentes tiene el sistema de encendido?", reto: "Investiga el sistema de encendido sin distribuidor (DIS)." },
+            { titulo: "Motor V8", teoria: "El motor V8 tiene 8 cilindros en configuración en V. Ofrece alta potencia y suavidad, pero mayor consumo.", ejemplo: "Los motores V8 son comunes en vehículos deportivos y camionetas.", ejercicio: "¿Qué es un motor V8?", reto: "Investiga las ventajas del motor V8." },
+            { titulo: "Motor en línea (L4, L6)", teoria: "Los motores en línea tienen todos los cilindros en una fila. El L4 (4 cilindros) es el más común en automóviles.", ejemplo: "La mayoría de los autos compactos usan motores L4.", ejercicio: "¿Qué es un motor en línea?", reto: "Investiga la diferencia entre L4 y L6." },
+            { titulo: "Motor boxer", teoria: "El motor boxer tiene los cilindros opuestos horizontalmente (como un 'bóxer' de boxeo). Ofrece un centro de gravedad bajo.", ejemplo: "Los motores boxer son característicos de Subaru y Porsche.", ejercicio: "¿Qué es un motor boxer?", reto: "Investiga las ventajas del motor boxer." },
+            { titulo: "Relación de compresión", teoria: "La relación de compresión es la relación entre el volumen del cilindro en el punto muerto inferior y el punto muerto superior.", ejemplo: "Una relación de compresión de 10:1 es común en motores de gasolina.", ejercicio: "¿Qué es la relación de compresión?", reto: "Investiga cómo afecta la relación de compresión al rendimiento." },
+            { titulo: "Motor de combustión interna (2 tiempos)", teoria: "El motor de 2 tiempos completa el ciclo en solo dos fases (compresión y explosión), combinando admisión y escape. Es más simple pero menos eficiente y más contaminante.", ejercicio: "¿Cómo funciona un motor de 2 tiempos?", reto: "Investiga las aplicaciones del motor de 2 tiempos en la actualidad." },
+            { titulo: "Sistema EGR (Recirculación de gases de escape)", teoria: "El sistema EGR recircula una parte de los gases de escape al colector de admisión para reducir las emisiones de óxidos de nitrógeno (NOx).", ejemplo: "El EGR es un componente clave en los motores modernos para cumplir con las normativas de emisiones.", ejercicio: "¿Qué función tiene el sistema EGR?", reto: "Investiga cómo funciona el sistema EGR." },
+            { titulo: "Sistema de admisión variable", teoria: "El sistema de admisión variable ajusta la longitud o geometría del colector de admisión para optimizar el rendimiento en diferentes regímenes de giro.", ejemplo: "Los sistemas de admisión variable mejoran la potencia a bajas y altas revoluciones.", ejercicio: "¿Qué es la admisión variable?", reto: "Investiga cómo funciona el sistema de admisión variable." },
+            { titulo: "Filtro de aire del motor", teoria: "El filtro de aire limpia el aire que entra al motor, evitando que partículas dañinas ingresen.", ejemplo: "El filtro de aire debe reemplazarse cada 15,000-30,000 km.", ejercicio: "¿Qué función tiene el filtro de aire?", reto: "Investiga cómo cambiar el filtro de aire." },
+            { titulo: "Filtro de combustible", teoria: "El filtro de combustible retiene las impurezas del combustible antes de que llegue al motor.", ejemplo: "El filtro de combustible debe reemplazarse según el manual del fabricante.", ejercicio: "¿Qué función tiene el filtro de combustible?", reto: "Investiga cómo reemplazar el filtro de combustible." },
+            { titulo: "Aceite de motor y su viscosidad", teoria: "El aceite de motor lubrica, limpia y enfría el motor. La viscosidad (ej. 5W-30) indica su fluidez en frío y en caliente.", ejemplo: "Usar la viscosidad incorrecta puede dañar el motor.", ejercicio: "¿Qué es la viscosidad del aceite?", reto: "Investiga qué viscosidad recomienda tu fabricante." }
+        ]
+    },
+    transcar: {
+        nombre: "Transcar", color: "azul", icono: "bi-robot",
+        especialidad: "Transmisión, embrague, caja de cambios, diferencial, ejes",
+        tecnicas: [
+            { titulo: "Sistema de transmisión", teoria: "El sistema de transmisión transmite la potencia del motor a las ruedas. Incluye el embrague, la caja de cambios, el eje de transmisión, el diferencial y los ejes de rueda.", ejemplo: "La transmisión puede ser manual, automática o CVT.", ejercicio: "¿Qué componentes forman el sistema de transmisión?", reto: "Investiga los tipos de transmisión." },
+            { titulo: "Embrague", teoria: "El embrague conecta y desconecta el motor de la transmisión para permitir cambios de velocidad y detener el vehículo sin apagar el motor.", ejemplo: "El embrague se acciona con el pedal izquierdo (en transmisiones manuales).", ejercicio: "¿Qué función tiene el embrague?", reto: "Investiga los tipos de embrague." },
+            { titulo: "Caja de cambios manual", teoria: "La caja de cambios manual permite seleccionar diferentes relaciones de velocidad. El conductor opera el embrague y la palanca de cambios.", ejemplo: "Las cajas manuales suelen tener 5 o 6 velocidades.", ejercicio: "¿Cómo funciona una caja de cambios manual?", reto: "Investiga el sincronizador de una caja manual." },
+            { titulo: "Transmisión automática", teoria: "La transmisión automática selecciona las relaciones de velocidad automáticamente, utilizando un convertidor de par y un sistema hidráulico o electrónico.", ejemplo: "Las transmisiones automáticas modernas tienen 6, 8 o 10 velocidades.", ejercicio: "¿Cómo funciona una transmisión automática?", reto: "Investiga la diferencia entre transmisión automática y CVT." },
+            { titulo: "Transmisión CVT (Variador continuo)", teoria: "La transmisión CVT no tiene relaciones fijas, sino que ajusta la relación de forma continua, ofreciendo una conducción suave y eficiente.", ejemplo: "Muchos vehículos híbridos y compactos usan CVT.", ejercicio: "¿Qué es la transmisión CVT?", reto: "Investiga las ventajas y desventajas de la CVT." },
+            { titulo: "Transmisión DSG / de doble embrague", teoria: "La transmisión de doble embrague (DSG) tiene dos embragues que permiten cambios de marcha ultrarrápidos sin interrupción de potencia.", ejemplo: "Las DSG son comunes en vehículos deportivos y de alta gama.", ejercicio: "¿Cómo funciona una transmisión DSG?", reto: "Investiga la diferencia entre DSG y transmisión automática tradicional." },
+            { titulo: "Diferencial", teoria: "El diferencial permite que las ruedas giren a diferentes velocidades en las curvas, mejorando la tracción y el manejo.", ejemplo: "El diferencial está ubicado en el eje trasero (en tracción trasera) o en el tren delantero (en tracción delantera).", ejercicio: "¿Qué función tiene el diferencial?", reto: "Investiga los tipos de diferenciales." },
+            { titulo: "Eje de transmisión", teoria: "El eje de transmisión (o cardán) transmite la potencia desde la caja de cambios hasta el diferencial en vehículos con tracción trasera o integral.", ejemplo: "El eje de transmisión tiene juntas universales para absorber los movimientos.", ejercicio: "¿Qué es el eje de transmisión?", reto: "Investiga los tipos de juntas universales." },
+            { titulo: "Tren delantero y suspensión", teoria: "El tren delantero incluye la suspensión, la dirección y los componentes que conectan las ruedas delanteras al chasis.", ejercicio: "¿Qué componentes forman el tren delantero?", reto: "Investiga la geometría de la suspensión delantera." },
+            { titulo: "Tracción delantera vs tracción trasera", teoria: "En la tracción delantera (FWD), el motor impulsa las ruedas delanteras; en la tracción trasera (RWD), impulsa las ruedas traseras.", ejemplo: "La mayoría de los autos compactos usan tracción delantera.", ejercicio: "¿Qué diferencia hay entre FWD y RWD?", reto: "Investiga las ventajas de cada tipo de tracción." },
+            { titulo: "Tracción integral (AWD / 4WD)", teoria: "La tracción integral (AWD) envía potencia a las cuatro ruedas, mejorando la tracción en condiciones adversas.", ejemplo: "Los SUV y vehículos todoterreno suelen tener tracción integral.", ejercicio: "¿Qué es la tracción integral?", reto: "Investiga la diferencia entre AWD y 4WD." },
+            { titulo: "Convertidor de par", teoria: "El convertidor de par es el componente que conecta el motor a la transmisión automática, transmitiendo la potencia a través de un fluido.", ejemplo: "El convertidor de par también multiplica el par a bajas revoluciones.", ejercicio: "¿Cómo funciona un convertidor de par?", reto: "Investiga el bloqueo del convertidor de par." },
+            { titulo: "Líquido de transmisión", teoria: "El líquido de transmisión (ATF) lubrica y enfría la transmisión automática. Debe cambiarse periódicamente según el fabricante.", ejemplo: "El ATF debe tener el color y el olor adecuados.", ejercicio: "¿Qué función tiene el líquido de transmisión?", reto: "Investiga cómo cambiar el líquido de transmisión." },
+            { titulo: "Filtro de transmisión", teoria: "El filtro de transmisión retiene las impurezas del líquido de transmisión, protegiendo los componentes internos.", ejemplo: "El filtro de transmisión debe reemplazarse con el cambio de líquido.", ejercicio: "¿Qué función tiene el filtro de transmisión?", reto: "Investiga cómo reemplazar el filtro de transmisión." },
+            { titulo: "Juntas homocinéticas", teoria: "Las juntas homocinéticas (CV) conectan los ejes de transmisión a las ruedas, permitiendo la dirección y el movimiento de la suspensión.", ejemplo: "Las juntas CV deben estar protegidas por fuelles.", ejercicio: "¿Qué función tienen las juntas homocinéticas?", reto: "Investiga cómo detectar una junta CV dañada." },
+            { titulo: "Eje trasero", teoria: "El eje trasero es el componente que soporta las ruedas traseras y contiene el diferencial en vehículos con tracción trasera.", ejercicio: "¿Qué componentes tiene el eje trasero?", reto: "Investiga los tipos de ejes traseros." },
+            { titulo: "Palier o semiejes", teoria: "Los palieres (o semiejes) transmiten la potencia desde el diferencial a las ruedas.", ejemplo: "Los palieres están conectados a las ruedas mediante juntas homocinéticas.", ejercicio: "¿Qué son los palieres?", reto: "Investiga cómo reemplazar un palier." },
+            { titulo: "Relación del diferencial", teoria: "La relación del diferencial (ej. 3.73:1) es la relación entre el número de dientes del piñón y del coronó. Determina la aceleración y la velocidad máxima.", ejemplo: "Una relación más alta da mejor aceleración pero menor velocidad máxima.", ejercicio: "¿Qué es la relación del diferencial?", reto: "Investiga cómo calcular la relación del diferencial." },
+            { titulo: "Mantenimiento de la transmisión", teoria: "El mantenimiento de la transmisión incluye el cambio de líquido, filtro y la revisión de los componentes. Debe realizarse según el manual del fabricante.", ejemplo: "Revisar el nivel de líquido de transmisión regularmente.", ejercicio: "¿Qué mantenimiento necesita la transmisión?", reto: "Investiga el plan de mantenimiento de tu vehículo." },
+            { titulo: "Síntomas de fallas en la transmisión", teoria: "Las fallas en la transmisión pueden manifestarse como ruidos, vibraciones, cambios bruscos, patinaje o pérdida de potencia.", ejemplo: "Un cambio brusco puede indicar bajo nivel de líquido.", ejercicio: "¿Qué síntomas indican fallas en la transmisión?", reto: "Investiga cómo diagnosticar fallas en la transmisión." }
+        ]
+    },
+    frenocar: {
+        nombre: "Frenocar", color: "verde", icono: "bi-robot",
+        especialidad: "Frenos y seguridad: ABS, ESP, pastillas, líquido de frenos",
+        tecnicas: [
+            { titulo: "Sistema de frenos", teoria: "El sistema de frenos reduce la velocidad o detiene el vehículo. Incluye el pedal, el servofreno, la bomba, las líneas, las pinzas y las pastillas.", ejemplo: "El sistema de frenos es crucial para la seguridad.", ejercicio: "¿Qué componentes tiene el sistema de frenos?", reto: "Investiga los tipos de frenos." },
+            { titulo: "Freno de disco", teoria: "El freno de disco utiliza una pinza que aprieta las pastillas contra un disco metálico. Ofrece mayor potencia y mejor disipación del calor.", ejemplo: "La mayoría de los automóviles modernos usan frenos de disco en las cuatro ruedas.", ejercicio: "¿Cómo funciona un freno de disco?", reto: "Investiga la diferencia entre discos ventilados y sólidos." },
+            { titulo: "Freno de tambor", teoria: "El freno de tambor utiliza zapatas que se expanden contra el interior de un tambor. Es menos potente pero más económico.", ejemplo: "Algunos vehículos de baja gama usan frenos de tambor en las ruedas traseras.", ejercicio: "¿Cómo funciona un freno de tambor?", reto: "Investiga las ventajas y desventajas del freno de tambor." },
+            { titulo: "Pastillas de freno", teoria: "Las pastillas de freno son los elementos de fricción que presionan el disco. Se desgastan con el uso y deben reemplazarse periódicamente.", ejemplo: "Las pastillas deben cambiarse cuando el material de fricción es inferior a 3 mm.", ejercicio: "¿Qué función tienen las pastillas de freno?", reto: "Investiga los tipos de pastillas (orgánicas, semimetálicas, cerámicas)." },
+            { titulo: "Líquido de frenos", teoria: "El líquido de frenos transmite la presión del pedal a las pinzas. Debe cambiarse cada 2 años porque absorbe humedad.", ejemplo: "El líquido de frenos se clasifica por su punto de ebullición (DOT 3, 4, 5.1).", ejercicio: "¿Qué función tiene el líquido de frenos?", reto: "Investiga cómo cambiar el líquido de frenos." },
+            { titulo: "Sistema ABS (Anti-lock Braking System)", teoria: "El ABS evita que las ruedas se bloqueen durante el frenado, manteniendo el control del vehículo.", ejemplo: "El ABS es obligatorio en todos los vehículos nuevos.", ejercicio: "¿Qué es el sistema ABS?", reto: "Investiga cómo funciona el sistema ABS." },
+            { titulo: "Sistema ESP (Control de estabilidad)", teoria: "El ESP detecta y reduce la pérdida de tracción, aplicando frenos selectivos para mantener el control del vehículo.", ejemplo: "El ESP es obligatorio en la mayoría de los vehículos nuevos.", ejercicio: "¿Qué es el sistema ESP?", reto: "Investiga cómo funciona el ESP." },
+            { titulo: "Servofreno (Bomba de vacío)", teoria: "El servofreno multiplica la fuerza aplicada al pedal, reduciendo el esfuerzo necesario para frenar.", ejemplo: "La mayoría de los vehículos tienen servofreno de vacío.", ejercicio: "¿Qué función tiene el servofreno?", reto: "Investiga cómo funciona el servofreno." },
+            { titulo: "Bomba de frenos", teoria: "La bomba de frenos (master cylinder) convierte la fuerza del pedal en presión hidráulica que se transmite a las pinzas.", ejemplo: "Una bomba de frenos defectuosa puede causar pérdida de frenos.", ejercicio: "¿Qué función tiene la bomba de frenos?", reto: "Investiga cómo probar la bomba de frenos." },
+            { titulo: "Mangueras y líneas de freno", teoria: "Las mangueras y líneas de freno transportan el líquido de frenos desde la bomba hasta las pinzas.", ejemplo: "Las mangueras deben inspeccionarse por fugas o daños.", ejercicio: "¿Qué función tienen las líneas de freno?", reto: "Investiga cómo revisar las mangueras de freno." },
+            { titulo: "Pastillas de freno cerámicas", teoria: "Las pastillas cerámicas ofrecen menor ruido y desgaste, pero son más caras. Son ideales para conducción urbana.", ejercicio: "¿Qué ventajas tienen las pastillas cerámicas?", reto: "Investiga la diferencia entre pastillas cerámicas y semimetálicas." },
+            { titulo: "Pastillas de freno semimetálicas", teoria: "Las pastillas semimetálicas ofrecen mayor rendimiento a altas temperaturas, pero pueden generar más ruido y polvo.", ejercicio: "¿Qué ventajas tienen las pastillas semimetálicas?", reto: "Investiga cuál es mejor para tu tipo de conducción." },
+            { titulo: "Discos de freno ventilados", teoria: "Los discos ventilados tienen canales internos que disipan mejor el calor, mejorando el rendimiento en condiciones exigentes.", ejercicio: "¿Qué ventajas tienen los discos ventilados?", reto: "Investiga la diferencia entre discos ventilados y sólidos." },
+            { titulo: "Frenado de emergencia", teoria: "En una frenada de emergencia, se debe aplicar el freno a fondo y mantener el control del vehículo. El ABS ayuda a evitar el bloqueo.", ejercicio: "¿Cómo se realiza una frenada de emergencia?", reto: "Investiga las técnicas de frenado en situaciones de emergencia." },
+            { titulo: "Distancia de frenado", teoria: "La distancia de frenado depende de la velocidad, el estado de los neumáticos, el sistema de frenos y la superficie de la carretera.", ejemplo: "A 60 km/h, la distancia de frenado puede ser de 15-20 metros.", ejercicio: "¿Qué factores afectan la distancia de frenado?", reto: "Investiga la distancia de frenado de tu vehículo." },
+            { titulo: "Mantenimiento de frenos", teoria: "El mantenimiento de frenos incluye la revisión de pastillas, discos, líquido de frenos y líneas. Debe realizarse periódicamente.", ejemplo: "Revisar los frenos cada 10,000 km.", ejercicio: "¿Qué mantenimiento necesitan los frenos?", reto: "Investiga cómo revisar el sistema de frenos." },
+            { titulo: "Purgado del sistema de frenos", teoria: "El purgado elimina el aire del sistema de frenos, mejorando la respuesta y la sensación de frenado.", ejemplo: "Purgar el sistema de frenos cada 2 años.", ejercicio: "¿Qué es el purgado del sistema de frenos?", reto: "Investiga cómo purgar el sistema de frenos." },
+            { titulo: "Frenos de alto rendimiento", teoria: "Los sistemas de frenos de alto rendimiento incluyen discos más grandes, pinzas de múltiples pistones y pastillas de competición.", ejemplo: "Los vehículos deportivos suelen tener frenos de alto rendimiento.", ejercicio: "¿Qué componentes mejoran el rendimiento de los frenos?", reto: "Investiga cómo mejorar los frenos de tu vehículo." },
+            { titulo: "Normativas de seguridad en Colombia", teoria: "En Colombia, los frenos deben cumplir con el Código Nacional de Tránsito y la revisión técnico-mecánica.", ejercicio: "¿Qué normativas aplican a los frenos en Colombia?", reto: "Investiga el Código Nacional de Tránsito sobre frenos." },
+            { titulo: "Sistema de frenos regenerativos (híbridos/eléctricos)", teoria: "Los vehículos híbridos y eléctricos usan frenos regenerativos que recuperan energía durante el frenado, recargando la batería.", ejercicio: "¿Cómo funciona el freno regenerativo?", reto: "Investiga la diferencia entre frenos regenerativos y convencionales." }
+        ]
+    },
+    chasis: {
+        nombre: "Chasis", color: "purpura", icono: "bi-robot",
+        especialidad: "Suspensión, dirección, ruedas y chasis",
+        tecnicas: [
+            { titulo: "Sistema de suspensión", teoria: "La suspensión absorbe los impactos y mantiene el contacto de las ruedas con el suelo, mejorando la estabilidad y la comodidad.", ejercicio: "¿Qué función tiene el sistema de suspensión?", reto: "Investiga los tipos de suspensión." },
+            { titulo: "Suspensión McPherson", teoria: "La suspensión McPherson es un sistema independiente que combina el amortiguador y el resorte en una sola unidad. Es común en la suspensión delantera.", ejercicio: "¿Cómo funciona la suspensión McPherson?", reto: "Investiga las ventajas de la suspensión McPherson." },
+            { titulo: "Suspensión multibrazo", teoria: "La suspensión multibrazo utiliza varios brazos de control para ofrecer mayor precisión y estabilidad. Es común en vehículos de alta gama.", ejercicio: "¿Qué es la suspensión multibrazo?", reto: "Investiga las ventajas de la suspensión multibrazo." },
+            { titulo: "Suspensión de eje rígido", teoria: "La suspensión de eje rígido conecta ambas ruedas traseras, ofreciendo robustez y simplicidad. Es común en vehículos todoterreno.", ejercicio: "¿Qué es la suspensión de eje rígido?", reto: "Investiga las ventajas y desventajas de este sistema." },
+            { titulo: "Amortiguadores", teoria: "Los amortiguadores controlan la oscilación de los resortes, mejorando la estabilidad y el confort.", ejemplo: "Los amortiguadores deben reemplazarse cuando presentan fugas de aceite.", ejercicio: "¿Qué función tienen los amortiguadores?", reto: "Investiga cómo probar los amortiguadores." },
+            { titulo: "Resortes (muelles)", teoria: "Los resortes soportan el peso del vehículo y absorben los impactos de la carretera.", ejemplo: "Los resortes pueden ser helicoidales o de ballesta.", ejercicio: "¿Qué tipos de resortes existen?", reto: "Investiga la diferencia entre resortes helicoidales y de ballesta." },
+            { titulo: "Barra estabilizadora", teoria: "La barra estabilizadora reduce la inclinación de la carrocería en las curvas, mejorando la estabilidad.", ejemplo: "La barra estabilizadora conecta ambos lados de la suspensión.", ejercicio: "¿Qué función tiene la barra estabilizadora?", reto: "Investiga cómo funciona la barra estabilizadora." },
+            { titulo: "Sistema de dirección", teoria: "El sistema de dirección permite controlar la dirección del vehículo. Incluye el volante, la columna de dirección, la cremallera y las barras de dirección.", ejercicio: "¿Qué componentes tiene el sistema de dirección?", reto: "Investiga la diferencia entre dirección asistida y dirección hidráulica." },
+            { titulo: "Dirección asistida", teoria: "La dirección asistida reduce el esfuerzo necesario para girar el volante. Puede ser hidráulica, eléctrica o electrohidráulica.", ejemplo: "La dirección asistida eléctrica (EPS) es común en vehículos modernos.", ejercicio: "¿Qué es la dirección asistida?", reto: "Investiga los tipos de dirección asistida." },
+            { titulo: "Alineación de ruedas", teoria: "La alineación de ruedas ajusta los ángulos de las ruedas (camber, caster, toe) para garantizar un desgaste uniforme de los neumáticos y un manejo preciso.", ejemplo: "La alineación debe realizarse cada 10,000 km.", ejercicio: "¿Qué es la alineación de ruedas?", reto: "Investiga los ángulos de alineación." },
+            { titulo: "Balanceo de ruedas", teoria: "El balanceo de ruedas equilibra el conjunto rueda-neumático para evitar vibraciones a altas velocidades.", ejemplo: "El balanceo debe realizarse cada 10,000 km o al cambiar neumáticos.", ejercicio: "¿Qué es el balanceo de ruedas?", reto: "Investiga cómo se balancean las ruedas." },
+            { titulo: "Neumáticos", teoria: "Los neumáticos son el punto de contacto entre el vehículo y la carretera. Deben tener la presión y el dibujo adecuados.", ejemplo: "La presión de los neumáticos debe revisarse regularmente.", ejercicio: "¿Qué función tienen los neumáticos?", reto: "Investiga la presión adecuada de los neumáticos." },
+            { titulo: "Ruedas y llantas", teoria: "Las ruedas están compuestas por la llanta (metal) y el neumático. Las llantas pueden ser de acero o de aleación.", ejemplo: "Las llantas de aleación son más ligeras y mejoran la estética.", ejercicio: "¿Qué tipos de llantas existen?", reto: "Investiga las ventajas de las llantas de aleación." },
+            { titulo: "Chasis monocasco", teoria: "El chasis monocasco es una estructura de una sola pieza que integra el chasis y la carrocería. Es el sistema más común en vehículos modernos.", ejercicio: "¿Qué es el chasis monocasco?", reto: "Investiga las ventajas del chasis monocasco." },
+            { titulo: "Chasis de largueros y travesaños", teoria: "El chasis de largueros y travesaños es una estructura de marco separada de la carrocería. Es común en vehículos todoterreno y camionetas.", ejercicio: "¿Qué es un chasis de largueros?", reto: "Investiga las ventajas de este tipo de chasis." },
+            { titulo: "Puntos de anclaje de la suspensión", teoria: "Los puntos de anclaje de la suspensión son los soportes donde se fijan los componentes de la suspensión al chasis.", ejercicio: "¿Qué son los puntos de anclaje de la suspensión?", reto: "Investiga cómo se fijan los componentes de la suspensión." },
+            { titulo: "Mantenimiento de la suspensión", teoria: "El mantenimiento de la suspensión incluye la revisión de amortiguadores, resortes, barras estabilizadoras y componentes de la dirección.", ejemplo: "Revisar la suspensión cada 20,000 km.", ejercicio: "¿Qué mantenimiento necesita la suspensión?", reto: "Investiga cómo revisar la suspensión." },
+            { titulo: "Dirección eléctrica vs hidráulica", teoria: "La dirección eléctrica (EPS) es más eficiente y requiere menos mantenimiento que la dirección hidráulica (HPS).", ejemplo: "La EPS es común en vehículos modernos.", ejercicio: "¿Qué diferencia hay entre dirección eléctrica e hidráulica?", reto: "Investiga las ventajas de la dirección eléctrica." },
+            { titulo: "Neumáticos de invierno vs todo tiempo", teoria: "Los neumáticos de invierno tienen un compuesto y dibujo específicos para bajas temperaturas y nieve.", ejercicio: "¿Qué diferencia hay entre neumáticos de invierno y todo tiempo?", reto: "Investiga qué neumático es mejor para tu región." },
+            { titulo: "Presión de neumáticos y su importancia", teoria: "La presión correcta de los neumáticos mejora la seguridad, el rendimiento y la durabilidad de los neumáticos.", ejemplo: "La presión recomendada se encuentra en el manual del vehículo y en la etiqueta del marco de la puerta.", ejercicio: "¿Cómo se verifica la presión de los neumáticos?", reto: "Investiga la presión recomendada para tu vehículo." }
+        ]
+    },
+    electrocar: {
+        nombre: "Electrocar", color: "rojo", icono: "bi-robot",
+        especialidad: "Sistema eléctrico, electrónica, mantenimiento y normativa",
+        tecnicas: [
+            { titulo: "Sistema eléctrico del automóvil", teoria: "El sistema eléctrico incluye la batería, el alternador, el motor de arranque, las luces, los sensores y la unidad de control (ECU).", ejercicio: "¿Qué componentes tiene el sistema eléctrico del automóvil?", reto: "Investiga cómo funciona el sistema eléctrico." },
+            { titulo: "Batería del automóvil", teoria: "La batería almacena energía eléctrica para el arranque y los sistemas eléctricos. Puede ser de plomo-ácido o de litio.", ejemplo: "Una batería de 12V con 60Ah es común en automóviles.", ejercicio: "¿Qué tipos de baterías existen?", reto: "Investiga cómo mantener la batería." },
+            { titulo: "Alternador", teoria: "El alternador genera electricidad para cargar la batería y alimentar los sistemas eléctricos mientras el motor está en marcha.", ejercicio: "¿Qué función tiene el alternador?", reto: "Investiga cómo funciona el sistema de carga." },
+            { titulo: "Motor de arranque", teoria: "El motor de arranque (bobin) gira el motor para ponerlo en marcha. Se activa con la llave o el botón de arranque.", ejercicio: "¿Cómo funciona el motor de arranque?", reto: "Investiga cómo probar el motor de arranque." },
+            { titulo: "Sistema de iluminación", teoria: "El sistema de iluminación incluye faros, luces traseras, intermitentes, luces de freno y luces de niebla.", ejemplo: "Las luces LED son cada vez más comunes.", ejercicio: "¿Qué componentes tiene el sistema de iluminación?", reto: "Investiga cómo cambiar una bombilla." },
+            { titulo: "Sistema de inyección electrónica (ECU)", teoria: "La ECU (Unidad de Control Electrónico) controla la inyección de combustible y el encendido, optimizando el rendimiento y las emisiones.", ejercicio: "¿Qué función tiene la ECU?", reto: "Investiga los sensores del sistema de inyección." },
+            { titulo: "Sensores del motor", teoria: "Los sensores (temperatura, oxígeno, posición del cigüeñal, MAP, MAF) proporcionan información a la ECU para ajustar la mezcla.", ejercicio: "¿Qué tipos de sensores existen?", reto: "Investiga los sensores de tu vehículo." },
+            { titulo: "Sistema de diagnóstico OBD-II", teoria: "El OBD-II es un sistema de diagnóstico a bordo que monitoriza el motor y los sistemas del vehículo. Se conecta a un escáner para leer códigos de falla.", ejercicio: "¿Qué es el OBD-II?", reto: "Investiga cómo usar un escáner OBD-II." },
+            { titulo: "Códigos de falla OBD-II", teoria: "Los códigos de falla OBD-II (ej. P0300) indican problemas específicos en el motor y los sistemas del vehículo.", ejercicio: "¿Qué son los códigos de falla OBD-II?", reto: "Investiga los códigos de falla más comunes." },
+            { titulo: "Mantenimiento preventivo", teoria: "El mantenimiento preventivo incluye cambios de aceite, filtros, correas, líquido de frenos, refrigerante, etc., según el manual del fabricante.", ejemplo: "Cambiar el aceite cada 5,000-10,000 km.", ejercicio: "¿Qué es el mantenimiento preventivo?", reto: "Investiga el plan de mantenimiento de tu vehículo." },
+            { titulo: "Cambio de aceite", teoria: "El cambio de aceite debe realizarse con el motor caliente y siguiendo las especificaciones del fabricante. Incluye el filtro de aceite.", ejercicio: "¿Cómo se cambia el aceite de un automóvil?", reto: "Investiga cómo cambiar el aceite y el filtro." },
+            { titulo: "Filtro de aceite", teoria: "El filtro de aceite retiene las impurezas del aceite. Debe reemplazarse en cada cambio de aceite.", ejercicio: "¿Qué función tiene el filtro de aceite?", reto: "Investiga cómo reemplazar el filtro de aceite." },
+            { titulo: "Filtro de aire", teoria: "El filtro de aire limpia el aire que entra al motor. Debe limpiarse o reemplazarse periódicamente.", ejercicio: "¿Cómo se limpia el filtro de aire?", reto: "Investiga cómo reemplazar el filtro de aire." },
+            { titulo: "Correa de distribución", teoria: "La correa de distribución sincroniza el cigüeñal y el árbol de levas. Debe reemplazarse según el manual del fabricante (generalmente cada 60,000-100,000 km).", ejercicio: "¿Qué función tiene la correa de distribución?", reto: "Investiga cómo reemplazar la correa de distribución." },
+            { titulo: "Correa de accesorios", teoria: "La correa de accesorios (o serpentina) impulsa el alternador, la bomba de agua, el compresor del aire acondicionado, etc.", ejercicio: "¿Qué función tiene la correa de accesorios?", reto: "Investiga cómo reemplazar la correa de accesorios." },
+            { titulo: "Líquido refrigerante", teoria: "El refrigerante mantiene la temperatura del motor en un rango óptimo. Debe cambiarse cada 2-3 años.", ejercicio: "¿Qué función tiene el refrigerante?", reto: "Investiga cómo cambiar el refrigerante." },
+            { titulo: "Revisión técnico-mecánica en Colombia", teoria: "La revisión técnico-mecánica es obligatoria en Colombia para verificar el estado del vehículo (frenos, luces, emisiones, etc.).", ejercicio: "¿Qué es la revisión técnico-mecánica?", reto: "Investiga el proceso de revisión técnico-mecánica." },
+            { titulo: "RUNT y normativa en Colombia", teoria: "El RUNT (Registro Único Nacional de Tránsito) regula la propiedad y el estado de los vehículos en Colombia.", ejercicio: "¿Qué es el RUNT?", reto: "Investiga los requisitos del RUNT." },
+            { titulo: "Seguridad vial en Colombia", teoria: "La seguridad vial incluye el uso del cinturón de seguridad, el respeto a las normas de tránsito y el mantenimiento del vehículo.", ejercicio: "¿Qué elementos de seguridad son obligatorios?", reto: "Investiga las normas de seguridad vial." },
+            { titulo: "Vehículos eléctricos e híbridos", teoria: "Los vehículos eléctricos (EV) e híbridos (HEV) están ganando popularidad. Su mantenimiento es diferente al de los vehículos de combustión.", ejercicio: "¿Qué diferencia hay entre un EV y un HEV?", reto: "Investiga el mantenimiento de vehículos eléctricos." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['motorcar','transcar','frenocar','chasis','electrocar'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_automotriz_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

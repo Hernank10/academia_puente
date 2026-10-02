@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Flota Educativa · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🎬 FLOTA EDUCATIVA<small>100 TÉCNICAS · TIKTOK EDUCATIVO</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="guion" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Guion <span class="badge-personaje bg-dorado">Estructura</span></a>
+        <a class="nav-link" data-section="camara" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Cámara <span class="badge-personaje bg-azul">Visual</span></a>
+        <a class="nav-link" data-section="edicion" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Edición <span class="badge-personaje bg-verde">Post</span></a>
+        <a class="nav-link" data-section="lenguaje" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Lenguaje <span class="badge-personaje bg-purpura">Didáctica</span></a>
+        <a class="nav-link" data-section="publicacion" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Publicación <span class="badge-personaje bg-rojo">Crecimiento</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🎬</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">TikTok educativo</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Videoclips educativos de lengua</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área del videoclip educativo:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Guion</strong> – Estructura, gancho, storytelling, formato TikTok.</li>
+                    <li><strong style="color:var(--neon-azul);">Cámara</strong> – Planos, encuadres, movimiento, iluminación con móvil.</li>
+                    <li><strong style="color:var(--neon-verde);">Edición</strong> – Montaje, efectos, transiciones, ritmo, música.</li>
+                    <li><strong style="color:var(--neon-purpura);">Lenguaje</strong> – Didáctica, claridad, ejemplos, engagement.</li>
+                    <li><strong style="color:var(--neon-rojo);">Publicación</strong> – Crecimiento, hashtags, comunidad, algoritmo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-guion" class="section-content" style="display:none;"></div>
+        <div id="section-camara" class="section-content" style="display:none;"></div>
+        <div id="section-edicion" class="section-content" style="display:none;"></div>
+        <div id="section-lenguaje" class="section-content" style="display:none;"></div>
+        <div id="section-publicacion" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    guion: {
+        nombre: "Guion", color: "dorado", icono: "bi-robot",
+        especialidad: "Estructura, gancho, storytelling, formato TikTok",
+        tecnicas: [
+            { titulo: "El gancho de los primeros 3 segundos", teoria: "En TikTok, los primeros 3 segundos deciden si el usuario se queda o se va. Debes enganchar con una pregunta, una afirmación impactante o una imagen inesperada.", recurso: "Gancho 3s", ejemplo: "Empieza con '¿Sabías que...?' o 'Nunca te contaron esto de la gramática...'", ejercicio: "Escribe 3 ganchos para diferentes lecciones.", reto: "Graba un vídeo de 3 segundos con gancho." },
+            { titulo: "El storytelling en 60 segundos", teoria: "Una historia bien contada en 60 segundos tiene: inicio (gancho), desarrollo (explicación) y cierre (conclusión o llamado a la acción).", recurso: "Storytelling 60s", ejemplo: "Cuenta la historia de una palabra, su origen y su uso actual.", ejercicio: "Escribe una historia de 60 segundos.", reto: "Graba un videoclip narrativo de 60 segundos." },
+            { titulo: "La estructura de 3 actos en vertical", teoria: "El formato vertical (9:16) requiere una estructura adaptada: Acto 1 (gancho), Acto 2 (explicación con ejemplos), Acto 3 (conclusión y CTA).", recurro: "3 actos vertical", ejemplo: "Un vídeo sobre el subjuntivo: Acto 1: '¿Por qué cuesta tanto el subjuntivo?', Acto 2: '3 casos clave', Acto 3: 'Practica conmigo'.", ejercicio: "Diseña un guion de 3 actos en vertical.", reto: "Graba un vídeo de 3 actos." },
+            { titulo: "El ritmo de la información", teoria: "La información debe fluir con un ritmo rápido: una idea principal cada 5-7 segundos. Usa texto, imágenes y voz para mantener la atención.", recurso: "Ritmo de información", ejemplo: "Alterna planos de ti hablando con planos de texto o ejemplos.", ejercicio: "Escribe un guion con ritmo rápido.", reto: "Graba un vídeo con ritmo rápido." },
+            { titulo: "La pregunta como gancho", teoria: "Una pregunta directa engancha al espectador porque activa su curiosidad. Debe ser relevante para tu audiencia.", recurso: "Pregunta gancho", ejemplo: "'¿Sabes cuándo usar 'porque' y 'por qué'?', '¿Cuál es tu error más común al escribir?'", ejercicio: "Escribe 5 preguntas gancho.", reto: "Graba un vídeo con una pregunta gancho." },
+            { titulo: "El ejemplo práctico inmediato", teoria: "Muestra un ejemplo práctico de la regla en los primeros segundos. La teoría debe ir después del ejemplo.", recurso: "Ejemplo inmediato", ejemplo: "Muestra una frase mal escrita y luego la corrección.", ejercicio: "Escribe un ejemplo práctico para una lección.", reto: "Graba un vídeo con ejemplo práctico." },
+            { titulo: "El cierre con llamado a la acción (CTA)", teoria: "Cada vídeo debe terminar con un CTA claro: 'Sígueme para más', 'Comenta tu ejemplo', 'Dale like si te sirvió'.", recurso: "CTA", ejemplo: "Termina con '¿Qué tema quieres que explique mañana? Dímelo en comentarios'.", ejercicio: "Escribe 3 CTAs para diferentes vídeos.", reto: "Graba un vídeo con CTA." },
+            { titulo: "La micro-lección (1 concepto por vídeo)", teoria: "En TikTok, menos es más. Enseña un solo concepto por vídeo. No intentes abarcar demasiado.", recurso: "Micro-lección", ejemplo: "Vídeo 1: 'Qué es el sujeto'. Vídeo 2: 'Cómo identificar el sujeto'.", ejercicio: "Elige un concepto y escribe un guion de micro-lección.", reto: "Graba una micro-lección de 30 segundos." },
+            { titulo: "El formato de preguntas y respuestas", teoria: "Pregunta al inicio y responde en el desarrollo. Es un formato que genera expectativa.", recurso: "Pregunta y respuesta", ejemplo: "'¿Sabes cuándo usar 'sino' y 'si no'? Te lo explico en 30 segundos.'", ejercicio: "Escribe un guion de preguntas y respuestas.", reto: "Graba un vídeo de preguntas y respuestas." },
+            { titulo: "El formato de 'error común'", teoria: "Mostrar un error común y luego la corrección es muy efectivo. Crea una tensión que se resuelve al final.", recurso: "Error común", ejemplo: "Muestra una frase con un error, preguntas '¿Ves el error?' y luego das la corrección.", ejercicio: "Escribe un guion de error común.", reto: "Graba un vídeo de error común." },
+            { titulo: "El formato de 'truco rápido'", teoria: "Un truco o regla mnemotécnica que ayude a recordar una regla gramatical.", recurso: "Truco rápido", ejemplo: "'Para acordarte de las preposiciones, canta esta canción: a, ante, bajo, cabe...'", ejercicio: "Crea un truco rápido para una regla.", reto: "Graba un vídeo de truco rápido." },
+            { titulo: "El formato de 'historia de una palabra'", teoria: "Cuenta el origen y la evolución de una palabra. Es un formato narrativo que engancha.", recurso: "Historia de una palabra", ejemplo: "'La palabra 'trabajo' viene del latín 'tripalium', un instrumento de tortura...'", ejercicio: "Investiga el origen de una palabra.", reto: "Graba un vídeo de historia de una palabra." },
+            { titulo: "El formato de 'top 3'", teoria: "Enumera 3 cosas sobre un tema. Es un formato fácil de seguir y muy popular.", recurso: "Top 3", ejemplo: "Top 3 errores al usar la coma. Top 3 trucos para mejorar tu redacción.", ejercicio: "Escribe un top 3 sobre un tema.", reto: "Graba un vídeo de top 3." },
+            { titulo: "El formato de 'verso vs prosa'", teoria: "Compara una regla gramatical en verso y en prosa. El verso es más memorable.", recurso: "Verso vs prosa", ejemplo: "Muestra la regla escrita en prosa y luego en un verso rimado.", ejercicio: "Escribe una regla en verso.", reto: "Graba un vídeo de verso vs prosa." },
+            { titulo: "El formato de 'dictado en vivo'", teoria: "Lee una frase y pide al espectador que la escriba. Luego muestra la corrección.", recurso: "Dictado en vivo", ejemplo: "'Escribe esta frase: 'El perro de mi vecino ladra mucho'. ¿Cómo se escribe? Así es...'", ejercicio: "Prepara un dictado.", reto: "Graba un vídeo de dictado en vivo." },
+            { titulo: "El formato de 'juego de palabras'", teoria: "Usa un juego de palabras para explicar un concepto. El humor facilita el aprendizaje.", recurso: "Juego de palabras", ejemplo: "'El subjuntivo no es un subjuntivo, es un SUPER-juntivo.'", ejercicio: "Crea un juego de palabras para una regla.", reto: "Graba un vídeo con juego de palabras." },
+            { titulo: "El formato de 'antes y después'", teoria: "Muestra cómo queda una frase antes de aplicar la regla y después.", recurso: "Antes y después", ejemplo: "'Antes: 'Me gusta la música y el arte'. Después: 'Me gusta la música y el arte'.' (con la coma correcta)", ejercicio: "Escribe un antes y después.", reto: "Graba un vídeo de antes y después." },
+            { titulo: "El formato de 'pregunta al espectador'", teoria: "Haz una pregunta al espectador y pide que responda en los comentarios. Fomenta la participación.", recurso: "Pregunta al espectador", ejemplo: "'¿Cuál es tu palabra favorita en español? Dímelo en comentarios.'", ejercicio: "Escribe una pregunta para tu audiencia.", reto: "Graba un vídeo con pregunta al espectador." },
+            { titulo: "El formato de 'curiosidad lingüística'", teoria: "Comparte un dato curioso sobre el idioma que pocos conocen.", recurso: "Curiosidad lingüística", ejemplo: "'¿Sabías que el español tiene más de 100.000 palabras?'", ejercicio: "Investiga una curiosidad lingüística.", reto: "Graba un vídeo de curiosidad lingüística." },
+            { titulo: "El formato de 'desafío en 10 segundos'", teoria: "Plantea un desafío rápido al espectador y resuélvelo.", recurro: "Desafío en 10s", ejemplo: "'¿Puedes corregir esta frase en 10 segundos? 'He visto una perro en el parque'. ¡Tiempo!'", ejercicio: "Crea un desafío en 10 segundos.", reto: "Graba un vídeo de desafío en 10s." },
+            { titulo: "El formato de 'regla en 3 pasos'", teoria: "Explica una regla en 3 pasos sencillos. Es fácil de recordar y compartir.", recurso: "3 pasos", ejemplo: "Paso 1: Identifica el sujeto. Paso 2: Busca el verbo. Paso 3: Encuentra el complemento.", ejercicio: "Escribe una regla en 3 pasos.", reto: "Graba un vídeo de regla en 3 pasos." }
+        ]
+    },
+    camara: {
+        nombre: "Cámara", color: "azul", icono: "bi-robot",
+        especialidad: "Planos, encuadres, movimiento, iluminación con móvil",
+        tecnicas: [
+            { titulo: "El plano medio para explicar", teoria: "El plano medio (cintura para arriba) es el más efectivo para vídeos educativos. Muestra tu expresión y gestos.", recurso: "Plano medio", ejemplo: "Usa el plano medio para hablar directamente a la cámara, como si estuvieras frente a un alumno.", ejercicio: "Graba una explicación en plano medio.", reto: "Graba un vídeo completo en plano medio." },
+            { titulo: "El primer plano para enfatizar", teoria: "El primer plano (rostro) enfatiza la emoción y la importancia de lo que dices.", recurso: "Primer plano", ejemplo: "Usa el primer plano para decir la regla clave o la conclusión.", ejercicio: "Graba un primer plano diciendo una regla importante.", reto: "Graba un vídeo con primeros planos." },
+            { titulo: "El plano detalle para ejemplos", teoria: "El plano detalle muestra el texto, la palabra o el ejemplo que estás explicando.", recurso: "Plano detalle", ejemplo: "Graba tu mano escribiendo o mostrando un libro con la regla.", ejercicio: "Graba un plano detalle de un ejemplo.", reto: "Graba un vídeo con planos detalle." },
+            { titulo: "El encuadre vertical (9:16)", teoria: "El encuadre vertical es obligatorio en TikTok. Debes ocupar todo el espacio vertical.", recurso: "Encuadre vertical", ejemplo: "Graba con el teléfono en vertical y ocupa el 80% del encuadre.", ejercicio: "Ajusta el encuadre de tu cámara.", reto: "Graba un vídeo en vertical." },
+            { titulo: "La iluminación natural", teoria: "La luz natural es la más favorecedora. Colócate frente a una ventana para una luz suave.", recurso: "Iluminación natural", ejemplo: "Graba cerca de una ventana con luz indirecta.", ejercicio: "Encuentra el mejor lugar con luz natural.", reto: "Graba un vídeo con luz natural." },
+            { titulo: "La luz frontal y de relleno", teoria: "Usa luz frontal para iluminar tu rostro y luz de relleno para eliminar sombras duras.", recurso: "Luz frontal", ejemplo: "Coloca una lámpara frente a ti y otra a 45 grados.", ejercicio: "Prueba diferentes posiciones de luz.", reto: "Graba un vídeo con buena iluminación." },
+            { titulo: "El fondo desenfocado (bokeh)", teoria: "Un fondo desenfocado aísla al sujeto y da un aspecto profesional. Usa el modo retrato o apps de cámara.", recurso: "Bokeh", ejemplo: "Graba con el modo retrato para desenfocar el fondo.", ejercicio: "Graba con fondo desenfocado.", reto: "Graba un vídeo con bokeh." },
+            { titulo: "El movimiento de cámara suave", teoria: "El movimiento de cámara debe ser suave. Usa estabilizador o apoya el teléfono en un trípode.", recurso: "Movimiento suave", ejemplo: "Un travelling suave al mostrar un texto o una imagen.", ejercicio: "Graba un travelling suave.", reto: "Graba un vídeo con movimiento de cámara." },
+            { titulo: "El zoom en edición", teoria: "El zoom en edición (postproducción) es más efectivo que el zoom óptico durante la grabación.", recurso: "Zoom en edición", ejemplo: "Graba en 4K y luego acerca la imagen en la edición.", ejercicio: "Graba y luego aplica zoom en edición.", reto: "Graba un vídeo con zoom en edición." },
+            { titulo: "El encuadre con espacio para texto", teoria: "Deja espacio en el encuadre para añadir texto (subtítulos, palabras clave) sin tapar tu rostro.", recurso: "Espacio para texto", ejemplo: "Colócate en la parte inferior o izquierda del encuadre.", ejercicio: "Graba dejando espacio para texto.", reto: "Graba un vídeo con espacio para texto." },
+            { titulo: "El uso de la luz de día", teoria: "La luz de día (entre 9 y 11 am o 4 y 6 pm) es la más suave y favorecedora.", recurso: "Luz de día", ejemplo: "Graba en las horas doradas para obtener una luz cálida.", ejercicio: "Graba en diferentes horas del día.", reto: "Graba un vídeo en la hora dorada." },
+            { titulo: "El contraluz creativo", teoria: "El contraluz (luz detrás) crea un efecto dramático y profesional. Úsalo con moderación.", recurso: "Contraluz", ejemplo: "Coloca una luz detrás de ti para crear un efecto de halo.", ejercicio: "Prueba el contraluz.", reto: "Graba un vídeo con contraluz." },
+            { titulo: "El uso de trípode o estabilizador", teoria: "Un trípode da estabilidad a tus vídeos. Un estabilizador (gimbal) permite movimientos fluidos.", recurso: "Trípode y gimbal", ejemplo: "Usa un trípode para planos fijos y un gimbal para planos en movimiento.", ejercicio: "Graba con trípode y sin él.", reto: "Graba un vídeo con trípode." },
+            { titulo: "El encuadre de la regla de los tercios", teoria: "Coloca los elementos importantes en las intersecciones de la regla de los tercios.", recurso: "Regla de los tercios", ejemplo: "Coloca tus ojos en la línea superior de los tercios.", ejercicio: "Activa la cuadrícula de tu cámara.", reto: "Graba un vídeo con la regla de los tercios." },
+            { titulo: "El plano subjetivo para ejemplos", teoria: "El plano subjetivo muestra lo que el espectador vería desde tu perspectiva. Útil para ejemplos prácticos.", recurso: "Plano subjetivo", ejemplo: "Graba un plano de tu mano escribiendo o señalando.", ejercicio: "Graba un plano subjetivo.", reto: "Graba un vídeo con plano subjetivo." },
+            { titulo: "El uso de la profundidad de campo", teoria: "La profundidad de campo (foco) puede aislar al sujeto o mostrar el contexto.", recurso: "Profundidad de campo", ejemplo: "Usa poca profundidad para aislarte y mucha para mostrar el entorno.", ejercicio: "Graba con diferente profundidad de campo.", reto: "Graba un vídeo con profundidad de campo." },
+            { titulo: "El encuadre con elementos de apoyo", teoria: "Usa elementos de apoyo (libros, pizarras, carteles) para reforzar el mensaje.", recurso: "Elementos de apoyo", ejemplo: "Sostén un libro con la regla o escribe en una pizarra.", ejercicio: "Usa un elemento de apoyo.", reto: "Graba un vídeo con elementos de apoyo." },
+            { titulo: "El movimiento de la cámara hacia el sujeto", teoria: "Acercar la cámara lentamente crea una sensación de intimidad y énfasis.", recurso: "Movimiento hacia el sujeto", ejemplo: "Acércate lentamente a la cámara mientras dices la frase clave.", ejercicio: "Graba un movimiento hacia la cámara.", reto: "Graba un vídeo con movimiento hacia el sujeto." },
+            { titulo: "El plano general para contexto", teoria: "El plano general muestra el entorno completo. Útil para contextualizar.", recurso: "Plano general", ejemplo: "Muestra tu espacio de trabajo o estudio antes de empezar.", ejercicio: "Graba un plano general.", reto: "Graba un vídeo con plano general." },
+            { titulo: "El uso de la cámara lenta", teoria: "La cámara lenta (60 fps) puede usarse para enfatizar un momento o un gesto.", recurso: "Cámara lenta", ejemplo: "Usa cámara lenta para mostrar una palabra escrita o un gesto.", ejercicio: "Graba en cámara lenta.", reto: "Graba un vídeo con cámara lenta." }
+        ]
+    },
+    edicion: {
+        nombre: "Edición", color: "verde", icono: "bi-robot",
+        especialidad: "Montaje, efectos, transiciones, ritmo, música",
+        tecnicas: [
+            { titulo: "El ritmo de corte rápido", teoria: "En TikTok, los cortes rápidos (cada 2-3 segundos) mantienen la atención. Alterna planos de ti hablando con planos de texto o ejemplos.", recurso: "Cortes rápidos", ejemplo: "Alterna 5 planos diferentes en 15 segundos.", ejercicio: "Edita un vídeo con cortes rápidos.", reto: "Graba un vídeo con cortes rápidos." },
+            { titulo: "La transición por corte seco", teoria: "El corte seco (sin transición) es el más efectivo y natural para vídeos educativos.", recurso: "Corte seco", ejemplo: "Corta directamente entre planos sin efectos.", ejercicio: "Edita un vídeo con cortes secos.", reto: "Graba un vídeo con cortes secos." },
+            { titulo: "El uso de texto en pantalla", teoria: "El texto en pantalla refuerza el mensaje y ayuda a los que ven sin sonido. Usa fuentes grandes y claras.", recurso: "Texto en pantalla", ejemplo: "Añade la regla escrita cuando la estés explicando.", ejercicio: "Añade texto a un vídeo.", reto: "Graba un vídeo con texto en pantalla." },
+            { titulo: "El efecto de zoom en edición", teoria: "El zoom en edición (acercar la imagen) enfatiza detalles o reacciones.", recurso: "Zoom en edición", ejemplo: "Haz zoom en tu rostro cuando digas la frase clave.", ejercicio: "Aplica zoom en edición.", reto: "Graba un vídeo con zoom en edición." },
+            { titulo: "La transición por fundido", teoria: "El fundido a negro o a blanco se usa para separar secciones o indicar un cambio de tema.", recurso: "Fundido", ejemplo: "Funde a negro entre la introducción y el desarrollo.", ejercicio: "Aplica un fundido.", reto: "Graba un vídeo con fundido." },
+            { titulo: "La música de fondo", teoria: "La música de fondo debe ser de ritmo rápido y no distraer. Usa música sin copyright.", recurso: "Música de fondo", ejemplo: "Elige música de fondo alegre y enérgica.", ejercicio: "Añade música a un vídeo.", reto: "Graba un vídeo con música de fondo." },
+            { titulo: "El sonido ambiente", teoria: "El sonido ambiente (ruido de fondo) no debe existir en TikTok. Limpia el audio en la edición.", recurso: "Sonido ambiente", ejemplo: "Elimina el ruido de fondo con la herramienta de reducción de ruido.", ejercicio: "Limpia el audio de un vídeo.", reto: "Graba un vídeo sin ruido." },
+            { titulo: "La sincronización de labios", teoria: "La sincronización de labios debe ser perfecta. Ajusta el audio en la edición si es necesario.", recurso: "Sincronización", ejemplo: "Usa la herramienta de sincronización de audio de tu editor.", ejercicio: "Sincroniza audio y video.", reto: "Graba un vídeo con audio sincronizado." },
+            { titulo: "El color grading", teoria: "El color grading (ajuste de color) da un estilo profesional a tus vídeos. Usa filtros cálidos.", recurso: "Color grading", ejemplo: "Aplica un filtro cálido o vintage a tus vídeos.", ejercicio: "Aplica color grading.", reto: "Graba un vídeo con color grading." },
+            { titulo: "El efecto de pantalla dividida", teoria: "La pantalla dividida muestra dos elementos a la vez: tú y un ejemplo visual.", recurso: "Pantalla dividida", ejemplo: "Pon la regla en un lado y tu explicación en el otro.", ejercicio: "Crea una pantalla dividida.", reto: "Graba un vídeo con pantalla dividida." },
+            { titulo: "El efecto de texto animado", teoria: "El texto animado (que aparece con efecto) atrae la atención. No abuses de él.", recurso: "Texto animado", ejemplo: "Añade el texto con un efecto de deslizamiento o escritura.", ejercicio: "Añade texto animado.", reto: "Graba un vídeo con texto animado." },
+            { titulo: "El efecto de cámara lenta", teoria: "La cámara lenta (en edición) enfatiza un momento o un gesto.", recurso: "Cámara lenta en edición", ejemplo: "Ralentiza el momento en que escribes la regla.", ejercicio: "Aplica cámara lenta.", reto: "Graba un vídeo con cámara lenta." },
+            { titulo: "El efecto de cámara rápida", teoria: "La cámara rápida (acelerar) se usa para transiciones o momentos cómicos.", recurso: "Cámara rápida", ejemplo: "Acelera el momento en que cambias de escena.", ejercicio: "Aplica cámara rápida.", reto: "Graba un vídeo con cámara rápida." },
+            { titulo: "El efecto de repetición", teoria: "Repetir una frase o un gesto tres veces enfatiza la idea.", recurso: "Repetición", ejemplo: "Repite la regla tres veces con diferentes ejemplos.", ejercicio: "Usa la repetición en un vídeo.", reto: "Graba un vídeo con repetición." },
+            { titulo: "El efecto de sobreimpresión", teoria: "Sobrepone un texto o una imagen sobre el vídeo principal.", recurso: "Sobrepresión", ejemplo: "Pon la regla escrita sobre tu imagen.", ejercicio: "Usa la sobreimpresión.", reto: "Graba un vídeo con sobreimpresión." },
+            { titulo: "El uso de subtítulos automáticos", teoria: "Los subtítulos automáticos (como los de TikTok) mejoran la accesibilidad y el engagement.", recurso: "Subtítulos automáticos", ejemplo: "Activa los subtítulos automáticos de TikTok.", ejercicio: "Añade subtítulos a un vídeo.", reto: "Graba un vídeo con subtítulos." },
+            { titulo: "El uso de emojis en texto", teoria: "Los emojis en el texto hacen el mensaje más visual y atractivo.", recurso: "Emojis", ejemplo: "Añade un 📝 antes de la regla o un ✅ después de un ejemplo correcto.", ejercicio: "Añade emojis a tu texto.", reto: "Graba un vídeo con emojis." },
+            { titulo: "El uso de transiciones creativas", teoria: "Las transiciones creativas (como el giro o el fundido) pueden hacer el vídeo más dinámico.", recurso: "Transiciones creativas", ejemplo: "Gira la cámara para cambiar de escena.", ejercicio: "Usa una transición creativa.", reto: "Graba un vídeo con transición creativa." },
+            { titulo: "El ajuste de velocidad", teoria: "Ajusta la velocidad del vídeo para crear ritmo: rápido para la introducción, lento para el ejemplo.", recurso: "Ajuste de velocidad", ejemplo: "Acelera la introducción y ralentiza la explicación.", ejercicio: "Ajusta la velocidad de un vídeo.", reto: "Graba un vídeo con velocidad ajustada." },
+            { titulo: "La exportación en alta calidad", teoria: "Exporta en 1080p y 60 fps para una calidad profesional.", recurso: "Exportación", ejemplo: "Configura la exportación en 1080p y 60 fps.", ejercicio: "Exporta un vídeo en alta calidad.", reto: "Graba un vídeo y expórtalo." }
+        ]
+    },
+    lenguaje: {
+        nombre: "Lenguaje", color: "purpura", icono: "bi-robot",
+        especialidad: "Didáctica, claridad, ejemplos, engagement",
+        tecnicas: [
+            { titulo: "El lenguaje claro y directo", teoria: "Usa frases cortas y palabras sencillas. Evita tecnicismos innecesarios.", recurso: "Lenguaje claro", ejemplo: "En lugar de 'el sustantivo es el núcleo del sintagma nominal', di 'el sustantivo es la palabra que nombra personas, cosas o ideas'.", ejercicio: "Reescribe una explicación compleja en lenguaje claro.", reto: "Graba un vídeo con lenguaje claro." },
+            { titulo: "El uso de ejemplos cotidianos", teoria: "Los ejemplos de la vida cotidiana hacen la regla más comprensible y memorable.", recurso: "Ejemplos cotidianos", ejemplo: "Explica el uso de la coma con un ejemplo de una lista de la compra.", ejercicio: "Crea 3 ejemplos cotidianos para una regla.", reto: "Graba un vídeo con ejemplos cotidianos." },
+            { titulo: "El humor en la enseñanza", teoria: "El humor facilita el aprendizaje y hace el contenido más memorable.", recurso: "Humor", ejemplo: "Cuenta un chiste relacionado con la regla o una anécdota divertida.", ejercicio: "Escribe un ejemplo humorístico.", reto: "Graba un vídeo con humor." },
+            { titulo: "La analogía como herramienta", teoria: "Las analogías (comparaciones) hacen comprensibles conceptos abstractos.", recurso: "Analogía", ejemplo: "'La coma es como un semáforo: indica una pausa, no el final.'", ejercicio: "Crea una analogía para una regla.", reto: "Graba un vídeo con analogía." },
+            { titulo: "La metáfora visual", teoria: "Usa imágenes o gestos que representen la regla.", recurso: "Metáfora visual", ejemplo: "Abre las manos para representar el sujeto y ciérralas para el predicado.", ejercicio: "Crea una metáfora visual.", reto: "Graba un vídeo con metáfora visual." },
+            { titulo: "La repetición estratégica", teoria: "Repite la idea clave al menos tres veces a lo largo del vídeo para fijarla.", recurso: "Repetición", ejemplo: "Di la regla al inicio, en el medio y al final.", ejercicio: "Escribe una regla y repítela 3 veces.", reto: "Graba un vídeo con repetición estratégica." },
+            { titulo: "El lenguaje corporal didáctico", teoria: "Usa gestos y movimientos para reforzar el mensaje. Señala, abre los brazos, asiente.", recurso: "Lenguaje corporal", ejemplo: "Señala hacia arriba cuando digas 'sujeto' y hacia abajo cuando digas 'predicado'.", ejercicio: "Practica gestos para una lección.", reto: "Graba un vídeo con lenguaje corporal." },
+            { titulo: "La entonación enfática", teoria: "Usa la entonación para enfatizar palabras clave. Sube el tono en la palabra importante.", recurso: "Entonación", ejemplo: "Di 'la COMA es importante' con énfasis en 'coma'.", ejercicio: "Practica la entonación enfática.", reto: "Graba un vídeo con entonación enfática." },
+            { titulo: "La pausa para el impacto", teoria: "Haz una pausa antes de la palabra clave para crear expectativa.", recurso: "Pausa", ejemplo: "'La regla es... (pausa)... la concordancia.'", ejercicio: "Practica las pausas.", reto: "Graba un vídeo con pausas." },
+            { titulo: "El uso de preguntas retóricas", teoria: "Las preguntas retóricas involucran al espectador y lo hacen reflexionar.", recurso: "Pregunta retórica", ejemplo: "'¿Sabes cuándo usar la tilde? Pues hoy lo descubrirás.'", ejercicio: "Escribe 3 preguntas retóricas.", reto: "Graba un vídeo con preguntas retóricas." },
+            { titulo: "El uso del 'tú' directo", teoria: "Dirígete al espectador como 'tú' para crear una conexión personal.", recurso: "Tú directo", ejemplo: "'Tú puedes mejorar tu escritura con esta regla.'", ejercicio: "Reescribe una explicación en 2ª persona.", reto: "Graba un vídeo con 'tú' directo." },
+            { titulo: "El uso de ejemplos con errores", teoria: "Muestra un ejemplo con error y luego la corrección. Es muy efectivo.", recurso: "Ejemplo con error", ejemplo: "Muestra 'La niña juegan' y luego 'La niña juega'.", ejercicio: "Crea un ejemplo con error.", reto: "Graba un vídeo con ejemplo con error." },
+            { titulo: "El uso de ejemplos correctos", teoria: "Muestra ejemplos correctos para reforzar el aprendizaje.", recurso: "Ejemplo correcto", ejemplo: "Muestra 'Los niños juegan' como ejemplo correcto.", ejercicio: "Crea un ejemplo correcto.", reto: "Graba un vídeo con ejemplo correcto." },
+            { titulo: "La estructura pregunta-respuesta", teoria: "Formula una pregunta al inicio y respóndela en el desarrollo.", recurso: "Pregunta-respuesta", ejemplo: "'¿Cuál es la diferencia entre 'sino' y 'si no'? Aquí te lo explico.'", ejercicio: "Escribe una pregunta-respuesta.", reto: "Graba un vídeo de pregunta-respuesta." },
+            { titulo: "El uso de la regla mnemotécnica", teoria: "Crea una regla mnemotécnica (truco para recordar) fácil de recordar.", recurso: "Mnemotécnica", ejemplo: "'Para las preposiciones, canta: a, ante, bajo, cabe, con, contra, de, desde...'", ejercicio: "Crea una mnemotécnica.", reto: "Graba un vídeo con mnemotécnica." },
+            { titulo: "El uso de la repetición con variación", teoria: "Repite la idea clave con diferentes palabras o ejemplos.", recurso: "Repetición con variación", ejemplo: "Di la regla de 3 formas diferentes.", ejercicio: "Escribe 3 versiones de una misma regla.", reto: "Graba un vídeo con repetición con variación." },
+            { titulo: "El uso de la historia personal", teoria: "Comparte una anécdota personal relacionada con la regla.", recurso: "Historia personal", ejemplo: "'Cuando empecé a escribir, siempre confundía... hasta que aprendí esta regla.'", ejercicio: "Escribe una historia personal.", reto: "Graba un vídeo con historia personal." },
+            { titulo: "El uso de la comparación", teoria: "Compara dos cosas para mostrar la diferencia.", recurso: "Comparación", ejemplo: "Compara 'porque' y 'por qué' con un ejemplo.", ejercicio: "Escribe una comparación.", reto: "Graba un vídeo con comparación." },
+            { titulo: "El uso del ejemplo visual", teoria: "Muestra un ejemplo visual (escrito, dibujado) además de la explicación oral.", recurso: "Ejemplo visual", ejemplo: "Escribe la regla en una pizarra o en un papel.", ejercicio: "Crea un ejemplo visual.", reto: "Graba un vídeo con ejemplo visual." },
+            { titulo: "El cierre con resumen", teoria: "Termina con un resumen de la regla en una frase.", recurso: "Resumen", ejemplo: "'Recuerda: la coma va antes de 'pero' y después de 'sin embargo'.'", ejercicio: "Escribe un resumen.", reto: "Graba un vídeo con resumen." }
+        ]
+    },
+    publicacion: {
+        nombre: "Publicación", color: "rojo", icono: "bi-robot",
+        especialidad: "Crecimiento, hashtags, comunidad, algoritmo",
+        tecnicas: [
+            { titulo: "El título en el texto del vídeo", teoria: "El texto del vídeo (la primera línea) debe ser el título o la pregunta que engancha.", recurso: "Título en texto", ejemplo: "Escribe '¿Sabes usar la coma?' al inicio del vídeo.", ejercicio: "Escribe un título para tu vídeo.", reto: "Graba un vídeo con título en texto." },
+            { titulo: "El uso de hashtags estratégicos", teoria: "Usa hashtags relevantes: #gramática #lenguaespañola #educación #aprendeencasa.", recurso: "Hashtags", ejemplo: "Añade 5 hashtags relevantes a tu vídeo.", ejercicio: "Investiga 10 hashtags para tu nicho.", reto: "Publica un vídeo con hashtags." },
+            { titulo: "La descripción con gancho", teoria: "La descripción debe ser un gancho que invite al usuario a ver el vídeo.", recurso: "Descripción gancho", ejemplo: "'¿Sabes cuándo usar 'porque' y 'por qué'? Te lo explico en 30 segundos.'", ejercicio: "Escribe una descripción gancho.", reto: "Publica un vídeo con descripción gancho." },
+            { titulo: "El horario de publicación", teoria: "Publica a las 7 PM (hora local) que es el pico de consumo en TikTok.", recurso: "Horario de publicación", ejemplo: "Programa tus vídeos para las 7 PM.", ejercicio: "Encuentra el mejor horario para tu audiencia.", reto: "Publica un vídeo en el horario óptimo." },
+            { titulo: "La frecuencia de publicación", teoria: "Publica al menos 3-5 veces por semana para mantener el engagement.", recurso: "Frecuencia", ejemplo: "Programa vídeos para lunes, miércoles y viernes.", ejercicio: "Crea un calendario de publicaciones.", reto: "Publica 3 vídeos en una semana." },
+            { titulo: "La interacción con comentarios", teoria: "Responde a todos los comentarios en las primeras horas para aumentar el engagement.", recurso: "Interacción", ejemplo: "Responde a los comentarios con preguntas o agradecimientos.", ejercicio: "Responde a 10 comentarios.", reto: "Publica un vídeo y responde comentarios." },
+            { titulo: "El uso de tendencias", teoria: "Usa sonidos, formatos y tendencias populares para aumentar el alcance.", recurso: "Tendencias", ejemplo: "Usa un sonido popular de fondo.", ejercicio: "Investiga tendencias en TikTok.", reto: "Publica un vídeo con una tendencia." },
+            { titulo: "El llamado a la acción (CTA)", teoria: "Pide a los usuarios que comenten, guarden o compartan el vídeo.", recurso: "CTA", ejemplo: "'Comenta tu error favorito en gramática.'", ejercicio: "Escribe 3 CTAs diferentes.", reto: "Publica un vídeo con CTA." },
+            { titulo: "El uso de 'duet' y 'stitch'", teoria: "El 'duet' y el 'stitch' permiten interactuar con otros creadores y aumentar el alcance.", recurso: "Duet y stitch", ejemplo: "Haz un duet con un vídeo popular de gramática.", ejercicio: "Prueba el duet o stitch.", reto: "Publica un duet o stitch." },
+            { titulo: "El uso de miniaturas atractivas", teoria: "La miniatura (la imagen del vídeo) debe ser atractiva y mostrar el tema.", recurso: "Miniatura", ejemplo: "Elige un fotograma donde tu expresión sea impactante.", ejercicio: "Elige una buena miniatura.", reto: "Publica un vídeo con buena miniatura." },
+            { titulo: "El uso de la biografía para enganchar", teoria: "La biografía debe decir quién eres y qué enseñas.", recurso: "Biografía", ejemplo: "'Profesor de lengua | Gramática fácil | Aprende conmigo.'", ejercicio: "Escribe una biografía atractiva.", reto: "Actualiza tu biografía." },
+            { titulo: "La colaboración con otros creadores", teoria: "Colaborar con otros creadores de tu nicho amplía tu audiencia.", recurso: "Colaboración", ejemplo: "Graba un vídeo conjunto con otro profesor de lengua.", ejercicio: "Contacta a otro creador para colaborar.", reto: "Publica un vídeo colaborativo." },
+            { titulo: "El uso de historias (stories)", teoria: "Usa las historias para promocionar tus vídeos y conectar con tu audiencia.", recurso: "Historias", ejemplo: "Comparte el nuevo vídeo en tus historias.", ejercicio: "Publica una historia promocionando tu vídeo.", reto: "Publica un vídeo y promociónalo en stories." },
+            { titulo: "El uso de listas de reproducción", teoria: "Crea listas de reproducción para organizar tus vídeos por temas.", recurso: "Listas de reproducción", ejemplo: "'Gramática básica', 'Ortografía', 'Consejos de escritura'.", ejercicio: "Crea una lista de reproducción.", reto: "Publica un vídeo en una lista." },
+            { titulo: "El análisis de métricas", teoria: "Analiza las métricas (vistas, likes, retención) para mejorar tu contenido.", recurso: "Métricas", ejemplo: "Revisa qué vídeos tienen mejor retención.", ejercicio: "Analiza las métricas de tus vídeos.", reto: "Publica un vídeo basado en métricas." },
+            { titulo: "La adaptación al algoritmo", teoria: "El algoritmo favorece la retención, los comentarios y las comparticiones.", recurso: "Algoritmo", ejemplo: "Crea vídeos que retengan la atención hasta el final.", ejercicio: "Investiga el algoritmo de TikTok.", reto: "Publica un vídeo optimizado para el algoritmo." },
+            { titulo: "El uso de preguntas en los comentarios", teoria: "Haz preguntas en los comentarios para fomentar la interacción.", recurso: "Preguntas en comentarios", ejemplo: "'¿Qué tema quieres que explique mañana?'", ejercicio: "Escribe 3 preguntas para tus comentarios.", reto: "Publica un vídeo y pregunta en comentarios." },
+            { titulo: "El uso de encuestas", teoria: "Usa las encuestas en las historias para conocer los intereses de tu audiencia.", recurso: "Encuestas", ejemplo: "'¿Qué prefieres: gramática o ortografía?'", ejercicio: "Crea una encuesta.", reto: "Publica una encuesta en historias." },
+            { titulo: "La constancia y la paciencia", teoria: "El crecimiento en TikTok lleva tiempo. Sé constante y paciente.", recurso: "Constancia", ejemplo: "Publica regularmente sin desanimarte.", ejercicio: "Mantén una rutina de publicación.", reto: "Publica durante 30 días seguidos." },
+            { titulo: "El legado educativo", teoria: "Tus vídeos pueden ser un legado educativo que ayude a otros a aprender.", recurso: "Legado", ejemplo: "Crea contenido que perdure en el tiempo.", ejercicio: "Reflexiona sobre el impacto de tu contenido.", reto: "Crea un vídeo que sea un legado." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['guion','camara','edicion','lenguaje','publicacion'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_educativa_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1840 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Sintaxis Científica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">sintaxis científica · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Sintaxis: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una oración científica que aplique esta técnica:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Los resultados demuestran que la hipótesis es válida.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS DE REDACCIÓN SINTÁCTICA CIENTÍFICA
+        //  Estructuras, claridad, precisión y estilo en textos científicos
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'claridad', label: 'Claridad y Precisión' },
+            { id: 'sujeto', label: 'Sujeto y Voz' },
+            { id: 'oraciones', label: 'Oraciones Simples y Compuestas' },
+            { id: 'subordinacion', label: 'Subordinación' },
+            { id: 'verbos', label: 'Verbos y Tiempos' },
+            { id: 'conectores', label: 'Conectores Lógicos' },
+            { id: 'nominalizacion', label: 'Nominalización' },
+            { id: 'estilo', label: 'Estilo Científico' },
+            { id: 'coherencia', label: 'Coherencia y Cohesión' },
+            { id: 'aplicacion', label: 'Aplicación Práctica' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: CLARIDAD Y PRECISIÓN (1–10)
+        // ============================================================
+        const b1 = [
+            ['Evitar ambigüedad', 'Precisión en el referente',
+                'En textos científicos, cada pronombre y cada referencia debe ser inequívoca para evitar malas interpretaciones.',
+                'Ambiguo: Los resultados se compararon con los del estudio anterior y estos fueron mejores. / Preciso: Los resultados se compararon con los del estudio anterior, y los resultados del estudio actual fueron mejores.',
+                'estos (ambiguo) → los resultados del estudio actual (preciso)',
+                '¿Cómo se evita la ambigüedad en la referencia pronominal?', ['Especificando el referente',
+                    'Usando pronombres indefinidos', 'Repitiendo el sujeto', 'Usando sinónimos'
+                ], 0, 'Reescribe "Los datos se analizaron y luego se interpretaron. Esto confirmó la hipótesis." para eliminar la ambigüedad.'
+            ],
+            ['Uso de términos unívocos', 'Términos con un solo significado',
+                'En ciencia, cada término debe tener un significado claro y único dentro del contexto del texto.',
+                'El término "celda" puede referirse a una unidad biológica o a una celda de una tabla. En un texto sobre biología, se especifica "célula biológica".',
+                'celda (ambiguo) → célula biológica (preciso)',
+                '¿Qué característica deben tener los términos en un texto científico?', ['Univocidad', 'Polisemia',
+                    'Ambigüedad', 'Figuratividad'
+                ], 0, 'Sustituye "el material" por un término más preciso en: "El material fue sometido a prueba."'
+            ],
+            ['Precisión en cuantificadores', 'Cuantificadores exactos (evitar "muchos", "pocos")',
+                'En textos científicos, se deben usar cuantificadores exactos o aproximaciones con datos numéricos en lugar de términos vagos.',
+                'Impreciso: Muchos pacientes mejoraron. / Preciso: El 85% de los pacientes mejoró (n=120).',
+                'muchos (impreciso) → 85% (preciso)',
+                '¿Cómo se deben expresar las cantidades en textos científicos?', ['Con datos numéricos',
+                    'Con términos vagos', 'Con superlativos', 'Con comparaciones subjetivas'
+                ], 0, 'Reescribe "La mayoría de los experimentos fueron exitosos" con precisión numérica.'
+            ],
+            ['Evitar rodeos', 'Estructura directa (sujeto + verbo + complemento)',
+                'La redacción científica debe ser directa, evitando circunloquios que diluyan el mensaje.',
+                'Rodeo: Se procedió a realizar un análisis de los datos obtenidos. / Directo: Se analizaron los datos.',
+                'Se procedió a realizar un análisis (rodeo) → Se analizaron (directo)',
+                '¿Qué estructura es preferible en la redacción científica?', ['Directa', 'Rodeada', 'Poética',
+                    'Retórica'
+                ], 0, 'Reescribe "Se llevó a cabo la medición de la temperatura" de forma más directa.'
+            ],
+            ['Claridad en la secuencia lógica', 'Orden lógico de las ideas',
+                'Las ideas deben presentarse en un orden lógico que facilite la comprensión del lector.',
+                'Primero se planteó la hipótesis, luego se diseñó el experimento y finalmente se analizaron los resultados.',
+                'hipótesis → experimento → resultados (orden lógico)',
+                '¿Qué orden deben seguir las ideas en un texto científico?', ['Lógico y secuencial', 'Alfabético',
+                    'Aleatorio', 'Jerárquico'
+                ], 0, 'Ordena lógicamente: "Se analizaron los datos. Se planteó la hipótesis. Se diseñó el experimento."'
+            ],
+            ['Precisión temporal', 'Marcadores temporales exactos',
+                'Los tiempos verbales y los marcadores temporales deben ser precisos para indicar cuándo ocurrieron los hechos.',
+                'Impreciso: Se realizó el experimento hace algún tiempo. / Preciso: El experimento se realizó en 2023.',
+                'hace algún tiempo (impreciso) → en 2023 (preciso)',
+                '¿Cómo se deben indicar los tiempos en textos científicos?', ['Con marcadores temporales exactos',
+                    'Con expresiones vagas', 'Con adverbios de frecuencia', 'Con metáforas temporales'
+                ], 0, 'Reescribe "Recientemente se publicó un estudio" con un marcador temporal preciso.'
+            ],
+            ['Evitar lenguaje figurado', 'Lenguaje denotativo (no metafórico)',
+                'El lenguaje científico debe ser denotativo, evitando metáforas y figuras retóricas que puedan crear ambigüedad.',
+                'Figurado: Las células son los ladrillos de la vida. / Denotativo: Las células son las unidades estructurales básicas de los seres vivos.',
+                'ladrillos de la vida (figurado) → unidades estructurales básicas (denotativo)',
+                '¿Qué tipo de lenguaje se usa en la redacción científica?', ['Denotativo', 'Connotativo', 'Poético',
+                    'Retórico'
+                ], 0, 'Reescribe "El ADN es el libro de instrucciones de la vida" en lenguaje denotativo.'
+            ],
+            ['Definiciones claras', 'Definición + ejemplificación',
+                'Cuando se introduce un término técnico, debe definirse claramente y, si es necesario, ejemplificarse.',
+                'La apoptosis (muerte celular programada) es un proceso fundamental. Por ejemplo, ocurre durante el desarrollo embrionario.',
+                'apoptosis (definición) + ejemplo',
+                '¿Qué debe incluir la introducción de un término técnico?', ['Definición y ejemplificación',
+                    'Solo definición', 'Solo ejemplificación', 'Sinónimos'
+                ], 0, 'Define "fotosíntesis" y da un ejemplo de dónde ocurre.'
+            ],
+            ['Evitar nominalizaciones excesivas', 'Verbos en lugar de sustantivos derivados',
+                'Las nominalizaciones excesivas (el análisis de, la evaluación de) pueden hacer el texto más denso y menos claro.',
+                'Nominalización: Se realizó el análisis de los datos. / Verbal: Se analizaron los datos.',
+                'el análisis de (nominalización) → analizaron (verbal)',
+                '¿Qué recurso hace el texto más directo y claro?', ['Uso de verbos en lugar de nominalizaciones',
+                    'Uso de sustantivos abstractos', 'Uso de gerundios', 'Uso de participios'
+                ], 0, 'Reescribe "Se llevó a cabo la medición de la temperatura" evitando la nominalización.'
+            ],
+            ['Explicitación de relaciones', 'Conectores que muestran relaciones lógicas',
+                'Las relaciones entre ideas (causa, consecuencia, contraste) deben explicitarse mediante conectores.',
+                'Implicito: Los resultados fueron positivos. La hipótesis es válida. / Explícito: Los resultados fueron positivos, por lo tanto la hipótesis es válida.',
+                'por lo tanto (conector de consecuencia)',
+                '¿Qué elementos explicitan las relaciones entre ideas en un texto científico?', ['Conectores lógicos',
+                    'Signos de puntuación', 'Mayúsculas', 'Numeración'
+                ], 0, 'Añade un conector adecuado a: "Los resultados fueron negativos. La hipótesis fue rechazada."'
+            ]
+        ];
+        b1.forEach(d => addLesson('claridad', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: SUJETO Y VOZ (11–20)
+        // ============================================================
+        const b2 = [
+            ['Voz activa (preferible)', 'Sujeto agente + verbo activo',
+                'La voz activa es más directa y clara que la pasiva. Se prefiere en la redacción científica moderna.',
+                'Pasiva: Los datos fueron analizados por el equipo. / Activa: El equipo analizó los datos.',
+                'fueron analizados (pasiva) → analizó (activa)',
+                '¿Qué voz se prefiere en la redacción científica actual?', ['Activa', 'Pasiva', 'Impersonal',
+                    'Reflexiva'
+                ], 0, 'Reescribe "El experimento fue diseñado por los investigadores" en voz activa.'
+            ],
+            ['Voz pasiva (cuando el agente no es relevante)', 'Pasiva sin agente',
+                'La voz pasiva se usa cuando el agente no es relevante o se desea enfatizar el objeto o el proceso.',
+                'Se midió la temperatura cada 10 minutos. (el agente no es relevante)',
+                'Se midió (pasiva refleja)',
+                '¿Cuándo se usa la voz pasiva en textos científicos?', ['Cuando el agente no es relevante',
+                    'Siempre', 'Nunca', 'Solo en introducciones'
+                ], 0, 'Escribe una oración en voz pasiva donde el agente no sea relevante.'
+            ],
+            ['Uso de "se" impersonal', 'Se + verbo en tercera persona singular',
+                'La construcción impersonal con "se" es útil para expresar acciones generales sin especificar el sujeto.',
+                'Se observa que la temperatura aumenta. / Se concluye que los resultados son significativos.',
+                'se observa / se concluye (impersonal)',
+                '¿Qué construcción expresa acciones generales sin especificar el sujeto?', ['Se + verbo en 3ª sing.',
+                    'Voz activa', 'Voz pasiva', 'Infinitivo'
+                ], 0, 'Escribe una oración impersonal con "se" para un texto científico.'
+            ],
+            ['Sujeto claro y visible', 'Sujeto explícito y cercano al verbo',
+                'El sujeto debe estar claramente identificado y cerca del verbo para evitar confusiones.',
+                'Confuso: Los resultados, después de un minucioso análisis, se publicaron. / Claro: Después de un minucioso análisis, los resultados se publicaron.',
+                'Los resultados (sujeto) cerca del verbo',
+                '¿Dónde debe estar el sujeto en relación con el verbo?', ['Cerca del verbo', 'Lejos del verbo',
+                    'Al final', 'Omitido'
+                ], 0, 'Reescribe "Los datos, tras ser procesados, se interpretaron" con el sujeto cerca del verbo.'
+            ],
+            ['Sujeto en oraciones pasivas', 'Sujeto paciente + verbo pasivo',
+                'En la voz pasiva, el sujeto es paciente y recibe la acción. Debe ser claro.',
+                'El experimento fue realizado por el equipo. (sujeto paciente: el experimento)',
+                'el experimento (sujeto paciente)',
+                '¿Qué tipo de sujeto tiene la voz pasiva?', ['Paciente', 'Agente', 'Causativo', 'Reflexivo'],
+                0, 'Escribe una oración pasiva con un sujeto paciente claro.'
+            ],
+            ['Sujeto en oraciones con "se"', 'Sujeto en pasivas reflejas (concordancia)',
+                'En las pasivas reflejas, el sujeto concuerda en número con el verbo.',
+                'Se vende casa. (sujeto: casa, singular) / Se venden casas. (sujeto: casas, plural)',
+                'se vende (singular) / se venden (plural)',
+                '¿Cómo concuerda el verbo en una pasiva refleja?', ['Con el sujeto', 'Siempre en singular',
+                    'Siempre en plural', 'Con el agente'
+                ], 0, 'Escribe una oración con "se" en singular y otra en plural.'
+            ],
+            ['Evitar sujetos tácitos confusos', 'Sujeto explícito para evitar ambigüedad',
+                'En textos científicos, es mejor explicitar el sujeto para evitar malentendidos sobre quién realiza la acción.',
+                'Confuso: Se analizaron y se interpretaron. ¿Quién? / Claro: Los investigadores analizaron e interpretaron los datos.',
+                'Se analizaron (sujeto tácito) → Los investigadores analizaron (sujeto explícito)',
+                '¿Qué se recomienda hacer con el sujeto en textos científicos?', ['Explicitarlo', 'Omitirlo siempre',
+                    'Usar solo pronombres', 'Usar pasiva siempre'
+                ], 0, 'Reescribe "Se midió y se comparó" con un sujeto explícito.'
+            ],
+            ['Agente en pasiva', 'Complemento agente (por + agente)',
+                'Cuando el agente es relevante en una oración pasiva, se introduce con "por".',
+                'El experimento fue realizado por el equipo de investigación.',
+                'por el equipo de investigación (complemento agente)',
+                '¿Cómo se introduce el agente en una oración pasiva?', ['Por', 'De', 'Con', 'A'],
+                0, 'Escribe una oración pasiva con complemento agente.'
+            ],
+            ['Sujeto en oraciones impersonales con "se"', 'Sujeto inexistente (impersonal)',
+                'En las oraciones impersonales con "se", no hay sujeto y el verbo va en tercera persona del singular.',
+                'Se vive bien en esta ciudad. (no hay sujeto)',
+                'se vive (impersonal)',
+                '¿Tienen sujeto las oraciones impersonales con "se"?', ['No', 'Sí', 'A veces', 'Solo en plural'],
+                0, 'Escribe una oración impersonal con "se".'
+            ],
+            ['Uso de "nosotros" en textos científicos', 'Nosotros (autor/es)',
+                'En algunos textos científicos se usa "nosotros" para referirse a los autores, aunque cada vez es menos común.',
+                'Nosotros planteamos la hipótesis de que... / En este estudio, planteamos la hipótesis de que...',
+                'nosotros (autores)',
+                '¿Qué pronombre se usa a veces para referirse a los autores?', ['Nosotros', 'Yo', 'Ellos', 'Se'],
+                0, 'Escribe una oración usando "nosotros" en un contexto científico.'
+            ]
+        ];
+        b2.forEach(d => addLesson('sujeto', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: ORACIONES SIMPLES Y COMPUESTAS (21–30)
+        // ============================================================
+        const b3 = [
+            ['Oraciones simples (claras)', 'Sujeto + verbo + complementos',
+                'Las oraciones simples son más claras y fáciles de entender. Se recomienda su uso en textos científicos.',
+                'El experimento demostró la hipótesis.',
+                'experimento (sujeto) + demostró (verbo) + hipótesis (CD)',
+                '¿Qué tipo de oración es más clara en un texto científico?', ['Simple', 'Compuesta', 'Compleja',
+                    'Subordinada'
+                ], 0, 'Escribe una oración simple sobre un experimento.'
+            ],
+            ['Oraciones compuestas (coordinadas)', 'Coordinación (y, o, pero)',
+                'Las oraciones coordinadas unen dos o más ideas de igual jerarquía con conjunciones.',
+                'El experimento se realizó en el laboratorio y los resultados se analizaron estadísticamente.',
+                'se realizó (1) + y (conjunción) + se analizaron (2)',
+                '¿Qué conjunción une dos oraciones coordinadas?', ['Y', 'Porque', 'Aunque', 'Cuando'],
+                0, 'Escribe una oración coordinada con "y" para un texto científico.'
+            ],
+            ['Evitar oraciones excesivamente largas', 'Límite de 25-30 palabras',
+                'Las oraciones muy largas dificultan la comprensión. Se recomienda un máximo de 25-30 palabras.',
+                'Larga: El experimento, que fue diseñado por el equipo de investigación del laboratorio de biología molecular de la universidad, se realizó en condiciones controladas de temperatura y humedad. / Corta: El equipo de investigación diseñó el experimento. Se realizó en condiciones controladas.',
+                'oración larga → dos oraciones cortas',
+                '¿Cuántas palabras se recomienda que tenga una oración en textos científicos?', ['25-30', '50-60',
+                    '10-15', '100'
+                ], 0, 'Divide una oración larga en dos oraciones cortas.'
+            ],
+            ['Oraciones subordinadas sustantivas', 'Sustantiva + que + verbo',
+                'Las subordinadas sustantivas pueden funcionar como sujeto u objeto de la oración principal.',
+                'Los resultados demuestran que la hipótesis es correcta.',
+                'demuestran (principal) + que la hipótesis es correcta (sustantiva)',
+                '¿Qué nexo introduce una subordinada sustantiva?', ['Que', 'Donde', 'Cuando', 'Como'],
+                0, 'Escribe una oración con subordinada sustantiva para un texto científico.'
+            ],
+            ['Oraciones subordinadas adjetivas (relativas)', 'Relativa + que/quien/cuyo',
+                'Las relativas especifican o añaden información sobre el sustantivo.',
+                'Los datos que se obtuvieron en el experimento son concluyentes.',
+                'que se obtuvieron (relativa especificativa)',
+                '¿Qué pronombre relativo se usa para personas?', ['Quien', 'Que', 'Cuyo', 'Donde'],
+                0, 'Escribe una oración con una relativa especificativa.'
+            ],
+            ['Oraciones subordinadas adverbiales', 'Adverbial + cuando, porque, aunque...',
+                'Las adverbiales expresan circunstancias: tiempo, causa, concesión, etc.',
+                'Cuando se analizaron los datos, se observó una tendencia clara.',
+                'Cuando se analizaron (temporal)',
+                '¿Qué tipo de subordinada expresa causa?', ['Causal', 'Temporal', 'Concesiva', 'Condicional'],
+                0, 'Escribe una oración con una subordinada causal.'
+            ],
+            ['Evitar el gerundio de posterioridad', 'Gerundio sin valor de posterioridad',
+                'El gerundio no debe expresar una acción posterior a la principal en textos científicos.',
+                'Incorrecto: Se realizó el experimento, obteniendo los resultados. / Correcto: Se realizó el experimento y se obtuvieron los resultados.',
+                'obteniendo (posterioridad, error) → y se obtuvieron (correcto)',
+                '¿Cuándo es incorrecto usar el gerundio?', ['Cuando expresa posterioridad', 'Cuando expresa simultaneidad',
+                    'Cuando expresa causa', 'Cuando expresa modo'
+                ], 0, 'Corrige "Se aplicó el método, obteniendo resultados positivos".'
+            ],
+            ['Uso del infinitivo en instrucciones', 'Infinitivo + instrucciones',
+                'El infinitivo es útil para dar instrucciones o describir procedimientos.',
+                'Para realizar el experimento, siga estos pasos: primero, preparar la muestra; segundo, aplicar el reactivo.',
+                'preparar, aplicar (infinitivos)',
+                '¿Qué forma verbal se usa en instrucciones científicas?', ['Infinitivo', 'Gerundio', 'Participio',
+                    'Imperativo'
+                ], 0, 'Escribe una instrucción usando el infinitivo.'
+            ],
+            ['Uso del participio en descripciones', 'Participio + estado o resultado',
+                'El participio se usa para describir estados o resultados de procesos.',
+                'La muestra fue preparada siguiendo el protocolo establecido.',
+                'preparada (participio)',
+                '¿Qué forma verbal describe estados o resultados?', ['Participio', 'Infinitivo', 'Gerundio',
+                    'Subjuntivo'
+                ], 0, 'Escribe una descripción usando un participio.'
+            ],
+            ['Uso de construcciones absolutas', 'Sustantivo + participio (absoluta)',
+                'Las construcciones absolutas con participio añaden información de manera concisa.',
+                'Terminado el experimento, se procedió al análisis.',
+                'Terminado el experimento (construcción absoluta)',
+                '¿Qué construcción añade información de manera concisa?', ['Construcción absoluta', 'Subordinada',
+                    'Coordinada', 'Yuxtapuesta'
+                ], 0, 'Escribe una construcción absoluta con participio.'
+            ]
+        ];
+        b3.forEach(d => addLesson('oraciones', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: SUBORDINACIÓN (31–40)
+        // ============================================================
+        const b4 = [
+            ['Subordinación correcta', 'Relaciones jerárquicas claras',
+                'La subordinación debe establecer relaciones jerárquicas claras entre las ideas.',
+                'Los resultados, que fueron publicados en la revista, confirman la hipótesis.',
+                'que fueron publicados (subordinada de 1er grado)',
+                '¿Qué establece la subordinación en un texto?', ['Relaciones jerárquicas', 'Coordinación',
+                    'Yuxtaposición', 'Elipsis'
+                ], 0, 'Escribe una oración con una subordinada de primer grado.'
+            ],
+            ['Subordinadas sustantivas de sujeto', 'Sustantiva como sujeto',
+                'La subordinada sustantiva puede funcionar como sujeto de la oración principal.',
+                'Que los resultados sean positivos es esperanzador.',
+                'Que los resultados sean positivos (sujeto)',
+                '¿Qué función puede tener una subordinada sustantiva?', ['Sujeto', 'CD', 'CI', 'CC'],
+                0, 'Escribe una oración con una subordinada sustantiva como sujeto.'
+            ],
+            ['Subordinadas sustantivas de objeto directo', 'Sustantiva como CD',
+                'La subordinada sustantiva puede funcionar como objeto directo.',
+                'Los investigadores demostraron que la hipótesis es válida.',
+                'que la hipótesis es válida (CD)',
+                '¿Qué función tiene la subordinada en "demostraron que la hipótesis es válida"?', ['CD', 'Sujeto',
+                    'CI', 'CC'
+                ], 0, 'Escribe una oración con una subordinada sustantiva como CD.'
+            ],
+            ['Subordinadas sustantivas de complemento de régimen', 'Sustantiva + preposición',
+                'Las subordinadas sustantivas pueden ser complemento de régimen con preposición.',
+                'Los investigadores insisten en que los datos son fiables.',
+                'en que los datos son fiables (CR)',
+                '¿Qué preposición introduce un complemento de régimen en esta oración?', ['En', 'De', 'Con', 'A'],
+                0, 'Escribe una oración con una subordinada sustantiva como complemento de régimen.'
+            ],
+            ['Subordinadas adjetivas especificativas', 'Relativa que especifica (sin comas)',
+                'Las especificativas restringen el significado del antecedente y no llevan comas.',
+                'Los datos que se obtuvieron son concluyentes.',
+                'que se obtuvieron (especificativa)',
+                '¿Cómo se escriben las relativas especificativas?', ['Sin comas', 'Con comas', 'Con paréntesis',
+                    'Con guiones'
+                ], 0, 'Escribe una oración con una relativa especificativa.'
+            ],
+            ['Subordinadas adjetivas explicativas', 'Relativa que explica (con comas)',
+                'Las explicativas añaden información adicional y van entre comas.',
+                'Los datos, que se obtuvieron en el laboratorio, son concluyentes.',
+                'que se obtuvieron en el laboratorio (explicativa)',
+                '¿Cómo se escriben las relativas explicativas?', ['Con comas', 'Sin comas', 'Con paréntesis',
+                    'Con guiones'
+                ], 0, 'Escribe una oración con una relativa explicativa.'
+            ],
+            ['Subordinadas adverbiales temporales', 'Temporal + cuando / mientras',
+                'Las temporales expresan el tiempo en que ocurre la acción principal.',
+                'Cuando se analizaron los datos, se observó la tendencia.',
+                'Cuando se analizaron (temporal)',
+                '¿Qué nexo introduce una subordinada temporal?', ['Cuando', 'Porque', 'Aunque', 'Si'],
+                0, 'Escribe una oración con una subordinada temporal.'
+            ],
+            ['Subordinadas adverbiales causales', 'Causal + porque / puesto que',
+                'Las causales expresan la razón de la acción principal.',
+                'El experimento fue exitoso porque se siguieron todos los protocolos.',
+                'porque se siguieron (causal)',
+                '¿Qué nexo introduce una subordinada causal?', ['Porque', 'Cuando', 'Aunque', 'Si'],
+                0, 'Escribe una oración con una subordinada causal.'
+            ],
+            ['Subordinadas adverbiales concesivas', 'Concesiva + aunque / a pesar de que',
+                'Las concesivas expresan una objeción o dificultad que no impide la acción principal.',
+                'Aunque los resultados fueron negativos, la hipótesis no se descartó.',
+                'Aunque los resultados fueron negativos (concesiva)',
+                '¿Qué nexo introduce una subordinada concesiva?', ['Aunque', 'Porque', 'Cuando', 'Si'],
+                0, 'Escribe una oración con una subordinada concesiva.'
+            ],
+            ['Subordinadas adverbiales condicionales', 'Condicional + si / en caso de que',
+                'Las condicionales expresan una condición para que se cumpla la acción principal.',
+                'Si los resultados son positivos, la hipótesis se confirmará.',
+                'Si los resultados son positivos (condicional)',
+                '¿Qué nexo introduce una subordinada condicional?', ['Si', 'Porque', 'Cuando', 'Aunque'],
+                0, 'Escribe una oración con una subordinada condicional.'
+            ]
+        ];
+        b4.forEach(d => addLesson('subordinacion', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: VERBOS Y TIEMPOS (41–50)
+        // ============================================================
+        const b5 = [
+            ['Presente para hechos generales', 'Presente + verdades científicas',
+                'El presente se usa para expresar hechos generalmente aceptados o verdades científicas.',
+                'El agua hierve a 100 grados centígrados.',
+                'hierve (presente)',
+                '¿Qué tiempo se usa para verdades científicas?', ['Presente', 'Pretérito', 'Futuro', 'Condicional'],
+                0, 'Escribe una oración en presente sobre una verdad científica.'
+            ],
+            ['Pretérito para experimentos pasados', 'Pretérito + experimentos realizados',
+                'El pretérito se usa para describir experimentos o acciones que ya se han completado.',
+                'Se midió la temperatura cada 10 minutos.',
+                'midió (pretérito)',
+                '¿Qué tiempo se usa para experimentos ya realizados?', ['Pretérito', 'Presente', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración en pretérito sobre un experimento.'
+            ],
+            ['Pretérito perfecto compuesto para resultados recientes', 'Pretérito perfecto + resultados actuales',
+                'El pretérito perfecto compuesto se usa para acciones pasadas con relevancia en el presente.',
+                'Se ha demostrado que la vacuna es efectiva.',
+                'ha demostrado (pretérito perfecto)',
+                '¿Qué tiempo se usa para resultados pasados con relevancia presente?', ['Pretérito perfecto compuesto',
+                    'Pretérito', 'Presente', 'Futuro'
+                ], 0, 'Escribe una oración con pretérito perfecto compuesto.'
+            ],
+            ['Futuro para predicciones', 'Futuro + predicciones científicas',
+                'El futuro se usa para hacer predicciones basadas en resultados o teorías.',
+                'Los resultados futuros confirmarán la hipótesis.',
+                'confirmarán (futuro)',
+                '¿Qué tiempo se usa para predicciones científicas?', ['Futuro', 'Presente', 'Pretérito', 'Condicional'],
+                0, 'Escribe una oración en futuro con una predicción científica.'
+            ],
+            ['Condicional para hipótesis', 'Condicional + hipótesis o cortesía',
+                'El condicional se usa para expresar hipótesis o para hacer afirmaciones con cautela.',
+                'Los resultados sugerirían que la hipótesis es correcta.',
+                'sugerirían (condicional)',
+                '¿Qué tiempo se usa para expresar hipótesis con cautela?', ['Condicional', 'Futuro', 'Presente',
+                    'Pretérito'
+                ], 0, 'Escribe una oración con condicional para expresar una hipótesis.'
+            ],
+            ['Voz pasiva en tiempos compuestos', 'Haber sido + participio',
+                'La voz pasiva en tiempos compuestos se forma con "haber sido" + participio.',
+                'La muestra ha sido analizada en el laboratorio.',
+                'ha sido analizada (pasiva en pretérito perfecto)',
+                '¿Cómo se forma la voz pasiva en pretérito perfecto?', ['Haber sido + participio',
+                    'Ser + participio', 'Estar + participio', 'Haber + participio'
+                ], 0, 'Escribe una oración en voz pasiva en pretérito perfecto.'
+            ],
+            ['Uso del subjuntivo en textos científicos', 'Subjuntivo + duda / deseo / finalidad',
+                'El subjuntivo se usa para expresar duda, deseo o finalidad en contextos científicos.',
+                'Es posible que los resultados varíen. / Se recomienda que se repita el experimento.',
+                'varíen (subjuntivo) / repita (subjuntivo)',
+                '¿Qué modo verbal se usa para expresar duda en textos científicos?', ['Subjuntivo', 'Indicativo',
+                    'Imperativo', 'Infinitivo'
+                ], 0, 'Escribe una oración con subjuntivo para expresar posibilidad.'
+            ],
+            ['Infinitivo en procedimientos', 'Infinitivo + descripción de pasos',
+                'El infinitivo es útil para describir pasos en procedimientos experimentales.',
+                'Para realizar el experimento, preparar la muestra, añadir el reactivo y observar los cambios.',
+                'preparar, añadir, observar (infinitivos)',
+                '¿Qué forma verbal se usa en la descripción de procedimientos?', ['Infinitivo', 'Gerundio',
+                    'Participio', 'Subjuntivo'
+                ], 0, 'Escribe una secuencia de pasos usando infinitivos.'
+            ],
+            ['Gerundio en explicaciones', 'Gerundio + explicación de proceso',
+                'El gerundio puede usarse para explicar procesos o acciones simultáneas.',
+                'Calentando la muestra, se observó un cambio de color.',
+                'Calentando (gerundio)',
+                '¿Qué forma verbal se usa para explicar procesos simultáneos?', ['Gerundio', 'Infinitivo', 'Participio',
+                    'Subjuntivo'
+                ], 0, 'Escribe una oración con gerundio para explicar un proceso.'
+            ],
+            ['Participio en descripciones de estado', 'Participio + estado resultante',
+                'El participio se usa para describir el estado resultante de un proceso.',
+                'La muestra está preparada para el análisis.',
+                'preparada (participio)',
+                '¿Qué forma verbal describe el estado resultante?', ['Participio', 'Infinitivo', 'Gerundio',
+                    'Subjuntivo'
+                ], 0, 'Escribe una oración con participio para describir un estado.'
+            ]
+        ];
+        b5.forEach(d => addLesson('verbos', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: CONECTORES LÓGICOS (51–60)
+        // ============================================================
+        const b6 = [
+            ['Conectores de causa (porque, puesto que)', 'Causa + efecto',
+                'Los conectores causales explican la razón de un fenómeno.',
+                'El experimento falló porque la temperatura no era la adecuada.',
+                'porque (causal)',
+                '¿Qué conector expresa causa?', ['Porque', 'Sin embargo', 'Además', 'Por lo tanto'],
+                0, 'Escribe una oración con "porque" en un contexto científico.'
+            ],
+            ['Conectores de consecuencia (por lo tanto, en consecuencia)', 'Consecuencia lógica',
+                'Los conectores de consecuencia indican el resultado de una acción o hecho.',
+                'Los resultados son positivos, por lo tanto la hipótesis se confirma.',
+                'por lo tanto (consecuencia)',
+                '¿Qué conector expresa consecuencia?', ['Por lo tanto', 'Porque', 'Sin embargo', 'Además'],
+                0, 'Escribe una oración con "por lo tanto" en un texto científico.'
+            ],
+            ['Conectores de contraste (sin embargo, no obstante)', 'Contraste / oposición',
+                'Los conectores de contraste introducen una idea opuesta a la anterior.',
+                'La muestra era pequeña; sin embargo, los resultados fueron significativos.',
+                'sin embargo (contraste)',
+                '¿Qué conector expresa contraste?', ['Sin embargo', 'Porque', 'Además', 'Por lo tanto'],
+                0, 'Escribe una oración con "sin embargo" en un contexto científico.'
+            ],
+            ['Conectores de adición (además, asimismo)', 'Adición de información',
+                'Los conectores de adición añaden información relacionada.',
+                'Los resultados confirman la hipótesis. Además, son consistentes con estudios previos.',
+                'además (adición)',
+                '¿Qué conector expresa adición?', ['Además', 'Sin embargo', 'Porque', 'Por lo tanto'],
+                0, 'Escribe una oración con "además" en un texto científico.'
+            ],
+            ['Conectores de ejemplificación (por ejemplo, como)', 'Ejemplificación',
+                'Los conectores de ejemplificación ilustran una idea con un caso concreto.',
+                'Varias especies muestran este comportamiento, por ejemplo, el ratón de laboratorio.',
+                'por ejemplo (ejemplificación)',
+                '¿Qué conector introduce un ejemplo?', ['Por ejemplo', 'Además', 'Sin embargo', 'Por lo tanto'],
+                0, 'Escribe una oración con "por ejemplo" en un contexto científico.'
+            ],
+            ['Conectores de conclusión (en conclusión, en resumen)', 'Conclusión / síntesis',
+                'Los conectores de conclusión resumen o cierran una idea o sección.',
+                'En conclusión, los resultados apoyan la hipótesis planteada.',
+                'en conclusión (conclusión)',
+                '¿Qué conector se usa para concluir?', ['En conclusión', 'Además', 'Por ejemplo', 'Sin embargo'],
+                0, 'Escribe una oración con "en conclusión" para un texto científico.'
+            ],
+            ['Conectores de condición (si, en caso de que)', 'Condición',
+                'Los conectores condicionales expresan una condición para que ocurra algo.',
+                'Si la temperatura supera los 50 °C, la reacción se acelera.',
+                'si (condicional)',
+                '¿Qué conector expresa condición?', ['Si', 'Porque', 'Además', 'Sin embargo'],
+                0, 'Escribe una oración con "si" en un contexto científico.'
+            ],
+            ['Conectores de finalidad (para, con el fin de)', 'Finalidad',
+                'Los conectores de finalidad expresan el propósito de una acción.',
+                'Se utilizó un microscopio para observar las células.',
+                'para (finalidad)',
+                '¿Qué conector expresa finalidad?', ['Para', 'Porque', 'Sin embargo', 'Además'],
+                0, 'Escribe una oración con "para" en un texto científico.'
+            ],
+            ['Conectores de reformulación (es decir, o sea)', 'Reformulación / aclaración',
+                'Los conectores de reformulación aclaran o explican de otra manera lo dicho.',
+                'La apoptosis, es decir, la muerte celular programada, es un proceso fundamental.',
+                'es decir (reformulación)',
+                '¿Qué conector se usa para aclarar un concepto?', ['Es decir', 'Además', 'Por ejemplo', 'Sin embargo'],
+                0, 'Escribe una oración con "es decir" para aclarar un término científico.'
+            ],
+            ['Conectores de secuencia (primero, luego, finalmente)', 'Secuencia temporal',
+                'Los conectores de secuencia ordenan los pasos en un procedimiento.',
+                'Primero, se preparó la muestra. Luego, se aplicó el reactivo. Finalmente, se observó el resultado.',
+                'primero, luego, finalmente (secuencia)',
+                '¿Qué conectores ordenan una secuencia?', ['Primero, luego, finalmente', 'Porque, pero, aunque',
+                    'Además, asimismo, también', 'En conclusión, en resumen'
+                ], 0, 'Escribe una secuencia de tres pasos con conectores de secuencia.'
+            ]
+        ];
+        b6.forEach(d => addLesson('conectores', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: NOMINALIZACIÓN (61–70)
+        // ============================================================
+        const b7 = [
+            ['Nominalización de verbos', 'Verbo → sustantivo (análisis, medición)',
+                'La nominalización convierte verbos en sustantivos, a menudo para crear un estilo más formal o abstracto.',
+                'Analizar los datos → El análisis de los datos.',
+                'analizar (verbo) → análisis (sustantivo)',
+                '¿Qué recurso convierte verbos en sustantivos?', ['Nominalización', 'Verbalización', 'Adjetivación',
+                    'Adverbialización'
+                ], 0, 'Nominaliza el verbo en "medir la temperatura".'
+            ],
+            ['Nominalización de adjetivos', 'Adjetivo → sustantivo (precisión, exactitud)',
+                'Los adjetivos pueden nominalizarse para referirse a la cualidad de manera abstracta.',
+                'Preciso → La precisión del método.',
+                'preciso (adjetivo) → precisión (sustantivo)',
+                '¿Qué recurso convierte adjetivos en sustantivos?', ['Nominalización', 'Verbalización', 'Adjetivación',
+                    'Adverbialización'
+                ], 0, 'Nominaliza el adjetivo en "exacto".'
+            ],
+            ['Nominalización en títulos', 'Títulos con nominalizaciones',
+                'Los títulos científicos a menudo usan nominalizaciones para ser más concisos y formales.',
+                'Estudio sobre la influencia de la temperatura en el crecimiento celular.',
+                'influencia (nominalización)',
+                '¿Qué recurso es común en los títulos científicos?', ['Nominalización', 'Verbalización', 'Adjetivación',
+                    'Adverbialización'
+                ], 0, 'Escribe un título científico usando una nominalización.'
+            ],
+            ['Nominalización en resúmenes', 'Resúmenes con nominalizaciones',
+                'Los resúmenes usan nominalizaciones para ser concisos y precisos.',
+                'El análisis de los datos reveló una tendencia significativa.',
+                'análisis (nominalización)',
+                '¿Qué recurso ayuda a la concisión en los resúmenes?', ['Nominalización', 'Verbalización',
+                    'Adjetivación', 'Adverbialización'
+                ], 0, 'Escribe una frase de resumen con una nominalización.'
+            ],
+            ['Evitar nominalizaciones excesivas', 'Uso moderado de nominalizaciones',
+                'El exceso de nominalizaciones puede hacer el texto pesado y difícil de leer.',
+                'Excesivo: Se realizó la medición de la temperatura y el análisis de los datos. / Mejor: Se midió la temperatura y se analizaron los datos.',
+                'medición, análisis (excesivo) → midió, analizaron (mejor)',
+                '¿Qué problema puede causar el exceso de nominalizaciones?', ['Textos pesados y difíciles',
+                    'Claridad', 'Precisión', 'Concisión'
+                ], 0, 'Reescribe "Se llevó a cabo la realización del experimento" evitando la nominalización.'
+            ],
+            ['Nominalización en definiciones', 'Definiciones con nominalizaciones',
+                'Las definiciones suelen usar nominalizaciones para ser más formales.',
+                'La fotosíntesis es el proceso de conversión de energía luminosa en energía química.',
+                'conversión (nominalización)',
+                '¿Qué recurso se usa en las definiciones científicas?', ['Nominalización', 'Verbalización',
+                    'Adjetivación', 'Adverbialización'
+                ], 0, 'Escribe una definición usando una nominalización.'
+            ],
+            ['Nominalización en descripciones de procesos', 'Procesos con nominalizaciones',
+                'La descripción de procesos a menudo usa nominalizaciones.',
+                'La evaporación del agua ocurre cuando la temperatura aumenta.',
+                'evaporación (nominalización)',
+                '¿Qué recurso describe procesos de manera formal?', ['Nominalización', 'Verbalización', 'Adjetivación',
+                    'Adverbialización'
+                ], 0, 'Escribe una descripción de proceso con una nominalización.'
+            ],
+            ['Nominalización en resultados', 'Resultados con nominalizaciones',
+                'En la sección de resultados, las nominalizaciones pueden resumir hallazgos.',
+                'El aumento de la temperatura provocó una aceleración de la reacción.',
+                'aumento, aceleración (nominalizaciones)',
+                '¿Qué recurso resume hallazgos de manera formal?', ['Nominalización', 'Verbalización', 'Adjetivación',
+                    'Adverbialización'
+                ], 0, 'Escribe una frase de resultados con una nominalización.'
+            ],
+            ['Nominalización en discusión', 'Discusión con nominalizaciones',
+                'En la discusión, las nominalizaciones pueden referirse a conceptos abstractos.',
+                'La interpretación de los resultados sugiere que...',
+                'interpretación (nominalización)',
+                '¿Qué recurso se usa en la discusión para referirse a conceptos abstractos?', ['Nominalización',
+                    'Verbalización', 'Adjetivación', 'Adverbialización'
+                ], 0, 'Escribe una frase de discusión con una nominalización.'
+            ],
+            ['Equilibrio entre nominalización y verbos', 'Uso equilibrado',
+                'Se debe buscar un equilibrio entre nominalizaciones y verbos para mantener la claridad y la fluidez.',
+                'El análisis de los datos (nominalización) demostró (verbo) que la hipótesis es válida.',
+                'análisis (nominalización) + demostró (verbo)',
+                '¿Qué equilibrio se recomienda en la redacción científica?', ['Entre nominalizaciones y verbos',
+                    'Solo nominalizaciones', 'Solo verbos', 'Sin equilibrio'
+                ], 0, 'Escribe una oración que combine una nominalización y un verbo.'
+            ]
+        ];
+        b7.forEach(d => addLesson('nominalizacion', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: ESTILO CIENTÍFICO (71–80)
+        // ============================================================
+        const b8 = [
+            ['Objetividad', 'Lenguaje objetivo (sin opiniones personales)',
+                'El texto científico debe ser objetivo, evitando opiniones personales y valoraciones subjetivas.',
+                'Subjetivo: Creo que los resultados son interesantes. / Objetivo: Los resultados indican una tendencia clara.',
+                'Creo que (subjetivo) → indican (objetivo)',
+                '¿Qué característica debe tener el lenguaje científico?', ['Objetividad', 'Subjetividad', 'Emotividad',
+                    'Figuratividad'
+                ], 0, 'Reescribe "Me parece que el experimento fue exitoso" de forma objetiva.'
+            ],
+            ['Impersonalidad', 'Uso de construcciones impersonales',
+                'El texto científico debe ser impersonal, evitando el uso excesivo de "yo" o "nosotros".',
+                'Personal: Yo pienso que... / Impersonal: Se piensa que...',
+                'yo pienso (personal) → se piensa (impersonal)',
+                '¿Qué recurso se usa para dar impersonalidad al texto?', ['Construcciones impersonales con "se"',
+                    'Uso de "yo"', 'Uso de "nosotros"', 'Uso de adjetivos'
+                ], 0, 'Reescribe "Creemos que los datos son fiables" de forma impersonal.'
+            ],
+            ['Precisión terminológica', 'Uso de terminología específica',
+                'Se debe usar la terminología específica de la disciplina para ser preciso.',
+                'En biología: "célula" no "cosita". / En química: "molécula" no "partícula".',
+                'cosita (impreciso) → célula (preciso)',
+                '¿Qué tipo de terminología se usa en textos científicos?', ['Específica y precisa', 'General y vaga',
+                    'Coloquial', 'Poética'
+                ], 0, 'Sustituye "cosa" por el término adecuado en un texto de biología.'
+            ],
+            ['Citas y referencias', 'Citas textuales y referencias bibliográficas',
+                'Las citas y referencias son esenciales para dar credibilidad y apoyar las afirmaciones.',
+                'Según Pérez (2020), la fotosíntesis es un proceso fundamental.',
+                'Pérez (2020) (cita)',
+                '¿Qué elemento da credibilidad a un texto científico?', ['Citas y referencias', 'Opiniones personales',
+                    'Adjetivos', 'Metáforas'
+                ], 0, 'Escribe una oración con una cita científica.'
+            ],
+            ['Estructura IMRaD', 'Introducción, Métodos, Resultados y Discusión',
+                'La estructura IMRaD (Introducción, Métodos, Resultados y Discusión) es el estándar en textos científicos.',
+                'Introducción: se plantea el problema. Métodos: se describe el procedimiento. Resultados: se presentan los hallazgos. Discusión: se interpretan.',
+                'IMRaD (estructura estándar)',
+                '¿Qué sigla representa la estructura estándar de un artículo científico?', ['IMRaD', 'IRDaM', 'DMRaI',
+                    'MRaDI'
+                ], 0, 'Escribe una frase para cada sección de IMRaD.'
+            ],
+            ['Uso de tablas y figuras', 'Tablas y figuras para datos',
+                'Las tablas y figuras deben ser claras y autónomas, con títulos y leyendas explicativas.',
+                'Tabla 1: Temperaturas registradas. / Figura 1: Curva de crecimiento.',
+                'tabla / figura (recursos visuales)',
+                '¿Qué recursos visuales se usan en textos científicos?', ['Tablas y figuras', 'Solo texto', 'Imágenes',
+                    'Videos'
+                ], 0, 'Escribe la leyenda de una tabla sobre temperaturas.'
+            ],
+            ['Títulos informativos', 'Títulos que describen el contenido',
+                'Los títulos deben ser informativos y describir el contenido del apartado.',
+                'Resultados del experimento / Análisis de datos.',
+                'título informativo',
+                '¿Qué característica deben tener los títulos en textos científicos?', ['Ser informativos',
+                    'Ser creativos', 'Ser poéticos', 'Ser ambiguos'
+                ], 0, 'Escribe un título informativo para una sección de resultados.'
+            ],
+            ['Resumen estructurado', 'Resumen con objetivos, métodos, resultados y conclusiones',
+                'El resumen de un artículo científico debe ser estructurado y contener los elementos clave del estudio.',
+                'Objetivo: evaluar... Métodos: se utilizó... Resultados: se encontró... Conclusión: se confirma...',
+                'resumen estructurado',
+                '¿Qué elementos debe contener un resumen científico?', ['Objetivos, métodos, resultados y conclusiones',
+                    'Solo objetivos', 'Solo resultados', 'Solo conclusiones'
+                ], 0, 'Escribe un resumen estructurado de un estudio hipotético.'
+            ],
+            ['Lenguaje formal', 'Registro formal y académico',
+                'El lenguaje científico debe ser formal, evitando coloquialismos y contracciones.',
+                'Coloquial: Se hizo el experimento. / Formal: Se realizó el experimento.',
+                'hizo (coloquial) → realizó (formal)',
+                '¿Qué registro se usa en textos científicos?', ['Formal', 'Coloquial', 'Poético', 'Literario'],
+                0, 'Reescribe "Se hizo la prueba" en un registro más formal.'
+            ],
+            ['Evitar la redundancia', 'Eliminar palabras innecesarias',
+                'La redacción científica debe ser concisa, evitando redundancias y palabras que no aporten información.',
+                'Redundante: El resultado final fue positivo. / Conciso: El resultado fue positivo.',
+                'final (redundante)',
+                '¿Qué se debe evitar para una redacción concisa?', ['Redundancias', 'Precisión', 'Claridad',
+                    'Formalidad'
+                ], 0, 'Elimina la redundancia de "El experimento práctico fue realizado".'
+            ]
+        ];
+        b8.forEach(d => addLesson('estilo', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: COHERENCIA Y COHESIÓN (81–90)
+        // ============================================================
+        const b9 = [
+            ['Unidad temática', 'Todas las oraciones tratan del mismo tema',
+                'Cada párrafo debe desarrollar una sola idea principal o tema.',
+                'El párrafo sobre fotosíntesis debe hablar solo de fotosíntesis.',
+                'unidad temática',
+                '¿Qué debe tener cada párrafo en un texto científico?', ['Unidad temática', 'Varios temas',
+                    'Temas contradictorios', 'Sin tema'
+                ], 0, 'Escribe un párrafo con unidad temática sobre la fotosíntesis.'
+            ],
+            ['Progresión temática', 'Tema → rema → nuevo tema',
+                'La progresión temática conecta las oraciones mediante el avance de la información.',
+                'La fotosíntesis (tema) es un proceso vital (rema). Este proceso (nuevo tema) ocurre en las plantas (rema).',
+                'progresión temática',
+                '¿Qué recurso conecta las oraciones mediante el avance de la información?', ['Progresión temática',
+                    'Repetición', 'Elipsis', 'Catáfora'
+                ], 0, 'Escribe un párrafo con progresión temática lineal.'
+            ],
+            ['Cohesión mediante pronombres', 'Pronombres anafóricos (él, ella, lo, la)',
+                'Los pronombres mantienen la cohesión al referirse a elementos mencionados anteriormente.',
+                'La fotosíntesis es un proceso fundamental. Ella ocurre en los cloroplastos.',
+                'Ella (anáfora de fotosíntesis)',
+                '¿Qué recurso mantiene la cohesión mediante referencias a elementos anteriores?', ['Pronombres anafóricos',
+                    'Repetición', 'Elipsis', 'Sinónimos'
+                ], 0, 'Escribe una oración con un pronombre anafórico.'
+            ],
+            ['Cohesión mediante sinónimos', 'Sinónimos para evitar repeticiones',
+                'Los sinónimos mantienen la cohesión sin repetir la misma palabra.',
+                'La fotosíntesis es un proceso vital. Este mecanismo es fundamental para la vida.',
+                'proceso → mecanismo (sinónimo)',
+                '¿Qué recurso evita repeticiones usando palabras de significado similar?', ['Sinónimos',
+                    'Pronombres anafóricos', 'Elipsis', 'Catáfora'
+                ], 0, 'Escribe una oración usando sinónimos para evitar repeticiones.'
+            ],
+            ['Cohesión mediante elipsis', 'Elipsis de elementos sobreentendidos',
+                'La elipsis omite elementos que se sobreentienden, manteniendo la cohesión.',
+                'La fotosíntesis ocurre en las plantas. (La fotosíntesis) es un proceso vital.',
+                'elipsis del sujeto',
+                '¿Qué recurso omite elementos sobreentendidos?', ['Elipsis', 'Pronombres anafóricos', 'Sinónimos',
+                    'Catáfora'
+                ], 0, 'Escribe una oración con elipsis del sujeto.'
+            ],
+            ['Cohesión mediante conectores', 'Conectores que relacionan oraciones',
+                'Los conectores (porque, sin embargo, además) relacionan las oraciones y párrafos.',
+                'Los resultados fueron positivos. Por lo tanto, la hipótesis se confirma.',
+                'por lo tanto (conector)',
+                '¿Qué recurso relaciona las oraciones mediante conectores?', ['Conectores', 'Pronombres', 'Sinónimos',
+                    'Elipsis'
+                ], 0, 'Escribe una oración con un conector de consecuencia.'
+            ],
+            ['Cohesión mediante repetición controlada', 'Repetición de palabras clave',
+                'La repetición controlada de palabras clave mantiene la cohesión y enfatiza conceptos.',
+                'La fotosíntesis es un proceso vital. La fotosíntesis convierte la luz en energía.',
+                'fotosíntesis (repetición)',
+                '¿Qué recurso repite palabras clave para mantener la cohesión?', ['Repetición controlada',
+                    'Sinónimos', 'Pronombres', 'Elipsis'
+                ], 0, 'Escribe una oración con repetición controlada de una palabra clave.'
+            ],
+            ['Cohesión mediante catáfora', 'Catáfora (anticipación)',
+                'La catáfora anticipa información que se mencionará después.',
+                'Te lo explico: la fotosíntesis es un proceso vital.',
+                'lo (catáfora que anticipa "fotosíntesis")',
+                '¿Qué recurso anticipa información posterior?', ['Catáfora', 'Anáfora', 'Elipsis', 'Sinonimia'],
+                0, 'Escribe una oración con catáfora.'
+            ],
+            ['Coherencia en la argumentación', 'Argumentos que apoyan la tesis',
+                'En la sección de discusión, los argumentos deben apoyar la tesis de manera coherente.',
+                'Tesis: La fotosíntesis es vital. Argumento: Sin ella no habría oxígeno.',
+                'tesis + argumento (coherencia)',
+                '¿Qué relación deben tener los argumentos con la tesis?', ['Apoyarla', 'Contradecirla', 'Ignorarla',
+                    'Ser indiferentes'
+                ], 0, 'Escribe una tesis y un argumento que la apoye.'
+            ],
+            ['Coherencia global', 'Todo el texto tiene un propósito claro',
+                'El texto científico debe tener una coherencia global, con un propósito claro desde la introducción hasta la conclusión.',
+                'Desde la introducción hasta la conclusión, el texto mantiene el mismo propósito.',
+                'coherencia global',
+                '¿Qué debe tener un texto científico desde la introducción hasta la conclusión?', ['Coherencia global',
+                    'Incoherencia', 'Cambios de tema', 'Contradicciones'
+                ], 0, 'Escribe un esquema de coherencia global para un artículo científico.'
+            ]
+        ];
+        b9.forEach(d => addLesson('coherencia', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: APLICACIÓN PRÁCTICA (91–100)
+        // ============================================================
+        const b10 = [
+            ['Estructura de introducción', 'Introducción: contexto + problema + objetivo',
+                'La introducción debe presentar el contexto, el problema de investigación y los objetivos del estudio.',
+                'La fotosíntesis es un proceso fundamental. Sin embargo, su regulación aún no se comprende del todo. El objetivo de este estudio es analizar los factores que la afectan.',
+                'contexto → problema → objetivo',
+                '¿Qué elementos debe tener una introducción científica?', ['Contexto, problema y objetivo',
+                    'Solo contexto', 'Solo problema', 'Solo objetivo'
+                ], 0, 'Escribe una introducción con contexto, problema y objetivo.'
+            ],
+            ['Redacción de métodos', 'Métodos: descripción clara y replicable',
+                'La sección de métodos debe describir el procedimiento de manera clara y suficientemente detallada para que sea replicable.',
+                'Se utilizó un espectrofotómetro para medir la absorbancia a 540 nm. La muestra se diluyó en 1 ml de agua destilada.',
+                'descripción clara y replicable',
+                '¿Qué característica debe tener la sección de métodos?', ['Replicabilidad', 'Creatividad', 'Subjetividad',
+                    'Poesía'
+                ], 0, 'Escribe una descripción de un método científico.'
+            ],
+            ['Redacción de resultados', 'Resultados: hechos objetivos (sin interpretación)',
+                'La sección de resultados debe presentar los hallazgos de manera objetiva, sin interpretación.',
+                'La absorbancia media fue de 0.45 ± 0.02 (n=10).',
+                'hechos objetivos',
+                '¿Qué característica debe tener la sección de resultados?', ['Objetividad', 'Interpretación',
+                    'Opinión', 'Subjetividad'
+                ], 0, 'Escribe una frase de resultados objetiva.'
+            ],
+            ['Redacción de discusión', 'Discusión: interpretación y comparación',
+                'La discusión interpreta los resultados y los compara con estudios previos.',
+                'Los resultados sugieren que... Esto coincide con lo informado por Pérez (2020).',
+                'interpretación y comparación',
+                '¿Qué se hace en la sección de discusión?', ['Interpretar y comparar', 'Presentar datos', 'Describir métodos',
+                    'Introducir el tema'
+                ], 0, 'Escribe una frase de discusión que interprete un resultado.'
+            ],
+            ['Redacción de conclusiones', 'Conclusiones: resumen y perspectivas',
+                'Las conclusiones resumen los hallazgos y sugieren perspectivas futuras.',
+                'En conclusión, los resultados confirman la hipótesis. Se recomienda realizar estudios adicionales.',
+                'resumen y perspectivas',
+                '¿Qué elementos debe tener una conclusión científica?', ['Resumen y perspectivas', 'Solo resumen',
+                    'Solo perspectivas', 'Nuevos datos'
+                ], 0, 'Escribe una conclusión científica.'
+            ],
+            ['Redacción de resumen', 'Resumen: breve y completo',
+                'El resumen debe ser breve y contener los elementos clave del estudio.',
+                'Este estudio analiza la influencia de la temperatura en la fotosíntesis. Los resultados muestran que...',
+                'breve y completo',
+                '¿Qué características debe tener un resumen científico?', ['Breve y completo', 'Largo y detallado',
+                    'Solo introducción', 'Solo conclusiones'
+                ], 0, 'Escribe un resumen breve de un estudio.'
+            ],
+            ['Redacción de títulos', 'Título: preciso y descriptivo',
+                'El título debe ser preciso y describir el contenido del estudio.',
+                'Influencia de la temperatura en la fotosíntesis de plantas de maíz.',
+                'preciso y descriptivo',
+                '¿Qué característica debe tener un título científico?', ['Precisión y descripción', 'Creatividad',
+                    'Poesía', 'Ambigüedad'
+                ], 0, 'Escribe un título científico preciso.'
+            ],
+            ['Redacción de referencias', 'Referencias: formato APA, Vancouver, etc.',
+                'Las referencias deben seguir un formato estándar (APA, Vancouver, etc.) y ser completas.',
+                'Pérez, J. (2020). Fotosíntesis y clima. Editorial Científica.',
+                'formato estándar',
+                '¿Qué formato se usa para las referencias en textos científicos?', ['APA, Vancouver, etc.',
+                    'Sin formato', 'Formato libre', 'Solo autores'
+                ], 0, 'Escribe una referencia bibliográfica en formato APA.'
+            ],
+            ['Revisión y corrección', 'Revisión de estilo y contenido',
+                'Es fundamental revisar el texto para corregir errores de estilo, gramática y contenido.',
+                'Revisar la coherencia, la claridad y la precisión del texto.',
+                'revisión',
+                '¿Qué aspectos se deben revisar en un texto científico?', ['Estilo, gramática y contenido',
+                    'Solo estilo', 'Solo gramática', 'Solo contenido'
+                ], 0, 'Escribe una lista de verificación para revisar un texto científico.'
+            ],
+            ['Revisión general: sintaxis científica', 'Resumen de técnicas sintácticas',
+                'La redacción científica requiere claridad, precisión, objetividad y una estructura lógica, con un uso adecuado de la voz, los tiempos verbales y los conectores.',
+                'Claridad, precisión, objetividad, estructura lógica.',
+                'resumen de sintaxis científica',
+                '¿Cuáles son los pilares de la redacción científica?', ['Claridad, precisión, objetividad y estructura lógica',
+                    'Creatividad, subjetividad, poesía', 'Ambigüedad, rodeos, figuras literarias', 'Coloquialismo, emotividad, opinión'
+                ], 0, 'Escribe un texto breve que aplique las técnicas de sintaxis científica.'
+            ]
+        ];
+        b10.forEach(d => addLesson('aplicacion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Sintaxis: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Sintaxis Científica');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Sintaxis Científica cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

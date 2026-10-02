@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fichero de Redacción — 100 técnicas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EAE2CC;
+    --paper-dark:#DACBA0;
+    --drawer:#C9AE7B;
+    --drawer-dark:#A8894F;
+    --card:#FBF7EC;
+    --ink:#2A2620;
+    --ink-light:#726A58;
+    --red:#A8342A;
+    --green:#3F6B4C;
+    --gold:#96702A;
+    --rule:#C9BC9C;
+    --shadow: 0 10px 30px rgba(42,38,32,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(ellipse at top left, rgba(255,255,255,0.25), transparent 50%),
+      var(--paper);
+    color:var(--ink);
+    font-family:'Source Serif 4', serif;
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:920px;margin:0 auto;padding:28px 18px 60px;}
+
+  /* Header — drawer label plate */
+  header{
+    text-align:center;
+    margin-bottom:22px;
+  }
+  .plate{
+    display:inline-block;
+    background:var(--drawer);
+    border:2px solid var(--drawer-dark);
+    border-radius:4px;
+    padding:6px 22px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25), var(--shadow);
+    transform:rotate(-0.6deg);
+  }
+  .plate h1{
+    font-family:'Special Elite', monospace;
+    font-size:1.5rem;
+    letter-spacing:0.06em;
+    margin:0;
+    color:#2A2620;
+    text-transform:uppercase;
+  }
+  header p{
+    color:var(--ink-light);
+    font-size:0.95rem;
+    margin:10px 0 0;
+    font-style:italic;
+  }
+
+  /* Drawer tabs (blocks) */
+  .tabs{
+    display:flex;
+    gap:6px;
+    overflow-x:auto;
+    padding:4px 2px 12px;
+    margin-bottom:6px;
+    scrollbar-width:thin;
+  }
+  .tab{
+    flex:0 0 auto;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.72rem;
+    letter-spacing:0.03em;
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-bottom:3px solid var(--drawer-dark);
+    padding:7px 10px;
+    border-radius:3px 3px 0 0;
+    cursor:pointer;
+    color:var(--ink-light);
+    white-space:nowrap;
+    transition:transform .12s ease, color .12s ease, background .12s ease;
+  }
+  .tab:hover{transform:translateY(-2px);}
+  .tab.active{
+    background:var(--ink);
+    color:var(--paper);
+    border-color:var(--ink);
+  }
+
+  /* Mode switch */
+  .modebar{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:18px;
+  }
+  .mode-btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    padding:8px 16px;
+    border-radius:999px;
+    border:1.5px solid var(--ink);
+    background:transparent;
+    color:var(--ink);
+    cursor:pointer;
+    letter-spacing:0.02em;
+  }
+  .mode-btn.active{background:var(--ink);color:var(--paper);}
+
+  /* Dashboard */
+  .dash{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:10px;
+    margin-bottom:22px;
+  }
+  .stat{
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:6px;
+    padding:10px 8px;
+    text-align:center;
+    box-shadow: 0 2px 0 var(--rule);
+  }
+  .stat .num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:1.35rem;
+    font-weight:600;
+    color:var(--red);
+    display:block;
+  }
+  .stat .lbl{
+    font-size:0.66rem;
+    letter-spacing:0.05em;
+    text-transform:uppercase;
+    color:var(--ink-light);
+  }
+  .progress-outer{
+    grid-column:1/-1;
+    height:10px;
+    background:var(--paper-dark);
+    border-radius:999px;
+    overflow:hidden;
+    border:1px solid var(--rule);
+  }
+  .progress-inner{
+    height:100%;
+    background:linear-gradient(90deg, var(--gold), var(--green));
+    width:0%;
+    transition:width .4s ease;
+  }
+
+  /* Index card */
+  .stage{position:relative; min-height:340px;}
+  .card{
+    position:relative;
+    background:var(--card);
+    border:1px solid var(--rule);
+    border-radius:8px;
+    box-shadow:var(--shadow);
+    padding:26px 26px 22px;
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 34px,
+      var(--rule) 34px, var(--rule) 35px
+    );
+    background-position: 0 64px;
+  }
+  .card::before{
+    content:'';
+    position:absolute;
+    top:16px; left:50%;
+    width:46px; height:8px;
+    margin-left:-23px;
+    border-radius:6px;
+    background:radial-gradient(circle, transparent 40%, var(--rule) 42%, var(--rule) 55%, transparent 58%);
+    opacity:0.7;
+  }
+  .card-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:10px;
+    padding-top:14px;
+  }
+  .card-num{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.85rem;
+    color:var(--red);
+    font-weight:600;
+  }
+  .card-block{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.68rem;
+    color:var(--ink-light);
+    text-transform:uppercase;
+    letter-spacing:0.04em;
+  }
+  .card h2{
+    font-family:'Special Elite', monospace;
+    font-size:1.25rem;
+    line-height:1.35;
+    margin:2px 0 14px;
+  }
+  .card .desc{
+    font-size:1.03rem;
+    line-height:1.65;
+    color:#3a352b;
+  }
+  .quiz-clue{
+    font-size:1.03rem;
+    line-height:1.65;
+    color:#3a352b;
+    font-style:italic;
+  }
+  .options{
+    display:grid;
+    gap:9px;
+    margin-top:18px;
+  }
+  .opt{
+    text-align:left;
+    font-family:'Source Serif 4', serif;
+    font-size:0.95rem;
+    background:var(--paper);
+    border:1px solid var(--rule);
+    border-radius:5px;
+    padding:10px 12px;
+    cursor:pointer;
+    transition:background .12s ease, transform .1s ease;
+  }
+  .opt:hover{background:#fff;transform:translateX(2px);}
+  .opt.correct{background:#e2ecdf; border-color:var(--green); color:var(--green);}
+  .opt.wrong{background:#f3dedb; border-color:var(--red); color:var(--red);}
+  .opt:disabled{cursor:default;}
+
+  .card-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:18px;
+  }
+  .btn{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:0.78rem;
+    padding:9px 14px;
+    border-radius:5px;
+    border:1.5px solid var(--ink);
+    background:var(--ink);
+    color:var(--paper);
+    cursor:pointer;
+  }
+  .btn.ghost{background:transparent;color:var(--ink);}
+  .btn:disabled{opacity:0.35;cursor:default;}
+
+  /* Stamp */
+  .stamp{
+    position:absolute;
+    top:38%; left:50%;
+    transform:translate(-50%,-50%) rotate(-12deg) scale(0.5);
+    font-family:'Special Elite', monospace;
+    font-size:2.1rem;
+    letter-spacing:0.08em;
+    padding:8px 22px;
+    border:5px solid;
+    border-radius:8px;
+    opacity:0;
+    pointer-events:none;
+    text-transform:uppercase;
+    mix-blend-mode:multiply;
+  }
+  .stamp.show{
+    animation: stampIn .35s ease-out forwards;
+  }
+  .stamp.ok{color:var(--green); border-color:var(--green);}
+  .stamp.no{color:var(--red); border-color:var(--red);}
+  @keyframes stampIn{
+    0%{opacity:0; transform:translate(-50%,-50%) rotate(-12deg) scale(1.8);}
+    60%{opacity:0.85; transform:translate(-50%,-50%) rotate(-12deg) scale(0.92);}
+    100%{opacity:0.85; transform:translate(-50%,-50%) rotate(-12deg) scale(1);}
+  }
+
+  footer{
+    text-align:center;
+    margin-top:28px;
+    color:var(--ink-light);
+    font-size:0.75rem;
+    font-family:'IBM Plex Mono', monospace;
+  }
+
+  @media (max-width:520px){
+    .dash{grid-template-columns:repeat(2,1fr);}
+    .plate h1{font-size:1.15rem;}
+    .card h2{font-size:1.08rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="plate"><h1>Fichero de Redacción</h1></div>
+    <p>100 técnicas del ensayo — práctica y seguimiento personal</p>
+  </header>
+
+  <div class="modebar">
+    <button class="mode-btn active" data-mode="explorar">📇 Explorar fichas</button>
+    <button class="mode-btn" data-mode="practicar">✍️ Practicar (quiz)</button>
+  </div>
+
+  <div class="dash">
+    <div class="stat"><span class="num" id="statScore">0</span><span class="lbl">Puntaje</span></div>
+    <div class="stat"><span class="num" id="statStreak">0</span><span class="lbl">Racha actual</span></div>
+    <div class="stat"><span class="num" id="statBest">0</span><span class="lbl">Mejor racha</span></div>
+    <div class="stat"><span class="num" id="statMastered">0/100</span><span class="lbl">Dominadas</span></div>
+    <div class="progress-outer"><div class="progress-inner" id="progressBar"></div></div>
+  </div>
+
+  <div class="tabs" id="tabs"></div>
+
+  <div class="stage">
+    <div class="card" id="card">
+      <div class="stamp" id="stamp"></div>
+      <div class="card-top">
+        <span class="card-num" id="cardNum">Nº 001</span>
+        <span class="card-block" id="cardBlock">Bloque</span>
+      </div>
+      <div id="cardBody"></div>
+      <div class="card-actions">
+        <button class="btn ghost" id="prevBtn">← Anterior</button>
+        <button class="btn" id="nextBtn">Siguiente →</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>Tu progreso se guarda en este navegador · Restablecer desde el botón de abajo</footer>
+  <div style="text-align:center;margin-top:10px;">
+    <button class="btn ghost" id="resetBtn" style="font-size:0.7rem;">↺ Restablecer seguimiento</button>
+  </div>
+</div>
+
+<script>
+const TECHNIQUES = [
+[1,1,"Planificación previa (outline)","Esbozar las ideas en un esquema jerárquico antes de escribir evita divagaciones."],
+[2,1,"La pirámide invertida","Colocar la información más relevante al inicio del texto, como en el periodismo."],
+[3,1,"Párrafos de una sola idea","Cada párrafo desarrolla un único concepto; una segunda idea merece párrafo propio."],
+[4,1,"Oraciones temáticas","Iniciar cada párrafo con una oración que anuncie su contenido."],
+[5,1,"Transiciones visibles","Usar conectores como 'sin embargo' o 'en consecuencia' para señalar relaciones lógicas."],
+[6,1,"Estructura de tres actos","Organizar el texto en introducción, desarrollo y cierre."],
+[7,1,"Jerarquía tipográfica","Usar títulos, subtítulos y listas para que el texto sea escaneable."],
+[8,1,"El principio de la cebolla","Ir de lo general a lo específico, capa por capa."],
+[9,1,"Cierre en espejo","Retomar en la conclusión una imagen de la introducción para dar unidad."],
+[10,1,"División por bloques temáticos","Agrupar contenido relacionado bajo subtítulos claros."],
+
+[11,2,"Verbos fuertes en vez de adjetivos débiles","Preferir un verbo con fuerza propia antes que un adjetivo genérico."],
+[12,2,"Evitar el gerundio de posterioridad","No usar el gerundio para una acción que ocurre después, no simultáneamente."],
+[13,2,"Variar la longitud de las oraciones","Alternar frases cortas y largas para crear ritmo."],
+[14,2,"Eliminar muletillas","Quitar palabras vacías como 'básicamente' u 'o sea'."],
+[15,2,"Voz activa sobre voz pasiva","Preferir 'el comité aprobó' antes que 'fue aprobado por el comité'."],
+[16,2,"Precisión léxica","Elegir la palabra exacta en vez de un término genérico como 'ir' o 'cosa'."],
+[17,2,"Consistencia de registro","No mezclar tono coloquial y solemne sin razón deliberada."],
+[18,2,"Economía verbal","Suprimir palabras que no aportan significado, como 'a nivel de'."],
+[19,2,"Uso deliberado de la primera persona","Decidir conscientemente desde qué voz habla el texto."],
+[20,2,"Ritmo mediante la puntuación","Usar comas y puntos para imitar la respiración del lector."],
+
+[21,3,"Metáfora","Trasladar significado de un campo a otro sin conectores comparativos."],
+[22,3,"Símil","Comparación explícita usando 'como' o 'cual'."],
+[23,3,"Anáfora","Repetir una palabra al inicio de varias oraciones para dar énfasis."],
+[24,3,"Hipérbole","Exagerar conscientemente para intensificar una idea."],
+[25,3,"Personificación","Atribuir cualidades humanas a objetos o ideas abstractas."],
+[26,3,"Paradoja","Presentar una idea aparentemente contradictoria que revela una verdad."],
+[27,3,"Antítesis","Contraponer ideas opuestas en una misma estructura sintáctica."],
+[28,3,"Elipsis","Omitir palabras sobreentendidas para lograr concisión."],
+[29,3,"Ironía","Decir lo contrario de lo que se piensa con fines críticos o humorísticos."],
+[30,3,"Aliteración","Repetir sonidos consonánticos para dar musicalidad."],
+[31,3,"Gradación (clímax)","Ordenar ideas de menor a mayor intensidad."],
+[32,3,"Pregunta retórica","Formular una pregunta cuya respuesta es obvia, para involucrar al lector."],
+[33,3,"Símbolo","Usar un elemento concreto que representa una idea abstracta más amplia."],
+[34,3,"Sinécdoque","Nombrar la parte por el todo o el todo por la parte."],
+[35,3,"Metonimia","Sustituir un término por otro con el que tiene relación de contigüidad."],
+
+[36,4,"Cadenas de referencia","Usar pronombres y sinónimos para no repetir el mismo sustantivo."],
+[37,4,"Conectores lógicos precisos","Distinguir causales, consecutivos, adversativos y concesivos."],
+[38,4,"Progresión temática","Conectar cada oración nueva con la información ya presentada."],
+[39,4,"Concordancia número-género rigurosa","Revisar que sujeto, verbo y adjetivos concuerden en oraciones largas."],
+[40,4,"Evitar la ambigüedad pronominal","Repetir el nombre si un pronombre puede confundirse entre dos referentes."],
+[41,4,"Isotopías léxicas","Mantener un campo semántico coherente a lo largo del texto."],
+[42,4,"Puntuación como mapa de lectura","Usar los signos para reflejar la estructura lógica, no solo pausas."],
+[43,4,"Relectura en voz alta","Escuchar el propio texto para detectar cortes de sentido."],
+[44,4,"Unidad de propósito","Cada parte del texto debe servir al objetivo comunicativo general."],
+[45,4,"Verificación de referentes","Confirmar que un término técnico se usa siempre con el mismo significado."],
+
+[46,5,"Reconocer los falsos amigos","Identificar palabras similares en forma pero distintas en significado entre idiomas."],
+[47,5,"Evitar calcos sintácticos","No traducir literalmente estructuras como 'hacer sentido' por 'make sense'."],
+[48,5,"Distinguir el uso del gerundio entre idiomas","El inglés usa el gerundio mucho más que el español."],
+[49,5,"Cuidado con las preposiciones","Cada idioma rige combinaciones verbo-preposición distintas."],
+[50,5,"Orden de adjetivos","El inglés antepone el adjetivo; el español suele posponerlo."],
+[51,5,"Puntuación de citas","El inglés pone comas y puntos dentro de las comillas; el español académico, fuera."],
+[52,5,"Mayúsculas en títulos","El inglés capitaliza casi todas las palabras del título; el español, solo la primera."],
+[53,5,"Evitar el 'Spanglish' involuntario","Diferenciar el code-switching deliberado del anglicismo por desconocimiento."],
+[54,5,"Cognados engañosos académicos","Cuidado con pares como 'actual/actual' o 'sensible/sensible'."],
+[55,5,"Adaptar la voz pasiva al traducir","El inglés usa la pasiva con más naturalidad que el español."],
+[56,5,"Revisar el uso de artículos","El español usa artículo con sustantivos abstractos donde el inglés lo omite."],
+[57,5,"Cuidar los tiempos verbales al traducir","El pretérito simple y compuesto no siempre corresponden entre idiomas."],
+[58,5,"No traducir modismos literalmente","Buscar el equivalente idiomático, no la traducción palabra por palabra."],
+[59,5,"Conectores específicos de cada idioma","'However' y 'sin embargo' no ocupan siempre la misma posición."],
+[60,5,"Practicar la retrotraducción","Traducir un texto propio y de vuelta revela anglicismos ocultos."],
+
+[61,6,"Dejar reposar el texto","Distanciarse antes de revisar para detectar errores con ojos frescos."],
+[62,6,"Revisión por capas","Revisar primero contenido, luego estilo, y al final ortografía."],
+[63,6,"Leer de atrás hacia adelante","Leer en orden inverso para revisar solo ortografía sin distraerse."],
+[64,6,"Buscar muletillas con Ctrl+F","Localizar repeticiones de palabras vacías para sustituirlas."],
+[65,6,"Pedir una segunda lectura externa","Un lector ajeno detecta vacíos que el autor no percibe."],
+[66,6,"Verificar la consistencia terminológica","Un mismo concepto no debe nombrarse de formas distintas sin razón."],
+[67,6,"Cortar el veinte por ciento","Reducir deliberadamente la extensión obliga a eliminar lo superfluo."],
+[68,6,"Revisar la puntuación de subordinadas","Las comas mal puestas en incisos son fuente común de ambigüedad."],
+[69,6,"Confirmar cifras y datos","Todo número o cita debe verificarse contra la fuente."],
+[70,6,"Usar listas de cotejo","Una lista de errores recurrentes agiliza la revisión final."],
+
+[71,7,"Tesis clara desde el inicio","El lector debe saber desde el principio qué postura defiende el texto."],
+[72,7,"Evidencia antes que opinión","Presentar datos o ejemplos antes de la conclusión que se sostiene."],
+[73,7,"Anticipar contraargumentos","Reconocer y refutar la postura contraria fortalece la credibilidad."],
+[74,7,"Ethos, pathos y logos","Combinar autoridad, emoción y lógica al persuadir."],
+[75,7,"Evitar falacias lógicas","No confundir correlación con causalidad ni atacar a la persona."],
+[76,7,"Gradar los argumentos","Guardar el argumento más fuerte para el final."],
+[77,7,"Usar ejemplos concretos","Una anécdota específica convence más que una generalización."],
+[78,7,"Llamada a la acción explícita","Indicar con claridad qué se espera del lector."],
+[79,7,"Moderar el lenguaje absoluto","Evitar 'siempre' o 'nunca' sin evidencia sólida."],
+[80,7,"Cerrar con una síntesis","La conclusión ilumina el argumento desde una perspectiva nueva."],
+
+[81,8,"Cita y parafraseo con normas claras","Dominar APA, MLA o Chicago evita el plagio involuntario."],
+[82,8,"Lenguaje impersonal en textos científicos","Preferir 'se observó que' sobre 'yo observé que'."],
+[83,8,"Resumen ejecutivo al inicio","Un párrafo que sintetiza hallazgos facilita la lectura rápida."],
+[84,8,"Conectores académicos","Usar 'no obstante' o 'asimismo' para precisión formal."],
+[85,8,"Definición de términos clave","Establecer el significado de conceptos especializados desde el inicio."],
+[86,8,"Estructura IMRaD","Introducción, Métodos, Resultados y Discusión en artículos científicos."],
+[87,8,"Cortesía profesional en correos","Fórmulas de apertura y cierre adecuadas al destinatario."],
+[88,8,"Claridad en el asunto del correo","Un asunto específico mejora la tasa de respuesta."],
+[89,8,"Evitar la jerga innecesaria","Simplificar el vocabulario técnico para público no especializado."],
+[90,8,"Uso de anexos y notas al pie","Separar información complementaria del cuerpo principal."],
+
+[91,9,"Mostrar, no contar","Describir gestos o silencios en vez de afirmar directamente una emoción."],
+[92,9,"Punto de vista narrativo deliberado","Elegir primera, segunda o tercera persona según el efecto buscado."],
+[93,9,"Diálogos que revelan carácter","Cada personaje habla de forma distinguible según su origen o edad."],
+[94,9,"Ritmo narrativo por extensión de frases","Oraciones cortas aceleran; las largas ralentizan la acción."],
+[95,9,"Detalles sensoriales concretos","Incluir olores, texturas y sonidos que anclan al lector en la escena."],
+[96,9,"Final abierto o cerrado","Decidir si se resuelve la tensión narrativa o se deja en suspenso."],
+[97,9,"Foreshadowing (anticipación)","Sembrar pistas sutiles que cobran sentido más adelante."],
+[98,9,"Voz narrativa consistente","Mantener el mismo tono y nivel de conocimiento del narrador."],
+[99,9,"Revisión enfocada en la tensión dramática","Verificar que cada escena aporte conflicto o avance emocional."],
+[100,9,"Lectura amplia en ambos idiomas","Leer autores hispanoamericanos y anglosajones para entrenar el oído."]
+].map(([id,block,title,desc])=>({id,block,title,desc}));
+
+const BLOCK_NAMES = {
+  1:"I · Estructura",
+  2:"II · Estilo y voz",
+  3:"III · Recursos retóricos",
+  4:"IV · Coherencia",
+  5:"V · Bilingüe ES-EN",
+  6:"VI · Revisión",
+  7:"VII · Persuasión",
+  8:"VIII · Académica/profesional",
+  9:"IX · Creativa"
+};
+
+const STORAGE_KEY = "fichero-redaccion-v1";
+let memoryStore = null;
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) return JSON.parse(raw);
+  }catch(e){ /* localStorage no disponible, se usará memoria de sesión */ }
+  return memoryStore || {
+    score:0, streak:0, best:0,
+    mastery:{} // id -> 0 no visto,1 visto,2 correcto,3 dominado
+  };
+}
+function saveProgress(p){
+  try{
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  }catch(e){
+    memoryStore = p;
+  }
+}
+
+let progress = loadProgress();
+let currentBlock = "all";
+let currentIndex = 0;
+let mode = "explorar";
+let quizPool = [];
+let quizCurrent = null;
+let answered = false;
+
+const tabsEl = document.getElementById('tabs');
+const cardNum = document.getElementById('cardNum');
+const cardBlock = document.getElementById('cardBlock');
+const cardBody = document.getElementById('cardBody');
+const stampEl = document.getElementById('stamp');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+
+function buildTabs(){
+  const blocks = [["all","Todas"], ...Object.entries(BLOCK_NAMES)];
+  tabsEl.innerHTML = "";
+  blocks.forEach(([key,label])=>{
+    const b = document.createElement('button');
+    b.className = 'tab' + (String(key)===String(currentBlock) ? ' active' : '');
+    b.textContent = label;
+    b.onclick = ()=>{ currentBlock = key; currentIndex = 0; buildTabs(); render(); };
+    tabsEl.appendChild(b);
+  });
+}
+
+function filteredTechniques(){
+  if(currentBlock==="all") return TECHNIQUES;
+  return TECHNIQUES.filter(t=>String(t.block)===String(currentBlock));
+}
+
+function updateDash(){
+  document.getElementById('statScore').textContent = progress.score;
+  document.getElementById('statStreak').textContent = progress.streak;
+  document.getElementById('statBest').textContent = progress.best;
+  const masteredCount = Object.values(progress.mastery).filter(v=>v>=3).length;
+  document.getElementById('statMastered').textContent = masteredCount + "/100";
+  document.getElementById('progressBar').style.width = masteredCount + "%";
+}
+
+function markSeen(id){
+  if(!progress.mastery[id]) progress.mastery[id] = 1;
+  saveProgress(progress);
+  updateDash();
+}
+
+function renderExplorar(){
+  const list = filteredTechniques();
+  if(currentIndex>=list.length) currentIndex = 0;
+  if(currentIndex<0) currentIndex = list.length-1;
+  const t = list[currentIndex];
+  cardNum.textContent = "Nº " + String(t.id).padStart(3,'0');
+  cardBlock.textContent = BLOCK_NAMES[t.block];
+  const level = progress.mastery[t.id] || 0;
+  const badge = level>=3 ? "🟢 dominada" : level>=2 ? "🟡 practicada" : level>=1 ? "⚪ vista" : "· sin visitar";
+  cardBody.innerHTML = `
+    <h2>${t.title}</h2>
+    <p class="desc">${t.desc}</p>
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-light);margin-top:16px;">${badge}</p>
+  `;
+  stampEl.className = "stamp";
+  markSeen(t.id);
+  prevBtn.disabled = false;
+  nextBtn.textContent = "Siguiente →";
+}
+
+function pickQuizQuestion(){
+  const pool = filteredTechniques();
+  quizCurrent = pool[Math.floor(Math.random()*pool.length)];
+  // distractores: preferir mismo bloque
+  let sameBlock = TECHNIQUES.filter(t=>t.block===quizCurrent.block && t.id!==quizCurrent.id);
+  let others = TECHNIQUES.filter(t=>t.id!==quizCurrent.id && t.block!==quizCurrent.block);
+  let distractors = [];
+  const shuffledSame = sameBlock.sort(()=>Math.random()-0.5);
+  const shuffledOthers = others.sort(()=>Math.random()-0.5);
+  distractors = shuffledSame.concat(shuffledOthers).slice(0,3);
+  const options = [quizCurrent, ...distractors].sort(()=>Math.random()-0.5);
+  answered = false;
+  return options;
+}
+
+function renderPracticar(){
+  const options = pickQuizQuestion();
+  cardNum.textContent = "Nº " + String(quizCurrent.id).padStart(3,'0');
+  cardBlock.textContent = BLOCK_NAMES[quizCurrent.block];
+  cardBody.innerHTML = `
+    <p class="quiz-clue">"${quizCurrent.desc}"</p>
+    <p style="font-family:'IBM Plex Mono',monospace;font-size:0.7rem;color:var(--ink-light);margin-top:8px;">¿A qué técnica corresponde esta descripción?</p>
+    <div class="options" id="optionsBox"></div>
+  `;
+  stampEl.className = "stamp";
+  const box = document.getElementById('optionsBox');
+  options.forEach(opt=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = opt.title;
+    b.onclick = ()=> handleAnswer(opt, b);
+    box.appendChild(b);
+  });
+  prevBtn.disabled = true;
+  nextBtn.textContent = "Saltar →";
+}
+
+function handleAnswer(opt, btnEl){
+  if(answered) return;
+  answered = true;
+  const isCorrect = opt.id === quizCurrent.id;
+  document.querySelectorAll('#optionsBox .opt').forEach(b=>{
+    b.disabled = true;
+    if(b.textContent === quizCurrent.title) b.classList.add('correct');
+  });
+  if(!isCorrect) btnEl.classList.add('wrong');
+
+  const prevLevel = progress.mastery[quizCurrent.id] || 0;
+  if(isCorrect){
+    progress.streak += 1;
+    progress.best = Math.max(progress.best, progress.streak);
+    progress.score += prevLevel>=2 ? 5 : 10;
+    progress.mastery[quizCurrent.id] = Math.min(3, prevLevel + 1) || 2;
+    if(prevLevel===0) progress.mastery[quizCurrent.id] = 2;
+    else progress.mastery[quizCurrent.id] = Math.min(3, prevLevel+1);
+    stampEl.textContent = "Correcto";
+    stampEl.classList.add('ok');
+  } else {
+    progress.streak = 0;
+    progress.mastery[quizCurrent.id] = Math.max(1, prevLevel);
+    stampEl.textContent = "Revisar";
+    stampEl.classList.add('no');
+  }
+  requestAnimationFrame(()=> stampEl.classList.add('show'));
+  saveProgress(progress);
+  updateDash();
+  nextBtn.textContent = "Siguiente pregunta →";
+}
+
+function render(){
+  if(mode==="explorar") renderExplorar();
+  else renderPracticar();
+  updateDash();
+}
+
+prevBtn.onclick = ()=>{
+  if(mode!=="explorar") return;
+  currentIndex -= 1;
+  render();
+};
+nextBtn.onclick = ()=>{
+  if(mode==="explorar"){
+    currentIndex += 1;
+    render();
+  } else {
+    render();
+  }
+};
+
+document.querySelectorAll('.mode-btn').forEach(b=>{
+  b.onclick = ()=>{
+    document.querySelectorAll('.mode-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    mode = b.dataset.mode;
+    currentIndex = 0;
+    render();
+  };
+});
+
+document.getElementById('resetBtn').onclick = ()=>{
+  if(confirm("¿Restablecer todo tu progreso guardado?")){
+    progress = { score:0, streak:0, best:0, mastery:{} };
+    saveProgress(progress);
+    render();
+  }
+};
+
+buildTabs();
+render();
+</script>
+</body>
+</html>

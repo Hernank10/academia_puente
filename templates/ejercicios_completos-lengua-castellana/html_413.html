@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Taller de Caligrafía — Practica a mano</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE4D2; --parchment-dk:#DDCFA9;
+    --ink:#241C13; --ink-soft:#463B29;
+    --rubric:#7A2E2A; --gold:#B08A3E; --verdigris:#3F6357;
+    --shadow: 0 6px 18px rgba(36,28,19,.25);
+  }
+  *{box-sizing:border-box; touch-action:manipulation;}
+  body{
+    background: radial-gradient(ellipse at top left, rgba(176,138,62,.10), transparent 45%),
+                radial-gradient(ellipse at bottom right, rgba(63,99,87,.08), transparent 50%),
+                var(--parchment);
+    color:var(--ink); font-family:'EB Garamond', serif; font-size:1.05rem;
+  }
+  h1,h2,h3,h4,.font-display{font-family:'Cinzel', serif; letter-spacing:.03em;}
+  .brand-title{font-family:'Cinzel Decorative', serif;}
+  .folio-header{
+    background: linear-gradient(180deg, var(--ink) 0%, #34281a 100%);
+    color:var(--parchment); border-bottom: 6px double var(--gold);
+    padding: 1.8rem 1rem 1.3rem; text-align:center;
+  }
+  .nav-tabs{border-bottom: 3px solid var(--ink); gap:.35rem; flex-wrap:wrap;}
+  .nav-tabs .nav-link{
+    font-family:'Cinzel', serif; font-size:.92rem; color:var(--ink-soft);
+    background: var(--parchment-dk); border:2px solid var(--ink); border-bottom:none;
+    border-radius: 6px 6px 0 0; padding:.5rem 1rem;
+  }
+  .nav-tabs .nav-link.active{background:var(--parchment); color:var(--rubric); border-color:var(--ink);}
+  .page{background: var(--parchment); border:1px solid rgba(36,28,19,.35); box-shadow: var(--shadow); padding: 1.3rem;}
+
+  .style-pill{
+    border:1px solid var(--ink); border-radius:20px; padding:.35rem .9rem; font-size:.85rem;
+    background:var(--parchment-dk); cursor:pointer; font-family:'Cinzel',serif;
+  }
+  .style-pill.active{background:var(--ink); color:var(--parchment); border-color:var(--ink);}
+
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:.6rem; align-items:center;
+    background:rgba(255,252,242,.6); border:1px solid rgba(36,28,19,.25);
+    padding:.6rem .8rem; margin-bottom:.8rem;
+  }
+  .toolbar label{font-size:.78rem; font-family:'Cinzel',serif; margin-bottom:0;}
+  .btn-ink{background:var(--ink); color:var(--parchment); border:1px solid var(--ink); font-family:'Cinzel',serif; font-size:.85rem;}
+  .btn-ink:hover{background:#3a2c1c; color:var(--parchment);}
+  .btn-outline-ink{border:1px solid var(--ink); color:var(--ink); font-family:'Cinzel',serif; font-size:.85rem;}
+  .btn-outline-ink:hover{background:var(--ink); color:var(--parchment);}
+
+  .letter-grid{display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem;}
+  .letter-btn{
+    width:38px; height:38px; border:1px solid var(--ink); background:var(--parchment-dk);
+    font-family:'EB Garamond',serif; font-weight:600; border-radius:4px; cursor:pointer;
+  }
+  .letter-btn.active{background:var(--rubric); color:var(--parchment); border-color:var(--rubric);}
+
+  /* Zona de trazado */
+  .trace-wrap{
+    position:relative; overflow-x:auto; overflow-y:hidden;
+    background:
+      repeating-linear-gradient(var(--parchment) 0 100%);
+    border:1px solid rgba(36,28,19,.35);
+  }
+  .guide-lines{position:absolute; inset:0; pointer-events:none;}
+  .guide-lines div{position:absolute; left:0; right:0; border-top:1px solid rgba(122,46,42,.35);}
+  .guide-lines .ascender{top:8%; border-top-style:dashed;}
+  .guide-lines .xheight{top:42%; border-top-style:dashed; border-color:rgba(63,99,87,.5);}
+  .guide-lines .baseline{top:74%; border-top:1.5px solid rgba(36,28,19,.65);}
+  .guide-lines .descender{top:96%; border-top-style:dashed;}
+
+  .guide-letter{
+    position:absolute; left:0; top:0; height:100%; display:flex; align-items:flex-end;
+    padding-bottom:10%; white-space:nowrap; pointer-events:none; user-select:none;
+    color:transparent; -webkit-text-stroke: 1.4px rgba(36,28,19,.4); text-stroke:1.4px rgba(36,28,19,.4);
+  }
+  @supports not (-webkit-text-stroke: 1px black){
+    .guide-letter{color: rgba(36,28,19,.25);}
+  }
+  .guide-letter.hidden-guide{opacity:0;}
+
+  canvas.draw-layer{position:relative; display:block; touch-action:none; cursor:crosshair;}
+
+  .gallery-item{
+    border:1px solid rgba(36,28,19,.3); background:rgba(255,252,242,.6); padding:.5rem; margin-bottom:.7rem;
+  }
+  .gallery-item img{width:100%; border:1px solid rgba(36,28,19,.2); background:#fff;}
+  .badge-style{background:var(--verdigris); font-family:'Cinzel',serif; font-size:.7rem;}
+
+  footer{background:var(--ink); color:var(--parchment); text-align:center; padding:1rem; font-family:'IM Fell English', serif; font-style:italic;}
+  .toast-ink{background:var(--ink); color:var(--parchment); font-family:'Cinzel',serif;}
+  .hint{font-size:.85rem; font-style:italic; opacity:.85;}
+</style>
+</head>
+<body>
+
+<header class="folio-header">
+  <h1 class="brand-title display-6 mb-1">✒ Taller de Caligrafía</h1>
+  <p class="mb-0 hint">Traza con el dedo o el lápiz óptico sobre la pantalla y desarrolla tu propio pulso</p>
+</header>
+
+<div class="container my-3">
+
+  <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-letras" type="button">Letras</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-palabras" type="button">Palabras y frases</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-libre" type="button">Mi estilo libre</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-galeria" type="button">Galería</button></li>
+  </ul>
+
+  <div class="tab-content page mt-0">
+
+    <!-- Selector de estilo, común -->
+    <div class="d-flex flex-wrap gap-2 mb-3" id="stylePills"></div>
+
+    <!-- ===== TAB LETRAS ===== -->
+    <div class="tab-pane fade show active" id="tab-letras">
+      <p class="hint mb-2">Elige una letra y repásala varias veces. Cuando te sientas segura o seguro, oculta la guía y escríbela de memoria.</p>
+      <div class="letter-grid" id="letterGridUpper"></div>
+      <div class="letter-grid" id="letterGridLower"></div>
+
+      <div class="toolbar">
+        <label>Color</label><input type="color" id="colorLetra" value="#241C13">
+        <label>Grosor</label><input type="range" id="widthLetra" min="1" max="8" value="3">
+        <button class="btn btn-outline-ink" id="toggleGuideLetra">Ocultar guía</button>
+        <button class="btn btn-outline-ink" id="undoLetra">Deshacer</button>
+        <button class="btn btn-outline-ink" id="clearLetra">Borrar</button>
+        <button class="btn btn-ink" id="saveLetra">Guardar en galería</button>
+        <button class="btn btn-outline-ink" id="printLetra">Imprimir hoja en blanco</button>
+      </div>
+
+      <div class="trace-wrap" id="traceWrapLetra" style="height:260px;">
+        <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+        <div class="guide-letter" id="guideLetra" style="font-size:9rem; width:340px;">a</div>
+        <canvas class="draw-layer" id="canvasLetra" style="width:340px; height:260px;"></canvas>
+      </div>
+    </div>
+
+    <!-- ===== TAB PALABRAS ===== -->
+    <div class="tab-pane fade" id="tab-palabras">
+      <p class="hint mb-2">Escribe una palabra o frase breve; aparecerá como guía para que la repases con tu propio trazo.</p>
+      <input type="text" class="form-control mb-3" id="wordInput" placeholder="Escribe una palabra o frase…" value="escritura">
+
+      <div class="toolbar">
+        <label>Color</label><input type="color" id="colorPalabra" value="#241C13">
+        <label>Grosor</label><input type="range" id="widthPalabra" min="1" max="8" value="3">
+        <button class="btn btn-outline-ink" id="toggleGuidePalabra">Ocultar guía</button>
+        <button class="btn btn-outline-ink" id="undoPalabra">Deshacer</button>
+        <button class="btn btn-outline-ink" id="clearPalabra">Borrar</button>
+        <button class="btn btn-ink" id="savePalabra">Guardar en galería</button>
+        <button class="btn btn-outline-ink" id="printPalabra">Imprimir hoja en blanco</button>
+      </div>
+
+      <div class="trace-wrap" id="traceWrapPalabra" style="height:220px;">
+        <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+        <div class="guide-letter" id="guidePalabra" style="font-size:4.2rem;">escritura</div>
+        <canvas class="draw-layer" id="canvasPalabra" style="height:220px;"></canvas>
+      </div>
+    </div>
+
+    <!-- ===== TAB LIBRE ===== -->
+    <div class="tab-pane fade" id="tab-libre">
+      <p class="hint mb-2">Aquí no hay guía: es tu propio papel pautado para inventar y afinar tu estilo personal de cursiva.</p>
+      <div class="toolbar">
+        <label>Color</label><input type="color" id="colorLibre" value="#241C13">
+        <label>Grosor</label><input type="range" id="widthLibre" min="1" max="8" value="3">
+        <button class="btn btn-outline-ink" id="undoLibre">Deshacer</button>
+        <button class="btn btn-outline-ink" id="clearLibre">Borrar</button>
+        <input type="text" class="form-control" id="nombreLibre" placeholder="Nombra este boceto (ej. Mi firma 1)" style="max-width:220px;">
+        <button class="btn btn-ink" id="saveLibre">Guardar en galería</button>
+      </div>
+      <div class="trace-wrap" id="traceWrapLibre" style="height:280px;">
+        <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+        <canvas class="draw-layer" id="canvasLibre" style="width:100%; height:280px;"></canvas>
+      </div>
+    </div>
+
+    <!-- ===== TAB GALERÍA ===== -->
+    <div class="tab-pane fade" id="tab-galeria">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <p class="hint mb-0">Tus prácticas guardadas, para ver cómo evoluciona tu letra con el tiempo.</p>
+        <button class="btn btn-sm btn-outline-ink" id="clearGallery">Vaciar galería</button>
+      </div>
+      <div class="row" id="galleryGrid"></div>
+      <p class="hint" id="galleryEmpty">Aún no has guardado ninguna práctica.</p>
+    </div>
+
+  </div>
+</div>
+
+<footer>Manus scribit, animus format — «la mano escribe, el ánimo la forma»</footer>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="saveToast" class="toast toast-ink" role="status"><div class="toast-body">Guardado.</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ================= ESTILOS DE ESCRITURA ================= */
+const estilos = [
+  { id:"spencerian", nombre:"Script Spencerian", font:"'Tangerine', cursive" },
+  { id:"copperplate", nombre:"Cursiva inglesa", font:"'Petit Formal Script', cursive" },
+  { id:"chancery", nombre:"Cursiva itálica", font:"'Mrs Saint Delafield', cursive" },
+  { id:"palmer", nombre:"Cursiva Palmer", font:"'Homemade Apple', cursive" }
+];
+let estiloActivo = estilos[0];
+
+function renderStylePills(){
+  const cont = document.getElementById('stylePills');
+  estilos.forEach((e,i)=>{
+    const b = document.createElement('button');
+    b.className = "style-pill" + (i===0 ? " active":"");
+    b.textContent = e.nombre;
+    b.dataset.id = e.id;
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.style-pill').forEach(p=>p.classList.remove('active'));
+      b.classList.add('active');
+      estiloActivo = e;
+      aplicarEstiloGuia();
+    });
+    cont.appendChild(b);
+  });
+}
+function aplicarEstiloGuia(){
+  document.getElementById('guideLetra').style.fontFamily = estiloActivo.font;
+  document.getElementById('guidePalabra').style.fontFamily = estiloActivo.font;
+}
+
+/* ================= UTILIDAD: CANVAS DE TRAZADO ================= */
+function crearLienzo(canvas, colorInput, widthInput){
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    const prev = canvas.toDataURL ? null : null;
+    canvas.width = Math.max(1, rect.width * dpr);
+    canvas.height = Math.max(1, rect.height * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    canvas._ctx = ctx;
+  }
+  resize();
+  canvas._undoStack = [];
+  let drawing = false, lastX=0, lastY=0;
+
+  function pos(e){
+    const r = canvas.getBoundingClientRect();
+    return { x: e.clientX - r.left, y: e.clientY - r.top };
+  }
+  function pushUndo(){
+    try{
+      const snap = canvas.toDataURL('image/png');
+      canvas._undoStack.push(snap);
+      if(canvas._undoStack.length > 12) canvas._undoStack.shift();
+    }catch(e){}
+  }
+  canvas.addEventListener('pointerdown', (e)=>{
+    canvas.setPointerCapture(e.pointerId);
+    pushUndo();
+    drawing = true;
+    const p = pos(e); lastX = p.x; lastY = p.y;
+    const ctx = canvas._ctx;
+    ctx.strokeStyle = colorInput.value;
+    ctx.lineWidth = parseFloat(widthInput.value);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY);
+  });
+  canvas.addEventListener('pointermove', (e)=>{
+    if(!drawing) return;
+    const p = pos(e);
+    const ctx = canvas._ctx;
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    lastX = p.x; lastY = p.y;
+  });
+  function endStroke(){ drawing = false; }
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointerleave', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+
+  canvas._resize = resize;
+  canvas._clear = ()=>{ const ctx=canvas._ctx; ctx.clearRect(0,0,canvas.width,canvas.height); };
+  canvas._undo = ()=>{
+    if(canvas._undoStack.length===0){ canvas._clear(); return; }
+    const data = canvas._undoStack.pop();
+    const img = new Image();
+    img.onload = ()=>{
+      const ctx = canvas._ctx;
+      ctx.save();
+      ctx.setTransform(1,0,0,1,0,0);
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      ctx.restore();
+    };
+    img.src = data;
+  };
+  return canvas;
+}
+
+/* --- Letra --- */
+const canvasLetra = document.getElementById('canvasLetra');
+crearLienzo(canvasLetra, document.getElementById('colorLetra'), document.getElementById('widthLetra'));
+document.getElementById('clearLetra').addEventListener('click', ()=>canvasLetra._clear());
+document.getElementById('undoLetra').addEventListener('click', ()=>canvasLetra._undo());
+document.getElementById('toggleGuideLetra').addEventListener('click', (e)=>{
+  const g = document.getElementById('guideLetra');
+  g.classList.toggle('hidden-guide');
+  e.target.textContent = g.classList.contains('hidden-guide') ? 'Mostrar guía' : 'Ocultar guía';
+});
+
+/* --- Palabra --- */
+const canvasPalabra = document.getElementById('canvasPalabra');
+function anchoPalabra(texto){ return Math.max(340, texto.length*70); }
+function actualizarPalabra(){
+  const texto = document.getElementById('wordInput').value || " ";
+  const ancho = anchoPalabra(texto);
+  document.getElementById('guidePalabra').textContent = texto;
+  document.getElementById('guidePalabra').style.width = ancho+"px";
+  canvasPalabra.style.width = ancho+"px";
+  canvasPalabra._resize();
+}
+document.getElementById('wordInput').addEventListener('input', actualizarPalabra);
+crearLienzo(canvasPalabra, document.getElementById('colorPalabra'), document.getElementById('widthPalabra'));
+actualizarPalabra();
+document.getElementById('clearPalabra').addEventListener('click', ()=>canvasPalabra._clear());
+document.getElementById('undoPalabra').addEventListener('click', ()=>canvasPalabra._undo());
+document.getElementById('toggleGuidePalabra').addEventListener('click', (e)=>{
+  const g = document.getElementById('guidePalabra');
+  g.classList.toggle('hidden-guide');
+  e.target.textContent = g.classList.contains('hidden-guide') ? 'Mostrar guía' : 'Ocultar guía';
+});
+
+/* --- Libre --- */
+const canvasLibre = document.getElementById('canvasLibre');
+crearLienzo(canvasLibre, document.getElementById('colorLibre'), document.getElementById('widthLibre'));
+document.getElementById('clearLibre').addEventListener('click', ()=>canvasLibre._clear());
+document.getElementById('undoLibre').addEventListener('click', ()=>canvasLibre._undo());
+
+/* Reajustar lienzos al cambiar de pestaña (dimensiones reales tras mostrarse) */
+document.querySelectorAll('#mainTabs button').forEach(btn=>{
+  btn.addEventListener('shown.bs.tab', ()=>{
+    canvasLetra._resize();
+    canvasPalabra._resize();
+    canvasLibre._resize();
+  });
+});
+
+/* ================= GRID DE LETRAS ================= */
+function renderLetterGrid(){
+  const upper = document.getElementById('letterGridUpper');
+  const lower = document.getElementById('letterGridLower');
+  const letras = "abcdefghijklmnñopqrstuvwxyz".split("");
+  letras.forEach((l,i)=>{
+    const bU = document.createElement('button');
+    bU.className = "letter-btn" + (i===0?" active":"");
+    bU.textContent = l.toUpperCase();
+    bU.addEventListener('click', ()=>seleccionarLetra(l.toUpperCase(), bU, 'upper'));
+    upper.appendChild(bU);
+
+    const bL = document.createElement('button');
+    bL.className = "letter-btn";
+    bL.textContent = l;
+    bL.addEventListener('click', ()=>seleccionarLetra(l, bL, 'lower'));
+    lower.appendChild(bL);
+  });
+}
+function seleccionarLetra(letra, btn, grupo){
+  document.querySelectorAll('.letter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('guideLetra').textContent = letra;
+  canvasLetra._clear();
+}
+
+/* ================= GALERÍA / ALMACENAMIENTO ================= */
+let galeria = [];
+
+async function cargarGaleria(){
+  try{
+    const r = await window.storage.get('taller-caligrafia:galeria');
+    if(r && r.value) galeria = JSON.parse(r.value);
+  }catch(e){ galeria = []; }
+  renderGaleria();
+}
+async function guardarGaleriaStorage(){
+  try{ await window.storage.set('taller-caligrafia:galeria', JSON.stringify(galeria)); }
+  catch(e){ console.error('No se pudo guardar la galería', e); }
+}
+function mostrarToast(msg){
+  const t = document.getElementById('saveToast');
+  t.querySelector('.toast-body').textContent = msg;
+  new bootstrap.Toast(t, {delay:1400}).show();
+}
+function renderGaleria(){
+  const grid = document.getElementById('galleryGrid');
+  const vacio = document.getElementById('galleryEmpty');
+  grid.innerHTML = "";
+  vacio.style.display = galeria.length === 0 ? 'block' : 'none';
+  galeria.slice().reverse().forEach(item=>{
+    const col = document.createElement('div');
+    col.className = "col-6 col-md-4 col-lg-3";
+    col.innerHTML = `
+      <div class="gallery-item">
+        <img src="${item.dataURL}" alt="práctica">
+        <div class="small mt-1"><span class="badge badge-style">${item.estilo}</span></div>
+        <div class="small">${item.etiqueta}</div>
+        <div class="small text-muted">${item.fecha}</div>
+        <a class="btn btn-sm btn-outline-ink mt-1" download="${item.etiqueta.replace(/\\s+/g,'_')}.png" href="${item.dataURL}">Descargar</a>
+      </div>`;
+    grid.appendChild(col);
+  });
+}
+async function guardarEnGaleria(canvas, etiqueta){
+  const dataURL = canvas.toDataURL('image/png');
+  galeria.push({
+    id: Date.now(),
+    estilo: estiloActivo.nombre,
+    etiqueta,
+    dataURL,
+    fecha: new Date().toLocaleDateString()
+  });
+  if(galeria.length > 60) galeria.shift();
+  await guardarGaleriaStorage();
+  renderGaleria();
+  mostrarToast('Guardado en la galería.');
+}
+
+document.getElementById('saveLetra').addEventListener('click', ()=>{
+  const letra = document.getElementById('guideLetra').textContent;
+  guardarEnGaleria(canvasLetra, `Letra "${letra}"`);
+});
+document.getElementById('savePalabra').addEventListener('click', ()=>{
+  const texto = document.getElementById('wordInput').value || "palabra";
+  guardarEnGaleria(canvasPalabra, texto);
+});
+document.getElementById('saveLibre').addEventListener('click', ()=>{
+  const nombre = document.getElementById('nombreLibre').value || "Estilo libre";
+  guardarEnGaleria(canvasLibre, nombre);
+});
+document.getElementById('clearGallery').addEventListener('click', async ()=>{
+  galeria = [];
+  await guardarGaleriaStorage();
+  renderGaleria();
+  mostrarToast('Galería vaciada.');
+});
+
+/* ================= IMPRESIÓN ================= */
+function imprimirHoja(contenido){
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <html><head><title>${estiloActivo.nombre}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:sans-serif; padding:30px;}
+      .line{font-family:${estiloActivo.font}; font-size:3rem; border-bottom:1px solid #999; padding:14px 4px; margin-bottom:6px; color:#444;}
+      .empty{border-bottom:1px solid #ccc; height:56px; margin-bottom:6px;}
+      h2{font-family:sans-serif;}
+    </style></head><body>
+    <h2>${estiloActivo.nombre} — hoja de práctica</h2>
+    <div class="line">${contenido}</div>
+    <div class="empty"></div><div class="empty"></div>
+    <div class="line">${contenido}</div>
+    <div class="empty"></div><div class="empty"></div>
+    <div class="empty"></div><div class="empty"></div>
+    </body></html>`);
+  w.document.close();
+  w.print();
+}
+document.getElementById('printLetra').addEventListener('click', ()=>{
+  imprimirHoja(document.getElementById('guideLetra').textContent.repeat(20));
+});
+document.getElementById('printPalabra').addEventListener('click', ()=>{
+  imprimirHoja(document.getElementById('wordInput').value || "practica");
+});
+
+/* ================= INIT ================= */
+renderStylePills();
+aplicarEstiloGuia();
+renderLetterGrid();
+cargarGaleria();
+</script>
+</body>
+</html>

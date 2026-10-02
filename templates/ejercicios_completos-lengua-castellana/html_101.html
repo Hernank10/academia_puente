@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas de recursos semánticos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 recursos semánticos · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'metáfora', 'sinonimia', 'eufemismo')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de recursos semánticos de la lengua castellana, extraídas de la literatura y la lingüística de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas han sido seleccionadas a partir del análisis de tropos, relaciones léxicas, cambios semánticos, campos semánticos, connotación, juegos de palabras, cohesión discursiva, neología y recursos literarios de autores como García Márquez, Cortázar, Borges, Valle-Inclán, Quevedo, Góngora y muchos más.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia semántica</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Figuras de significado (tropos)",
+                tecnicas: [
+                    {nombre:"Metáfora", desc:"Identificación entre un término real y otro imaginario con el que guarda semejanza.", ej:"Las perlas de tu boca (dientes)."},
+                    {nombre:"Metonimia", desc:"Sustitución de un término por otro con el que mantiene una relación de contigüidad (causa-efecto, autor-obra, etc.).", ej:"Se bebió un jerez (el contenido)."},
+                    {nombre:"Sinécdoque", desc:"Designar la parte por el todo o el todo por la parte.", ej:"Necesitamos más brazos (trabajadores)."},
+                    {nombre:"Ironía", desc:"Dar a entender lo contrario de lo que se dice con intención crítica.", ej:"¡Qué puntual! (al que llega tarde)."},
+                    {nombre:"Antífrasis", desc:"Expresión irónica de un significado opuesto al literal.", ej:"¡Qué listo eres! (a alguien torpe)."},
+                    {nombre:"Hipérbole", desc:"Exageración desmesurada.", ej:"Te lo he dicho un millón de veces."},
+                    {nombre:"Lítote", desc:"Atenuación mediante negación de lo contrario.", ej:"No está mal (para decir que está bien)."},
+                    {nombre:"Personificación", desc:"Atribuir cualidades humanas a seres inanimados o abstractos.", ej:"La luna nos miraba."},
+                    {nombre:"Animalización", desc:"Atribución de rasgos animales a personas.", ej:"Se abalanzó como una hiena."},
+                    {nombre:"Cosificación", desc:"Reducir a una persona a cosa.", ej:"Era una máquina de trabajar."}
+                ]
+            },
+            {
+                nombre: "B. Relaciones léxicas",
+                tecnicas: [
+                    {nombre:"Sinonimia total", desc:"Palabras con significado idéntico y uso intercambiable.", ej:"comenzar / empezar."},
+                    {nombre:"Sinonimia parcial", desc:"Palabras que comparten significado en ciertos contextos pero no en todos.", ej:"hombre / caballero (en algunos contextos)."},
+                    {nombre:"Antonimia gradual", desc:"Opuestos con grados intermedios.", ej:"frío / caliente."},
+                    {nombre:"Antonimia complementaria", desc:"Opuestos que se excluyen mutuamente.", ej:"vivo / muerto."},
+                    {nombre:"Antonimia recíproca", desc:"Opuestos que implican la misma relación desde distinto ángulo.", ej:"comprar / vender."},
+                    {nombre:"Polisemia", desc:"Una palabra con varios significados relacionados entre sí.", ej:"cabeza (parte del cuerpo / líder)."},
+                    {nombre:"Homonimia homógrafa", desc:"Palabras iguales en escritura y sonido, con significados distintos no relacionados.", ej:"banco (asiento / entidad financiera)."},
+                    {nombre:"Homonimia homófona", desc:"Palabras que suenan igual pero se escriben diferente.", ej:"vaca / baca."},
+                    {nombre:"Paronimia", desc:"Palabras semejantes en forma pero con significados distintos.", ej:"actitud / aptitud."},
+                    {nombre:"Hiperonimia e hiponimia", desc:"Relación entre un término general (hiperónimo) y sus concreciones (hipónimos).", ej:"flor (hiperónimo) / rosa, clavel (hipónimos)."}
+                ]
+            },
+            {
+                nombre: "C. Cambios semánticos",
+                tecnicas: [
+                    {nombre:"Ampliación semántica", desc:"Extensión del significado original a más contextos.", ej:"armario (originalmente 'lugar para armas')."},
+                    {nombre:"Restricción semántica", desc:"Reducción del significado a un contexto más limitado.", ej:"labrador (antes 'trabajador del campo', hoy 'perro de raza')."},
+                    {nombre:"Elevación semántica", desc:"Palabra que adquiere un significado más positivo.", ej:"caballero (antes 'hombre a caballo', hoy 'hombre educado')."},
+                    {nombre:"Degradación semántica", desc:"Palabra que adquiere un significado más negativo.", ej:"villano (originalmente 'habitante de villa')."},
+                    {nombre:"Metáfora lexicalizada", desc:"Metáfora que se ha integrado en la lengua.", ej:"la pata de la mesa."},
+                    {nombre:"Metonimia lexicalizada", desc:"Metonimia fijada en el uso común.", ej:"tomar una copa (el contenido)."},
+                    {nombre:"Elipsis semántica", desc:"Omisión de un elemento léxico que se sobreentiende.", ej:"el móvil (teléfono móvil)."},
+                    {nombre:"Etimología popular", desc:"Reinterpretación de una palabra por analogía con otra más familiar.", ej:"vagabundo (originalmente 'vagamundo')."},
+                    {nombre:"Eufemismo", desc:"Sustitución de una palabra dura por otra más suave.", ej:"persona mayor (viejo)."},
+                    {nombre:"Disfemismo", desc:"Expresión deliberadamente peyorativa.", ej:"matasanos (médico)."}
+                ]
+            },
+            {
+                nombre: "D. Campos semánticos",
+                tecnicas: [
+                    {nombre:"Campo léxico", desc:"Conjunto de palabras de la misma categoría gramatical que comparten un rasgo semántico.", ej:"silla, mesa, armario (muebles)."},
+                    {nombre:"Campo asociativo", desc:"Palabras relacionadas por la experiencia, no por rasgos objetivos.", ej:"hospital, médico, enfermedad, cura."},
+                    {nombre:"Familia léxica", desc:"Palabras que comparten la misma raíz.", ej:"pan, panadero, panadería."},
+                    {nombre:"Isotopía", desc:"Red de significados recurrentes que dan coherencia a un texto.", ej:"En un poema amoroso: corazón, beso, pasión, fuego."},
+                    {nombre:"Redes léxicas", desc:"Relaciones múltiples entre palabras (sinonimia, antonimia, etc.).", ej:"enseñar-aprender, maestro-alumno, escuela-aula."},
+                    {nombre:"Solidaridades léxicas", desc:"Restricciones combinatorias entre palabras por su significado.", ej:"el gato maúlla, no ladra."},
+                    {nombre:"Colocaciones", desc:"Combinaciones frecuentes de palabras.", ej:"cometer un crimen, entablar una conversación."},
+                    {nombre:"Modismos", desc:"Expresiones fijas con significado figurado.", ej:"estar en las nubes."},
+                    {nombre:"Frases hechas", desc:"Expresiones lexicalizadas que funcionan como unidad.", ej:"a la vuelta de la esquina."},
+                    {nombre:"Refranes", desc:"Enunciados populares con valor de enseñanza.", ej:"Más vale pájaro en mano que ciento volando."}
+                ]
+            },
+            {
+                nombre: "E. Connotación y denotación",
+                tecnicas: [
+                    {nombre:"Denotación", desc:"Significado literal u objetivo de una palabra.", ej:"rojo: color como la sangre."},
+                    {nombre:"Connotación", desc:"Significados subjetivos y culturales añadidos.", ej:"rojo: pasión, peligro, revolución."},
+                    {nombre:"Connotación positiva", desc:"Asociaciones favorables.", ej:"natural (frente a artificial)."},
+                    {nombre:"Connotación negativa", desc:"Asociaciones desfavorables.", ej:"viejo (frente a anciano)."},
+                    {nombre:"Tabú", desc:"Palabras evitadas por razones sociales o culturales.", ej:"cáncer (a menudo se dice 'larga enfermedad')."},
+                    {nombre:"Eufemismo", desc:"Expresión suave para un concepto tabú.", ej:"pasar a mejor vida (morir)."},
+                    {nombre:"Disfemismo", desc:"Expresión ofensiva o despectiva.", ej:"estirar la pata (morir)."},
+                    {nombre:"Lenguaje figurado", desc:"Uso de palabras con significado distinto al literal.", ej:"me muero de hambre."},
+                    {nombre:"Doble sentido", desc:"Enunciado que puede interpretarse de dos maneras.", ej:"Tiró la toalla (boxeo / rendirse)."},
+                    {nombre:"Ambigüedad", desc:"Falta de claridad que permite varias interpretaciones.", ej:"El gato de María es divertido (¿el animal o su mascota?)."}
+                ]
+            },
+            {
+                nombre: "F. Recursos de intensificación y atenuación",
+                tecnicas: [
+                    {nombre:"Hipérbole", desc:"Exageración para intensificar.", ej:"Eres el hombre más guapo del universo."},
+                    {nombre:"Lítote", desc:"Atenuación mediante negación del contrario.", ej:"No es poco inteligente."},
+                    {nombre:"Atenuación", desc:"Rebajar la fuerza de lo expresado.", ej:"Quizá sea un poco tarde."},
+                    {nombre:"Intensificación léxica", desc:"Uso de palabras con significado fuerte.", ej:"Apasionadamente, terriblemente, brutalmente."},
+                    {nombre:"Superlativo semántico", desc:"Superlativo construido sin morfología especial.", ej:"Eres lo máximo."},
+                    {nombre:"Diminutivo afectivo", desc:"Diminutivo que suaviza o expresa cariño.", ej:"Ahora mismo voy, abuelita."},
+                    {nombre:"Aumentativo despectivo", desc:"Aumentativo con valor negativo.", ej:"Menudo cochazo tiene."},
+                    {nombre:"Ironía atenuadora", desc:"Crítica suavizada con aparente elogio.", ej:"No está mal para ser la primera vez."},
+                    {nombre:"Sarcasmo", desc:"Ironía cruel y mordaz.", ej:"¡Genial! Otro día lloviendo en vacaciones."},
+                    {nombre:"Eufemismo intensificador", desc:"Eufemismo que en realidad enfatiza.", ej:"No es precisamente un genio."}
+                ]
+            },
+            {
+                nombre: "G. Juegos de palabras y doble sentido",
+                tecnicas: [
+                    {nombre:"Calambur", desc:"Agrupación de sílabas para formar palabras distintas.", ej:"Oro parece, plata no es (plátano es)."},
+                    {nombre:"Paronomasia", desc:"Semejanza fonética entre palabras de distinto significado.", ej:"Casa y caza."},
+                    {nombre:"Dilogía", desc:"Empleo de una palabra con dos sentidos a la vez.", ej:"Le echó un ojo (vigilar o mirar con deseo)."},
+                    {nombre:"Retruécano", desc:"Inversión de términos en una frase.", ej:"No hay camino para la paz, la paz es el camino."},
+                    {nombre:"Antanaclasis", desc:"Repetición de una palabra con distinto significado.", ej:"La razón de la sinrazón."},
+                    {nombre:"Equívoco", desc:"Palabra o frase que induce a error o confusión.", ej:"Voy al banco (sentarse o dinero)."},
+                    {nombre:"Albur", desc:"Juego de palabras con doble sentido picante.", ej:"¿Te gusta el arroz? (popular en México)."},
+                    {nombre:"Adivinanza", desc:"Juego verbal que propone un enigma.", ej:"Blanco por dentro, verde por fuera; si quieres que te lo diga, espera."},
+                    {nombre:"Trabalenguas", desc:"Frase difícil de pronunciar por la repetición de sonidos.", ej:"Tres tristes tigres comen trigo en un trigal."},
+                    {nombre:"Palíndromo semántico", desc:"Frase que invierte el sentido sin repetir las letras.", ej:"Amar da drama."}
+                ]
+            },
+            {
+                nombre: "H. Relaciones de significado en el discurso",
+                tecnicas: [
+                    {nombre:"Anáfora semántica", desc:"Uso de un término que se refiere a otro anterior por su significado.", ej:"Pedro llegó. El hombre estaba cansado."},
+                    {nombre:"Catáfora semántica", desc:"Término que adelanta información que se explicitará después.", ej:"Lo intentó todo: huir, luchar, rendirse."},
+                    {nombre:"Cohesión léxica", desc:"Conexión entre partes del texto mediante repetición o relaciones léxicas.", ej:"El coche se estropeó. El vehículo no arrancaba."},
+                    {nombre:"Repetición", desc:"Reiteración de un término para dar énfasis o unidad.", ej:"Silencio en las calles, silencio en las casas, silencio en los corazones."},
+                    {nombre:"Sinonimia textual", desc:"Uso de sinónimos para evitar la repetición.", ej:"El profesor explicó la lección. El docente respondió las dudas."},
+                    {nombre:"Hiperonimia textual", desc:"Sustitución de una palabra por un hiperónimo.", ej:"Compró rosas. Las flores perfumaban la sala."},
+                    {nombre:"Cadena cohesiva", desc:"Sucesión de términos relacionados semánticamente.", ej:"Llegó la policía. Los agentes rodearon la casa. Los uniformados entraron."},
+                    {nombre:"Isotopía discursiva", desc:"Repetición de semas que garantizan la coherencia del discurso.", ej:"En un texto sobre fútbol: balón, gol, árbitro, portería."},
+                    {nombre:"Marco semántico", desc:"Conjunto de conocimientos asociados a una situación.", ej:"En un restaurante: camarero, menú, cuenta."},
+                    {nombre:"Guion cognitivo", desc:"Secuencia esperada de acciones en una situación.", ej:"Al ir al cine: comprar entrada, palomitas, ver la película."}
+                ]
+            },
+            {
+                nombre: "I. Neología semántica",
+                tecnicas: [
+                    {nombre:"Neologismo por préstamo", desc:"Palabra tomada de otra lengua con adaptación.", ej:"fútbol (del inglés football)."},
+                    {nombre:"Calco semántico", desc:"Traducción literal del significado de una palabra extranjera.", ej:"rascacielos (de skyscraper)."},
+                    {nombre:"Neologismo metafórico", desc:"Creación de una palabra a partir de una metáfora.", ej:"navegar (por internet)."},
+                    {nombre:"Neologismo metonímico", desc:"Creación por metonimia.", ej:"los cascos azules (por los soldados de la ONU)."},
+                    {nombre:"Composición neológica", desc:"Unión de palabras existentes.", ej:"cortacésped."},
+                    {nombre:"Derivación neológica", desc:"Añadir prefijos o sufijos a palabras existentes.", ej:"antivirus, hipertexto."},
+                    {nombre:"Acronimia", desc:"Combinación del inicio de varias palabras.", ej:"módem (modulador-demodulador)."},
+                    {nombre:"Siglas lexicalizadas", desc:"Siglas que se leen como palabras.", ej:"ovni, sida."},
+                    {nombre:"Onomatopeya lexicalizada", desc:"Palabras que imitan sonidos.", ej:"tictac, zigzag."},
+                    {nombre:"Epónimo", desc:"Palabra derivada de un nombre propio.", ej:"pasteurizado (de Louis Pasteur)."}
+                ]
+            },
+            {
+                nombre: "J. Recursos semánticos en la literatura hispánica",
+                tecnicas: [
+                    {nombre:"Realismo mágico", desc:"Lo fantástico presentado como cotidiano.", ej:"Macondo, donde llovieron flores amarillas (García Márquez)."},
+                    {nombre:"Lo real maravilloso", desc:"Lo extraordinario surge de la realidad americana.", ej:"El reino de este mundo, de Carpentier."},
+                    {nombre:"Surrealismo verbal", desc:"Asociaciones insólitas y oníricas.", ej:"Rayuela, de Cortázar, con su lenguaje lúdico."},
+                    {nombre:"Esperpento", desc:"Deformación grotesca de la realidad.", ej:"Luces de bohemia, de Valle-Inclán."},
+                    {nombre:"Conceptismo", desc:"Agudeza de ingenio y juegos conceptuales.", ej:"Érase un hombre a una nariz pegado (Quevedo)."},
+                    {nombre:"Culteranismo", desc:"Estilo recargado con latinismos y metáforas complejas.", ej:"Soledades, de Góngora."},
+                    {nombre:"Vanguardismo", desc:"Ruptura con las convenciones lingüísticas.", ej:"Altazor, de Huidobro."},
+                    {nombre:"Criollismo", desc:"Reflejo del habla y la cosmovisión rural americana.", ej:"Doña Bárbara, de Gallegos."},
+                    {nombre:"Indigenismo", desc:"Incorporación de palabras y estructuras de lenguas indígenas.", ej:"Los ríos profundos, de Arguedas."},
+                    {nombre:"Neobarroco", desc:"Complejidad léxica y sintáctica extrema.", ej:"Paradiso, de Lezama Lima."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoRecursosSemanticos')) {
+                const p = JSON.parse(localStorage.getItem('progresoRecursosSemanticos'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoRecursosSemanticos', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea el recurso <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

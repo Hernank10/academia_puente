@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scriptorium — Cuaderno del Escriba</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE4D2;
+    --parchment-dk:#DDCFA9;
+    --ink:#241C13;
+    --ink-soft:#463B29;
+    --rubric:#7A2E2A;
+    --gold:#B08A3E;
+    --verdigris:#3F6357;
+    --shadow: 0 6px 18px rgba(36,28,19,.25);
+  }
+  *{box-sizing:border-box;}
+  body{
+    background:
+      radial-gradient(ellipse at top left, rgba(176,138,62,.10), transparent 45%),
+      radial-gradient(ellipse at bottom right, rgba(63,99,87,.08), transparent 50%),
+      var(--parchment);
+    color:var(--ink);
+    font-family:'EB Garamond', serif;
+    font-size:1.12rem;
+    min-height:100vh;
+  }
+  h1,h2,h3,h4,.font-display{font-family:'Cinzel', serif; letter-spacing:.04em;}
+  .brand-title{font-family:'Cinzel Decorative', serif;}
+  .rubric{color:var(--rubric);}
+  .gold{color:var(--gold);}
+
+  /* Cabecera tipo folio iluminado */
+  .folio-header{
+    background: linear-gradient(180deg, var(--ink) 0%, #34281a 100%);
+    color:var(--parchment);
+    border-bottom: 6px double var(--gold);
+    padding: 2.2rem 1rem 1.6rem;
+    position:relative;
+  }
+  .folio-header::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:-6px; height:6px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 20px);
+    opacity:.6;
+  }
+  .drop-cap::first-letter{
+    font-family:'Cinzel Decorative', serif;
+    font-size: 3.2em;
+    float:left;
+    line-height:0.8;
+    padding-right:.12em;
+    color:var(--gold);
+  }
+
+  /* Pestañas tipo lengüetas de manuscrito */
+  .nav-tabs{border-bottom: 3px solid var(--ink); gap:.4rem;}
+  .nav-tabs .nav-link{
+    font-family:'Cinzel', serif;
+    color:var(--ink-soft);
+    background: var(--parchment-dk);
+    border:2px solid var(--ink);
+    border-bottom:none;
+    border-radius: 6px 6px 0 0;
+    padding:.6rem 1.3rem;
+  }
+  .nav-tabs .nav-link.active{
+    background:var(--parchment);
+    color:var(--rubric);
+    border-color:var(--ink);
+  }
+
+  .page{
+    background: var(--parchment);
+    border:1px solid rgba(36,28,19,.35);
+    box-shadow: var(--shadow);
+    position:relative;
+    padding: 1.6rem;
+  }
+  .page::before{
+    content:"";
+    position:absolute; inset:8px;
+    border:1px solid rgba(176,138,62,.5);
+    pointer-events:none;
+  }
+
+  .ink-blot{
+    position:absolute; width:70px; height:70px; opacity:.10; pointer-events:none;
+  }
+
+  /* Progreso tipo sello de cera */
+  .seal-progress{
+    display:flex; align-items:center; gap:.75rem;
+  }
+  .seal{
+    width:64px;height:64px;border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #9a3f37, var(--rubric) 60%, #5c211e 100%);
+    display:flex;align-items:center;justify-content:center;
+    color:var(--parchment); font-family:'Cinzel',serif; font-weight:700; font-size:.95rem;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.5), 0 3px 6px rgba(0,0,0,.35);
+    border: 2px solid #3c1512;
+  }
+
+  .accordion-button{
+    font-family:'Cinzel', serif;
+    background: var(--parchment-dk);
+    color:var(--ink);
+  }
+  .accordion-button:not(.collapsed){
+    background: var(--ink); color: var(--parchment);
+  }
+  .accordion-button:focus{box-shadow:none; outline:2px solid var(--gold);}
+  .accordion-item{border-color: rgba(36,28,19,.35);}
+
+  .tech-card{
+    border:1px solid rgba(36,28,19,.3);
+    background: rgba(255,252,242,.55);
+    border-left: 4px solid var(--verdigris);
+    padding: .85rem 1rem;
+    margin-bottom:.7rem;
+  }
+  .tech-card.done{border-left-color: var(--rubric); background: rgba(122,46,42,.06);}
+  .tech-num{
+    font-family:'Cinzel', serif; color:var(--gold); font-weight:700;
+  }
+  .tech-card textarea{
+    font-family:'EB Garamond', serif; font-size:1.05rem;
+    background: repeating-linear-gradient(var(--parchment) 0 33px, rgba(36,28,19,.18) 34px);
+    line-height:34px; padding-top:2px;
+    border:1px solid rgba(36,28,19,.35);
+  }
+  .btn-ink{
+    background:var(--ink); color:var(--parchment); border:1px solid var(--ink);
+    font-family:'Cinzel', serif; letter-spacing:.03em;
+  }
+  .btn-ink:hover{background:#3a2c1c; color:var(--parchment);}
+  .btn-outline-ink{
+    border:1px solid var(--ink); color:var(--ink); font-family:'Cinzel', serif;
+  }
+  .btn-outline-ink:hover{background:var(--ink); color:var(--parchment);}
+  .form-check-input:checked{background-color:var(--verdigris); border-color:var(--verdigris);}
+
+  /* Caligrafía */
+  .calli-card{
+    background: rgba(255,252,242,.6);
+    border:1px solid rgba(36,28,19,.3);
+    padding:1.4rem;
+    margin-bottom:1.6rem;
+  }
+  .calli-alphabet{
+    background: repeating-linear-gradient(var(--parchment) 0 44px, rgba(36,28,19,.22) 45px);
+    padding: 1rem .5rem .5rem;
+    font-size:2.1rem;
+    line-height:44px;
+    letter-spacing:.15em;
+    color: var(--ink-soft);
+    word-spacing: .4em;
+    overflow-x:auto;
+    white-space:nowrap;
+  }
+  .calli-sample{
+    font-size:2.4rem;
+    color:var(--rubric);
+    line-height:1.3;
+  }
+  .calli-live{
+    font-size:2.2rem;
+    min-height:70px;
+    border-bottom:2px solid var(--ink);
+    color:var(--ink);
+    padding:.3rem .2rem;
+  }
+  #calliInput{
+    font-family:'EB Garamond', serif;
+  }
+  .badge-est{font-family:'Cinzel',serif; background:var(--verdigris);}
+
+  footer{
+    background:var(--ink); color:var(--parchment); text-align:center;
+    padding: 1.2rem; font-family:'IM Fell English', serif; font-style:italic;
+  }
+  .toast-ink{background:var(--ink); color:var(--parchment); font-family:'Cinzel',serif;}
+</style>
+</head>
+<body>
+
+<header class="folio-header text-center">
+  <div class="container">
+    <h1 class="brand-title display-5 mb-1">✒ Scriptorium</h1>
+    <p class="mb-0 fst-italic" style="font-family:'IM Fell English',serif; opacity:.9;">
+      Cuaderno del escriba — cien técnicas narrativas y cuatro escrituras de mano
+    </p>
+  </div>
+</header>
+
+<div class="container my-4">
+
+  <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tab-tecnicas-btn" data-bs-toggle="tab" data-bs-target="#tab-tecnicas" type="button" role="tab">Técnicas narrativas</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab-calli-btn" data-bs-toggle="tab" data-bs-target="#tab-calli" type="button" role="tab">Caligrafía</button>
+    </li>
+  </ul>
+
+  <div class="tab-content page mt-0">
+
+    <!-- ===================== TAB TÉCNICAS ===================== -->
+    <div class="tab-pane fade show active" id="tab-tecnicas" role="tabpanel">
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div class="seal-progress">
+          <div class="seal" id="sealCount">0/100</div>
+          <div>
+            <div class="fw-bold" style="font-family:'Cinzel',serif;">Folios completados</div>
+            <div class="progress" style="width:220px; height:10px; background:var(--parchment-dk); border:1px solid var(--ink);">
+              <div class="progress-bar" id="progressBar" role="progressbar" style="width:0%; background:var(--verdigris);"></div>
+            </div>
+          </div>
+        </div>
+        <div style="max-width:320px; width:100%;">
+          <input type="text" class="form-control" id="searchInput" placeholder="Buscar técnica por nombre…" style="font-family:'EB Garamond',serif;">
+        </div>
+      </div>
+
+      <p class="fst-italic small mb-4">Marca "practicada" tras escribir tu ejercicio. Tu texto y tu progreso quedan guardados en este cuaderno.</p>
+
+      <div class="accordion" id="accordionCategorias"></div>
+    </div>
+
+    <!-- ===================== TAB CALIGRAFÍA ===================== -->
+    <div class="tab-pane fade" id="tab-calli" role="tabpanel">
+      <h2 class="text-center mb-2">Las cuatro escrituras de mano</h2>
+      <p class="text-center fst-italic mb-4">Estudia cada trazo con la guía de líneas, luego escribe tu propio texto abajo para verlo tomar forma en cada estilo. Imprime la guía para practicar con pluma y tinta sobre papel.</p>
+      <div id="calliContainer"></div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  Feliciter scriptum — «bien escrito» · cuaderno personal, sin conexión a terceros
+</footer>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="saveToast" class="toast toast-ink" role="status">
+    <div class="toast-body">Guardado en el cuaderno.</div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ================= DATOS: 100 TÉCNICAS ================= */
+const categorias = [
+{ nombre:"Punto de vista y voz narrativa", tecnicas:[
+["Narrador omnisciente","Conoce pensamientos y hechos de todos los personajes y lugares.","Tolstói en Guerra y paz salta entre la mente de un general y la de un campesino.","Escribe una escena saltando entre la interioridad de dos personajes sin cambiar de párrafo."],
+["Narrador en primera persona","El «yo» cuenta solo lo que vive y sabe.","Salinger construye así a Holden en El guardián entre el centeno.","Narra un recuerdo real tuyo cambiando deliberadamente algunos hechos."],
+["Narrador poco fiable","El lector debe dudar de lo que se le cuenta.","Nabokov lo perfecciona en Lolita con Humbert Humbert.","Escribe una confesión donde el narrador minimice su culpa sin que tú lo señales."],
+["Segunda persona narrativa","El relato se dirige a un «tú» que es protagonista.","Cortázar la usa en fragmentos de Rayuela.","Escribe una escena cotidiana en segunda persona."],
+["Narrador testigo","Un personaje secundario cuenta la historia de otro.","Nick Carraway narra la vida de Gatsby.","Narra la historia de un personaje central desde los ojos de su mejor amigo."],
+["Focalización múltiple","Distintos capítulos, distintos narradores.","Faulkner lo lleva al extremo en Mientras agonizo.","Escribe una discusión familiar desde dos personajes, con vocabulario distinto en cada uno."],
+["Narrador colectivo (nosotros)","La voz de un grupo, no de un individuo.","Eugenides usa el «nosotros» vecinal en Las vírgenes suicidas.","Narra un evento del barrio como si hablara la comunidad entera."],
+["Distancia narrativa variable","Acercar o alejar la cámara emocional del narrador.","Flaubert alterna ironía distante e inmersión en Madame Bovary.","Reescribe un párrafo tuyo con distancia fría y luego con cercanía íntima."],
+["Narrador que desafía la verosimilitud","La voz narrativa se sostiene más allá de lo posible.","Alice Sebold hace narrar a una niña asesinada en Desde mi cielo.","Explora narrar desde un lugar imposible para tu historia."],
+["Cambio de persona gramatical","Alternar yo, tú y él para el mismo personaje.","Michel Butor lo hace en La modificación.","Narra un capítulo alternando persona gramatical en los quiebres emocionales."]
+]},
+{ nombre:"Estructura y tiempo", tecnicas:[
+["In medias res","Comenzar en mitad de la acción.","La Ilíada empieza en el noveno año de guerra.","Abre tu relato en el momento de mayor tensión y retrocede después."],
+["Analepsis (flashback)","Interrumpir el presente con el pasado.","García Márquez lo hace constantemente en Cien años de soledad.","Inserta un recuerdo de una sola frase en medio de una escena de acción."],
+["Prolepsis (flash-forward)","Adelantar un hecho futuro.","La primera línea de Cien años de soledad anuncia un fusilamiento futuro.","Escribe una frase inicial que revele el final y construye hacia ese punto."],
+["Estructura circular","El final regresa al punto de partida.","El manuscrito que se lee a sí mismo cierra Cien años de soledad.","Diseña un final cuya última línea repita, transformada, la primera."],
+["Estructura fragmentada","El relato se arma con piezas no lineales.","Cortázar propone órdenes alternativos de capítulos en Rayuela.","Escribe una historia en fragmentos numerados sin orden obligatorio."],
+["Cronología múltiple entrelazada","Dos líneas temporales avanzan en paralelo.","Ishiguro alterna presente y memoria en Los restos del día.","Alterna capítulo a capítulo el «ahora» y el «antes» de un personaje."],
+["Elipsis temporal","Omitir deliberadamente un periodo de tiempo.","Woolf salta diez años en la sección central de Al faro.","Salta meses entre dos párrafos y deja que el lector complete lo elidido."],
+["Mise en abyme","Una historia dentro de la historia que refleja el todo.","La obra de teatro dentro de Hamlet representa el crimen real.","Incluye un cuento o carta dentro de tu relato que anticipe su desenlace."],
+["Ritmo por yuxtaposición de escenas breves","Capítulos cortos que aceleran la lectura.","Hemingway lo practica en Los asesinos.","Divide una escena larga en tres fragmentos separados por espacio en blanco."],
+["Final abierto","No resolver todos los conflictos.","Henry James deja ambigua la maldad en Otra vuelta de tuerca.","Termina un relato sin responder la pregunta central que planteaste."]
+]},
+{ nombre:"Caracterización", tecnicas:[
+["Caracterización por acción","Mostrar el carácter mediante lo que el personaje hace.","Homero define a Aquiles por sus actos en batalla.","Presenta a un personaje nuevo solo mediante una acción, sin describirlo."],
+["Caracterización por objetos","Un objeto revela quién es alguien.","El abrigo en El capote de Gógol define su identidad social.","Describe un objeto cotidiano para revelar el carácter de su dueño."],
+["Personajes especulares","Dos personajes reflejan valores opuestos.","Don Quijote y Sancho Panza: idealismo y pragmatismo.","Crea una pareja que responda de forma opuesta al mismo conflicto."],
+["Personaje redondo vs. plano","Complejidad frente a función fija.","Los personajes de Dickens son memorables por rasgos fijos.","Diseña un secundario «plano» con un solo rasgo dominante."],
+["Monólogo interior","Acceso directo al flujo de pensamiento.","Molly Bloom cierra Ulises con un monólogo sin puntuación.","Escribe medio folio del pensamiento de un personaje sin puntos ni comas."],
+["Corriente de conciencia","Mezcla de percepciones, recuerdos y sensaciones sin orden lógico.","Woolf la despliega en La señora Dalloway.","Escribe una caminata mezclando lo que el personaje ve, recuerda y siente."],
+["Caracterización por diálogo indirecto","Lo que otros dicen del personaje ausente.","El lector conoce a los fantasmas solo por referencias en James.","Presenta un personaje que nunca aparece, solo mencionado por otros."],
+["Arco de transformación","Evolución interna motivada por la trama.","Scrooge se transforma en Cuento de Navidad.","Traza el antes, el quiebre y el después de un personaje."],
+["Antihéroe","Protagonista con defectos morales visibles.","Raskólnikov comete un crimen y conserva la empatía del lector.","Haz que tu protagonista actúe mal pero deja una grieta de humanidad."],
+["Caracterización por el habla (idiolecto)","Cada personaje tiene un modo único de hablar.","Twain diferencia dialectos en Huckleberry Finn.","Da a dos personajes muletillas y ritmo de frase distintos."]
+]},
+{ nombre:"Diálogo", tecnicas:[
+["Diálogo subtextual","Los personajes dicen una cosa y quieren decir otra.","Hemingway lo perfecciona en Colinas como elefantes blancos.","Escribe un diálogo trivial que en realidad discuta algo grave."],
+["Diálogo sin acotaciones","Prescindir de «dijo», «preguntó».","McCarthy elimina casi toda acotación en La carretera.","Escribe un intercambio identificando a los hablantes solo por su estilo."],
+["Interrupción y solapamiento","Los personajes se cortan entre sí.","Recurso habitual del diálogo realista contemporáneo.","Usa el guion largo para cortar una frase que el otro retoma."],
+["Silencio como respuesta","Lo no dicho pesa más que lo dicho.","Chéjov construye tensión evitando lo esencial.","Responde una pregunta importante solo con una acción física."],
+["Diálogo coral","Varias voces simultáneas, casi teatral.","Faulkner y Dos Passos retratan comunidades así.","Escribe una fiesta con fragmentos de al menos cuatro voces entremezcladas."],
+["Revelación diferida en diálogo","La información clave se entrega en fragmentos.","Agatha Christie dosifica pistas en sus novelas.","Divide una confesión importante en tres diálogos distintos."],
+["Registro y clase social en el habla","El nivel de lenguaje delata origen y educación.","Dickens marca diferencias de clase en el habla londinense.","Escribe «llegas tarde» en boca de dos personajes de estratos distintos."],
+["Ironía verbal en el diálogo","Decir lo contrario de lo que se piensa.","Austen construye tensión social con ironía conversacional.","Escribe un diálogo cortés que oculte un desprecio mutuo."],
+["Diálogo telegráfico","Frases cortísimas que aceleran el ritmo.","Carver reduce el diálogo a lo esencial.","Elimina toda palabra no estrictamente necesaria de un diálogo tuyo."],
+["Monólogo a interlocutor mudo","Un personaje habla y el otro nunca responde.","Recurso clásico de cartas no respondidas y monólogos dramáticos.","Escribe una escena donde un personaje hable largamente a otro en silencio."]
+]},
+{ nombre:"Estilo y lenguaje", tecnicas:[
+["Estilo indirecto libre","Fusión de la voz del narrador y el pensamiento del personaje.","Flaubert lo inventa en Madame Bovary.","Narra un pensamiento en tercera persona pero con el vocabulario del personaje."],
+["Frase larga acumulativa","Periodos extensos que imitan el pensamiento continuo.","Proust construye frases de página entera.","Escribe un párrafo de una sola frase sin punto hasta el cierre."],
+["Frase corta y seca","Economía extrema como recurso de tensión.","Hemingway la eleva a estilo propio.","Reescribe una escena usando solo frases de menos de ocho palabras."],
+["Repetición anafórica","Repetir una palabra al inicio de frases sucesivas.","Whitman la usa en Hojas de hierba.","Escribe un párrafo donde cada frase empiece igual."],
+["Polisíndeton","Multiplicar conjunciones para dar sensación de urgencia.","Hemingway y la prosa bíblica la usan con frecuencia.","Encadena una escena de acción con «y» en vez de puntuar."],
+["Asíndeton","Eliminar conjunciones para dar velocidad.","César la usa en su prosa latina.","Convierte una frase con «y» en frases cortas separadas por comas."],
+["Metáfora extendida","Una imagen que se desarrolla en varios párrafos.","Kafka literaliza la alienación en La metamorfosis.","Desarrolla una metáfora simple en tres momentos del relato."],
+["Prosa poética","Lenguaje narrativo cercano a la densidad del poema.","Toni Morrison lo logra en Beloved.","Describe un paisaje priorizando el sonido sobre la información."],
+["Extrañamiento (ostranenie)","Describir lo cotidiano como si se viera por primera vez.","Tolstói y los formalistas rusos la teorizan y practican.","Describe un objeto doméstico como alguien que nunca vio algo similar."],
+["Registro mixto (alta y baja cultura)","Combinar lenguaje culto y coloquial.","Joyce mezcla parodia épica y jerga dublinesa en Ulises.","Escribe un párrafo que alterne una referencia culta con jerga callejera."]
+]},
+{ nombre:"Ambientación y atmósfera", tecnicas:[
+["Pathetic fallacy","El entorno natural refleja el estado emocional.","Las tormentas de Cumbres borrascosas acompañan la pasión.","Describe el clima de una escena para expresar la emoción sin nombrarla."],
+["Ambientación como personaje","El lugar pesa tanto como los humanos.","Macondo y Yoknapatawpha funcionan así.","Dale a tu escenario una historia propia, con nombre y memoria."],
+["Detalle sensorial selectivo","Elegir dos o tres detalles en vez de describirlo todo.","Chéjov aconsejaba mostrar el vidrio roto bajo la luna.","Describe una habitación usando solo tres objetos."],
+["Atmósfera gótica","Ambientes cerrados y opresivos que generan inquietud.","Poe la perfecciona en La caída de la casa Usher.","Describe la entrada a un edificio antiguo enfatizando el deterioro."],
+["Realismo mágico","Elementos fantásticos tratados con naturalidad.","García Márquez y Rulfo son referentes centrales.","Introduce un hecho imposible y nárralo con tono cotidiano."],
+["Descripción por ausencia","Definir un lugar por lo que falta en él.","McCarthy describe un mundo posapocalíptico por lo perdido.","Describe una ciudad nombrando tres cosas que ya no están."],
+["Sinestesia descriptiva","Mezclar sentidos en una misma imagen.","Rimbaud y los simbolistas la explotan.","Escribe una descripción combinando dos sentidos distintos."],
+["Clima o estaciones simbólicas","Vincular fases del año a fases de la trama.","Muchas tragedias clásicas sitúan el clímax en tormenta o invierno.","Haz coincidir el mayor conflicto con un cambio de estación."],
+["Espacio como metáfora psicológica","Laberintos y casas que representan el estado mental.","El castillo de El proceso de Kafka es un estado mental.","Diseña un espacio cuya disposición refleje la confusión interior."],
+["Contraste interior/exterior","Oponer un espacio íntimo a uno público.","Ibsen lo usa en Casa de muñecas.","Escribe una escena que empiece en privado y termine en público."]
+]},
+{ nombre:"Tensión y suspenso", tecnicas:[
+["El fusil de Chéjov","Todo elemento introducido debe tener función posterior.","Chéjov formuló que un arma mostrada debe dispararse antes del final.","Introduce un objeto trivial al inicio y dale importancia decisiva al final."],
+["Ironía dramática","El lector sabe algo que el personaje ignora.","Shakespeare la usa en Otelo.","Revela al lector un dato oculto al protagonista."],
+["Retardación (delay)","Aplazar la información crucial con digresiones controladas.","Las novelas de folletín de Dickens dominan este recurso.","Interrumpe el momento de mayor tensión con un breve desvío."],
+["Pista falsa","Un elemento que desvía la atención deliberadamente.","Agatha Christie construye tramas alrededor de pistas falsas.","Introduce un sospechoso que luego resulte irrelevante."],
+["Cliffhanger de capítulo","Terminar una sección en el punto de mayor incertidumbre.","Dickens publicaba así sus novelas por entregas.","Corta un capítulo justo antes de una noticia decisiva."],
+["Reloj narrativo","Un límite de tiempo que aumenta la presión.","Muchos thrillers usan plazos explícitos.","Da a tu protagonista un plazo concreto para resolver el conflicto."],
+["Presagios (foreshadowing)","Sembrar señales del desenlace sin revelarlo.","Sófocles siembra el destino de Edipo desde el oráculo.","Incluye una frase inocente que, releída, anuncie el final."],
+["Suspenso por punto de vista limitado","El lector solo sabe lo que el narrador percibe.","Los relatos de terror de Poe dependen de esta restricción.","Cuenta un peligro sin que el narrador vea lo que hay detrás de la puerta."],
+["Contraste de ritmo","Alternar escenas lentas y rápidas.","Los thrillers alternan calma y acción explosiva.","Antecede tu escena de más acción con un párrafo lento."],
+["Revelación tardía (twist)","Un giro que reinterpreta todo lo anterior.","El final de Otra vuelta de tuerca depende de esto.","Decide el giro final primero y siembra las pistas que lo permitan."]
+]},
+{ nombre:"Metaficción y experimentación", tecnicas:[
+["Metaficción","La ficción expone su propia condición de artificio.","Cervantes lo hace en la segunda parte del Quijote.","Haz que un personaje mencione que está dentro de una historia."],
+["Novela epistolar","La historia se cuenta mediante cartas.","Drácula y Las relaciones peligrosas son ejemplos centrales.","Cuenta un conflicto entero mediante tres cartas cruzadas."],
+["Formato de diario","Narración cronológica en primera persona con entradas fechadas.","El diario de Ana Frank es el ejemplo más conocido.","Escribe cinco entradas que muestren el cambio de un personaje."],
+["Segunda persona interactiva","El lector se convierte en actor de las decisiones.","Cortázar lo experimenta parcialmente en Rayuela.","Ofrece al lector dos caminos posibles y desarrolla ambos."],
+["Documento encontrado","El relato se presenta como manuscrito hallado o editado.","Drácula y Frankenstein usan marcos de documentos reales.","Presenta tu relato como manuscrito descubierto con una nota editorial."],
+["Ruptura de la cuarta pared","El narrador se dirige directamente al lector.","Fielding lo hace en Tom Jones.","Escribe un párrafo donde el narrador comente sus propias decisiones."],
+["Narrador que miente conscientemente","La mentira es deliberada y se revela después.","Ishiguro lo trabaja en Los restos del día.","Haz que el narrador oculte algo y luego admita que mintió."],
+["Estructura en catálogo o lista","El relato avanza mediante enumeraciones.","Perec construye La vida instrucciones de uso como inventario.","Escribe una escena entera como lista de objetos o instrucciones."],
+["Colage de géneros discursivos","Mezclar recortes de periódico, actas o anuncios.","Dos Passos lo hace en su trilogía U.S.A.","Inserta un fragmento de noticia ficticia dentro de tu relato."],
+["Fragmentación tipográfica","Usar el espacio en blanco como parte del sentido.","B. S. Johnson experimenta con la disposición visual del texto.","Usa espacios en blanco inusuales para representar una interrupción emocional."]
+]},
+{ nombre:"Simbolismo y recursos retóricos", tecnicas:[
+["Símbolo recurrente","Un objeto o imagen que se repite y acumula significado.","La ballena blanca en Moby Dick es el ejemplo canónico.","Haz reaparecer un objeto tres veces con un matiz distinto cada vez."],
+["Alegoría","La historia completa funciona como metáfora de otra realidad.","Rebelión en la granja de Orwell es alegoría política.","Diseña tu trama para que sostenga una lectura moral paralela."],
+["Motivo (leitmotiv)","Una frase o gesto que se repite para dar cohesión.","Thomas Mann lo usa en La montaña mágica.","Repite una misma frase corta en tres momentos, con más carga cada vez."],
+["Ironía dramática estructural","El destino contradice los propios valores del personaje.","Edipo busca la verdad que lo destruirá.","Haz que el objetivo del protagonista sea justo lo que provoque su ruina."],
+["Doble o doppelgänger","Un personaje representa el lado oculto de otro.","Jekyll y Hyde lo formulan directamente.","Crea un secundario que actúe como espejo oscuro del protagonista."],
+["Objeto transicional cargado de memoria","Un objeto conecta pasado y presente.","La magdalena de Proust dispara la memoria involuntaria.","Elige un objeto sensorial que desencadene un recuerdo completo."],
+["Paralelismo estructural entre tramas","Dos historias se iluminan mutuamente.","Ana Karenina contrasta a Ana y a Levin.","Escribe dos subtramas que respondan a la misma pregunta de forma opuesta."],
+["Ironía de tono","El narrador comenta con distancia burlona.","Austen y Vargas Llosa la dominan.","Narra un evento serio con un tono ligeramente burlón."],
+["Personificación de fuerzas abstractas","Dar cualidades activas al tiempo o la muerte.","La Muerte narra en La ladrona de libros.","Convierte una fuerza abstracta en una presencia casi personal."],
+["Circularidad simbólica del título","El título cobra sentido pleno solo al terminar.","Cien años de soledad funciona así.","Elige el título después de escribir, para que cierre el sentido."]
+]},
+{ nombre:"Cierre y resolución", tecnicas:[
+["Final epifánico","Comprensión súbita que ilumina sin resolver la trama.","Joyce construye Dublineses alrededor de epifanías.","Termina con un instante de comprensión silenciosa, sin explicarlo."],
+["Final circular con variación","Se repite la escena inicial con un matiz distinto.","Recurso clásico para mostrar transformación del personaje.","Reescribe tu primera escena al final cambiando un solo detalle."],
+["Final trágico inevitable","El desenlace se anuncia desde el principio y aun así conmueve.","La tragedia griega se basa en este principio.","Anuncia el destino fatal desde el inicio; que importe el cómo."],
+["Final ambiguo deliberado","Dos lecturas igualmente válidas del desenlace.","Otra vuelta de tuerca permite dos interpretaciones.","Construye un final que admita dos lecturas opuestas y coherentes."],
+["Resolución por objeto simbólico final","El destino del objeto recurrente cierra la historia.","El objeto que abre la historia regresa transformado.","Haz reaparecer tu símbolo recurrente por última vez."],
+["Final con cambio de narrador","La voz que cierra no es la que empezó.","Las novelas polifónicas ceden la última palabra a otro personaje.","Cierra con la voz de un personaje que no había narrado antes."],
+["Coda o epílogo temporal","Un salto al futuro muestra consecuencias lejanas.","Cien años de soledad y Middlemarch usan epílogos así.","Añade un párrafo final que salte años y resuma destinos."],
+["Anticlímax deliberado","El desenlace es deliberadamente menor tras tanta tensión.","Chéjov y Beckett dominan este recurso.","Resuelve una gran expectativa con un gesto mínimo."],
+["Final que retoma el título","La última línea contiene, transformada, la frase del título.","Recurso frecuente en el cuento breve.","Escribe tu última frase usando de forma distinta las palabras del título."],
+["Silencio final","El relato termina en una acción, no en una reflexión explicada.","Hemingway y Carver prefieren terminar en un gesto.","Termina con una sola acción física, sin comentario del narrador."]
+]}
+];
+
+/* ================= DATOS: CALIGRAFÍA ================= */
+const estilos = [
+  { id:"spencerian", nombre:"Script — Cursiva Spencerian", font:"'Tangerine', cursive", tam:"3.6rem",
+    historia:"Estilo estadounidense de mediados del siglo XIX, fluido y ornamental, base de la firma comercial elegante antes de la escritura mecanografiada." },
+  { id:"copperplate", nombre:"Cursiva inglesa (Copperplate / Roundhand)", font:"'Petit Formal Script', cursive", tam:"2.6rem",
+    historia:"Escritura inglesa de trazo fino y grueso alternado, nacida de la pluma de punta metálica en el siglo XVIII; base de la caligrafía formal europea." },
+  { id:"chancery", nombre:"Cursiva itálica (Chancery)", font:"'Mrs Saint Delafield', cursive", tam:"2.8rem",
+    historia:"Cursiva cancilleresca renacentista italiana, inclinada y rápida, creada para la correspondencia oficial y hoy base de la itálica caligráfica moderna." },
+  { id:"palmer", nombre:"Cursiva Palmer", font:"'Homemade Apple', cursive", tam:"2.3rem",
+    historia:"Método estadounidense de escritura ligada, simplificado a inicios del siglo XX para la enseñanza escolar rápida y legible." }
+];
+
+/* ================= ESTADO Y ALMACENAMIENTO ================= */
+let estado = { practicadas:{}, textos:{} };
+
+function mostrarToast(msg){
+  const t = document.getElementById('saveToast');
+  t.querySelector('.toast-body').textContent = msg;
+  new bootstrap.Toast(t, {delay:1400}).show();
+}
+
+async function cargarEstado(){
+  try{
+    const r = await window.storage.get('scriptorium:estado');
+    if(r && r.value){ estado = JSON.parse(r.value); }
+  }catch(e){ /* sin datos previos */ }
+  renderTecnicas();
+  actualizarProgreso();
+}
+
+async function guardarEstado(){
+  try{
+    await window.storage.set('scriptorium:estado', JSON.stringify(estado));
+  }catch(e){ console.error('No se pudo guardar', e); }
+}
+
+/* ================= RENDER TÉCNICAS ================= */
+function idTecnica(catIdx, tIdx){ return catIdx+"-"+tIdx; }
+
+function renderTecnicas(filtro=""){
+  const cont = document.getElementById('accordionCategorias');
+  cont.innerHTML = "";
+  categorias.forEach((cat, ci)=>{
+    const items = cat.tecnicas
+      .map((t,ti)=>({t,ti}))
+      .filter(o => filtro==="" || o.t[0].toLowerCase().includes(filtro.toLowerCase()));
+    if(items.length===0) return;
+
+    const accId = "cat"+ci;
+    const item = document.createElement('div');
+    item.className = "accordion-item";
+    item.innerHTML = `
+      <h2 class="accordion-header">
+        <button class="accordion-button ${ci===0?'':'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#${accId}">
+          ${ci+1}. ${cat.nombre}
+        </button>
+      </h2>
+      <div id="${accId}" class="accordion-collapse collapse ${ci===0?'show':''}" data-bs-parent="#accordionCategorias">
+        <div class="accordion-body" id="body-${accId}"></div>
+      </div>`;
+    cont.appendChild(item);
+
+    const body = item.querySelector(`#body-${accId}`);
+    items.forEach(({t,ti})=>{
+      const id = idTecnica(ci,ti);
+      const [nombre,def,ejemplo,ejercicio] = t;
+      const numGlobal = categorias.slice(0,ci).reduce((a,c)=>a+c.tecnicas.length,0) + ti + 1;
+      const done = !!estado.practicadas[id];
+      const texto = estado.textos[id] || "";
+
+      const card = document.createElement('div');
+      card.className = "tech-card" + (done ? " done":"");
+      card.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <span class="tech-num">#${numGlobal}</span>
+            <strong> ${nombre}</strong>
+            <div class="small mt-1">${def}</div>
+            <div class="small fst-italic mt-1 rubric">Ejemplo: ${ejemplo}</div>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input chk-done" type="checkbox" id="chk-${id}" ${done?'checked':''}>
+            <label class="form-check-label small" for="chk-${id}">practicada</label>
+          </div>
+        </div>
+        <div class="small gold mt-2 mb-1"><strong>Ejercicio:</strong> ${ejercicio}</div>
+        <textarea class="form-control mt-1" rows="3" placeholder="Escribe aquí tu práctica…">${texto}</textarea>
+        <button class="btn btn-sm btn-outline-ink mt-2 btn-save">Guardar folio</button>
+      `;
+      body.appendChild(card);
+
+      card.querySelector('.chk-done').addEventListener('change', async (e)=>{
+        estado.practicadas[id] = e.target.checked;
+        card.classList.toggle('done', e.target.checked);
+        await guardarEstado();
+        actualizarProgreso();
+      });
+      card.querySelector('.btn-save').addEventListener('click', async ()=>{
+        estado.textos[id] = card.querySelector('textarea').value;
+        await guardarEstado();
+        mostrarToast('Guardado en el cuaderno.');
+      });
+    });
+  });
+}
+
+function actualizarProgreso(){
+  const total = categorias.reduce((a,c)=>a+c.tecnicas.length,0);
+  const hechas = Object.values(estado.practicadas).filter(Boolean).length;
+  document.getElementById('sealCount').textContent = hechas+"/"+total;
+  document.getElementById('progressBar').style.width = (hechas/total*100)+"%";
+}
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  renderTecnicas(e.target.value);
+});
+
+/* ================= RENDER CALIGRAFÍA ================= */
+const alfabetoLower = "a b c d e f g h i j k l m n ñ o p q r s t u v w x y z".split(" ");
+const alfabetoUpper = "A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z".split(" ");
+
+function renderCalligraphy(){
+  const cont = document.getElementById('calliContainer');
+  estilos.forEach(est=>{
+    const card = document.createElement('div');
+    card.className = "calli-card";
+    card.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <h3 class="mb-0">${est.nombre}</h3>
+        <button class="btn btn-sm btn-outline-ink btn-print">Imprimir guía</button>
+      </div>
+      <p class="small fst-italic">${est.historia}</p>
+      <div class="calli-alphabet" style="font-family:${est.font}; font-size:${est.tam};">
+        ${alfabetoUpper.join(" ")}
+      </div>
+      <div class="calli-alphabet mt-2" style="font-family:${est.font}; font-size:${est.tam};">
+        ${alfabetoLower.join(" ")}
+      </div>
+      <div class="calli-sample mt-3" style="font-family:${est.font};">Feliciter scriptum — bien escrito</div>
+      <hr>
+      <label class="form-label small fw-bold" style="font-family:'Cinzel',serif;">Practica tu propio texto en este estilo</label>
+      <input type="text" class="form-control calli-input" placeholder="Escribe una palabra o frase…" value="">
+      <div class="calli-live mt-2" style="font-family:${est.font};"></div>
+    `;
+    cont.appendChild(card);
+
+    card.querySelector('.calli-input').addEventListener('input', (e)=>{
+      card.querySelector('.calli-live').textContent = e.target.value;
+    });
+    card.querySelector('.btn-print').addEventListener('click', ()=>{
+      const w = window.open('', '_blank');
+      w.document.write(`
+        <html><head><title>${est.nombre}</title>
+        <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+        <style>
+          body{font-family:sans-serif; padding:30px;}
+          .line{font-family:${est.font}; font-size:${est.tam}; border-bottom:1px solid #999; padding:14px 4px; margin-bottom:6px;}
+          .empty{border-bottom:1px solid #ccc; height:56px; margin-bottom:6px;}
+          h2{font-family:sans-serif;}
+        </style></head><body>
+        <h2>${est.nombre} — hoja de práctica</h2>
+        <div class="line">${alfabetoUpper.join(" ")}</div>
+        <div class="empty"></div>
+        <div class="line">${alfabetoLower.join(" ")}</div>
+        <div class="empty"></div>
+        <div class="line">Feliciter scriptum</div>
+        <div class="empty"></div><div class="empty"></div><div class="empty"></div>
+        </body></html>`);
+      w.document.close();
+      w.print();
+    });
+  });
+}
+
+/* ================= INIT ================= */
+cargarEstado();
+renderCalligraphy();
+</script>
+</body>
+</html>

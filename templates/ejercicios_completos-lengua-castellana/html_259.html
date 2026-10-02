@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Fórmulas de Argumentación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== Estilos holográficos ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-secondary: #111122;
+            --cyan: #00f0ff;
+            --violet: #b000ff;
+            --cyan-glow: 0 0 15px rgba(0,240,255,0.3);
+            --violet-glow: 0 0 20px rgba(176,0,255,0.4);
+            --text-cyan: #a0faff;
+            --text-violet: #d9a0ff;
+            --card-bg: rgba(18,18,40,0.7);
+            --border-cyan: 1px solid rgba(0,240,255,0.2);
+            --border-violet: 1px solid rgba(176,0,255,0.2);
+        }
+        body {
+            background: var(--bg-primary);
+            color: #e0e0ff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.03) 0%, transparent 60%),
+                              radial-gradient(circle at 80% 70%, rgba(176,0,255,0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }
+        .app-container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.8rem; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            padding: 1.2rem 2rem; background: var(--card-bg); border: var(--border-cyan); border-radius: 18px;
+            backdrop-filter: blur(8px); box-shadow: var(--cyan-glow);
+        }
+        .brand { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px var(--cyan)); }
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,240,255,0.2); letter-spacing: 2px;
+        }
+        .brand span { font-size: 0.9rem; color: var(--text-cyan); font-weight: 300; letter-spacing: 4px; -webkit-text-fill-color: var(--text-cyan); background: none; margin-left: 0.5rem; opacity: 0.7; }
+        .stats { display: flex; gap: 2rem; font-family: 'Orbitron', monospace; font-weight: 600; font-size: 0.8rem; color: var(--text-cyan); }
+        .stats-item { display: flex; align-items: center; gap: 0.4rem; }
+        .stats-item .num { color: #fff; font-weight: 700; font-size: 1.1rem; min-width: 1.8rem; text-align: center; }
+        .stats-item .label { color: rgba(160,250,255,0.6); font-weight: 300; }
+        .stats-item .highlight { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .vector-row {
+            display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
+            padding: 0.8rem 1rem; background: rgba(0,0,0,0.3); border-radius: 60px; border: var(--border-violet);
+            backdrop-filter: blur(4px);
+        }
+        .vector-avatar {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.3rem 1.2rem; border-radius: 40px; cursor: pointer; transition: all 0.3s ease;
+            background: transparent; border: 1px solid transparent; opacity: 0.5;
+        }
+        .vector-avatar.active { opacity: 1; background: rgba(176,0,255,0.12); border-color: var(--violet); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .vector-avatar:hover { opacity: 0.9; transform: scale(1.05); }
+        .vector-avatar .icon { font-size: 2.2rem; filter: drop-shadow(0 0 8px var(--cyan)); }
+        .vector-avatar .name { font-size: 0.6rem; font-weight: 600; color: var(--text-cyan); letter-spacing: 1px; text-transform: uppercase; font-family: 'Orbitron', monospace; }
+        .vector-avatar.active .name { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .blocks-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
+        .block-tab {
+            padding: 0.3rem 1.2rem; border-radius: 30px; background: rgba(0,240,255,0.05);
+            border: 1px solid rgba(0,240,255,0.1); color: rgba(160,250,255,0.5);
+            font-family: 'Orbitron', monospace; font-size: 0.65rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; letter-spacing: 0.5px;
+        }
+        .block-tab.active { background: rgba(176,0,255,0.15); border-color: var(--violet); color: #fff; box-shadow: 0 0 20px rgba(176,0,255,0.15); }
+        .block-tab .badge { background: rgba(0,240,255,0.2); border-radius: 20px; padding: 0 0.5rem; margin-left: 0.4rem; font-size: 0.55rem; color: var(--text-cyan); }
+        .block-tab.active .badge { background: rgba(176,0,255,0.3); color: var(--text-violet); }
+        .lesson-card {
+            background: var(--card-bg); border: var(--border-cyan); border-radius: 24px;
+            padding: 2rem 2.5rem; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,240,255,0.05);
+        }
+        .lesson-header {
+            display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+            margin-bottom: 1.8rem; border-bottom: 1px solid rgba(0,240,255,0.08); padding-bottom: 0.8rem;
+        }
+        .lesson-header h2 {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .lesson-header .counter { font-size: 0.8rem; color: var(--text-cyan); font-weight: 300; opacity: 0.7; }
+        .theory-box {
+            background: rgba(0,240,255,0.04); border-left: 3px solid var(--cyan);
+            padding: 1.2rem 1.8rem; border-radius: 12px; margin-bottom: 1.5rem;
+        }
+        .theory-box .root { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 30px rgba(0,240,255,0.2); }
+        .theory-box .meaning { font-size: 1.1rem; margin-top: 0.3rem; color: #c8c8ff; }
+        .theory-box .origin { font-size: 0.9rem; color: rgba(160,250,255,0.5); margin-top: 0.2rem; font-style: italic; }
+        .example-holo {
+            background: rgba(176,0,255,0.06); border: 1px solid rgba(176,0,255,0.2);
+            border-radius: 16px; padding: 1.2rem 1.8rem; margin-bottom: 1.8rem;
+            box-shadow: 0 0 30px rgba(176,0,255,0.08); position: relative; overflow: hidden;
+        }
+        .example-holo::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(176,0,255,0.05), transparent, rgba(0,240,255,0.05), transparent);
+            animation: rotateHolo 12s linear infinite;
+        }
+        @keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .example-holo .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-violet); font-weight: 600; position: relative; z-index: 1; }
+        .example-holo .word { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 0 25px rgba(176,0,255,0.5); position: relative; z-index: 1; }
+        .example-holo .breakdown { font-size: 1.1rem; color: var(--text-cyan); position: relative; z-index: 1; font-weight: 300; letter-spacing: 1px; }
+        .example-holo .breakdown span { color: var(--violet); font-weight: 600; }
+        .exercise-area { margin-top: 1.5rem; padding: 1.2rem 1.8rem; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(0,240,255,0.08); }
+        .exercise-area .question { font-size: 1rem; font-weight: 500; margin-bottom: 1rem; color: #d0d0ff; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .opt-btn {
+            padding: 0.7rem 1.2rem; border-radius: 12px; background: rgba(0,240,255,0.04);
+            border: 1px solid rgba(0,240,255,0.1); color: #b0b0ff; font-family: 'Rajdhani', sans-serif;
+            font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; text-align: left;
+        }
+        .opt-btn:hover:not(:disabled) { background: rgba(0,240,255,0.1); border-color: var(--cyan); color: #fff; transform: scale(1.01); }
+        .opt-btn.correct { background: rgba(0,240,255,0.2); border-color: var(--cyan); color: #fff; box-shadow: 0 0 25px rgba(0,240,255,0.15); }
+        .opt-btn.wrong { background: rgba(255,0,100,0.15); border-color: #ff0055; color: #ff88aa; }
+        .opt-btn:disabled { cursor: default; opacity: 0.7; }
+        .feedback { margin-top: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 500; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: rgba(0,240,255,0.08); color: var(--text-cyan); border: 1px solid rgba(0,240,255,0.2); }
+        .feedback.wrong { background: rgba(255,0,100,0.08); color: #ff88aa; border: 1px solid rgba(255,0,100,0.2); }
+        .nav-buttons {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: rgba(0,240,255,0.08); border: 1px solid var(--cyan); color: var(--text-cyan);
+            padding: 0.5rem 1.8rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-btn:hover:not(:disabled) { background: rgba(0,240,255,0.2); box-shadow: 0 0 25px rgba(0,240,255,0.2); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .voice-btn {
+            background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet);
+            padding: 0.5rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .voice-btn:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .terminal-box {
+            margin-top: 1.8rem; background: #050510; border: 1px solid rgba(0,240,255,0.1);
+            border-radius: 16px; padding: 1.2rem 1.8rem; font-family: 'Rajdhani', monospace;
+        }
+        .terminal-box .term-header { display: flex; justify-content: space-between; color: rgba(160,250,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,240,255,0.05); padding-bottom: 0.4rem; margin-bottom: 0.8rem; }
+        .terminal-input-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+        .terminal-input-row input { flex: 1; background: transparent; border: none; border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-cyan); font-family: 'Rajdhani', monospace; font-size: 1rem; padding: 0.4rem 0.2rem; outline: none; transition: border 0.3s; min-width: 150px; }
+        .terminal-input-row input:focus { border-bottom-color: var(--violet); }
+        .terminal-input-row button { background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet); padding: 0.3rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px; }
+        .terminal-input-row button:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .term-output { margin-top: 0.8rem; padding: 0.8rem; background: rgba(0,0,0,0.4); border-radius: 10px; min-height: 2.5rem; color: #a0c0ff; font-size: 0.9rem; border-left: 2px solid var(--cyan); opacity: 0.7; transition: all 0.3s; }
+        .term-output.populated { opacity: 1; border-left-color: var(--violet); }
+        @media (max-width: 700px) {
+            body { padding: 0.8rem; }
+            .header { flex-direction: column; align-items: stretch; gap: 0.8rem; padding: 1rem; }
+            .brand h1 { font-size: 1.3rem; }
+            .stats { justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+            .lesson-card { padding: 1.2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .vector-avatar .icon { font-size: 1.6rem; }
+            .vector-avatar { padding: 0.2rem 0.8rem; }
+            .example-holo .word { font-size: 1.3rem; }
+            .theory-box .root { font-size: 1.4rem; }
+            .blocks-nav { justify-content: center; }
+            .block-tab { font-size: 0.55rem; padding: 0.2rem 0.8rem; }
+            .terminal-input-row { flex-wrap: wrap; }
+            .terminal-input-row input { min-width: 100%; }
+            .nav-buttons { flex-direction: column; align-items: stretch; }
+            .nav-btn, .voice-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="header">
+        <div class="brand">
+            <span class="brand-icon">⚡</span>
+            <h1>Archivo de Vector <span>· Argumentación</span></h1>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><span class="label">aciertos</span><span class="num" id="scoreDisplay">0</span></div>
+            <div class="stats-item"><span class="label">racha</span><span class="num highlight" id="streakDisplay">0</span></div>
+            <div class="stats-item"><span class="label">progreso</span><span class="num" id="progressDisplay">0/10</span></div>
+        </div>
+    </header>
+    <div class="vector-row" id="vectorRow">
+        <div class="vector-avatar active" data-state="0"><span class="icon">📁</span><span class="name">Archivo</span></div>
+        <div class="vector-avatar" data-state="1"><span class="icon">🕰️</span><span class="name">Biblioteca</span></div>
+        <div class="vector-avatar" data-state="2"><span class="icon">📡</span><span class="name">En transmisión</span></div>
+        <div class="vector-avatar" data-state="3"><span class="icon">🏛️</span><span class="name">Coordenada Roma</span></div>
+        <div class="vector-avatar" data-state="4"><span class="icon">🏺</span><span class="name">Coordenada Grecia</span></div>
+    </div>
+    <div class="blocks-nav" id="blocksNav"></div>
+    <div class="lesson-card">
+        <div class="lesson-header">
+            <h2 id="blockTitle">Conectores de causa-efecto</h2>
+            <span class="counter" id="lessonCounter">1 / 10</span>
+        </div>
+        <div class="theory-box">
+            <div class="root" id="rootDisplay">porque</div>
+            <div class="meaning" id="meaningDisplay">expresa la causa de un argumento</div>
+            <div class="origin" id="originDisplay">🔹 función: justificar una afirmación</div>
+        </div>
+        <div class="example-holo">
+            <div class="label">⬡ proyección argumentativa</div>
+            <div class="word" id="exampleWord">Debes estudiar porque es importante</div>
+            <div class="breakdown" id="exampleBreakdown"><span>porque</span> (causa) + <span>es importante</span> (justificación)</div>
+        </div>
+        <div class="exercise-area">
+            <div class="question" id="questionText">¿Qué expresa el conector "porque"?</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+            <div>
+                <button class="nav-btn" id="prevBtn">◀ Anterior</button>
+                <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+            </div>
+            <button class="voice-btn" id="voiceBtn">🔊 Escuchar</button>
+        </div>
+    </div>
+    <div class="terminal-box">
+        <div class="term-header"><span>✦ terminal de práctica</span><span>escribe tu propio argumento</span></div>
+        <div class="terminal-input-row">
+            <input type="text" id="termInput" placeholder="ej. 'Debemos actuar porque es urgente'..." autocomplete="off" />
+            <button id="termBtn">➤ enviar</button>
+        </div>
+        <div class="term-output" id="termOutput">⏺ esperando tu creación...</div>
+    </div>
+</div>
+<script>
+(function() {
+    // ================================================================
+    //  100 FÓRMULAS DE ARGUMENTACIÓN · 10 bloques temáticos
+    // ================================================================
+    const BLOCKS = [
+        {
+            name: 'Conectores de causa-efecto',
+            items: [
+                { root: 'porque', meaning: 'expresa la causa de un argumento', example: 'Debes estudiar porque es importante', breakdown: 'porque + causa' },
+                { root: 'ya que', meaning: 'causa conocida o evidente', example: 'Ya que no vienes, me voy', breakdown: 'ya que + causa' },
+                { root: 'puesto que', meaning: 'causa formal', example: 'Puesto que llueve, no saldremos', breakdown: 'puesto que + causa' },
+                { root: 'debido a', meaning: 'causa con sustantivo', example: 'Debido a la lluvia, no salimos', breakdown: 'debido a + sustantivo' },
+                { root: 'a causa de', meaning: 'causa negativa', example: 'A causa del frío, no fuimos', breakdown: 'a causa de + sustantivo' },
+                { root: 'gracias a', meaning: 'causa positiva', example: 'Gracias a su ayuda, lo logré', breakdown: 'gracias a + sustantivo' },
+                { root: 'por tanto', meaning: 'consecuencia directa', example: 'No estudió, por tanto suspendió', breakdown: 'por tanto + consecuencia' },
+                { root: 'por consiguiente', meaning: 'consecuencia formal', example: 'No hay presupuesto; por consiguiente, cancelamos', breakdown: 'por consiguiente + consecuencia' },
+                { root: 'en consecuencia', meaning: 'resultado lógico', example: 'En consecuencia, debemos actuar', breakdown: 'en consecuencia + resultado' },
+                { root: 'de modo que', meaning: 'consecuencia práctica', example: 'Estudia mucho, de modo que aprobará', breakdown: 'de modo que + consecuencia' }
+            ]
+        },
+        {
+            name: 'Conectores de contraste y objeción',
+            items: [
+                { root: 'sin embargo', meaning: 'oposición fuerte a un argumento', example: 'Está lloviendo; sin embargo, saldremos', breakdown: 'sin embargo + contraste' },
+                { root: 'no obstante', meaning: 'oposición formal', example: 'Es difícil; no obstante, lo intentaremos', breakdown: 'no obstante + contraste' },
+                { root: 'aunque', meaning: 'concesión en la argumentación', example: 'Aunque llueva, iré', breakdown: 'aunque + concesión' },
+                { root: 'a pesar de', meaning: 'concesión con sustantivo', example: 'A pesar del frío, salimos', breakdown: 'a pesar de + sustantivo' },
+                { root: 'en cambio', meaning: 'contraste directo', example: 'Él es alto; en cambio, su hermano es bajo', breakdown: 'en cambio + contraste' },
+                { root: 'por el contrario', meaning: 'oposición total', example: 'No es tímido; por el contrario, es extrovertido', breakdown: 'por el contrario + contraste' },
+                { root: 'con todo', meaning: 'concesión que no anula', example: 'Con todo lo que pasó, sigue sonriendo', breakdown: 'con todo + concesión' },
+                { root: 'aun así', meaning: 'concesión enfática', example: 'Aun así, no me rendiré', breakdown: 'aun así + concesión' },
+                { root: 'ahora bien', meaning: 'introducción de objeción', example: 'Ahora bien, también hay que considerar...', breakdown: 'ahora bien + objeción' },
+                { root: 'no obstante lo cual', meaning: 'objeción formal', example: 'No obstante lo cual, seguimos adelante', breakdown: 'no obstante lo cual + objeción' }
+            ]
+        },
+        {
+            name: 'Recursos de refutación',
+            items: [
+                { root: 'en realidad', meaning: 'corrección de un argumento previo', example: 'En realidad, no es tan simple', breakdown: 'en realidad + corrección' },
+                { root: 'más bien', meaning: 'corrección matizada', example: 'No es tonto, más bien es despistado', breakdown: 'más bien + corrección' },
+                { root: 'al contrario', meaning: 'refutación total', example: 'Al contrario, es muy inteligente', breakdown: 'al contrario + refutación' },
+                { root: 'todo lo contrario', meaning: 'refutación enfática', example: 'Todo lo contrario, eso es falso', breakdown: 'todo lo contrario + refutación' },
+                { root: 'no es cierto que', meaning: 'negación de argumento', example: 'No es cierto que sea imposible', breakdown: 'no es cierto que + negación' },
+                { root: 'lejos de', meaning: 'refutación con distancia', example: 'Lejos de ser fácil, es muy difícil', breakdown: 'lejos de + refutación' },
+                { root: 'antes bien', meaning: 'refutación afirmativa', example: 'No lo odio, antes bien lo aprecio', breakdown: 'antes bien + refutación' },
+                { root: 'por el contrario', meaning: 'refutación con contraste', example: 'Por el contrario, deberíamos ayudar', breakdown: 'por el contrario + refutación' },
+                { root: 'no obstante', meaning: 'refutación formal', example: 'No obstante, hay que considerar otra visión', breakdown: 'no obstante + refutación' },
+                { root: 'sin embargo', meaning: 'refutación directa', example: 'Sin embargo, los datos dicen lo contrario', breakdown: 'sin embargo + refutación' }
+            ]
+        },
+        {
+            name: 'Refuerzo y énfasis argumentativo',
+            items: [
+                { root: 'sin duda', meaning: 'aseveración categórica', example: 'Sin duda, es el mejor', breakdown: 'sin duda + afirmación' },
+                { root: 'evidentemente', meaning: 'evidencia argumental', example: 'Evidentemente, es así', breakdown: 'evidentemente + evidencia' },
+                { root: 'por supuesto', meaning: 'aceptación argumental', example: 'Por supuesto, te ayudaré', breakdown: 'por supuesto + aceptación' },
+                { root: 'desde luego', meaning: 'afirmación enfática', example: 'Desde luego, no es fácil', breakdown: 'desde luego + afirmación' },
+                { root: 'claro que', meaning: 'concesión enfática', example: 'Claro que puedes venir', breakdown: 'claro que + concesión' },
+                { root: 'en efecto', meaning: 'confirmación argumental', example: 'En efecto, así fue', breakdown: 'en efecto + confirmación' },
+                { root: 'efectivamente', meaning: 'confirmación enfática', example: 'Efectivamente, llegaron tarde', breakdown: 'efectivamente + confirmación' },
+                { root: 'ciertamente', meaning: 'certeza argumental', example: 'Ciertamente, es una buena opción', breakdown: 'ciertamente + certeza' },
+                { root: 'indudablemente', meaning: 'certeza absoluta', example: 'Indudablemente, es la mejor solución', breakdown: 'indudablemente + certeza' },
+                { root: 'sin lugar a dudas', meaning: 'certeza rotunda', example: 'Sin lugar a dudas, ganaremos', breakdown: 'sin lugar a dudas + certeza' }
+            ]
+        },
+        {
+            name: 'Estrategias de persuasión',
+            items: [
+                { root: 'es necesario que', meaning: 'persuasión por necesidad', example: 'Es necesario que actúes ya', breakdown: 'es necesario que + subjuntivo' },
+                { root: 'es fundamental que', meaning: 'persuasión por importancia', example: 'Es fundamental que lo entiendas', breakdown: 'es fundamental que + subjuntivo' },
+                { root: 'hay que', meaning: 'persuasión imperativa', example: 'Hay que tomar medidas', breakdown: 'hay que + infinitivo' },
+                { root: 'debemos', meaning: 'persuasión colectiva', example: 'Debemos reflexionar sobre esto', breakdown: 'debemos + infinitivo' },
+                { root: 'no podemos olvidar que', meaning: 'persuasión por recuerdo', example: 'No podemos olvidar que hay alternativas', breakdown: 'no podemos olvidar que + oración' },
+                { root: 'tengamos en cuenta que', meaning: 'persuasión por consideración', example: 'Tengamos en cuenta que es complejo', breakdown: 'tengamos en cuenta que + oración' },
+                { root: 'es importante señalar', meaning: 'persuasión por relevancia', example: 'Es importante señalar este detalle', breakdown: 'es importante señalar + oración' },
+                { root: 'cabe destacar', meaning: 'persuasión por énfasis', example: 'Cabe destacar su esfuerzo', breakdown: 'cabe destacar + sustantivo' },
+                { root: 'conviene recordar', meaning: 'persuasión por memoria', example: 'Conviene recordar los hechos', breakdown: 'conviene recordar + sustantivo' },
+                { root: 'no hay que olvidar', meaning: 'persuasión por recordatorio', example: 'No hay que olvidar los detalles', breakdown: 'no hay que olvidar + sustantivo' }
+            ]
+        },
+        {
+            name: 'Recursos de concesión y matización',
+            items: [
+                { root: 'aunque es cierto que', meaning: 'concesión parcial', example: 'Aunque es cierto que es difícil, podemos intentarlo', breakdown: 'aunque es cierto que + concesión' },
+                { root: 'reconozco que', meaning: 'concesión personal', example: 'Reconozco que cometí un error', breakdown: 'reconozco que + concesión' },
+                { root: 'admito que', meaning: 'concesión', example: 'Admito que no es perfecto', breakdown: 'admito que + concesión' },
+                { root: 'ciertamente', meaning: 'concesión con matiz', example: 'Ciertamente, hay problemas', breakdown: 'ciertamente + concesión' },
+                { root: 'es verdad que', meaning: 'concesión objetiva', example: 'Es verdad que llovió mucho', breakdown: 'es verdad que + concesión' },
+                { root: 'sin negar que', meaning: 'concesión con reserva', example: 'Sin negar que hay fallos, el sistema funciona', breakdown: 'sin negar que + concesión' },
+                { root: 'a pesar de todo', meaning: 'concesión final', example: 'A pesar de todo, seguimos adelante', breakdown: 'a pesar de todo + concesión' },
+                { root: 'con todo y con eso', meaning: 'concesión coloquial', example: 'Con todo y con eso, no me rendiré', breakdown: 'con todo y con eso + concesión' },
+                { root: 'pese a que', meaning: 'concesión formal', example: 'Pese a que fue difícil, lo logramos', breakdown: 'pese a que + concesión' },
+                { root: 'aun cuando', meaning: 'concesión enfática', example: 'Aun cuando no quieras, irás', breakdown: 'aun cuando + concesión' }
+            ]
+        },
+        {
+            name: 'Estructuración de argumentos',
+            items: [
+                { root: 'en primer lugar', meaning: 'introducción de primer argumento', example: 'En primer lugar, debemos analizar los datos', breakdown: 'en primer lugar + argumento' },
+                { root: 'en segundo lugar', meaning: 'segundo argumento', example: 'En segundo lugar, evaluamos las opciones', breakdown: 'en segundo lugar + argumento' },
+                { root: 'por un lado', meaning: 'primer aspecto de un argumento', example: 'Por un lado, es económico', breakdown: 'por un lado + aspecto' },
+                { root: 'por otro lado', meaning: 'segundo aspecto de un argumento', example: 'Por otro lado, es rápido', breakdown: 'por otro lado + aspecto' },
+                { root: 'por una parte', meaning: 'primer aspecto formal', example: 'Por una parte, es necesario', breakdown: 'por una parte + aspecto' },
+                { root: 'por otra parte', meaning: 'segundo aspecto formal', example: 'Por otra parte, es viable', breakdown: 'por otra parte + aspecto' },
+                { root: 'en primer término', meaning: 'inicio formal de argumentación', example: 'En primer término, definiremos los conceptos', breakdown: 'en primer término + argumento' },
+                { root: 'a continuación', meaning: 'secuencia argumental', example: 'A continuación, expondremos los datos', breakdown: 'a continuación + argumento' },
+                { root: 'por último', meaning: 'cierre argumental', example: 'Por último, extraemos las conclusiones', breakdown: 'por último + conclusión' },
+                { root: 'finalmente', meaning: 'conclusión argumental', example: 'Finalmente, decidimos actuar', breakdown: 'finalmente + conclusión' }
+            ]
+        },
+        {
+            name: 'Recursos de ejemplificación y analogía',
+            items: [
+                { root: 'por ejemplo', meaning: 'ejemplo ilustrativo', example: 'Por ejemplo, el león es un felino', breakdown: 'por ejemplo + ejemplo' },
+                { root: 'como', meaning: 'ejemplo directo', example: 'Animales como el perro y el gato', breakdown: 'como + ejemplo' },
+                { root: 'así como', meaning: 'ejemplo adicional', example: 'Estudia idiomas, así como historia', breakdown: 'así como + ejemplo' },
+                { root: 'tal como', meaning: 'ejemplo exacto', example: 'Tal como lo hiciste ayer', breakdown: 'tal como + ejemplo' },
+                { root: 'análogamente', meaning: 'comparación argumental', example: 'Análogamente, ocurre en la naturaleza', breakdown: 'análogamente + analogía' },
+                { root: 'de igual manera', meaning: 'comparación de igualdad', example: 'De igual manera, procederemos', breakdown: 'de igual manera + comparación' },
+                { root: 'de forma similar', meaning: 'comparación de similitud', example: 'De forma similar, actúa en la economía', breakdown: 'de forma similar + comparación' },
+                { root: 'a semejanza de', meaning: 'analogía formal', example: 'A semejanza de otros países', breakdown: 'a semejanza de + analogía' },
+                { root: 'del mismo modo', meaning: 'comparación directa', example: 'Del mismo modo, podemos aplicarlo', breakdown: 'del mismo modo + comparación' },
+                { root: 'como sucede con', meaning: 'analogía contextual', example: 'Como sucede con el cine', breakdown: 'como sucede con + analogía' }
+            ]
+        },
+        {
+            name: 'Estrategias de concesión y refutación avanzadas',
+            items: [
+                { root: 'si bien es cierto que', meaning: 'concesión formal seguida de refutación', example: 'Si bien es cierto que es caro, vale la pena', breakdown: 'si bien es cierto que + concesión + refutación' },
+                { root: 'no obstante lo dicho', meaning: 'refutación tras concesión', example: 'No obstante lo dicho, hay que avanzar', breakdown: 'no obstante lo dicho + refutación' },
+                { root: 'a pesar de que', meaning: 'concesión con subjuntivo', example: 'A pesar de que no quieras, irás', breakdown: 'a pesar de que + subjuntivo' },
+                { root: 'pese a todo', meaning: 'concesión final', example: 'Pese a todo, sigue siendo válido', breakdown: 'pese a todo + concesión' },
+                { root: 'concedo que', meaning: 'concesión personal formal', example: 'Concedo que tienes razón en eso', breakdown: 'concedo que + concesión' },
+                { root: 'no niego que', meaning: 'concesión afirmativa', example: 'No niego que hay problemas', breakdown: 'no niego que + concesión' },
+                { root: 'estoy de acuerdo en que', meaning: 'concesión de acuerdo', example: 'Estoy de acuerdo en que es difícil', breakdown: 'estoy de acuerdo en que + concesión' },
+                { root: 'reconozcamos que', meaning: 'concesión colectiva', example: 'Reconozcamos que hemos cometido errores', breakdown: 'reconozcamos que + concesión' },
+                { root: 'aceptando que', meaning: 'concesión condicional', example: 'Aceptando que es posible, ¿qué hacemos?', breakdown: 'aceptando que + concesión' },
+                { root: 'asumiendo que', meaning: 'concesión hipotética', example: 'Asumiendo que es cierto, ¿y entonces?', breakdown: 'asumiendo que + concesión' }
+            ]
+        },
+        {
+            name: 'Recursos de cierre y conclusión',
+            items: [
+                { root: 'en conclusión', meaning: 'cierre formal', example: 'En conclusión, debemos actuar', breakdown: 'en conclusión + cierre' },
+                { root: 'para finalizar', meaning: 'cierre argumental', example: 'Para finalizar, quiero agradecer', breakdown: 'para finalizar + cierre' },
+                { root: 'en resumen', meaning: 'síntesis final', example: 'En resumen, todo salió bien', breakdown: 'en resumen + síntesis' },
+                { root: 'por lo tanto', meaning: 'conclusión lógica', example: 'Por lo tanto, la decisión es acertada', breakdown: 'por lo tanto + conclusión' },
+                { root: 'así pues', meaning: 'conclusión secuencial', example: 'Así pues, hemos llegado al final', breakdown: 'así pues + conclusión' },
+                { root: 'en definitiva', meaning: 'conclusión definitiva', example: 'En definitiva, es la mejor opción', breakdown: 'en definitiva + conclusión' },
+                { root: 'en suma', meaning: 'síntesis conclusiva', example: 'En suma, los beneficios superan los costes', breakdown: 'en suma + conclusión' },
+                { root: 'en pocas palabras', meaning: 'conclusión breve', example: 'En pocas palabras, no funcionó', breakdown: 'en pocas palabras + conclusión' },
+                { root: 'dicho esto', meaning: 'cierre tras argumentación', example: 'Dicho esto, pasemos a las conclusiones', breakdown: 'dicho esto + cierre' },
+                { root: 'como corolario', meaning: 'conclusión formal', example: 'Como corolario, podemos afirmar que...', breakdown: 'como corolario + conclusión' }
+            ]
+        }
+    ];
+
+    // ================================================================
+    //  ESTADO Y DOM
+    // ================================================================
+    let currentBlock = 0, currentLesson = 0, score = 0, streak = 0, answered = false;
+    const blocksNav = document.getElementById('blocksNav');
+    const blockTitle = document.getElementById('blockTitle');
+    const lessonCounter = document.getElementById('lessonCounter');
+    const rootDisplay = document.getElementById('rootDisplay');
+    const meaningDisplay = document.getElementById('meaningDisplay');
+    const originDisplay = document.getElementById('originDisplay');
+    const exampleWord = document.getElementById('exampleWord');
+    const exampleBreakdown = document.getElementById('exampleBreakdown');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const streakDisplay = document.getElementById('streakDisplay');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const termInput = document.getElementById('termInput');
+    const termBtn = document.getElementById('termBtn');
+    const termOutput = document.getElementById('termOutput');
+    const vectorAvatars = document.querySelectorAll('.vector-avatar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const voiceBtn = document.getElementById('voiceBtn');
+
+    function getLesson(b, l) { return BLOCKS[b].items[l]; }
+    function getCurrentLesson() { return getLesson(currentBlock, currentLesson); }
+    function shuffleArray(arr) { for (let i = arr.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+    function renderBlockTabs() {
+        blocksNav.innerHTML = '';
+        BLOCKS.forEach((block, idx) => {
+            const tab = document.createElement('div');
+            tab.className = 'block-tab' + (idx === currentBlock ? ' active' : '');
+            tab.innerHTML = `${block.name} <span class="badge">${block.items.length}</span>`;
+            tab.dataset.idx = idx;
+            tab.addEventListener('click', () => { currentBlock = idx; currentLesson = 0; renderAll(); });
+            blocksNav.appendChild(tab);
+        });
+    }
+
+    function renderLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        blockTitle.textContent = BLOCKS[currentBlock].name;
+        lessonCounter.textContent = `${currentLesson + 1} / ${BLOCKS[currentBlock].items.length}`;
+        rootDisplay.textContent = lesson.root;
+        meaningDisplay.textContent = lesson.meaning;
+        originDisplay.textContent = `🔹 función: ${lesson.breakdown.split('→')[0].trim()}`;
+        exampleWord.textContent = lesson.example;
+        exampleBreakdown.innerHTML = lesson.breakdown.replace(/\b(\w+)\b/g, m => `<span>${m}</span>`);
+        generateExercise(lesson);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        answered = false;
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = false);
+        let done = 0;
+        for (let i = 0; i < currentBlock; i++) done += BLOCKS[i].items.length;
+        done += currentLesson;
+        const total = BLOCKS.reduce((a,b) => a + b.items.length, 0);
+        progressDisplay.textContent = `${Math.min(Math.floor((done/total)*10), 10)}/10`;
+        prevBtn.disabled = (currentBlock === 0 && currentLesson === 0);
+        const lastBlock = BLOCKS.length - 1;
+        const lastLesson = BLOCKS[lastBlock].items.length - 1;
+        nextBtn.disabled = (currentBlock === lastBlock && currentLesson === lastLesson);
+    }
+
+    function generateExercise(lesson) {
+        const all = []; BLOCKS.forEach(b => b.items.forEach(it => all.push({ root: it.root, meaning: it.meaning })));
+        const correct = lesson.meaning;
+        let wrongs = all.filter(m => m.meaning !== correct && m.root !== lesson.root);
+        shuffleArray(wrongs);
+        wrongs = wrongs.slice(0, 3);
+        const options = [correct, ...wrongs.map(w => w.meaning)];
+        shuffleArray(options);
+        questionText.textContent = `¿Qué expresa la fórmula "${lesson.root}"?`;
+        optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.textContent = opt;
+            btn.dataset.value = opt;
+            btn.addEventListener('click', () => handleOptionClick(btn, correct));
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function handleOptionClick(btn, correct) {
+        if (answered) return;
+        const selected = btn.dataset.value;
+        const isCorrect = selected === correct;
+        answered = true;
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score++; streak++;
+            feedback.className = 'feedback show correct';
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+        } else {
+            btn.classList.add('wrong');
+            streak = 0;
+            allBtns.forEach(b => { if (b.dataset.value === correct) b.classList.add('correct'); });
+            feedback.className = 'feedback show wrong';
+            feedback.textContent = `❌ No. La respuesta correcta es "${correct}".`;
+        }
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    function goToLesson(b, l) {
+        if (b < 0 || b >= BLOCKS.length) return;
+        if (l < 0 || l >= BLOCKS[b].items.length) return;
+        currentBlock = b; currentLesson = l; renderAll();
+    }
+    function nextLesson() {
+        if (currentLesson < BLOCKS[currentBlock].items.length - 1) goToLesson(currentBlock, currentLesson + 1);
+        else if (currentBlock < BLOCKS.length - 1) goToLesson(currentBlock + 1, 0);
+    }
+    function prevLesson() {
+        if (currentLesson > 0) goToLesson(currentBlock, currentLesson - 1);
+        else if (currentBlock > 0) goToLesson(currentBlock - 1, BLOCKS[currentBlock - 1].items.length - 1);
+    }
+
+    function speakLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        const text = `${lesson.root}. Significado: ${lesson.meaning}. Ejemplo: ${lesson.example}. Desglose: ${lesson.breakdown}`;
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else alert('Tu navegador no soporta síntesis de voz.');
+    }
+
+    function handleTerminal() {
+        const val = termInput.value.trim();
+        if (!val) {
+            termOutput.textContent = '⏺ escribe un argumento...';
+            termOutput.classList.remove('populated');
+            return;
+        }
+        let found = false, msg = `🔍 "${val}" → `;
+        for (const block of BLOCKS) {
+            for (const item of block.items) {
+                const rootClean = item.root.replace(/[()]/g, '').trim();
+                if (val.toLowerCase().includes(rootClean.toLowerCase()) ||
+                    item.example.toLowerCase().includes(val.toLowerCase().replace(/[()]/g, ''))) {
+                    msg += `relacionado con "${item.root}" (${item.meaning}). `;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        if (!found) msg += 'no se reconoció una fórmula argumentativa concreta, pero tu creatividad cuenta. ⚡';
+        termOutput.textContent = msg;
+        termOutput.classList.add('populated');
+        termInput.value = '';
+    }
+
+    function renderAll() {
+        renderBlockTabs();
+        renderLesson();
+        vectorAvatars.forEach((el, idx) => el.classList.toggle('active', idx === (currentBlock % 5)));
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    // Eventos
+    prevBtn.addEventListener('click', prevLesson);
+    nextBtn.addEventListener('click', nextLesson);
+    voiceBtn.addEventListener('click', speakLesson);
+    termBtn.addEventListener('click', handleTerminal);
+    termInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleTerminal(); });
+    vectorAvatars.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+            currentBlock = idx % BLOCKS.length;
+            currentLesson = 0;
+            renderAll();
+        });
+    });
+
+    renderAll();
+    setTimeout(() => {
+        termOutput.textContent = '⏳ Vector activo. Explora las 100 fórmulas argumentativas. Escribe tu propio argumento.';
+        termOutput.classList.add('populated');
+    }, 500);
+})();
+</script>
+</body>
+</html>

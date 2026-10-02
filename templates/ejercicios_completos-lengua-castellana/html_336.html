@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔍 Flota Semiótica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🔍 FLOTA SEMIÓTICA<small>100 TÉCNICAS · SIGNOS</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="signo" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Signo <span class="badge-personaje bg-dorado">Fundamentos</span></a>
+        <a class="nav-link" data-section="saussure" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Saussure <span class="badge-personaje bg-azul">Estructural</span></a>
+        <a class="nav-link" data-section="peirce" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Peirce <span class="badge-personaje bg-verde">Triádica</span></a>
+        <a class="nav-link" data-section="cultural" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Cultural <span class="badge-personaje bg-purpura">Semiosis</span></a>
+        <a class="nav-link" data-section="aplicacion" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Aplicación <span class="badge-personaje bg-rojo">Práctica</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🔍</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Semiótica</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Semiótica de la lengua española</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la semiótica:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Signo</strong> – Fundamentos del signo: significado, significante, arbitrariedad, iconicidad.</li>
+                    <li><strong style="color:var(--neon-azul);">Saussure</strong> – Estructuralismo: lengua/habla, sincronía/diacronía, sintagma/paradigma.</li>
+                    <li><strong style="color:var(--neon-verde);">Peirce</strong> – Semiótica triádica: icono, índice, símbolo, interpretante.</li>
+                    <li><strong style="color:var(--neon-purpura);">Cultural</strong> – Semiosis cultural: mitos, códigos, ideologías, discurso social.</li>
+                    <li><strong style="color:var(--neon-rojo);">Aplicación</strong> – Semiótica práctica: publicidad, cine, literatura, redes sociales.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-signo" class="section-content" style="display:none;"></div>
+        <div id="section-saussure" class="section-content" style="display:none;"></div>
+        <div id="section-peirce" class="section-content" style="display:none;"></div>
+        <div id="section-cultural" class="section-content" style="display:none;"></div>
+        <div id="section-aplicacion" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    signo: {
+        nombre: "Signo", color: "dorado", icono: "bi-robot",
+        especialidad: "Fundamentos del signo: significado, significante, arbitrariedad, iconicidad",
+        tecnicas: [
+            { titulo: "El signo lingüístico", teoria: "El signo lingüístico es la unidad mínima de la comunicación que asocia un significante (imagen acústica) con un significado (concepto). Es la base de la semiótica.", recurso: "Signo lingüístico", ejemplo: "La palabra 'árbol' (significante) evoca la imagen mental de un árbol (significado).", ejercicio: "Analiza el signo lingüístico en 5 palabras.", reto: "Investiga la naturaleza del signo lingüístico." },
+            { titulo: "Significante", teoria: "El significante es la parte material del signo: la imagen acústica, la forma escrita o cualquier manifestación física del signo.", recurso: "Significante", ejemplo: "El sonido /ár-bol/ o la grafía 'árbol' son el significante.", ejercicio: "Identifica el significante en 5 palabras.", reto: "Investiga la relación entre significante y significado." },
+            { titulo: "Significado", teoria: "El significado es el contenido mental, el concepto o la idea que el significante evoca en el hablante.", recurso: "Significado", ejemplo: "La imagen mental de un árbol es el significado de la palabra 'árbol'.", ejercicio: "Identifica el significado en 5 palabras.", reto: "Investiga la relación entre significado y referente." },
+            { titulo: "Arbitrariedad del signo", teoria: "La relación entre significante y significado es arbitraria, no existe una conexión necesaria o natural entre ellos (excepto en las onomatopeyas).", recurso: "Arbitrariedad", ejemplo: "La palabra 'mesa' no tiene nada que ver con el objeto mesa; es una convención social.", ejercicio: "Demuestra la arbitrariedad del signo en 5 palabras.", reto: "Investiga las excepciones a la arbitrariedad." },
+            { titulo: "Carácter lineal del significante", teoria: "El significante se desarrolla en el tiempo (en el habla) y en el espacio (en la escritura), de forma lineal, uno detrás de otro.", recurso: "Linealidad", ejemplo: "Las palabras de una frase se pronuncian una tras otra.", ejercicio: "Analiza la linealidad del significante en una frase.", reto: "Investiga la linealidad en diferentes sistemas de escritura." },
+            { titulo: "Mutabilidad e inmutabilidad del signo", teoria: "El signo es inmutable porque la comunidad lingüística lo impone, pero es mutable porque evoluciona con el tiempo.", recurso: "Mutabilidad", ejemplo: "La palabra 'caballo' ha evolucionado desde el latín 'caballus'.", ejercicio: "Investiga la evolución de 3 palabras.", reto: "Analiza la inmutabilidad y mutabilidad del signo." },
+            { titulo: "Valor lingüístico", teoria: "El valor de un signo no está en sí mismo, sino en su relación con los demás signos del sistema. Cada signo es lo que los otros no son.", recurso: "Valor lingüístico", ejemplo: "El valor de 'rojo' se define por su oposición a 'azul', 'verde', etc.", ejercicio: "Analiza el valor de 5 palabras.", reto: "Investiga el concepto de valor en Saussure." },
+            { titulo: "Identidad y realidad del signo", teoria: "La identidad del signo está determinada por su lugar en el sistema, no por sus características físicas.", recurso: "Identidad del signo", ejemplo: "La palabra 'casa' es la misma aunque se pronuncie con diferentes acentos.", ejercicio: "Analiza la identidad del signo en 3 palabras.", reto: "Investiga la identidad del signo en diferentes dialectos." },
+            { titulo: "Iconicidad", teoria: "La iconicidad es el grado de similitud entre el signo y lo que representa. Las onomatopeyas son icónicas; la mayoría de las palabras son simbólicas.", recurso: "Iconicidad", ejemplo: "'Miau' suena como el maullido del gato.", ejercicio: "Clasifica 10 palabras por su grado de iconicidad.", reto: "Investiga la iconicidad en diferentes lenguas." },
+            { titulo: "Símbolo", teoria: "El símbolo es un signo arbitrario y convencional, cuya relación con el significado está establecida por la tradición y la cultura.", recurso: "Símbolo", ejemplo: "La cruz es un símbolo del cristianismo; la bandera es un símbolo de una nación.", ejercicio: "Escribe 5 símbolos culturales.", reto: "Investiga el simbolismo en diferentes culturas." },
+            { titulo: "Índice", teoria: "El índice es un signo que mantiene una relación física o causal con su referente: el humo indica fuego, la huella indica paso.", recurso: "Índice", ejemplo: "El humo es índice de fuego; las nubes oscuras son índice de lluvia.", ejercicio: "Escribe 5 ejemplos de índices.", reto: "Investiga los índices en la comunicación no verbal." },
+            { titulo: "Icono", teoria: "El icono es un signo que se asemeja a su referente: un retrato, un mapa, una fotografía, una onomatopeya.", recurso: "Icono", ejemplo: "Un retrato de una persona es un icono de esa persona.", ejercicio: "Escribe 5 ejemplos de iconos.", reto: "Investiga la iconicidad en el arte." },
+            { titulo: "Código", teoria: "El código es un sistema de reglas que permite la producción e interpretación de signos. La lengua es el código más importante.", recurso: "Código", ejemplo: "El español es un código; el código de la carretera también lo es.", ejercicio: "Analiza 3 códigos diferentes.", reto: "Investiga la relación entre código y mensaje." },
+            { titulo: "Sistema", teoria: "El sistema es el conjunto de elementos interrelacionados que forman un todo coherente. La lengua es un sistema de signos.", recurso: "Sistema", ejemplo: "El sistema fonológico del español, el sistema verbal, etc.", ejercicio: "Analiza un sistema lingüístico.", reto: "Investiga la estructura de los sistemas." },
+            { titulo: "Estructura", teoria: "La estructura es la organización interna de un sistema, las relaciones entre sus elementos.", recurso: "Estructura", ejemplo: "La estructura de la oración: sujeto + predicado.", ejercicio: "Analiza la estructura de 3 oraciones.", reto: "Investiga el concepto de estructura en lingüística." },
+            { titulo: "Función del signo", teoria: "La función del signo es comunicar, representar y significar. Los signos sirven para transmitir información y expresar ideas.", recurso: "Función del signo", ejemplo: "La palabra 'agua' sirve para referirse al líquido.", ejercicio: "Analiza la función de 5 signos.", reto: "Investiga las funciones del lenguaje." },
+            { titulo: "Signo y realidad", teoria: "El signo no es la realidad, sino una representación de ella. La realidad existe independientemente de los signos, pero solo la conocemos a través de ellos.", recurso: "Signo y realidad", ejemplo: "La palabra 'amor' no es el amor, sino una representación.", ejercicio: "Reflexiona sobre la relación entre signo y realidad.", reto: "Investiga la filosofía del lenguaje." },
+            { titulo: "Signo y pensamiento", teoria: "El signo no solo comunica, sino que también estructura el pensamiento. Pensamos a través de signos.", recurso: "Signo y pensamiento", ejemplo: "La hipótesis de Sapir-Whorf: el lenguaje influye en la percepción.", ejercicio: "Reflexiona sobre la relación entre signo y pensamiento.", reto: "Investiga la hipótesis de Sapir-Whorf." },
+            { titulo: "Signo y cultura", teoria: "Los signos son productos culturales y, a su vez, construyen la cultura. Cada cultura tiene su propio sistema de signos.", recurso: "Signo y cultura", ejemplo: "Los gestos tienen diferentes significados en diferentes culturas.", ejercicio: "Analiza signos culturales de tu entorno.", reto: "Investiga la semiótica cultural." },
+            { titulo: "Signo y poder", teoria: "Los signos pueden ser utilizados para ejercer poder, manipular, persuadir o controlar. El discurso político es un ejemplo.", recurso: "Signo y poder", ejemplo: "La propaganda política usa signos para persuadir.", ejercicio: "Analiza el uso de signos en un discurso político.", reto: "Investiga la semiótica del poder." }
+        ]
+    },
+    saussure: {
+        nombre: "Saussure", color: "azul", icono: "bi-robot",
+        especialidad: "Estructuralismo: lengua/habla, sincronía/diacronía, sintagma/paradigma",
+        tecnicas: [
+            { titulo: "Lengua y habla", teoria: "La lengua es el sistema abstracto de signos compartido por una comunidad. El habla es el uso concreto que cada hablante hace de la lengua.", recurso: "Lengua / Habla", ejemplo: "El español es la lengua; la conversación que mantienes con un amigo es habla.", ejercicio: "Distingue lengua y habla en 5 situaciones.", reto: "Investiga la relación entre lengua y habla." },
+            { titulo: "Sincronía y diacronía", teoria: "La sincronía estudia la lengua en un momento dado, como un sistema. La diacronía estudia la evolución de la lengua a lo largo del tiempo.", recurso: "Sincronía / Diacronía", ejemplo: "Estudiar el español actual es sincronía; estudiar la evolución del español desde el latín es diacronía.", ejercicio: "Distingue sincronía y diacronía en 5 fenómenos lingüísticos.", reto: "Investiga la sincronía y diacronía en lingüística." },
+            { titulo: "Sintagma y paradigma", teoria: "El sintagma es la combinación de signos en el eje horizontal (la frase). El paradigma es el conjunto de signos que pueden ocupar una misma posición (eje vertical).", recurso: "Sintagma / Paradigma", ejemplo: "En 'El perro come', 'El perro' es un sintagma; 'perro' podría ser reemplazado por 'gato', 'caballo' (paradigma).", ejercicio: "Analiza sintagmas y paradigmas en 3 oraciones.", reto: "Investiga los ejes sintagmático y paradigmático." },
+            { titulo: "Valor lingüístico en Saussure", teoria: "El valor de un signo está determinado por su posición en el sistema, por su relación con los otros signos (diferencia y oposición).", recurso: "Valor lingüístico", ejemplo: "El valor de 'perro' se define por su oposición a 'gato', 'lobo', etc.", ejercicio: "Analiza el valor de 5 palabras.", reto: "Investiga el concepto de valor en Saussure." },
+            { titulo: "Arbitrariedad radical", teoria: "Saussure sostiene que la relación entre significante y significado es enteramente arbitraria, establecida por la convención social.", recurso: "Arbitrariedad radical", ejemplo: "No hay razón natural para llamar 'mesa' a una mesa.", ejercicio: "Demuestra la arbitrariedad en 5 palabras.", reto: "Investiga la arbitrariedad del signo." },
+            { titulo: "El objeto de la lingüística", teoria: "El objeto de la lingüística, según Saussure, es la lengua en sí misma, considerada como un sistema de signos.", recurso: "Objeto de la lingüística", ejemplo: "La lingüística estudia la estructura de la lengua, no el uso individual.", ejercicio: "Reflexiona sobre el objeto de la lingüística.", reto: "Investiga la definición de la lingüística." },
+            { titulo: "La lingüística como ciencia", teoria: "Saussure propuso que la lingüística debe ser una ciencia que estudie la lengua como un sistema autónomo.", recurso: "Lingüística como ciencia", ejemplo: "La lingüística tiene métodos propios y un objeto de estudio definido.", ejercicio: "Reflexiona sobre la cientificidad de la lingüística.", reto: "Investiga el método en lingüística." },
+            { titulo: "Inmutabilidad y mutabilidad", teoria: "El signo es inmutable porque la comunidad lo impone, pero es mutable porque la lengua evoluciona con el tiempo.", recurso: "Inmutabilidad / Mutabilidad", ejemplo: "El español cambia lentamente, pero los hablantes no pueden cambiarlo a voluntad.", ejercicio: "Investiga la evolución de 3 palabras.", reto: "Analiza la inmutabilidad y mutabilidad del signo." },
+            { titulo: "El círculo del habla", teoria: "El circuito del habla describe el proceso de comunicación: desde el cerebro del hablante hasta el oído del oyente.", recurso: "Circuito del habla", ejemplo: "El hablante codifica un mensaje, el oyente lo decodifica.", ejercicio: "Dibuja un circuito del habla.", reto: "Investiga el circuito del habla en Saussure." },
+            { titulo: "El signo como entidad psíquica", teoria: "El signo es una entidad psíquica que une un concepto (significado) y una imagen acústica (significante) en la mente.", recurso: "Signo psíquico", ejemplo: "La palabra 'amor' evoca un concepto en la mente.", ejercicio: "Reflexiona sobre la naturaleza psíquica del signo.", reto: "Investiga la psicología del signo." },
+            { titulo: "La lengua como sistema de valores puros", teoria: "La lengua es un sistema en el que cada elemento adquiere su valor por su oposición a los demás elementos del sistema.", recurso: "Valores puros", ejemplo: "Los colores del semáforo adquieren su valor por su oposición mutua.", ejercicio: "Analiza un sistema de valores lingüísticos.", reto: "Investiga el concepto de valor en Saussure." },
+            { titulo: "El método sincrónico", teoria: "El método sincrónico estudia la lengua como un sistema en un momento dado, sin considerar su evolución.", recurso: "Método sincrónico", ejemplo: "La descripción del español actual es sincrónica.", ejercicio: "Aplica el método sincrónico a un fenómeno lingüístico.", reto: "Investiga el método sincrónico." },
+            { titulo: "El método diacrónico", teoria: "El método diacrónico estudia la evolución de la lengua a lo largo del tiempo.", recurso: "Método diacrónico", ejemplo: "El estudio de la evolución del latín al español es diacrónico.", ejercicio: "Aplica el método diacrónico a un fenómeno lingüístico.", reto: "Investiga el método diacrónico." },
+            { titulo: "La oposición significante/significado", teoria: "La oposición entre significante (forma) y significado (contenido) es fundamental para entender el signo lingüístico.", recurso: "Significante / Significado", ejemplo: "La palabra 'casa' tiene un significante (su sonido) y un significado (su concepto).", ejercicio: "Analiza la oposición en 5 signos.", reto: "Investiga la relación entre forma y contenido." },
+            { titulo: "La oposición lengua/habla", teoria: "La oposición entre lengua (sistema) y habla (uso) es central en el estructuralismo saussuriano.", recurso: "Lengua / Habla", ejemplo: "La gramática es parte de la lengua; la conversación es parte del habla.", ejercicio: "Distingue lengua y habla en diferentes contextos.", reto: "Investiga la relación entre sistema y uso." },
+            { titulo: "La oposición sincronía/diacronía", teoria: "La oposición entre sincronía (estudio en un momento) y diacronía (estudio a lo largo del tiempo) permite diferentes enfoques.", recurso: "Sincronía / Diacronía", ejemplo: "Un diccionario es sincrónico; una historia de la lengua es diacrónica.", ejercicio: "Aplica ambos enfoques a un fenómeno lingüístico.", reto: "Investiga la sincronía y diacronía." },
+            { titulo: "La oposición sintagma/paradigma", teoria: "La oposición entre sintagma (combinación) y paradigma (selección) estructura el análisis lingüístico.", recurso: "Sintagma / Paradigma", ejemplo: "La elección de una palabra en una frase es paradigmática; su combinación con otras es sintagmática.", ejercicio: "Analiza ambas dimensiones en una oración.", reto: "Investiga los ejes sintagmático y paradigmático." },
+            { titulo: "La lengua como sistema de relaciones", teoria: "La lengua es un sistema de relaciones: cada elemento se define por su relación con los demás.", recurso: "Sistema de relaciones", ejemplo: "El fonema /p/ se define por su oposición a /b/, /t/, etc.", ejercicio: "Analiza las relaciones en un sistema lingüístico.", reto: "Investiga la teoría de sistemas." },
+            { titulo: "El legado de Saussure", teoria: "Saussure fundó la lingüística moderna y sentó las bases del estructuralismo, que influyó en todas las ciencias humanas.", recurso: "Legado de Saussure", ejemplo: "El estructuralismo ha influido en la antropología, la psicología, la literatura.", ejercicio: "Investiga el legado de Saussure.", reto: "Escribe un ensayo sobre el estructuralismo." },
+            { titulo: "Saussure y la semiótica", teoria: "Saussure propuso una ciencia general de los signos: la semiología, que estudia la vida de los signos en la sociedad.", recurso: "Semiología", ejemplo: "La semiótica estudia todos los sistemas de signos, no solo la lengua.", ejercicio: "Investiga la relación entre semiología y semiótica.", reto: "Escribe un texto sobre la semiótica." }
+        ]
+    },
+    peirce: {
+        nombre: "Peirce", color: "verde", icono: "bi-robot",
+        especialidad: "Semiótica triádica: icono, índice, símbolo, interpretante",
+        tecnicas: [
+            { titulo: "El signo en Peirce", teoria: "Para Peirce, el signo es algo que, para alguien, representa algo en algún aspecto o capacidad. Es una relación triádica.", recurso: "Signo triádico", ejemplo: "Un semáforo en rojo significa 'detenerse' para un conductor.", ejercicio: "Analiza un signo triádico.", reto: "Investiga la definición de signo en Peirce." },
+            { titulo: "El representamen", teoria: "El representamen es la forma que toma el signo, su manifestación física (palabra, imagen, sonido).", recurso: "Representamen", ejemplo: "La palabra 'perro' es un representamen.", ejercicio: "Identifica el representamen en 5 signos.", reto: "Investiga el concepto de representamen." },
+            { titulo: "El objeto", teoria: "El objeto es aquello a lo que el signo se refiere: puede ser un objeto real, un concepto o una idea.", recurso: "Objeto", ejemplo: "El objeto de la palabra 'perro' es el animal perro.", ejercicio: "Identifica el objeto en 5 signos.", reto: "Investiga la relación entre signo y objeto." },
+            { titulo: "El interpretante", teoria: "El interpretante es el efecto que el signo produce en la mente del intérprete: el significado que se genera.", recurso: "Interpretante", ejemplo: "La palabra 'perro' genera la imagen mental de un perro.", ejercicio: "Analiza el interpretante de 5 signos.", reto: "Investiga el concepto de interpretante." },
+            { titulo: "El icono en Peirce", teoria: "El icono es un signo que se asemeja a su objeto. Tiene una relación de similitud.", recurso: "Icono", ejemplo: "Un retrato de una persona es un icono.", ejercicio: "Escribe 5 ejemplos de iconos.", reto: "Investiga la iconicidad en el lenguaje." },
+            { titulo: "El índice en Peirce", teoria: "El índice es un signo que mantiene una relación física o causal con su objeto. Señala, indica.", recurso: "Índice", ejemplo: "El humo es índice de fuego; una señal de tráfico es un índice.", ejercicio: "Escribe 5 ejemplos de índices.", reto: "Investiga los índices en la comunicación." },
+            { titulo: "El símbolo en Peirce", teoria: "El símbolo es un signo arbitrario, basado en una convención o una regla general. La mayoría de las palabras son símbolos.", recurso: "Símbolo", ejemplo: "La palabra 'agua' es un símbolo.", ejercicio: "Escribe 5 ejemplos de símbolos.", reto: "Investiga la naturaleza simbólica del lenguaje." },
+            { titulo: "El signo y el interpretante dinámico", teoria: "El interpretante dinámico es el efecto real que el signo produce en la mente del intérprete en un momento concreto.", recurso: "Interpretante dinámico", ejemplo: "Una señal de peligro genera miedo o precaución.", ejercicio: "Analiza el interpretante dinámico en 3 signos.", reto: "Investiga la semiosis." },
+            { titulo: "El signo y el interpretante lógico", teoria: "El interpretante lógico es el efecto general y estable que el signo produce en la mente de los intérpretes.", recurso: "Interpretante lógico", ejemplo: "El significado general de 'perro' es el mismo para todos los hablantes.", ejercicio: "Analiza el interpretante lógico en 3 signos.", reto: "Investiga la semiosis." },
+            { titulo: "La semiosis infinita", teoria: "La semiosis es el proceso por el cual un signo genera otro interpretante, que a su vez puede generar otro signo, ad infinitum.", recurso: "Semiosis infinita", ejemplo: "El significado de una palabra se define con otras palabras, que a su vez se definen con otras.", ejercicio: "Reflexiona sobre la semiosis infinita.", reto: "Investiga el concepto de semiosis." },
+            { titulo: "La tricotomía de los signos", teoria: "Peirce clasifica los signos en tres tricotomías: según el signo en sí (cualisigno, sinsigno, legisigno), según la relación con el objeto (icono, índice, símbolo) y según la relación con el interpretante (rema, dicente, argumento).", recurso: "Tricotomía de los signos", ejemplo: "Un signo puede ser icono, índice y símbolo a la vez.", ejercicio: "Clasifica 5 signos según las tricotomías de Peirce.", reto: "Investiga las tricotomías de Peirce." },
+            { titulo: "El cualisigno", teoria: "El cualisigno es un signo que es una cualidad o posibilidad: un color, un sonido, una sensación.", recurso: "Cualisigno", ejemplo: "El color rojo es un cualisigno.", ejercicio: "Escribe 5 cualisignos.", reto: "Investiga los cualisignos." },
+            { titulo: "El sinsigno", teoria: "El sinsigno es un signo que es un objeto o evento concreto: un grito, una señal, una palabra pronunciada.", recurso: "Sinsigno", ejemplo: "Un grito de auxilio es un sinsigno.", ejercicio: "Escribe 5 sinsignos.", reto: "Investiga los sinsignos." },
+            { titulo: "El legisigno", teoria: "El legisigno es un signo que es una ley o convención: una palabra en el diccionario, una señal de tráfico.", recurso: "Legisigno", ejemplo: "La palabra 'perro' en el diccionario es un legisigno.", ejercicio: "Escribe 5 legisignos.", reto: "Investiga los legisignos." },
+            { titulo: "El rema o rhema", teoria: "El rema es un signo que representa una posibilidad o cualidad, sin afirmar nada. Es un término o predicado.", recurso: "Rema", ejemplo: "'... es rojo' es un rema.", ejercicio: "Escribe 5 remas.", reto: "Investiga los remas en lógica." },
+            { titulo: "El dicente", teoria: "El dicente es un signo que representa un hecho o proposición, afirmando algo. Es una oración o enunciado.", recurso: "Dicente", ejemplo: "'El cielo es azul' es un dicente.", ejercicio: "Escribe 5 dicentes.", reto: "Investiga los dicentes en lógica." },
+            { titulo: "El argumento", teoria: "El argumento es un signo que representa una ley o razonamiento. Es un silogismo o una inferencia.", recurso: "Argumento", ejemplo: "Un silogismo es un argumento.", ejercicio: "Escribe 5 argumentos.", reto: "Investiga los argumentos en lógica." },
+            { titulo: "La lógica como semiótica", teoria: "Peirce consideraba que la lógica es una rama de la semiótica, el estudio de los signos y sus relaciones.", recurso: "Lógica y semiótica", ejemplo: "El razonamiento lógico se basa en signos.", ejercicio: "Reflexiona sobre la relación entre lógica y semiótica.", reto: "Investiga la lógica de Peirce." },
+            { titulo: "El legado de Peirce", teoria: "Peirce es considerado el fundador de la semiótica moderna y su obra ha influido en la filosofía, la lingüística y la comunicación.", recurso: "Legado de Peirce", ejemplo: "La semiótica de Peirce es fundamental para el análisis del discurso.", ejercicio: "Investiga el legado de Peirce.", reto: "Escribe un ensayo sobre la semiótica de Peirce." },
+            { titulo: "Peirce y la semiótica actual", teoria: "La semiótica de Peirce sigue siendo relevante hoy en día, aplicada a la publicidad, el cine, la inteligencia artificial y la comunicación digital.", recurso: "Semiótica actual", ejemplo: "Los emojis pueden analizarse desde la semiótica de Peirce.", ejercicio: "Investiga la semiótica en la comunicación digital.", reto: "Escribe un texto sobre la semiótica contemporánea." }
+        ]
+    },
+    cultural: {
+        nombre: "Cultural", color: "purpura", icono: "bi-robot",
+        especialidad: "Semiosis cultural: mitos, códigos, ideologías, discurso social",
+        tecnicas: [
+            { titulo: "Semiosis cultural", teoria: "La semiosis cultural es el proceso por el cual los signos y símbolos construyen y transmiten la cultura de una sociedad.", recurso: "Semiosis cultural", ejemplo: "Los mitos, las leyendas y los rituales son formas de semiosis cultural.", ejercicio: "Analiza un ejemplo de semiosis cultural.", reto: "Investiga la semiosis cultural en tu entorno." },
+            { titulo: "Mito", teoria: "El mito es un relato simbólico que explica el origen del mundo, de los dioses o de la sociedad, y que funciona como un sistema de signos culturales.", recurso: "Mito", ejemplo: "El mito de la fundación de Roma (Rómulo y Remo).", ejercicio: "Analiza un mito de tu cultura.", reto: "Investiga el mito en la semiótica cultural." },
+            { titulo: "Rito", teoria: "El rito es una práctica simbólica repetitiva que refuerza los valores y la identidad de una comunidad.", recurso: "Rito", ejemplo: "La ceremonia de la comunión, el bautizo, el funeral.", ejercicio: "Analiza un rito de tu cultura.", reto: "Investiga los ritos en la semiótica cultural." },
+            { titulo: "Símbolo cultural", teoria: "El símbolo cultural es un signo que condensa significados profundos y compartidos por una comunidad.", recurso: "Símbolo cultural", ejemplo: "La bandera, el escudo, el himno nacional son símbolos culturales.", ejercicio: "Escribe 5 símbolos culturales.", reto: "Investiga el simbolismo cultural." },
+            { titulo: "Código cultural", teoria: "El código cultural es un conjunto de reglas y convenciones que permiten interpretar los signos dentro de una cultura.", recurso: "Código cultural", ejemplo: "Las normas de cortesía son un código cultural.", ejercicio: "Analiza un código cultural.", reto: "Investiga los códigos culturales." },
+            { titulo: "Discurso social", teoria: "El discurso social es el conjunto de prácticas lingüísticas y semióticas que construyen la realidad social.", recurso: "Discurso social", ejemplo: "El discurso político, el discurso publicitario, el discurso mediático.", ejercicio: "Analiza un discurso social.", reto: "Investiga el análisis del discurso." },
+            { titulo: "Ideología", teoria: "La ideología es un sistema de ideas, creencias y valores que se expresa a través de signos y discursos.", recurso: "Ideología", ejemplo: "El discurso neoliberal, el discurso feminista.", ejercicio: "Analiza la ideología en un discurso.", reto: "Investiga la ideología en la semiótica." },
+            { titulo: "Hegemonía cultural", teoria: "La hegemonía cultural es el dominio de una clase o grupo social sobre los signos y discursos de una sociedad.", recurso: "Hegemonía cultural", ejemplo: "El discurso dominante en los medios de comunicación.", ejercicio: "Analiza un ejemplo de hegemonía cultural.", reto: "Investiga el concepto de hegemonía cultural." },
+            { titulo: "Contrahegemonía", teoria: "La contrahegemonía es la resistencia al discurso dominante a través de signos y prácticas alternativas.", recurso: "Contrahegemonía", ejemplo: "El arte callejero, el activismo social, la contracultura.", ejercicio: "Analiza un ejemplo de contrahegemonía.", reto: "Investiga la resistencia cultural." },
+            { titulo: "Identidad cultural", teoria: "La identidad cultural se construye a través de signos, símbolos y discursos que definen la pertenencia a un grupo.", recurso: "Identidad cultural", ejemplo: "La identidad nacional, la identidad étnica, la identidad de género.", ejercicio: "Analiza la identidad cultural en un signo.", reto: "Investiga la identidad cultural." },
+            { titulo: "Alteridad", teoria: "La alteridad es la representación del 'otro' a través de signos y discursos, a menudo desde una perspectiva etnocéntrica.", recurso: "Alteridad", ejemplo: "La representación de los pueblos indígenas en los medios.", ejercicio: "Analiza la alteridad en un discurso.", reto: "Investiga el concepto de alteridad." },
+            { titulo: "Estereotipo", teoria: "El estereotipo es un signo simplificador que reduce la complejidad de un grupo o persona a unos pocos rasgos.", recurso: "Estereotipo", ejemplo: "El estereotipo del 'mexicano' o del 'español' en el cine.", ejercicio: "Analiza un estereotipo.", reto: "Investiga los estereotipos culturales." },
+            { titulo: "Prejuicio", teoria: "El prejuicio es una creencia o juicio negativo sobre un grupo, expresado a través de signos y discursos discriminatorios.", recurso: "Prejuicio", ejemplo: "El discurso racista, sexista, homófobo.", ejercicio: "Analiza un prejuicio en un discurso.", reto: "Investiga los prejuicios culturales." },
+            { titulo: "Racismo", teoria: "El racismo es un sistema de signos y discursos que jerarquiza a las personas según su origen étnico o racial.", recurso: "Racismo", ejemplo: "El discurso colonial, la discriminación racial.", ejercicio: "Analiza un discurso racista.", reto: "Investiga la semiótica del racismo." },
+            { titulo: "Sexismo", teoria: "El sexismo es un sistema de signos y discursos que jerarquiza a las personas según su género.", recurso: "Sexismo", ejemplo: "El lenguaje sexista, la publicidad sexista.", ejercicio: "Analiza un discurso sexista.", reto: "Investiga la semiótica del sexismo." },
+            { titulo: "Nacionalismo", teoria: "El nacionalismo es una ideología que se expresa a través de símbolos y discursos que exaltan la identidad nacional.", recurso: "Nacionalismo", ejemplo: "Los símbolos patrios, los discursos nacionalistas.", ejercicio: "Analiza un discurso nacionalista.", reto: "Investiga la semiótica del nacionalismo." },
+            { titulo: "Globalización", teoria: "La globalización ha creado nuevos signos y discursos que trascienden las fronteras nacionales.", recurso: "Globalización", ejemplo: "Las marcas globales, el inglés como lengua franca.", ejercicio: "Analiza un signo de la globalización.", reto: "Investiga la semiótica de la globalización." },
+            { titulo: "Cultura popular", teoria: "La cultura popular es un campo de signos y discursos que se producen y consumen masivamente.", recurso: "Cultura popular", ejemplo: "La música pop, el cine, la televisión, los memes.", ejercicio: "Analiza un signo de la cultura popular.", reto: "Investiga la semiótica de la cultura popular." },
+            { titulo: "Memes", teoria: "Los memes son unidades de transmisión cultural que se difunden a través de signos visuales y textuales en internet.", recurso: "Memes", ejemplo: "Un meme de un gato con un texto gracioso.", ejercicio: "Analiza un meme.", reto: "Investiga la semiótica de los memes." },
+            { titulo: "Redes sociales", teoria: "Las redes sociales son espacios de producción y circulación de signos que han transformado la comunicación contemporánea.", recurso: "Redes sociales", ejemplo: "Twitter, Instagram, TikTok son plataformas de signos.", ejercicio: "Analiza un signo en una red social.", reto: "Investiga la semiótica de las redes sociales." }
+        ]
+    },
+    aplicacion: {
+        nombre: "Aplicación", color: "rojo", icono: "bi-robot",
+        especialidad: "Semiótica práctica: publicidad, cine, literatura, redes sociales",
+        tecnicas: [
+            { titulo: "Semiótica publicitaria", teoria: "La publicidad utiliza signos para persuadir, asociar productos con valores y construir marcas.", recurso: "Semiótica publicitaria", ejemplo: "Un anuncio de Coca-Cola asocia el producto con la felicidad.", ejercicio: "Analiza un anuncio desde la semiótica.", reto: "Investiga la semiótica de la publicidad." },
+            { titulo: "Semiótica del cine", teoria: "El cine es un lenguaje audiovisual con su propio sistema de signos: planos, encuadres, movimientos de cámara, montaje, música.", recurso: "Semiótica del cine", ejemplo: "Un primer plano indica intimidad; un plano general indica contexto.", ejercicio: "Analiza una escena de cine desde la semiótica.", reto: "Investiga la semiótica del cine." },
+            { titulo: "Semiótica de la literatura", teoria: "La literatura es un sistema de signos que construye mundos ficticios y transmite significados a través del lenguaje.", recurso: "Semiótica de la literatura", ejemplo: "La metáfora es un signo que crea nuevos significados.", ejercicio: "Analiza un texto literario desde la semiótica.", reto: "Investiga la semiótica de la literatura." },
+            { titulo: "Semiótica de la moda", teoria: "La moda es un sistema de signos que comunica identidad, estatus y pertenencia a un grupo.", recurso: "Semiótica de la moda", ejemplo: "Una corbata puede comunicar formalidad; unos jeans comunican informalidad.", ejercicio: "Analiza un signo de la moda.", reto: "Investiga la semiótica de la moda." },
+            { titulo: "Semiótica de la arquitectura", teoria: "La arquitectura es un sistema de signos que comunica poder, función y estilo.", recurso: "Semiótica de la arquitectura", ejemplo: "Un edificio de oficinas comunica seriedad; una catedral comunica espiritualidad.", ejercicio: "Analiza un edificio desde la semiótica.", reto: "Investiga la semiótica de la arquitectura." },
+            { titulo: "Semiótica del diseño", teoria: "El diseño gráfico y de productos utiliza signos para comunicar información y emociones.", recurso: "Semiótica del diseño", ejemplo: "El logo de Apple comunica innovación y elegancia.", ejercicio: "Analiza un diseño desde la semiótica.", reto: "Investiga la semiótica del diseño." },
+            { titulo: "Semiótica de la música", teoria: "La música es un sistema de signos que comunica emociones y significados a través del sonido.", recurso: "Semiótica de la música", ejemplo: "Un acorde mayor suena alegre; un acorde menor suena triste.", ejercicio: "Analiza una pieza musical desde la semiótica.", reto: "Investiga la semiótica de la música." },
+            { titulo: "Semiótica del color", teoria: "Los colores son signos que comunican emociones, significados y asociaciones culturales.", recurso: "Semiótica del color", ejemplo: "El rojo comunica pasión o peligro; el azul comunica calma.", ejercicio: "Analiza el uso del color en un anuncio.", reto: "Investiga la semiótica del color." },
+            { titulo: "Semiótica del espacio", teoria: "El espacio es un sistema de signos que comunica poder, jerarquía y función.", recurso: "Semiótica del espacio", ejemplo: "La distribución de un aula comunica la jerarquía entre profesor y alumnos.", ejercicio: "Analiza un espacio desde la semiótica.", reto: "Investiga la semiótica del espacio." },
+            { titulo: "Semiótica de la fotografía", teoria: "La fotografía es un signo icónico que captura la realidad, pero que también puede ser manipulado para comunicar significados.", recurso: "Semiótica de la fotografía", ejemplo: "Una fotografía en blanco y negro comunica nostalgia.", ejercicio: "Analiza una fotografía desde la semiótica.", reto: "Investiga la semiótica de la fotografía." },
+            { titulo: "Semiótica de la televisión", teoria: "La televisión es un sistema de signos que combina imagen y sonido para comunicar información y entretenimiento.", recurso: "Semiótica de la televisión", ejemplo: "Los informativos tienen un código de signos específico.", ejercicio: "Analiza un programa de televisión desde la semiótica.", reto: "Investiga la semiótica de la televisión." },
+            { titulo: "Semiótica de la publicidad digital", teoria: "La publicidad digital utiliza signos interactivos y personalizados para persuadir a los usuarios.", recurso: "Semiótica digital", ejemplo: "Los anuncios en redes sociales utilizan signos visuales y textuales.", ejercicio: "Analiza un anuncio digital.", reto: "Investiga la semiótica de la publicidad digital." },
+            { titulo: "Semiótica de los emojis", teoria: "Los emojis son signos visuales que añaden significado emocional a los mensajes digitales.", recurso: "Semiótica de emojis", ejemplo: "Un ❤️ añade afecto; un 😂 añade risa.", ejercicio: "Analiza el uso de emojis en una conversación.", reto: "Investiga la semiótica de los emojis." },
+            { titulo: "Semiótica de los memes", teoria: "Los memes son signos culturales que se transmiten y transforman en internet.", recurso: "Semiótica de memes", ejemplo: "Un meme con un gato y un texto gracioso comunica humor.", ejercicio: "Analiza un meme.", reto: "Investiga la semiótica de los memes." },
+            { titulo: "Semiótica de la comida", teoria: "La comida es un sistema de signos que comunica identidad cultural, estatus social y emociones.", recurso: "Semiótica de la comida", ejemplo: "Una cena de lujo comunica estatus; una comida callejera comunica autenticidad.", ejercicio: "Analiza un plato de comida desde la semiótica.", reto: "Investiga la semiótica de la comida." },
+            { titulo: "Semiótica de la moda", teoria: "La moda es un sistema de signos que comunica identidad, estatus y pertenencia a un grupo.", recurso: "Semiótica de la moda", ejemplo: "Una corbata puede comunicar formalidad; unos jeans comunican informalidad.", ejercicio: "Analiza un signo de la moda.", reto: "Investiga la semiótica de la moda." },
+            { titulo: "Semiótica del deporte", teoria: "El deporte es un sistema de signos que comunica valores, emociones y pertenencia a un equipo o nación.", recurso: "Semiótica del deporte", ejemplo: "La camiseta de un equipo comunica pertenencia.", ejercicio: "Analiza un signo del deporte.", reto: "Investiga la semiótica del deporte." },
+            { titulo: "Semiótica de la religión", teoria: "La religión es un sistema de signos que comunica lo sagrado, la moral y la identidad de una comunidad.", recurso: "Semiótica de la religión", ejemplo: "La cruz es el símbolo del cristianismo.", ejercicio: "Analiza un signo religioso.", reto: "Investiga la semiótica de la religión." },
+            { titulo: "Semiótica de la política", teoria: "La política es un sistema de signos que comunica poder, ideología y persuasión.", recurso: "Semiótica de la política", ejemplo: "Un discurso político utiliza signos para persuadir.", ejercicio: "Analiza un discurso político.", reto: "Investiga la semiótica de la política." },
+            { titulo: "Semiótica y educación", teoria: "La semiótica puede aplicarse a la educación para analizar los signos y discursos que se utilizan en el aula.", recurso: "Semiótica educativa", ejemplo: "El manual escolar es un signo de autoridad.", ejercicio: "Analiza un signo educativo.", reto: "Investiga la semiótica educativa." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['signo','saussure','peirce','cultural','aplicacion'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_semiotica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

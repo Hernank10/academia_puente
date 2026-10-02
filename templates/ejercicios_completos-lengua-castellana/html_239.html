@@ -1,0 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Separación Fonética y Fonológica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">fonética y fonología · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Concepto: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una palabra u oración y sepárala en sílabas fonéticas o fonológicas:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «ca-sa» / «con-tem-plar»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS DE SEPARACIÓN FONÉTICA Y FONOLÓGICA
+        //  Diferencias entre fonética (sonido real) y fonología (fonemas)
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'fundamentos', label: 'Fundamentos Fonéticos y Fonológicos' },
+            { id: 'vocales', label: 'Vocales: Fonética vs Fonología' },
+            { id: 'consonantes', label: 'Consonantes: Alófonos' },
+            { id: 'silabeo_fonetico', label: 'Silabeo Fonético' },
+            { id: 'silabeo_fonologico', label: 'Silabeo Fonológico' },
+            { id: 'procesos_fonologicos', label: 'Procesos Fonológicos' },
+            { id: 'contextos', label: 'Contextos Fonéticos' },
+            { id: 'variacion', label: 'Variación y Dialectos' },
+            { id: 'redaccion', label: 'Aplicación en Redacción' },
+            { id: 'practica', label: 'Práctica y Consolidación' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: FUNDAMENTOS FONÉTICOS Y FONOLÓGICOS (1–10)
+        // ============================================================
+        const b1 = [
+            ['Fonética vs Fonología', 'Fonética (sonido físico) / Fonología (fonema mental)',
+                'La fonética estudia los sonidos del habla en su realización física; la fonología estudia los fonemas como unidades abstractas que distinguen significados.',
+                'Fonética: [k] aspirada en "casa". / Fonología: /k/ como fonema de "casa".',
+                '[k] (fonética) vs /k/ (fonología)',
+                '¿Qué estudia la fonética?', ['Los sonidos físicos del habla', 'Los fonemas abstractos',
+                    'La morfología', 'La sintaxis'
+                ], 0, 'Escribe la diferencia entre [b] y /b/.'
+            ],
+            ['Fonema', 'Unidad mínima abstracta con valor distintivo',
+                'El fonema es la unidad mínima de sonido que puede cambiar el significado de una palabra. Se representa entre barras / /.',
+                '/p/ y /b/ son fonemas distintos: "pala" vs "bala".',
+                '/p/ vs /b/ (fonemas distintos)',
+                '¿Qué unidad mínima distingue significado en "pala" y "bala"?', ['Fonema', 'Fono', 'Alófono',
+                    'Sílaba'
+                ], 0, 'Escribe un par de palabras que se distingan por un fonema.'
+            ],
+            ['Alófono', 'Variante fonética de un fonema',
+                'El alófono es una variante de un fonema que no cambia el significado. Se representa entre corchetes [ ].',
+                '/b/ tiene alófonos [b] y [β] en español: "bobo" [b] vs "haba" [β].',
+                '[b] y [β] son alófonos de /b/',
+                '¿Qué son los alófonos?', ['Variantes de un fonema', 'Fonemas distintos', 'Letras', 'Sílabas'],
+                0, 'Escribe un ejemplo de alófono del fonema /d/.'
+            ],
+            ['Sílaba fonética', 'Unidad de pronunciación (sonido real)',
+                'La sílaba fonética es la unidad de pronunciación basada en la producción real de sonidos, considerando la coarticulación.',
+                'Fonéticamente, "con-tem-plar" puede pronunciarse [kon-tem-plar].',
+                '[kon-tem-plar] (sílaba fonética)',
+                '¿Qué unidad se basa en la pronunciación real?', ['Sílaba fonética', 'Sílaba fonológica', 'Fonema',
+                    'Alófono'
+                ], 0, 'Escribe la separación fonética de "absolver".'
+            ],
+            ['Sílaba fonológica', 'Unidad de estructura abstracta',
+                'La sílaba fonológica es la unidad de organización de los fonemas en la estructura mental del hablante.',
+                'Fonológicamente, "con-tem-plar" se separa /kon-tem-plar/.',
+                '/kon-tem-plar/ (sílaba fonológica)',
+                '¿Qué unidad es abstracta y mental?', ['Sílaba fonológica', 'Sílaba fonética', 'Fono', 'Alófono'],
+                0, 'Escribe la separación fonológica de "absolver".'
+            ],
+            ['Núcleo silábico', 'Vocal como centro de la sílaba',
+                'El núcleo silábico es la vocal (o grupo vocálico) que da sonoridad a la sílaba. En fonética, es el sonido más sonoro.',
+                'En "ca-sa", el núcleo es la vocal [a] en ambas sílabas.',
+                '[a] (núcleo) en "ca" y "sa"',
+                '¿Qué elemento es el núcleo de la sílaba?', ['Vocal', 'Consonante', 'Diptongo', 'Triptongo'],
+                0, 'Escribe el núcleo silábico de "tren".'
+            ],
+            ['Ataque y coda', 'Consonantes antes y después del núcleo',
+                'El ataque es la consonante o grupo consonántico que precede al núcleo; la coda es la que le sigue.',
+                'En "tren": /t/ es ataque, /n/ es coda.',
+                '/t/ (ataque) y /n/ (coda) en "tren"',
+                '¿Cómo se llama la consonante que precede al núcleo?', ['Ataque', 'Coda', 'Núcleo', 'Margen'],
+                0, 'Escribe el ataque y la coda de "sal".'
+            ],
+            ['Principio de sonoridad', 'Sonidos más sonoros cerca del núcleo',
+                'En la sílaba, los sonidos se organizan por orden de sonoridad: los más sonoros (vocales) en el centro, los menos sonoros (consonantes) en los bordes.',
+                'En "tren": /t/ (menos sonoro) → /r/ (más sonoro) → /e/ (máximo) → /n/ (menos sonoro).',
+                'Escala de sonoridad en "tren"',
+                '¿Dónde se sitúa el sonido más sonoro de la sílaba?', ['En el núcleo', 'En el ataque', 'En la coda',
+                    'En el margen'
+                ], 0, 'Escribe la escala de sonoridad de "planta".'
+            ],
+            ['Fonema y letra', 'Fonema (sonido) vs Letra (grafía)',
+                'El fonema es un sonido abstracto; la letra es su representación gráfica. No siempre coinciden.',
+                'La letra "h" no representa ningún fonema en español.',
+                'h (letra) vs Ø (fonema)',
+                '¿Qué representa la letra "h" en español?', ['Ningún fonema', 'El fonema /x/', 'El fonema /h/',
+                    'El fonema /j/'
+                ], 0, 'Escribe una palabra donde letra y fonema no coincidan.'
+            ],
+            ['Transcripción fonética vs fonológica', '[ ] vs / /',
+                'La transcripción fonética usa corchetes [ ] para sonidos reales; la fonológica usa barras / / para fonemas.',
+                'Fonética: [ˈka.sa] / Fonológica: /ˈkasa/',
+                '[ˈka.sa] (fonética) vs /ˈkasa/ (fonológica)',
+                '¿Qué símbolos se usan en la transcripción fonética?', ['[ ]', '/ /', '< >', '{ }'],
+                0, 'Transcribe fonéticamente y fonológicamente "casa".'
+            ]
+        ];
+        b1.forEach(d => addLesson('fundamentos', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: VOCALES: FONÉTICA VS FONOLOGÍA (11–20)
+        // ============================================================
+        const b2 = [
+            ['Vocales en español', '5 vocales fonológicas / 5 vocales fonéticas (generalmente)',
+                'El español tiene 5 fonemas vocálicos /a, e, i, o, u/. Fonéticamente, pueden variar según el contexto (alófonos).',
+                '/a/ puede realizarse como [a] o [æ] según el contexto.',
+                '/a/ → [a] o [æ] (alófonos)',
+                '¿Cuántos fonemas vocálicos tiene el español?', ['5', '7', '10', '12'],
+                0, 'Escribe un alófono de la vocal /e/.'
+            ],
+            ['Vocales abiertas y cerradas', 'Apertura vocálica',
+                'Las vocales abiertas (/a, e, o/) y cerradas (/i, u/) determinan la formación de diptongos y hiatos.',
+                '/a/ es abierta; /i/ es cerrada.',
+                'abierta (/a/) vs cerrada (/i/)',
+                '¿Qué vocales son cerradas en español?', ['/i, u/', '/a, e, o/', '/e, o/', '/a, i/'],
+                0, 'Escribe una palabra con diptongo usando una vocal abierta y una cerrada.'
+            ],
+            ['Diptongos fonológicos', 'Secuencia de dos vocales en una sílaba',
+                'Fonológicamente, un diptongo es una secuencia de dos vocales en la misma sílaba que forman un solo núcleo.',
+                '/ie/ en "tienes" es un diptongo fonológico.',
+                '/tienes/ (diptongo /ie/)',
+                '¿Qué es un diptongo fonológico?', ['Dos vocales en la misma sílaba', 'Dos vocales en sílabas distintas',
+                    'Tres vocales en la misma sílaba', 'Vocal + consonante'
+                ], 0, 'Escribe una palabra con diptongo fonológico.'
+            ],
+            ['Hiatos fonológicos', 'Dos vocales en sílabas distintas',
+                'Fonológicamente, un hiato es una secuencia de dos vocales que pertenecen a sílabas diferentes.',
+                '/poeta/ tiene hiato /o-e/ en sílabas distintas.',
+                '/po-e-ta/ (hiato /o-e/)',
+                '¿Qué es un hiato fonológico?', ['Dos vocales en sílabas distintas', 'Dos vocales en la misma sílaba',
+                    'Tres vocales en la misma sílaba', 'Vocal + consonante'
+                ], 0, 'Escribe una palabra con hiato fonológico.'
+            ],
+            ['Triptongos fonológicos', 'Tres vocales en una sílaba',
+                'Fonológicamente, un triptongo es la secuencia de tres vocales en una sola sílaba: cerrada + abierta + cerrada.',
+                '/güeis/ en "averigüéis" es un triptongo.',
+                '/güeis/ (triptongo)',
+                '¿Qué es un triptongo fonológico?', ['Tres vocales en una sílaba', 'Tres vocales en sílabas distintas',
+                    'Dos vocales en una sílaba', 'Vocal + consonante + vocal'
+                ], 0, 'Escribe una palabra con triptongo fonológico.'
+            ],
+            ['Acentuación y diptongos', 'Tilde en diptongos fonológicos',
+                'Fonológicamente, la tilde en los diptongos se coloca sobre la vocal abierta (a, e, o) cuando le corresponde.',
+                '/bién/ (tilde en /e/)',
+                'Tilde en /e/ en "bien"',
+                '¿Dónde se coloca la tilde en un diptongo fonológico?', ['Sobre la vocal abierta', 'Sobre la vocal cerrada',
+                    'Sobre ambas', 'No se coloca'
+                ], 0, 'Escribe una palabra con diptongo y tilde.'
+            ],
+            ['Acentuación y hiatos', 'Tilde en hiatos fonológicos',
+                'Fonológicamente, si la vocal cerrada lleva tilde, se rompe el diptongo y se forma hiato.',
+                '/país/ tiene tilde en /i/ y forma hiato.',
+                '/pa-ís/ (hiato con tilde)',
+                '¿Qué ocurre cuando la vocal cerrada lleva tilde en un diptongo?', ['Se forma hiato',
+                    'Sigue siendo diptongo', 'Se convierte en triptongo', 'Desaparece la vocal'
+                ], 0, 'Escribe una palabra con hiato por tilde en la vocal cerrada.'
+            ],
+            ['Sinalefa fonética', 'Unión de vocales en la pronunciación',
+                'La sinalefa es la unión fonética de la vocal final de una palabra con la vocal inicial de la siguiente en el habla.',
+                'Fonéticamente: "casa oscura" → [ka.sa.ˈsku.ɾa]',
+                '[ka.sa.ˈsku.ɾa] (sinalefa)',
+                '¿Qué es la sinalefa?', ['Unión de vocales en la pronunciación', 'Separación de vocales',
+                    'Unión de consonantes', 'Separación de consonantes'
+                ], 0, 'Escribe una frase con sinalefa.'
+            ],
+            ['Sinalefa fonológica', 'Unión de vocales en la estructura abstracta',
+                'Fonológicamente, la sinalefa no siempre se representa, ya que la estructura silábica subyacente puede ser diferente.',
+                'Fonológicamente: /kasa.ˈoskuɾa/ (sin sinalefa)',
+                '/kasa.ˈoskuɾa/ (sin sinalefa)',
+                '¿Cómo se representa la sinalefa en fonología?', ['No siempre se representa', 'Siempre se representa',
+                    'Nunca se representa', 'Depende del dialecto'
+                ], 0, 'Escribe la diferencia entre la sinalefa fonética y la fonológica.'
+            ],
+            ['Hiato en sinalefa', 'Hiato vs sinalefa en la pronunciación',
+                'En la pronunciación, la sinalefa puede evitarse para marcar un hiato enfático.',
+                '"María Elena" puede pronunciarse con sinalefa [ma.ˈɾi.a.ˈle.na] o sin ella [ma.ˈɾi.a .e.ˈle.na]',
+                '[ma.ˈɾi.a .e.ˈle.na] (hiato)',
+                '¿Qué ocurre cuando se evita la sinalefa?', ['Se marca un hiato', 'Se forma un diptongo',
+                    'Se forma un triptongo', 'No ocurre nada'
+                ], 0, 'Escribe una frase donde se pueda evitar la sinalefa.'
+            ]
+        ];
+        b2.forEach(d => addLesson('vocales', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: CONSONANTES: ALÓFONOS (21–30)
+        // ============================================================
+        const b3 = [
+            ['Alófonos de /b/ en español', '/b/ → [b] y [β]',
+                'El fonema /b/ tiene dos alófonos: [b] (oclusivo) después de pausa o nasal; [β] (fricativo/ aproximante) en otros contextos.',
+                '"bobo": [ˈbo.bo] / "haba": [ˈa.βa]',
+                '[b] (oclusivo) vs [β] (fricativo)',
+                '¿Qué alófono de /b/ aparece en "haba"?', ['[β]', '[b]', '[p]', '[v]'],
+                0, 'Escribe la diferencia entre [b] y [β].'
+            ],
+            ['Alófonos de /d/ en español', '/d/ → [d] y [ð]',
+                'El fonema /d/ tiene dos alófonos: [d] (oclusivo) después de pausa o nasal; [ð] (fricativo/ aproximante) en otros contextos.',
+                '"dado": [ˈda.ðo] (d inicial oclusiva, d intermedia fricativa)',
+                '[d] (oclusivo) vs [ð] (fricativo)',
+                '¿Qué alófono de /d/ aparece en "dedo" entre vocales?', ['[ð]', '[d]', '[t]', '[θ]'],
+                0, 'Escribe la diferencia entre [d] y [ð].'
+            ],
+            ['Alófonos de /g/ en español', '/g/ → [g] y [ɣ]',
+                'El fonema /g/ tiene dos alófonos: [g] (oclusivo) después de pausa o nasal; [ɣ] (fricativo/ aproximante) en otros contextos.',
+                '"gago": [ˈga.ɣo] (g inicial oclusiva, g intermedia fricativa)',
+                '[g] (oclusivo) vs [ɣ] (fricativo)',
+                '¿Qué alófono de /g/ aparece en "pago" entre vocales?', ['[ɣ]', '[g]', '[k]', '[x]'],
+                0, 'Escribe la diferencia entre [g] y [ɣ].'
+            ],
+            ['Alófonos de /s/ en español', '/s/ → [s] y variantes',
+                'El fonema /s/ tiene variantes fonéticas como [s] alveolar, [z] sonora, o [h] aspirada en algunos dialectos.',
+                '"casa": [ˈka.sa] (s alveolar) / En Andalucía: [ˈka.ha] (s aspirada)',
+                '[s] vs [h] (alófonos de /s/)',
+                '¿Qué alófono de /s/ aparece en el español andaluz?', ['[h]', '[s]', '[z]', '[θ]'],
+                0, 'Escribe la variante de /s/ en tu dialecto.'
+            ],
+            ['Alófonos de /n/ en español', '/n/ → [n], [m], [ŋ]',
+                'El fonema /n/ tiene alófonos que se asimilan a la consonante siguiente: [n] alveolar, [m] bilabial, [ŋ] velar.',
+                '"un buey": [um buey] (n → m) / "un coche": [uŋ ko.ʧe] (n → ŋ)',
+                '[n] vs [m] vs [ŋ] (alófonos de /n/)',
+                '¿Qué alófono de /n/ aparece antes de /k/?', ['[ŋ]', '[n]', '[m]', '[ɲ]'],
+                0, 'Escribe un ejemplo de asimilación de /n/.'
+            ],
+            ['Alófonos de /r/ en español', '/r/ → [r] y [ɾ]',
+                'El fonema /r/ tiene dos alófonos: [r] (vibrante múltiple) al inicio de palabra o con "rr"; [ɾ] (vibrante simple) entre vocales o después de consonante.',
+                '"perro": [ˈpe.ro] (r múltiple) / "pero": [ˈpe.ɾo] (r simple)',
+                '[r] (múltiple) vs [ɾ] (simple)',
+                '¿Qué alófono de /r/ aparece en "caro"?', ['[ɾ]', '[r]', '[ɹ]', '[ɾ]'],
+                0, 'Escribe la diferencia entre [r] y [ɾ].'
+            ],
+            ['Alófonos de /l/ en español', '/l/ → [l] y variantes',
+                'El fonema /l/ tiene alófonos como [l] alveolar y [ɫ] velarizada en algunos dialectos.',
+                '"alto": [ˈal.to] (l alveolar) / En algunos dialectos: [ˈaɫ.to] (l velarizada)',
+                '[l] vs [ɫ] (alófonos de /l/)',
+                '¿Qué alófono de /l/ aparece en el español caribeño?', ['[ɫ]', '[l]', '[ɬ]', '[ʎ]'],
+                0, 'Escribe la variante de /l/ en tu dialecto.'
+            ],
+            ['Alófonos de /tʃ/ en español', '/tʃ/ → [tʃ] y variantes',
+                'El fonema /tʃ/ se realiza como [tʃ] (africada palatal) en la mayoría de los dialectos.',
+                '"chico": [ˈtʃi.ko]',
+                '[tʃ] (africada palatal)',
+                '¿Qué sonido representa la "ch" en español?', ['[tʃ]', '[ʃ]', '[ʧ]', '[tʂ]'],
+                0, 'Escribe la pronunciación de "chico".'
+            ],
+            ['Alófonos de /x/ en español', '/x/ → [x], [h]',
+                'El fonema /x/ tiene alófonos como [x] (velar) y [h] (faríngea o glotal) en algunos dialectos.',
+                '"jota": [ˈxo.ta] (velar) / En Andalucía: [ˈho.ta] (faríngea)',
+                '[x] vs [h] (alófonos de /x/)',
+                '¿Qué alófono de /x/ aparece en el español andaluz?', ['[h]', '[x]', '[χ]', '[ç]'],
+                0, 'Escribe la variante de /x/ en tu dialecto.'
+            ],
+            ['Alófonos de /j/ (ye) en español', '/j/ → [j], [ʝ], [ʒ]',
+                'El fonema /j/ tiene alófonos como [j] (semiconsonante), [ʝ] (fricativa palatal sonora), y [ʒ] en algunas regiones.',
+                '"yo": [ˈʝo] (fricativa) / En Argentina: [ˈʃo] (sibilante)',
+                '[ʝ] vs [ʃ] (alófonos de /j/)',
+                '¿Qué alófono de /j/ aparece en el español rioplatense?', ['[ʃ]', '[ʝ]', '[j]', '[ʒ]'],
+                0, 'Escribe la variante de /j/ en tu dialecto.'
+            ]
+        ];
+        b3.forEach(d => addLesson('consonantes', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: SILABEO FONÉTICO (31–45)
+        // ============================================================
+        const b4 = [
+            ['Silabeo fonético: principio de sonoridad', 'Organización de sonidos en la pronunciación',
+                'Fonéticamente, la sílaba se organiza según la sonoridad de los sonidos, con el núcleo (vocal) como pico de sonoridad.',
+                '"tren" → [t] (bajo) → [ɾ] (medio) → [e] (alto) → [n] (bajo)',
+                'Escala de sonoridad en [tɾen]',
+                '¿Qué sonido es el pico de sonoridad en "tren"?', ['[e]', '[t]', '[ɾ]', '[n]'],
+                0, 'Escribe la escala de sonoridad de "planta".'
+            ],
+            ['Ataque fonético', 'Consonantes antes del núcleo',
+                'Fonéticamente, el ataque puede tener una o más consonantes que se pronuncian antes de la vocal.',
+                '"tren" → [tɾ] es el ataque de [e].',
+                '[tɾ] (ataque) en "tren"',
+                '¿Qué es el ataque fonético?', ['Consonantes antes del núcleo', 'Consonantes después del núcleo',
+                    'Vocal del núcleo', 'Sonidos al final'
+                ], 0, 'Escribe el ataque de "plaza".'
+            ],
+            ['Coda fonética', 'Consonantes después del núcleo',
+                'Fonéticamente, la coda es la consonante o grupo consonántico que sigue al núcleo en la misma sílaba.',
+                '"al" → [l] es la coda de [a].',
+                '[l] (coda) en "al"',
+                '¿Qué es la coda fonética?', ['Consonantes después del núcleo', 'Consonantes antes del núcleo',
+                    'Vocal del núcleo', 'Sonidos al inicio'
+                ], 0, 'Escribe la coda de "sol".'
+            ],
+            ['Silabeo de grupos consonánticos', 'Separación de consonantes en la pronunciación',
+                'Fonéticamente, los grupos consonánticos se separan según la sonoridad: la primera consonante tiende a ir con la sílaba anterior.',
+                '"cons-te-la-ción" → [kons-te-la-sjon]',
+                '[kons-te-la-sjon] (silabeo fonético)',
+                '¿Cómo se separa "ns" fonéticamente?', ['La n va con la sílaba anterior, la s con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior', 'Se unen en la misma sílaba'
+                ], 0, 'Escribe la separación fonética de "construcción".'
+            ],
+            ['Silabeo de "x" fonética', 'Pronunciación de /ks/',
+                'Fonéticamente, la "x" se pronuncia como [ks] y se separa: [k] con la sílaba anterior, [s] con la siguiente.',
+                '"ex-ce-len-te" → [eks-te-len-te]',
+                '[eks-te-len-te] (silabeo de x)',
+                '¿Cómo se separa la "x" en "excelente"?', ['[eks-te-len-te]', '[ek-ste-len-te]', '[eks-te-len-te]',
+                    '[e-ks-te-len-te]'
+                ], 0, 'Escribe la separación fonética de "examen".'
+            ],
+            ['Silabeo de "r" y "rr"', 'Pronunciación de vibrantes',
+                'Fonéticamente, la "rr" (vibrante múltiple) y la "r" simple se pronuncian con la vocal siguiente.',
+                '"pe-rro" → [pe.ro] / "pe-ro" → [pe.ɾo]',
+                '[pe.ro] (rr) vs [pe.ɾo] (r)',
+                '¿Cómo se pronuncia la "rr" en "perro"?', ['[r] (múltiple)', '[ɾ] (simple)', '[r] (simple)',
+                    '[ɾ] (múltiple)'
+                ], 0, 'Escribe la diferencia entre "perro" y "pero" fonéticamente.'
+            ],
+            ['Silabeo de "l" y "ll"', 'Pronunciación de laterales',
+                'Fonéticamente, la "ll" se pronuncia como [ʎ] (palatal) o [j] (yeísmo) y va con la vocal siguiente.',
+                '"ca-llo" → [ˈka.ʎo] o [ˈka.jo]',
+                '[ka.ʎo] (ll) / [ka.jo] (yeísmo)',
+                '¿Cómo se pronuncia la "ll" en zonas yeístas?', ['[j]', '[ʎ]', '[ʝ]', '[ʒ]'],
+                0, 'Escribe la pronunciación de "calle" en tu dialecto.'
+            ],
+            ['Silabeo de "ch"', 'Pronunciación de africada palatal',
+                'Fonéticamente, la "ch" se pronuncia como [tʃ] (africada) y va con la vocal siguiente.',
+                '"chi-co" → [ˈtʃi.ko]',
+                '[ˈtʃi.ko] (ch)',
+                '¿Qué sonido representa la "ch" en español?', ['[tʃ]', '[ʃ]', '[ʧ]', '[tʂ]'],
+                0, 'Escribe la pronunciación de "muchacho".'
+            ],
+            ['Silabeo de "gu" y "qu"', 'Pronunciación de oclusivas + u muda',
+                'Fonéticamente, la "gu" (con u muda) y la "qu" se pronuncian como [g] o [k] + la vocal siguiente.',
+                '"gue-rra" → [ˈge.ra] / "que-rer" → [ke.ˈɾeɾ]',
+                '[ge.ra] (gu) / [ke.ɾeɾ] (qu)',
+                '¿Cómo se pronuncia "gue" en "guerra"?', ['[ge]', '[gue]', '[gwe]', '[ge]'],
+                0, 'Escribe la pronunciación de "queso".'
+            ],
+            ['Silabeo de "gü" y "qü"', 'Pronunciación con diéresis',
+                'Fonéticamente, la "gü" con diéresis se pronuncia [gw] y la "qü" [kw], con la vocal siguiente.',
+                '"pi-güe-la" → [pi.ˈgwe.la] / "qües-tión" → [kwes.ˈtjon]',
+                '[pi.ˈgwe.la] (gü) / [kwes.ˈtjon] (qü)',
+                '¿Cómo se pronuncia "güe" en "pígüela"?', ['[gwe]', '[ge]', '[gue]', '[güe]'],
+                0, 'Escribe la pronunciación de "lingüística".'
+            ],
+            ['Sinalefa fonética en frases', 'Unión de vocales entre palabras',
+                'Fonéticamente, cuando una palabra termina en vocal y la siguiente comienza en vocal, se produce sinalefa y se unen en una sola sílaba.',
+                '"Casa oscura" → [ka.sa.ˈsku.ɾa]',
+                '[ka.sa.ˈsku.ɾa] (sinalefa)',
+                '¿Qué ocurre fonéticamente en "casa oscura"?', ['Sinalefa', 'Hiato', 'Diptongo', 'Triptongo'],
+                0, 'Escribe una frase con sinalefa.'
+            ],
+            ['Hiato fonético en frases', 'Separación de vocales entre palabras',
+                'Fonéticamente, se puede marcar un hiato (no sinalefa) para enfatizar o en registros formales.',
+                '"María Elena" → [ma.ˈɾi.a e.ˈle.na] (sin sinalefa)',
+                '[ma.ˈɾi.a e.ˈle.na] (hiato)',
+                '¿Qué ocurre en "María Elena" sin sinalefa?', ['Hiato', 'Sinalefa', 'Diptongo', 'Triptongo'],
+                0, 'Escribe una frase con hiato entre palabras.'
+            ],
+            ['Acentuación fonética', 'Tono y acento en la pronunciación',
+                'Fonéticamente, el acento se manifiesta como mayor intensidad, duración y tono en la sílaba tónica.',
+                '"cá-sa" → la primera sílaba tiene más intensidad: [ˈka.sa]',
+                '[ˈka.sa] (acento en la primera)',
+                '¿Cómo se manifiesta el acento fonéticamente?', ['Mayor intensidad', 'Menor intensidad', 'Misma intensidad',
+                    'Silencio'
+                ], 0, 'Escribe la pronunciación acentuada de "teléfono".'
+            ],
+            ['Entonación fonética', 'Curva melódica en la oración',
+                'Fonéticamente, la entonación es la variación de tono a lo largo de la oración que transmite significado.',
+                '¿Cómo estás? → entonación ascendente al final.',
+                'Entonación ascendente en preguntas',
+                '¿Qué transmite la entonación ascendente?', ['Pregunta', 'Afirmación', 'Exclamación', 'Duda'],
+                0, 'Escribe una frase con entonación descendente.'
+            ]
+        ];
+        b4.forEach(d => addLesson('silabeo_fonetico', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: SILABEO FONOLÓGICO (46–55)
+        // ============================================================
+        const b5 = [
+            ['Silabeo fonológico: estructura abstracta', 'Organización de fonemas en sílabas',
+                'Fonológicamente, la sílaba se organiza en una estructura abstracta: ataque + núcleo (+ coda), independientemente de la pronunciación real.',
+                '"tren" → /tren/ (fonológicamente una sílaba)',
+                '/tren/ (sílaba fonológica)',
+                '¿Qué unidad organiza los fonemas en sílabas abstractas?', ['Sílaba fonológica', 'Sílaba fonética',
+                    'Fonema', 'Alófono'
+                ], 0, 'Escribe la estructura fonológica de "planta".'
+            ],
+            ['Ataque fonológico', 'Consonantes permitidas',
+                'Fonológicamente, el ataque puede tener una o dos consonantes, siguiendo las restricciones del español: /pl/, /pr/, /tr/, etc.',
+                '/pl/ en "planta" es un ataque complejo.',
+                '/pl/ (ataque fonológico)',
+                '¿Qué grupos son permitidos en el ataque fonológico del español?', ['/pl/, /pr/, /tr/, /kl/, /kr/',
+                    '/ps/, /pn/', /pt/', '/ks/'
+                ], 0, 'Escribe un ataque fonológico complejo.'
+            ],
+            ['Coda fonológica', 'Consonantes al final de sílaba',
+                'Fonológicamente, la coda puede tener una o dos consonantes, aunque en español son limitadas: /l/, /r/, /n/, /s/, /d/ (en cultismo).',
+                '/al/ (coda /l/)',
+                '/l/ (coda fonológica)',
+                '¿Qué consonantes son permitidas en la coda fonológica del español?', ['/l/, /r/, /n/, /s/, /d/',
+                    '/p/, /t/, /k/', '/b/, /g/'
+                ], 0, 'Escribe una palabra con coda fonológica /s/.'
+            ],
+            ['Principio de sonoridad fonológico', 'Restricciones de sonoridad',
+                'Fonológicamente, los fonemas se organizan en la sílaba siguiendo el principio de sonoridad: los más sonoros (vocales) en el núcleo.',
+                '/tren/ → /t/ (bajo), /r/ (medio), /e/ (alto), /n/ (bajo)',
+                'Escala de sonoridad fonológica',
+                '¿Qué fonema es el más sonoro en "tren"?', ['/e/', '/t/', '/r/', '/n/'],
+                0, 'Escribe la escala de sonoridad fonológica de "planta".'
+            ],
+            ['Silabeo de prefijos fonológico', 'Separación de prefijos en la estructura',
+                'Fonológicamente, los prefijos se separan de la raíz: /des-hacer/, /pre-ver/, /re-construir/.',
+                '/des-ha-cer/ (prefijo /des/ + raíz)',
+                '/des-ha-cer/ (silabeo fonológico)',
+                '¿Cómo se separan los prefijos fonológicamente?', ['Separando el prefijo de la raíz',
+                    'Juntando el prefijo con la raíz', 'Depende', 'No se separan'
+                ], 0, 'Escribe la separación fonológica de "deshacer".'
+            ],
+            ['Silabeo de compuestos fonológico', 'Separación de elementos compuestos',
+                'Fonológicamente, los compuestos se separan en sus elementos: /ro-bo-cas-tro/, /per-ro-ki-os-co/.',
+                '/ro-bo-cas-tro/ (compuesto)',
+                '/ro-bo-cas-tro/ (silabeo fonológico)',
+                '¿Cómo se separan los compuestos fonológicamente?', ['Separando sus elementos', 'Juntando todo',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe la separación fonológica de "paraguas".'
+            ],
+            ['Sinalefa fonológica', 'Unión de vocales en la estructura',
+                'Fonológicamente, la sinalefa no suele representarse en la transcripción fonológica, ya que la estructura silábica subyacente es diferente.',
+                '/kasa.ˈoskuɾa/ (sin sinalefa)',
+                '/kasa.ˈoskuɾa/ (sin sinalefa)',
+                '¿Cómo se representa la sinalefa en fonología?', ['No se representa', 'Se representa con guion',
+                    'Se representa con punto', 'Se representa con tilde'
+                ], 0, 'Escribe la diferencia entre la sinalefa fonética y la fonológica.'
+            ],
+            ['Hiato fonológico', 'Dos vocales en sílabas distintas',
+                'Fonológicamente, el hiato es la separación de dos vocales en sílabas diferentes: /po-e-ta/.',
+                '/po-e-ta/ (hiato)',
+                '¿Qué es un hiato fonológico?', ['Dos vocales en sílabas distintas', 'Dos vocales en la misma sílaba',
+                    'Tres vocales en la misma sílaba', 'Vocal + consonante'
+                ], 0, 'Escribe una palabra con hiato fonológico.'
+            ],
+            ['Diptongo fonológico', 'Dos vocales en la misma sílaba',
+                'Fonológicamente, el diptongo es la unión de dos vocales en una sílaba: /bue-no/.',
+                '/bue-no/ (diptongo)',
+                '¿Qué es un diptongo fonológico?', ['Dos vocales en la misma sílaba', 'Dos vocales en sílabas distintas',
+                    'Tres vocales en la misma sílaba', 'Vocal + consonante'
+                ], 0, 'Escribe una palabra con diptongo fonológico.'
+            ],
+            ['Triptongo fonológico', 'Tres vocales en la misma sílaba',
+                'Fonológicamente, el triptongo es la unión de tres vocales en una sílaba: /güeis/.',
+                '/güeis/ (triptongo)',
+                '¿Qué es un triptongo fonológico?', ['Tres vocales en una sílaba', 'Tres vocales en sílabas distintas',
+                    'Dos vocales en una sílaba', 'Vocal + consonante + vocal'
+                ], 0, 'Escribe una palabra con triptongo fonológico.'
+            ]
+        ];
+        b5.forEach(d => addLesson('silabeo_fonologico', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: PROCESOS FONOLÓGICOS (56–65)
+        // ============================================================
+        const b6 = [
+            ['Asimilación', 'Un sonido se vuelve similar a otro',
+                'La asimilación es un proceso por el cual un sonido se vuelve similar a otro adyacente, facilitando la pronunciación.',
+                '"un beso" → [um beso] (n → m por asimilación)',
+                '[um be.so] (asimilación)',
+                '¿Qué ocurre en "un beso"?', ['Asimilación de /n/ a /m/', 'Disimilación', 'Epéntesis', 'Elisión'],
+                0, 'Escribe un ejemplo de asimilación.'
+            ],
+            ['Disimilación', 'Un sonido se vuelve diferente de otro',
+                'La disimilación es un proceso por el cual un sonido se vuelve diferente de otro adyacente para evitar repetición.',
+                '"árbol" → [árbol] (no hay disimilación en este caso) / En algunos dialectos: "árbol" → [árbor] (disimilación de l a r)',
+                'Disimilación de /l/ a /r/ en "árbol" (en algunos dialectos)',
+                '¿Qué ocurre en la disimilación?', ['Un sonido se vuelve diferente', 'Un sonido se vuelve similar',
+                    'Se añade un sonido', 'Se elimina un sonido'
+                ], 0, 'Escribe un ejemplo de disimilación.'
+            ],
+            ['Elisión', 'Pérdida de un sonido',
+                'La elisión es la pérdida de un sonido en la pronunciación, a menudo en contextos rápidos o informales.',
+                '"para" → [pa] (elisión de /r/ en "para" en algunos dialectos)',
+                'Elisión de /r/ en "para"',
+                '¿Qué ocurre en la elisión?', ['Se pierde un sonido', 'Se añade un sonido', 'Se cambia un sonido',
+                    'Se repite un sonido'
+                ], 0, 'Escribe un ejemplo de elisión.'
+            ],
+            ['Epéntesis', 'Adición de un sonido',
+                'La epéntesis es la adición de un sonido en la pronunciación para facilitar la articulación.',
+                '"cónclave" → [cón.klá.ve] (epéntesis de /k/ en "conclave")',
+                'Epéntesis de /k/ en "cónclave"',
+                '¿Qué ocurre en la epéntesis?', ['Se añade un sonido', 'Se pierde un sonido', 'Se cambia un sonido',
+                    'Se repite un sonido'
+                ], 0, 'Escribe un ejemplo de epéntesis.'
+            ],
+            ['Metátesis', 'Cambio de orden de sonidos',
+                'La metátesis es el cambio de orden de los sonidos en una palabra, a menudo por error o evolución.',
+                '"cocodrilo" → [cocodrilo] (no hay metátesis) / "crocodilo" (metátesis de r)',
+                'Metátesis de /r/ en "crocodilo"',
+                '¿Qué ocurre en la metátesis?', ['Cambio de orden de sonidos', 'Pérdida de sonidos',
+                    'Adición de sonidos', 'Repetición de sonidos'
+                ], 0, 'Escribe un ejemplo de metátesis.'
+            ],
+            ['Neutralización', 'Pérdida de distinción entre fonemas',
+                'La neutralización es la pérdida de la distinción entre dos fonemas en un contexto determinado.',
+                'En español, /s/ y /z/ se neutralizan en posición final de sílaba en algunos dialectos.',
+                'Neutralización de /s/ y /z/',
+                '¿Qué ocurre en la neutralización?', ['Se pierde la distinción entre fonemas', 'Se añade un fonema',
+                    'Se cambia un fonema', 'Se repite un fonema'
+                ], 0, 'Escribe un ejemplo de neutralización.'
+            ],
+            ['Fonologización', 'Un alófono se convierte en fonema',
+                'La fonologización es el proceso por el cual un alófono se convierte en un fonema independiente en la lengua.',
+                'En algunas lenguas, /s/ y /z/ son fonemas; en español, son alófonos.',
+                'Fonologización',
+                '¿Qué ocurre en la fonologización?', ['Un alófono se convierte en fonema', 'Un fonema se convierte en alófono',
+                    'Se pierde un fonema', 'Se añade un fonema'
+                ], 0, 'Escribe un ejemplo de fonologización.'
+            ],
+            ['Desfonologización', 'Un fonema se convierte en alófono',
+                'La desfonologización es el proceso por el cual un fonema se convierte en un alófono de otro.',
+                'El yeísmo: /ʎ/ se convierte en alófono de /j/ en muchos dialectos.',
+                'Desfonologización de /ʎ/ a /j/',
+                '¿Qué ocurre en la desfonologización?', ['Un fonema se convierte en alófono', 'Un alófono se convierte en fonema',
+                    'Se pierde un fonema', 'Se añade un fonema'
+                ], 0, 'Escribe un ejemplo de desfonologización.'
+            ],
+            ['Coarticulación', 'Influencia de sonidos adyacentes',
+                'La coarticulación es la influencia de los sonidos adyacentes en la pronunciación de un sonido.',
+                '"casa" → [ˈka.sa] (coarticulación entre /k/ y /a/)',
+                'Coarticulación en "casa"',
+                '¿Qué ocurre en la coarticulación?', ['Influencia de sonidos adyacentes', 'Pérdida de sonidos',
+                    'Adición de sonidos', 'Cambio de orden de sonidos'
+                ], 0, 'Escribe un ejemplo de coarticulación.'
+            ],
+            ['Acento fonológico', 'Fonema acentual',
+                'El acento fonológico es un rasgo suprasegmental que distingue significados y organiza la palabra.',
+                'En /ˈkasa/ (casa) vs /kaˈsa/ (casá) el acento cambia el significado.',
+                '/ˈkasa/ vs /kaˈsa/ (acento distintivo)',
+                '¿Qué rasgo distingue "casa" de "casá"?', ['Acento fonológico', 'Fonema', 'Alófono', 'Sílaba'],
+                0, 'Escribe un par de palabras distinguidas por el acento.'
+            ]
+        ];
+        b6.forEach(d => addLesson('procesos_fonologicos', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: CONTEXTOS FONÉTICOS (66–75)
+        // ============================================================
+        const b7 = [
+            ['Contexto intervocálico', 'Sonidos entre vocales',
+                'En contexto intervocálico, las consonantes suelen ser más suaves (fricativas o aproximantes).',
+                '"haba" → [ˈa.βa] (/b/ se realiza como [β] entre vocales)',
+                '[ˈa.βa] (contexto intervocálico)',
+                '¿Cómo se realiza /b/ en contexto intervocálico?', ['Como [β]', 'Como [b]', 'Como [p]', 'Como [v]'],
+                0, 'Escribe un ejemplo de consonante intervocálica.'
+            ],
+            ['Contexto inicial de palabra', 'Sonidos al inicio',
+                'En inicio de palabra, las consonantes oclusivas se realizan como oclusivas (no fricativas).',
+                '"casa" → [ˈka.sa] (/k/ se realiza como [k] oclusivo)',
+                '[ˈka.sa] (contexto inicial)',
+                '¿Cómo se realiza /k/ en inicio de palabra?', ['Como [k] oclusivo', 'Como [x]', 'Como [g]',
+                    'Como [h]'
+                ], 0, 'Escribe un ejemplo de consonante inicial.'
+            ],
+            ['Contexto final de palabra', 'Sonidos al final',
+                'En final de palabra, las consonantes pueden ser más débiles o elididas, especialmente en el habla rápida.',
+                '"madrid" → [maˈðɾið] (la /d/ final puede ser [ð] o elidida)',
+                '[maˈðɾið] (contexto final)',
+                '¿Cómo se realiza /d/ en final de palabra?', ['Como [ð] o se elide', 'Como [d]', 'Como [t]', 'Como [θ]'],
+                0, 'Escribe un ejemplo de consonante final.'
+            ],
+            ['Contexto antes de nasal', 'Consonante + nasal',
+                'Antes de nasal, las consonantes oclusivas pueden ser nasales o tener asimilación.',
+                '"un beso" → [um ˈbe.so] (/n/ se asimila a /m/ antes de /b/)',
+                '[um ˈbe.so] (asimilación ante nasal)',
+                '¿Qué ocurre con /n/ antes de /b/?', ['Se asimila a /m/', 'Se mantiene como /n/', 'Se pierde',
+                    'Se convierte en /ŋ/'
+                ], 0, 'Escribe un ejemplo de asimilación ante nasal.'
+            ],
+            ['Contexto antes de consonante fricativa', 'Consonante + fricativa',
+                'Antes de fricativa, las consonantes pueden tener asimilación o elisión.',
+                '"los sábados" → [los ˈsa.βa.ðos] (la /s/ se mantiene)',
+                '[los ˈsa.βa.ðos] (contexto ante fricativa)',
+                '¿Qué ocurre con /s/ en "los sábados"?', ['Se mantiene', 'Se asimila', 'Se pierde', 'Se convierte en /h/'],
+                0, 'Escribe un ejemplo de consonante ante fricativa.'
+            ],
+            ['Contexto en grupos consonánticos', 'Dos o más consonantes',
+                'En grupos consonánticos, la primera consonante puede ser más débil o asimilarse a la segunda.',
+                '"construcción" → [kons.tɾuk.ˈsjon] (la /n/ se asimila a /s/ en /ns/)',
+                '[kons.tɾuk.ˈsjon] (grupo consonántico)',
+                '¿Qué ocurre con /n/ en "construcción"?', ['Se asimila a /s/', 'Se mantiene como /n/', 'Se pierde',
+                    'Se convierte en /ŋ/'
+                ], 0, 'Escribe un ejemplo de grupo consonántico.'
+            ],
+            ['Contexto de sinalefa', 'Unión de vocales entre palabras',
+                'En sinalefa, las vocales se unen en la pronunciación, afectando la separación silábica.',
+                '"casa oscura" → [ka.sa.ˈsku.ɾa] (sinalefa)',
+                '[ka.sa.ˈsku.ɾa] (contexto de sinalefa)',
+                '¿Qué ocurre en la sinalefa?', ['Se unen vocales entre palabras', 'Se separan vocales entre palabras',
+                    'Se unen consonantes', 'Se separan consonantes'
+                ], 0, 'Escribe un ejemplo de sinalefa.'
+            ],
+            ['Contexto de hiato', 'Separación de vocales entre palabras',
+                'En hiato, las vocales se separan en la pronunciación, marcando una pausa o énfasis.',
+                '"María Elena" → [ma.ˈɾi.a e.ˈle.na] (hiato)',
+                '[ma.ˈɾi.a e.ˈle.na] (contexto de hiato)',
+                '¿Qué ocurre en el hiato?', ['Se separan vocales entre palabras', 'Se unen vocales entre palabras',
+                    'Se unen consonantes', 'Se separan consonantes'
+                ], 0, 'Escribe un ejemplo de hiato entre palabras.'
+            ],
+            ['Contexto de enclíticos', 'Pronombres unidos al verbo',
+                'Los pronombres enclíticos se unen al verbo en la pronunciación, afectando la separación silábica.',
+                '"decirme" → [de.ˈθiɾ.me] (el pronombre se une al verbo)',
+                '[de.ˈθiɾ.me] (contexto de enclítico)',
+                '¿Qué ocurre con los pronombres enclíticos?', ['Se unen al verbo en la pronunciación',
+                    'Se separan del verbo', 'Se pierden', 'Se convierten en tónicos'
+                ], 0, 'Escribe un ejemplo de enclítico.'
+            ],
+            ['Contexto de prefijos', 'Prefijos unidos a la raíz',
+                'Los prefijos se unen a la raíz en la pronunciación, afectando la separación silábica.',
+                '"deshacer" → [des.a.ˈθeɾ] (el prefijo se une a la raíz)',
+                '[des.a.ˈθeɾ] (contexto de prefijo)',
+                '¿Qué ocurre con los prefijos en la pronunciación?', ['Se unen a la raíz', 'Se separan de la raíz',
+                    'Se pierden', 'Se convierten en tónicos'
+                ], 0, 'Escribe un ejemplo de prefijo en pronunciación.'
+            ]
+        ];
+        b7.forEach(d => addLesson('contextos', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: VARIACIÓN Y DIALECTOS (76–82)
+        // ============================================================
+        const b8 = [
+            ['Yeísmo', 'Fusión de /ʎ/ y /j/',
+                'El yeísmo es la fusión de los fonemas /ʎ/ y /j/ en [j] o [ʝ] en muchos dialectos.',
+                '"calle" → [ˈka.je] en zonas yeístas, [ˈka.ʎe] en zonas no yeístas.',
+                '[ˈka.je] (yeísmo) vs [ˈka.ʎe] (no yeísmo)',
+                '¿Qué ocurre en el yeísmo?', ['Fusión de /ʎ/ y /j/', 'Separación de /ʎ/ y /j/', 'Pérdida de /j/',
+                    'Pérdida de /ʎ/'
+                ], 0, 'Escribe la pronunciación de "calle" en tu dialecto.'
+            ],
+            ['Seseo', 'Fusión de /s/ y /θ/',
+                'El seseo es la fusión de los fonemas /s/ y /θ/ en [s] en muchos dialectos americanos.',
+                '"casa" y "caza" se pronuncian igual: [ˈka.sa] en zonas seseantes.',
+                '[ˈka.sa] (seseo) vs [ˈka.sa] (no distinción)',
+                '¿Qué ocurre en el seseo?', ['Fusión de /s/ y /θ/', 'Separación de /s/ y /θ/', 'Pérdida de /s/',
+                    'Pérdida de /θ/'
+                ], 0, 'Escribe la pronunciación de "caza" en tu dialecto.'
+            ],
+            ['Ceceo', 'Fusión de /s/ y /θ/ en [θ]',
+                'El ceceo es la fusión de los fonemas /s/ y /θ/ en [θ] en algunas zonas de Andalucía.',
+                '"casa" y "caza" se pronuncian igual: [ˈka.θa] en zonas ceceantes.',
+                '[ˈka.θa] (ceceo)',
+                '¿Qué ocurre en el ceceo?', ['Fusión de /s/ y /θ/ en [θ]', 'Fusión de /s/ y /θ/ en [s]',
+                    'Separación de /s/ y /θ/', 'Pérdida de /s/'
+                ], 0, 'Escribe la pronunciación de "casa" en ceceo.'
+            ],
+            ['Aspiración de /s/ en coda', '/s/ → [h] al final de sílaba',
+                'En muchos dialectos, la /s/ en posición de coda se aspira como [h] o se elide.',
+                '"los mismos" → [loh ˈmih.moh] en Andalucía o el Caribe.',
+                '[loh ˈmih.moh] (aspiración de /s/)',
+                '¿Qué ocurre con /s/ en coda en algunos dialectos?', ['Se aspira como [h]', 'Se mantiene como [s]',
+                    'Se pierde', 'Se convierte en [z]'
+                ], 0, 'Escribe un ejemplo de aspiración de /s/.'
+            ],
+            ['Elisión de /d/ intervocálica', '/d/ → ∅ entre vocales',
+                'La /d/ intervocálica se elide en muchos dialectos, especialmente en participios.',
+                '"cansado" → [kan.ˈsao] (elisión de /d/)',
+                '[kan.ˈsao] (elisión de /d/)',
+                '¿Qué ocurre con /d/ en "cansado" en algunos dialectos?', ['Se elide', 'Se mantiene como [d]',
+                    'Se convierte en [ð]', 'Se convierte en [t]'
+                ], 0, 'Escribe un ejemplo de elisión de /d/.'
+            ],
+            ['Neutralización de líquidas', '/l/ y /r/ se neutralizan en coda',
+                'En algunos dialectos, /l/ y /r/ se neutralizan en posición de coda, a menudo como [l].',
+                    '"puerta" → [ˈpwel.ta] (neutralización de /r/ en [l])',
+                    '[ˈpwel.ta] (neutralización de líquidas)',
+                    '¿Qué ocurre con /l/ y /r/ en coda en algunos dialectos?', ['Se neutralizan', 'Se mantienen distintas',
+                        'Se pierden', 'Se convierten en [j]'
+                    ], 0, 'Escribe un ejemplo de neutralización de líquidas.'
+                ],
+                ['Acento en dialectos', 'Variación en la posición del acento',
+                    'En algunos dialectos, el acento puede variar en palabras como "video" (vídeo en España, video en América).',
+                    '"vídeo" (España) vs "video" (América)',
+                    'Variación acentual',
+                    '¿Cómo varía el acento en "video"?', ['En España es "vídeo", en América "video"',
+                        'No varía', 'Es siempre "video"', 'Es siempre "vídeo"'
+                    ], 0, 'Escribe una palabra con variación acentual dialectal.'
+                ]
+            ];
+        b8.forEach(d => addLesson('variacion', ...d));
+
+            // ============================================================
+            //  BLOQUE 9: APLICACIÓN EN REDACCIÓN (83–90)
+            // ============================================================
+            const b9 = [
+                ['Silabeo en poesía', 'Métrica y ritmo poético',
+                    'El silabeo es fundamental en poesía para contar sílabas métricas. La sinalefa, el hiato y el acento afectan el cómputo silábico.',
+                    '"A-mor de-mas-i-a-do" → 7 sílabas',
+                    'Cómputo silábico en poesía',
+                    '¿Qué afecta el cómputo silábico en poesía?', ['Sinalefa, hiato y acento', 'Solo la sinalefa',
+                        'Solo el hiato', 'Solo el acento'
+                    ], 0, 'Escribe un verso y cuenta sus sílabas.'
+                ],
+                ['Silabeo en música', 'Letras y ritmo musical',
+                    'En la música, el silabeo se adapta al ritmo de la melodía, a menudo con sinalefa o elisión para ajustar el número de sílabas.',
+                    '"Can-tar" → 2 sílabas / "can-ta-rás" → 3 sílabas',
+                    'Silabeo musical',
+                    '¿Qué se ajusta en la música al silabeo?', ['El ritmo y la melodía', 'La métrica', 'El acento',
+                        'La entonación'
+                    ], 0, 'Escribe un verso de canción y su silabeo.'
+                ],
+                ['Silabeo en publicidad', 'Slogans y nombres de marca',
+                    'El silabeo en publicidad busca palabras cortas y fáciles de recordar: "Co-ca", "Ni-ke", "A-di-das".',
+                    '"Co-ca" (2 sílabas) / "Ni-ke" (2 sílabas)',
+                    'Silabeo publicitario',
+                    '¿Qué características tiene el silabeo publicitario?', ['Corto y fácil de recordar',
+                        'Largo y complejo', 'Con hiato', 'Con triptongo'
+                    ], 0, 'Escribe un eslogan con silabeo corto.'
+                ],
+                ['Silabeo en nombres de dominio', 'Facilidad de lectura y pronunciación',
+                    'Los nombres de dominio con silabeo claro son más fáciles de recordar y pronunciar.',
+                    '"a-ma-zo-na.com"',
+                    'Silabeo en dominios',
+                    '¿Qué facilita el silabeo en nombres de dominio?', ['La pronunciación y el recuerdo',
+                        'La escritura', 'El SEO', 'La velocidad de carga'
+                    ], 0, 'Escribe un nombre de dominio con silabeo claro.'
+                ],
+                ['Silabeo en traducción', 'Adaptación del silabeo al idioma meta',
+                    'En traducción, el silabeo puede cambiar al adaptar palabras a la fonología del idioma de llegada.',
+                    '"software" → "sof-tua-re" (adaptación al español)',
+                    'Adaptación silábica en traducción',
+                    '¿Qué ocurre al adaptar extranjerismos al español?', ['Cambia el silabeo', 'Se mantiene igual',
+                        'Se pierde', 'Se convierte en diptongo'
+                    ], 0, 'Escribe un extranjerismo adaptado al español con su silabeo.'
+                ],
+                ['Silabeo en transcripción fonética', 'Representación de la pronunciación real',
+                    'La transcripción fonética representa el silabeo real, incluyendo sinalefas y asimilaciones.',
+                    '[ka.sa.ˈsku.ɾa] (transcripción fonética)',
+                    'Transcripción fonética del silabeo',
+                    '¿Qué representa la transcripción fonética?', ['La pronunciación real', 'La estructura abstracta',
+                        'La ortografía', 'La gramática'
+                    ], 0, 'Escribe la transcripción fonética de una frase.'
+                ],
+                ['Silabeo en transcripción fonológica', 'Representación de la estructura abstracta',
+                    'La transcripción fonológica representa el silabeo subyacente, sin sinalefas ni asimilaciones.',
+                    '/ka.sa.ˈos.ku.ɾa/ (transcripción fonológica)',
+                    'Transcripción fonológica del silabeo',
+                    '¿Qué representa la transcripción fonológica?', ['La estructura abstracta', 'La pronunciación real',
+                        'La ortografía', 'La gramática'
+                    ], 0, 'Escribe la transcripción fonológica de una frase.'
+                ],
+                ['Silabeo en corrección ortográfica', 'Separación de sílabas al final de línea',
+                    'El silabeo es fundamental para la separación de palabras al final de línea en la redacción.',
+                    '"con-ti-nua-ción" (separación correcta al final de línea)',
+                    'Separación silábica en redacción',
+                    '¿Para qué se usa el silabeo en redacción?', ['Para separar palabras al final de línea',
+                        'Para la métrica', 'Para la pronunciación', 'Para la gramática'
+                    ], 0, 'Escribe una palabra con su separación silábica para final de línea.'
+                ]
+            ];
+        b9.forEach(d => addLesson('redaccion', ...d));
+
+            // ============================================================
+            //  BLOQUE 10: PRÁCTICA Y CONSOLIDACIÓN (91–100)
+            // ============================================================
+            const b10 = [
+                ['Diferencia entre [b] y /b/', 'Sonido real vs fonema abstracto',
+                    'La diferencia entre [b] y /b/ es clave: [b] es el sonido real, /b/ es el fonema abstracto.',
+                    '[b] (sonido) vs /b/ (fonema)',
+                    'Fonética vs Fonología',
+                    '¿Qué representa [b]?', ['El sonido real', 'El fonema abstracto', 'La letra', 'La sílaba'],
+                    0, 'Escribe la diferencia entre [b] y /b/.'
+                ],
+                ['Diferencia entre sinalefa y hiato', 'Unión vs separación de vocales',
+                    'La sinalefa une vocales en la pronunciación; el hiato las separa en sílabas distintas.',
+                    'Sinalefa: [ka.sa.ˈsku.ɾa] / Hiato: [ma.ˈɾi.a e.ˈle.na]',
+                    'Sinalefa vs Hiato',
+                    '¿Qué ocurre en la sinalefa?', ['Se unen vocales', 'Se separan vocales', 'Se unen consonantes',
+                        'Se separan consonantes'
+                    ], 0, 'Escribe un ejemplo de sinalefa y otro de hiato.'
+                ],
+                ['Diptongo vs hiato fonológico', 'Una sílaba vs dos sílabas',
+                    'El diptongo fonológico une dos vocales en una sílaba; el hiato las separa en dos sílabas.',
+                    '/bue-no/ (diptongo) vs /po-e-ta/ (hiato)',
+                    'Diptongo vs Hiato fonológico',
+                    '¿Qué ocurre en un diptongo fonológico?', ['Dos vocales en una sílaba', 'Dos vocales en sílabas distintas',
+                        'Tres vocales en una sílaba', 'Vocal + consonante'
+                    ], 0, 'Escribe un ejemplo de diptongo y otro de hiato fonológico.'
+                ],
+                ['Triptongo y diptongo', 'Tres vocales vs dos vocales en una sílaba',
+                    'El triptongo tiene tres vocales en una sílaba; el diptongo tiene dos.',
+                    '/güeis/ (triptongo) vs /bue-no/ (diptongo)',
+                    'Triptongo vs Diptongo',
+                    '¿Cuántas vocales tiene un triptongo en una sílaba?', ['3', '2', '4', '1'],
+                    0, 'Escribe un ejemplo de triptongo y otro de diptongo.'
+                ],
+                ['Sinalefa y acento', 'Efecto en el cómputo silábico',
+                    'La sinalefa reduce el número de sílabas en el cómputo poético y afecta el acento métrico.',
+                    '"Ca-sa os-cu-ra" → 5 sílabas sin sinalefa / "Ca-saos-cu-ra" → 4 sílabas con sinalefa',
+                    'Efecto de la sinalefa en el cómputo silábico',
+                    '¿Qué ocurre con el cómputo silábico en la sinalefa?', ['Se reduce el número de sílabas',
+                        'Aumenta el número de sílabas', 'No afecta', 'Depende'
+                    ], 0, 'Escribe un verso con sinalefa y cuenta sus sílabas.'
+                ],
+                ['Yeísmo y no yeísmo', 'Fusión vs distinción de /ʎ/ y /j/',
+                    'El yeísmo fusiona /ʎ/ y /j/; el no yeísmo las mantiene distintas.',
+                    'Yeísmo: [ˈka.je] / No yeísmo: [ˈka.ʎe]',
+                    'Yeísmo vs No yeísmo',
+                    '¿Qué ocurre en el yeísmo?', ['Fusión de /ʎ/ y /j/', 'Separación de /ʎ/ y /j/', 'Pérdida de /j/',
+                        'Pérdida de /ʎ/'
+                    ], 0, 'Escribe la pronunciación de "calle" en tu dialecto.'
+                ],
+                ['Seseo y ceceo', 'Fusión de /s/ y /θ/ en [s] o [θ]',
+                    'El seseo fusiona /s/ y /θ/ en [s]; el ceceo en [θ].',
+                    'Seseo: [ˈka.sa] / Ceceo: [ˈka.θa]',
+                    'Seseo vs Ceceo',
+                    '¿Qué ocurre en el seseo?', ['Fusión en [s]', 'Fusión en [θ]', 'Separación', 'Pérdida de /s/'],
+                    0, 'Escribe la pronunciación de "caza" en seseo y en ceceo.'
+                ],
+                ['Aspiración de /s/ y elisión de /d/', 'Procesos en el habla rápida',
+                    'La aspiración de /s/ en coda y la elisión de /d/ intervocálica son procesos comunes en el habla rápida.',
+                    '"los mismos" → [loh ˈmih.moh] / "cansado" → [kan.ˈsao]',
+                    'Aspiración y elisión',
+                    '¿Qué ocurre en el habla rápida con /s/ y /d/?', ['Aspiración de /s/ y elisión de /d/',
+                        'No ocurre nada', 'Se mantienen', 'Se convierten en otro sonido'
+                    ], 0, 'Escribe un ejemplo de aspiración y otro de elisión.'
+                ],
+                ['Acento y significado', 'Función distintiva del acento',
+                    'El acento fonológico puede distinguir significados: "cá-sa" (sustantivo) vs "ca-sá" (verbo).',
+                    '/ˈkasa/ (sustantivo) vs /kaˈsa/ (verbo)',
+                    'Acento distintivo',
+                    '¿Qué función tiene el acento fonológico?', ['Distinguir significados', 'Indicar origen',
+                        'Indicar género', 'Indicar número'
+                    ], 0, 'Escribe un par de palabras distinguidas por el acento.'
+                ],
+                ['Resumen: fonética y fonología', 'Diferencias y aplicaciones',
+                    'La fonética estudia los sonidos reales; la fonología estudia los fonemas abstractos. El silabeo se analiza desde ambos enfoques.',
+                    '[ka.sa] (fonética) vs /kasa/ (fonología)',
+                    'Fonética vs Fonología',
+                    '¿Qué estudia la fonética?', ['Los sonidos reales', 'Los fonemas abstractos', 'La ortografía',
+                        'La gramática'
+                    ], 0, 'Escribe un texto breve que muestre la diferencia entre fonética y fonología.'
+                ]
+            ];
+        b10.forEach(d => addLesson('practica', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Concepto: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Fonética y Fonología');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Fonética/Fonología cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

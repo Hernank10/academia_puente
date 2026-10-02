@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MorphoPlay · 30 juegos morfológicos</title>
+  <!-- Bootstrap 5 + Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body { background: linear-gradient(145deg, #f7f3ff 0%, #e8e0f5 100%); font-family: 'Segoe UI', system-ui, sans-serif; }
+    .card-morph { border-radius: 2rem; border: none; box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 8px 20px rgba(90, 40, 140, 0.10); backdrop-filter: blur(2px); background: rgba(255,255,255,0.7); }
+    .game-header { border-bottom: 2px dashed #c9b8e6; padding-bottom: 0.75rem; }
+    .badge-cat { background: #6c4b9e; color: white; padding: 0.5rem 1.2rem; border-radius: 40px; font-weight: 500; letter-spacing: 0.3px; }
+    .btn-morph { background: #7c5fbf; border: none; color: white; border-radius: 60px; padding: 0.5rem 1.8rem; font-weight: 600; transition: 0.2s; box-shadow: 0 6px 12px rgba(106, 60, 180, 0.25); }
+    .btn-morph:hover { background: #5e3d9e; transform: scale(1.02); color: white; }
+    .btn-outline-morph { border: 2px solid #7c5fbf; color: #4d2e7a; border-radius: 60px; padding: 0.4rem 1.5rem; font-weight: 600; }
+    .btn-outline-morph:hover { background: #7c5fbf; color: white; }
+    .cursive-input { font-family: 'Brush Script MT', 'Comic Sans MS', 'Snell Roundhand', cursive; font-size: 1.8rem; letter-spacing: 1px; background: #fcf9ff; border: 2px solid #d5c4f0; border-radius: 30px; padding: 0.4rem 1.2rem; }
+    .cursive-input:focus { border-color: #7c5fbf; box-shadow: 0 0 0 4px rgba(124, 95, 191, 0.25); }
+    .streak-box { background: #f0e9fc; border-radius: 60px; padding: 0.4rem 1.2rem; font-weight: 600; color: #2c1a4a; }
+    .game-wrapper { min-height: 380px; }
+    .list-group-item { background: transparent; border: none; border-bottom: 1px solid #ddd0f0; padding: 0.7rem 0.2rem; }
+    .list-group-item:last-child { border: none; }
+    .progress-bar-morph { background: #7c5fbf; height: 0.5rem; border-radius: 40px; }
+    .fs-small { font-size: 0.9rem; }
+    .escritura-badge { background: #ffd966; color: #3d2a5c; border-radius: 40px; padding: 0.2rem 1rem; font-weight: 600; font-size: 0.8rem; }
+    .fade-in { animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn { 0% { opacity: 0.3; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+    .game-title { font-weight: 700; color: #2f1a50; }
+    .respuesta-correcta { background: #d4edda; border-radius: 40px; padding: 0.3rem 1.2rem; color: #155724; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="container py-4 py-md-5">
+    <!-- Título principal -->
+    <div class="text-center mb-4">
+      <h1 class="display-4 fw-bold" style="color: #2f1a50; letter-spacing: -0.5px;"><i class="fas fa-puzzle-piece me-3" style="color: #7c5fbf;"></i>MorphoPlay</h1>
+      <p class="lead fw-light" style="color: #433262;">30 juegos · morfología en español, inglés y bilingüe</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <span class="badge-cat"><i class="fas fa-flag me-1"></i> 🇪🇸 1-10</span>
+        <span class="badge-cat"><i class="fas fa-flag me-1"></i> 🇬🇧 11-20</span>
+        <span class="badge-cat"><i class="fas fa-globe me-1"></i> 🌐 21-30</span>
+        <span class="badge-cat" style="background: #b48ad9;"><i class="fas fa-pen-fancy me-1"></i> ✍️ escritura</span>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <!-- Panel principal: juego activo -->
+      <div class="col-lg-8">
+        <div class="card card-morph p-4 game-wrapper">
+          <div class="d-flex justify-content-between align-items-start game-header">
+            <div>
+              <span class="badge bg-secondary bg-opacity-25 text-dark me-2" id="gameIndexDisplay">#1</span>
+              <span class="badge" id="categoryBadge" style="background:#6c4b9e; color:white;">🇪🇸 Español</span>
+              <span class="badge bg-warning bg-opacity-25 text-dark ms-2" id="escrituraBadge">✍️</span>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <span class="streak-box"><i class="fas fa-fire text-warning me-1"></i> <span id="streakCount">0</span> racha</span>
+              <span class="streak-box" style="background: #d5c4f0;"><i class="fas fa-star text-warning me-1"></i> <span id="scoreCount">0</span> pts</span>
+            </div>
+          </div>
+
+          <div class="mt-3">
+            <h4 class="game-title" id="gameTitle">Cargando juego...</h4>
+            <p class="text-muted" id="gameDescription">Instrucción del juego</p>
+          </div>
+
+          <!-- Área de interacción -->
+          <div class="mt-3" id="interactionArea">
+            <!-- dinámico según tipo de juego -->
+          </div>
+
+          <!-- Respuesta correcta (se muestra tras responder) -->
+          <div id="respuestaCorrectaContainer" class="mt-3 text-center" style="display: none;">
+            <div class="respuesta-correcta d-inline-block"><i class="fas fa-check-circle me-2"></i> <span id="respuestaCorrectaTexto">---</span></div>
+          </div>
+
+          <!-- Controles -->
+          <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top border-light">
+            <button class="btn btn-outline-morph" id="prevGameBtn"><i class="fas fa-arrow-left me-1"></i> Anterior</button>
+            <div>
+              <span class="badge bg-light text-dark rounded-pill px-3 py-2" id="progressText">1 / 30</span>
+            </div>
+            <button class="btn btn-morph" id="nextGameBtn">Siguiente <i class="fas fa-arrow-right ms-1"></i></button>
+          </div>
+          <div class="progress mt-2" style="height: 6px; background: #ddd0f0;">
+            <div class="progress-bar progress-bar-morph" id="progressBar" style="width: 3.3%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel lateral: lista de juegos + estadísticas -->
+      <div class="col-lg-4">
+        <div class="card card-morph p-3" style="background: rgba(255,255,255,0.5);">
+          <div class="d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold"><i class="fas fa-list-ul me-2" style="color:#7c5fbf;"></i> Juegos</h5>
+            <span class="badge bg-primary bg-opacity-10 text-primary" id="completedCount">0/30</span>
+          </div>
+          <div class="list-group mt-2" id="gameList" style="max-height: 400px; overflow-y: auto;">
+            <!-- relleno con JS -->
+          </div>
+          <div class="mt-3 text-center">
+            <button class="btn btn-sm btn-outline-secondary w-100" id="resetProgressBtn"><i class="fas fa-undo-alt me-1"></i> Reiniciar progreso</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center text-muted mt-4 small">
+      <i class="fas fa-pen-fancy me-1"></i> Juegos de escritura: escribe en cursiva (puedes usar <span style="font-family: 'Brush Script MT', cursive;">Brush Script</span>)
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      // --------------------------------------------------------------
+      // DATOS: 30 juegos (morfología)
+      // --------------------------------------------------------------
+      const juegos = [
+        // 🇪🇸 1-10
+        { id:1, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Prefijos nominales', desc:'Elige el prefijo correcto para "___vida" (vida después de la muerte).', opciones:['anti-','post-','pre-','pro-'], correcta:'post-', escritura:false },
+        { id:2, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Sufijos nominales', desc:'¿Qué sufijo forma un sustantivo a partir de "bello"?', opciones:['-dad','-eza','-ura','-ción'], correcta:'-eza', escritura:false },
+        { id:3, cat:'🇪🇸 Español', tipo:'escritura', titulo:'✍️ Diminutivos y aumentativos', desc:'Escribe el diminutivo de "casa" (con -ita o -ecita).', correcta:'casita', escritura:true },
+        { id:4, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Familias de palabras', desc:'¿Cuál NO pertenece a la familia de "mar"?', opciones:['marino','maremoto','marea','martillo'], correcta:'martillo', escritura:false },
+        { id:5, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Sufijos verbales', desc:'Verbo a partir de "moderno":', opciones:['modernizar','modernear','modernar','modernizar'], correcta:'modernizar', escritura:false },
+        { id:6, cat:'🇪🇸 Español', tipo:'escritura', titulo:'✍️ Sufijos de adjetivos', desc:'Escribe el adjetivo derivado de "cuidado" (con -oso).', correcta:'cuidadoso', escritura:true },
+        { id:7, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Prefijos y sufijos', desc:'Palabra con prefijo y sufijo: "inmoralidad" → prefijo in- y sufijo -dad, raíz "moral". ¿Qué es?', opciones:['sustantivo','adjetivo','verbo','adverbio'], correcta:'sustantivo', escritura:false },
+        { id:8, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Familia léxica', desc:'Elija la palabra que NO es de la familia de "pan":', opciones:['panadero','empanada','panal','panera'], correcta:'panal', escritura:false },
+        { id:9, cat:'🇪🇸 Español', tipo:'escritura', titulo:'✍️ Aumentativos', desc:'Escribe el aumentativo de "perro" (con -azo).', correcta:'perrazo', escritura:true },
+        { id:10, cat:'🇪🇸 Español', tipo:'opcion', titulo:'Sufijos diminutivos', desc:'El sufijo "-illo" en "pajarillo" indica:', opciones:['aumentativo','diminutivo','despectivo','afectivo'], correcta:'diminutivo', escritura:false },
+        // 🇬🇧 11-20
+        { id:11, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Prefijo UN-', desc:'Significado de "unhappy":', opciones:['muy feliz','no feliz','felizmente','felicidad'], correcta:'no feliz', escritura:false },
+        { id:12, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Prefijo RE-', desc:'"Rewrite" significa:', opciones:['escribir mal','escribir de nuevo','escribir antes','escribir sobre'], correcta:'escribir de nuevo', escritura:false },
+        { id:13, cat:'🇬🇧 Inglés', tipo:'escritura', titulo:'✍️ Sufijo -tion / -sion', desc:'Escribe el sustantivo de "decide" (termina en -sion).', correcta:'decision', escritura:true },
+        { id:14, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Prefijo MIS-', desc:'"Misunderstand" es:', opciones:['entender mal','entender bien','entender antes','entender después'], correcta:'entender mal', escritura:false },
+        { id:15, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Agentes -er/-or', desc:'Persona que enseña (teacher) → sufijo:', opciones:['-er','-or','-ist','-ian'], correcta:'-er', escritura:false },
+        { id:16, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Adjetivos -ful', desc:'"Careful" significa:', opciones:['sin cuidado','cuidadoso','descuidado','cuidadosamente'], correcta:'cuidadoso', escritura:false },
+        { id:17, cat:'🇬🇧 Inglés', tipo:'escritura', titulo:'✍️ Adjetivos -less', desc:'Escribe el adjetivo "sin esperanza" (hope + less).', correcta:'hopeless', escritura:true },
+        { id:18, cat:'🇬🇧 Inglés', tipo:'escritura', titulo:'✍️ Adverbios -ly', desc:'Escribe el adverbio de "quick" (termina en -ly).', correcta:'quickly', escritura:true },
+        { id:19, cat:'🇬🇧 Inglés', tipo:'opcion', titulo:'Sufijo -ous', desc:'"Dangerous" es:', opciones:['peligro','peligroso','sin peligro','peligrosamente'], correcta:'peligroso', escritura:false },
+        { id:20, cat:'🇬🇧 Inglés', tipo:'escritura', titulo:'✍️ Repaso -tion', desc:'Escribe el sustantivo de "inform" (termina en -tion).', correcta:'information', escritura:true },
+        // 🌐 21-30 bilingüe
+        { id:21, cat:'🌐 Bilingüe', tipo:'opcion', titulo:'Cognados ES↔EN', desc:'"Family" en español es:', opciones:['familia','familiar','famoso','falda'], correcta:'familia', escritura:false },
+        { id:22, cat:'🌐 Bilingüe', tipo:'opcion', titulo:'Sufijos paralelos', desc:'-ción en español → -tion en inglés. ¿"Nación" en inglés?', opciones:['nation','nacion','nacional','national'], correcta:'nation', escritura:false },
+        { id:23, cat:'🌐 Bilingüe', tipo:'opcion', titulo:'Falsos amigos morfológicos', desc:'"Embarazada" NO significa "embarrassed". ¿Qué significa?', opciones:['avergonzada','embarazada','preñada','confundida'], correcta:'preñada', escritura:false },
+        { id:24, cat:'🌐 Bilingüe', tipo:'escritura', titulo:'✍️ Raíces grecolatinas', desc:'Escribe una palabra con raíz "geo" (tierra) — ej: geografía.', correcta:'geografia', escritura:true },
+        { id:25, cat:'🌐 Bilingüe', tipo:'escritura', titulo:'✍️ Neologismos', desc:'Escribe un neologismo con el sufijo "-ear" (ej: tuitear).', correcta:'tuitear', escritura:true },
+        { id:26, cat:'🌐 Bilingüe', tipo:'opcion', titulo:'Cognados -tion', desc:'"Education" en español:', opciones:['educación','educativo','educador','educado'], correcta:'educación', escritura:false },
+        { id:27, cat:'🌐 Bilingüe', tipo:'escritura', titulo:'✍️ Sufijos -dad / -ty', desc:'Escribe el sustantivo de "able" en español (termina en -dad).', correcta:'abilidad', escritura:true },
+        { id:28, cat:'🌐 Bilingüe', tipo:'opcion', titulo:'Raíces grecolatinas', desc:'"Teléfono" contiene la raíz "tele" (lejos) y "fono" (sonido). ¿Qué es?', opciones:['sonido lejano','lejos sonido','sonido','lejos'], correcta:'sonido lejano', escritura:false },
+        { id:29, cat:'🌐 Bilingüe', tipo:'escritura', titulo:'✍️ Gran Reto Final I', desc:'Escribe "superhéroe" en inglés (super + hero).', correcta:'superhero', escritura:true },
+        { id:30, cat:'🌐 Bilingüe', tipo:'escritura', titulo:'✍️ Gran Reto Final II', desc:'Escribe el adjetivo de "morfología" (con -ico).', correcta:'morfológico', escritura:true }
+      ];
+
+      // Estado
+      let currentIndex = 0; // 0-based
+      let score = 0;
+      let streak = 0;
+      let completed = new Array(30).fill(false); // si ya respondió correctamente
+
+      // DOM refs
+      const gameIndexDisplay = document.getElementById('gameIndexDisplay');
+      const categoryBadge = document.getElementById('categoryBadge');
+      const escrituraBadge = document.getElementById('escrituraBadge');
+      const gameTitle = document.getElementById('gameTitle');
+      const gameDescription = document.getElementById('gameDescription');
+      const interactionArea = document.getElementById('interactionArea');
+      const respuestaCorrectaContainer = document.getElementById('respuestaCorrectaContainer');
+      const respuestaCorrectaTexto = document.getElementById('respuestaCorrectaTexto');
+      const streakCount = document.getElementById('streakCount');
+      const scoreCount = document.getElementById('scoreCount');
+      const progressText = document.getElementById('progressText');
+      const progressBar = document.getElementById('progressBar');
+      const completedCount = document.getElementById('completedCount');
+      const gameList = document.getElementById('gameList');
+      const prevBtn = document.getElementById('prevGameBtn');
+      const nextBtn = document.getElementById('nextGameBtn');
+      const resetBtn = document.getElementById('resetProgressBtn');
+
+      // funciones aux
+      function updateStats() {
+        streakCount.textContent = streak;
+        scoreCount.textContent = score;
+        const done = completed.filter(v => v).length;
+        completedCount.textContent = `${done}/30`;
+        // lista de juegos actualizar clases
+        const items = gameList.querySelectorAll('.list-group-item');
+        items.forEach((li, idx) => {
+          if (completed[idx]) {
+            li.classList.add('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+            li.querySelector('.badge').innerHTML = '<i class="fas fa-check-circle text-success"></i> OK';
+          } else {
+            li.classList.remove('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+            li.querySelector('.badge').textContent = `#${idx+1}`;
+          }
+        });
+        // barra progreso
+        const pct = Math.min(100, (done/30)*100);
+        progressBar.style.width = pct + '%';
+        progressText.textContent = `${currentIndex+1} / 30`;
+        // game index
+        gameIndexDisplay.textContent = `#${currentIndex+1}`;
+      }
+
+      function renderGame(index) {
+        const juego = juegos[index];
+        if (!juego) return;
+        // header
+        categoryBadge.textContent = juego.cat;
+        if (juego.escritura) {
+          escrituraBadge.style.display = 'inline-block';
+          escrituraBadge.textContent = '✍️ escritura';
+        } else {
+          escrituraBadge.style.display = 'none';
+        }
+        gameTitle.textContent = juego.titulo;
+        gameDescription.textContent = juego.desc;
+        // ocultar respuesta correcta anterior
+        respuestaCorrectaContainer.style.display = 'none';
+
+        // generar interacción
+        let html = '';
+        if (juego.tipo === 'opcion') {
+          html = `<div class="d-flex flex-wrap gap-3 justify-content-center">`;
+          juego.opciones.forEach((opt, i) => {
+            html += `<button class="btn btn-outline-morph opcion-btn" data-opt="${opt}" data-correct="${juego.correcta}">${opt}</button>`;
+          });
+          html += `</div>`;
+        } else if (juego.tipo === 'escritura') {
+          html = `
+            <div class="text-center">
+              <input type="text" class="cursive-input w-75 mx-auto" id="escrituraInput" placeholder="Escribe en cursiva..." autofocus>
+              <button class="btn btn-morph mt-3 d-block mx-auto" id="submitEscrituraBtn"><i class="fas fa-pen me-2"></i>Comprobar</button>
+            </div>
+          `;
+        }
+        interactionArea.innerHTML = html;
+
+        // eventos para opciones
+        if (juego.tipo === 'opcion') {
+          document.querySelectorAll('.opcion-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+              const selected = this.dataset.opt;
+              const correct = this.dataset.correct;
+              const isCorrect = (selected === correct);
+              // deshabilitar todos
+              document.querySelectorAll('.opcion-btn').forEach(b => b.disabled = true);
+              // marcar
+              if (isCorrect) {
+                this.classList.add('btn-success');
+                this.classList.remove('btn-outline-morph');
+                // sumar puntos si no completado
+                if (!completed[index]) {
+                  score += 10;
+                  streak += 1;
+                  completed[index] = true;
+                } else {
+                  // ya completado, solo no suma extra
+                }
+              } else {
+                this.classList.add('btn-danger');
+                this.classList.remove('btn-outline-morph');
+                streak = 0;
+                // mostrar correcta
+              }
+              // mostrar respuesta correcta
+              respuestaCorrectaTexto.textContent = correct;
+              respuestaCorrectaContainer.style.display = 'block';
+              // resaltar correcta entre opciones
+              document.querySelectorAll('.opcion-btn').forEach(b => {
+                if (b.dataset.opt === correct) {
+                  b.classList.add('border', 'border-success', 'bg-success', 'bg-opacity-25');
+                }
+              });
+              updateStats();
+            });
+          });
+        } else if (juego.tipo === 'escritura') {
+          const input = document.getElementById('escrituraInput');
+          const submitBtn = document.getElementById('submitEscrituraBtn');
+          if (input && submitBtn) {
+            // función comprobar
+            function checkEscritura() {
+              const val = input.value.trim().toLowerCase();
+              const correct = juego.correcta.toLowerCase();
+              const isCorrect = (val === correct);
+              if (isCorrect) {
+                if (!completed[index]) {
+                  score += 15;
+                  streak += 1;
+                  completed[index] = true;
+                }
+                input.style.borderColor = '#28a745';
+                input.style.background = '#e6f9e6';
+              } else {
+                streak = 0;
+                input.style.borderColor = '#dc3545';
+                input.style.background = '#fce4e4';
+              }
+              respuestaCorrectaTexto.textContent = juego.correcta;
+              respuestaCorrectaContainer.style.display = 'block';
+              input.disabled = true;
+              submitBtn.disabled = true;
+              updateStats();
+            }
+            submitBtn.addEventListener('click', checkEscritura);
+            input.addEventListener('keypress', function(e) {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                checkEscritura();
+              }
+            });
+          }
+        }
+
+        // actualizar stats, lista
+        updateStats();
+        // scroll
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // llenar lista de juegos
+      function populateGameList() {
+        gameList.innerHTML = '';
+        juegos.forEach((j, idx) => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex justify-content-between align-items-center';
+          li.style.cursor = 'pointer';
+          const icono = j.escritura ? '✍️ ' : '';
+          li.innerHTML = `<span>${icono} ${j.titulo.substring(0, 28)}</span><span class="badge bg-secondary bg-opacity-25 text-dark">#${idx+1}</span>`;
+          li.addEventListener('click', function() {
+            currentIndex = idx;
+            renderGame(currentIndex);
+          });
+          gameList.appendChild(li);
+        });
+        updateStats();
+      }
+
+      // navegación
+      function goTo(index) {
+        if (index < 0) index = 0;
+        if (index >= juegos.length) index = juegos.length - 1;
+        currentIndex = index;
+        renderGame(currentIndex);
+      }
+
+      prevBtn.addEventListener('click', function() { goTo(currentIndex - 1); });
+      nextBtn.addEventListener('click', function() { goTo(currentIndex + 1); });
+
+      resetBtn.addEventListener('click', function() {
+        if (confirm('¿Reiniciar todo el progreso?')) {
+          completed = new Array(30).fill(false);
+          score = 0;
+          streak = 0;
+          currentIndex = 0;
+          renderGame(0);
+          updateStats();
+        }
+      });
+
+      // Inicializar
+      populateGameList();
+      renderGame(0);
+    })();
+  </script>
+</body>
+</html>

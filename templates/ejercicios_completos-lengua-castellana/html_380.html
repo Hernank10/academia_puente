@@ -1,0 +1,1021 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Consola de sintaxis · Bitácora de morfosintaxis</title>
+<style>
+:root {
+  --space-black: #060810;
+  --space-deep: #0A0E1A;
+  --panel-bg: #0F1626;
+  --panel-bg-light: #141D33;
+  --panel-border: #1E3A4A;
+  --cyan: #4DEAE0;
+  --cyan-dim: #2C8A86;
+  --cyan-glow: rgba(77, 234, 224, 0.35);
+  --amber: #FFB454;
+  --amber-glow: rgba(255, 180, 84, 0.35);
+  --magenta: #FF6FB0;
+  --lime: #A8FF60;
+  --red-alert: #FF5C5C;
+  --white-hot: #E8F4F2;
+  --muted: #6E8A9A;
+  --correct: #5CFFB0;
+  --correct-bg: rgba(92, 255, 176, 0.10);
+
+  --font-display: "Orbitron", "IBM Plex Mono", monospace;
+  --font-body: "IBM Plex Mono", monospace;
+  --font-mono: "IBM Plex Mono", monospace;
+  --font-cursive: "Share Tech Mono", "IBM Plex Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--space-black);
+  color: var(--white-hot);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* ===== Starfield background, CSS-only ===== */
+.starfield {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 900px 600px at 15% 8%, rgba(77,234,224,0.07), transparent 60%),
+    radial-gradient(ellipse 700px 500px at 88% 15%, rgba(255,180,84,0.05), transparent 60%),
+    radial-gradient(ellipse 800px 600px at 50% 100%, rgba(77,160,234,0.06), transparent 65%),
+    radial-gradient(1px 1px at 12% 22%, #fff, transparent),
+    radial-gradient(1px 1px at 28% 8%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 42% 35%, #cdf, transparent),
+    radial-gradient(1px 1px at 58% 15%, #fff, transparent),
+    radial-gradient(1px 1px at 67% 48%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 78% 22%, #cdf, transparent),
+    radial-gradient(1px 1px at 88% 60%, #fff, transparent),
+    radial-gradient(1px 1px at 95% 12%, #fff, transparent),
+    radial-gradient(1px 1px at 8% 70%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 22% 85%, #cdf, transparent),
+    radial-gradient(1px 1px at 35% 92%, #fff, transparent),
+    radial-gradient(1px 1px at 48% 75%, #fff, transparent),
+    radial-gradient(1px 1px at 63% 88%, #fff, transparent),
+    radial-gradient(1.5px 1.5px at 75% 95%, #cdf, transparent),
+    radial-gradient(1px 1px at 5% 45%, #fff, transparent),
+    radial-gradient(1px 1px at 92% 80%, #fff, transparent),
+    linear-gradient(180deg, var(--space-deep), var(--space-black) 50%, #030408);
+  background-size: auto, auto, auto, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%,
+    100% 100%, 100% 100%, 100% 100%, 100% 100%, auto;
+}
+
+/* subtle scanline texture across the whole viewport */
+.scanline-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(77,234,224,0.012) 0px,
+    rgba(77,234,224,0.012) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: screen;
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .block-pill, .btn-primary, .btn-secondary, .toggle-btn, .word-chip { transition: all 0.16s ease; }
+  .stat-num, .speak-btn-sm.speaking { transition: text-shadow 0.3s ease; }
+}
+
+/* ===== HUD corner brackets ===== */
+.hud-corner {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  z-index: 2;
+}
+.hud-corner-tl { top: -1px; left: -1px; border-top: 2px solid var(--cyan); border-left: 2px solid var(--cyan); border-top-left-radius: 6px; }
+.hud-corner-tr { top: -1px; right: -1px; border-top: 2px solid var(--cyan); border-right: 2px solid var(--cyan); border-top-right-radius: 6px; }
+.hud-corner-bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--cyan); border-left: 2px solid var(--cyan); border-bottom-left-radius: 6px; }
+.hud-corner-br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--cyan); border-right: 2px solid var(--cyan); border-bottom-right-radius: 6px; }
+
+/* ===== Header ===== */
+.site-header {
+  position: relative;
+  z-index: 2;
+  padding: 56px 24px 36px;
+  border-bottom: 1px solid var(--panel-border);
+  text-align: center;
+  background: linear-gradient(180deg, rgba(77,234,224,0.04), transparent 70%);
+}
+.header-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  padding: 28px 36px;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  color: var(--amber);
+  margin: 0 0 14px;
+  font-weight: 600;
+  text-shadow: 0 0 8px var(--amber-glow);
+}
+.title {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6.5vw, 58px);
+  line-height: 1.05;
+  margin: 0 0 16px;
+  color: var(--cyan);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 18px var(--cyan-glow), 0 0 4px rgba(255,255,255,0.4);
+}
+.subtitle {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+.header-stats { display: flex; gap: 36px; justify-content: center; flex-wrap: wrap; }
+.stat { display: flex; flex-direction: column; align-items: center; }
+.stat-num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cyan);
+  text-shadow: 0 0 10px var(--cyan-glow);
+  font-variant-numeric: tabular-nums;
+}
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+/* ===== Block nav ===== */
+.block-nav {
+  position: sticky;
+  top: 0;
+  z-index: 6;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 12px 24px;
+  background: rgba(6, 8, 16, 0.88);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--panel-border);
+  overflow-x: auto;
+}
+.block-pill {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 7px 13px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  color: var(--white-hot);
+  cursor: pointer;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.block-pill:hover { border-color: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+.block-pill.active { background: var(--cyan); border-color: var(--cyan); color: var(--space-black); font-weight: 700; box-shadow: 0 0 12px var(--cyan-glow); }
+
+/* ===== Workspace ===== */
+.workspace {
+  position: relative;
+  z-index: 2;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 32px 24px 90px;
+}
+
+/* ===== Exercise picker ===== */
+.exercise-picker { margin-bottom: 24px; }
+.picker-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; flex-wrap: wrap; gap: 10px; }
+.picker-label { font-family: var(--font-mono); font-size: 12px; color: var(--amber); letter-spacing: 0.05em; }
+.picker-nav { display: flex; gap: 8px; }
+.icon-btn {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  cursor: pointer;
+  color: var(--white-hot);
+  letter-spacing: 0.04em;
+}
+.icon-btn:hover { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 8px var(--cyan-glow); }
+
+.chip-row { display: flex; gap: 7px; overflow-x: auto; padding-bottom: 8px; }
+.word-chip {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 6px 11px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.word-chip:hover { border-color: var(--cyan); color: var(--cyan); }
+.word-chip.active { background: var(--cyan); border-color: var(--cyan); color: var(--space-black); font-weight: 700; }
+.word-chip.done::after { content: " ✓"; color: var(--correct); }
+.word-chip.done { border-color: var(--correct); }
+
+/* ===== Exercise card: console panel ===== */
+.exercise-card {
+  position: relative;
+  background: linear-gradient(180deg, var(--panel-bg-light), var(--panel-bg));
+  border: 1px solid var(--panel-border);
+  border-radius: 10px;
+  padding: 30px 30px 26px;
+  box-shadow: 0 0 0 1px rgba(77,234,224,0.06), 0 20px 50px -20px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.exercise-head { margin-bottom: 18px; }
+.exercise-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--amber);
+  margin: 0 0 8px;
+  text-shadow: 0 0 6px var(--amber-glow);
+}
+.exercise-consigna {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 3vw, 23px);
+  color: var(--white-hot);
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+}
+
+.original-box {
+  background: rgba(77,234,224,0.05);
+  border: 1px solid var(--panel-border);
+  border-left: 3px solid var(--cyan);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-bottom: 8px;
+}
+.box-label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  color: var(--cyan-dim);
+  margin: 0 0 6px;
+}
+.original-text {
+  font-size: 16px;
+  color: var(--white-hot);
+  margin: 0 0 12px;
+  font-family: var(--font-mono);
+}
+.hint-line {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin: 8px 0 22px;
+}
+
+.speak-btn-sm {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: transparent;
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+.speak-btn-sm:hover { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+.speak-btn-sm.speaking { background: var(--cyan); border-color: var(--cyan); color: var(--space-black); }
+
+/* ===== Step blocks ===== */
+.step-block { margin-bottom: 18px; }
+.step-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 6px;
+  background: rgba(77,234,224,0.12);
+  border: 1px solid var(--cyan-dim);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+}
+.step-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  color: var(--white-hot);
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.hidden { display: none !important; }
+
+/* ===== Toolbar ===== */
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--panel-border);
+}
+.tool-group { display: flex; align-items: center; gap: 9px; }
+.tool-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+.ink-swatches { display: flex; gap: 6px; }
+.ink-swatch {
+  width: 22px; height: 22px;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 0 4px rgba(0,0,0,0.4);
+}
+.ink-swatch.active { border-color: var(--white-hot); box-shadow: 0 0 10px currentColor, 0 0 4px rgba(0,0,0,0.4); transform: scale(1.1); }
+.tool-range { width: 100px; accent-color: var(--cyan); }
+.toggle-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--panel-border);
+  background: var(--panel-bg);
+  color: var(--muted);
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+.toggle-btn:hover { border-color: var(--cyan); color: var(--cyan); }
+.toggle-btn.active { background: var(--correct-bg); border-color: var(--correct); color: var(--correct); }
+
+/* ===== Canvas: HUD targeting grid ===== */
+.canvas-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 6.4;
+  max-height: 280px;
+  background: #060A12;
+  border: 1px solid var(--panel-border);
+  border-radius: 6px;
+  overflow: hidden;
+  touch-action: none;
+  box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+}
+.canvas-wrap canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#drawCanvasUser, #drawCanvasModel { cursor: crosshair; }
+
+.reveal-row { text-align: center; margin: 22px 0 26px; }
+.btn-primary {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  background: var(--amber);
+  color: var(--space-black);
+  border: none;
+  padding: 13px 28px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  box-shadow: 0 0 20px var(--amber-glow);
+}
+.btn-primary:hover { box-shadow: 0 0 28px var(--amber-glow); }
+.btn-primary:disabled { opacity: 0.55; cursor: default; box-shadow: none; }
+
+.model-box {
+  background: var(--correct-bg);
+  border: 1px solid var(--correct);
+  border-radius: 4px;
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.model-text {
+  font-family: var(--font-cursive);
+  font-size: 19px;
+  color: var(--correct);
+  margin: 0 0 10px;
+  letter-spacing: 0.01em;
+}
+
+.compare-row { text-align: right; margin-top: 16px; }
+.btn-secondary {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  background: transparent;
+  border: 1px solid var(--correct);
+  color: var(--correct);
+  padding: 9px 18px;
+  border-radius: 5px;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+}
+.btn-secondary:hover { background: var(--correct); color: var(--space-black); }
+.btn-secondary.done { background: var(--correct); color: var(--space-black); cursor: default; }
+
+/* ===== Footer ===== */
+.site-footer {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 26px 24px 50px;
+  color: var(--muted);
+  font-size: 12px;
+  font-family: var(--font-mono);
+  border-top: 1px solid var(--panel-border);
+  letter-spacing: 0.03em;
+}
+
+/* ===== Toast ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--panel-bg-light);
+  border: 1px solid var(--cyan);
+  color: var(--cyan);
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  padding: 11px 20px;
+  border-radius: 5px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.25s ease;
+  z-index: 50;
+  white-space: nowrap;
+  box-shadow: 0 0 16px var(--cyan-glow);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+button:focus-visible, .ink-swatch:focus-visible, .word-chip:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+@media (max-width: 680px) {
+  .site-header { padding: 40px 14px 26px; }
+  .header-inner { padding: 22px 18px; }
+  .workspace { padding: 24px 16px 70px; }
+  .exercise-card { padding: 22px 18px 20px; }
+  .toolbar { gap: 14px; }
+  .canvas-wrap { aspect-ratio: 4 / 4.6; max-height: 380px; }
+}
+
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Share+Tech+Mono&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="starfield"></div>
+<div class="scanline-overlay"></div>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <p class="eyebrow">// MÓDULO DE ENTRENAMIENTO · SINTAXIS-7 //</p>
+    <h1 class="title">CONSOLA DE SINTAXIS</h1>
+    <p class="subtitle">Lee la orden de misión, traza tu respuesta con el lápiz óptico, y luego despliega la solución correcta para calcarla y comparar ambas trayectorias.</p>
+    <div class="header-stats">
+      <div class="stat"><span class="stat-num" id="stat-total">27</span><span class="stat-label">ejercicios</span></div>
+      <div class="stat"><span class="stat-num">10</span><span class="stat-label">sectores</span></div>
+      <div class="stat"><span class="stat-num" id="stat-done">0</span><span class="stat-label">completados</span></div>
+    </div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+  </div>
+</header>
+
+<nav class="block-nav" id="blockNav" aria-label="Navegación por sectores"></nav>
+
+<main class="workspace">
+
+  <section class="exercise-picker" aria-label="Selector de ejercicio">
+    <div class="picker-head">
+      <span class="picker-label" id="pickerLabel">REGISTRO 01 / 27</span>
+      <div class="picker-nav">
+        <button class="icon-btn" id="prevBtn" aria-label="Registro anterior">◄</button>
+        <button class="icon-btn" id="randomBtn">⟲ ALEATORIO</button>
+        <button class="icon-btn" id="nextBtn" aria-label="Registro siguiente">►</button>
+      </div>
+    </div>
+    <div class="chip-row" id="chipRow"></div>
+  </section>
+
+  <section class="exercise-card">
+    <div class="hud-corner hud-corner-tl"></div>
+    <div class="hud-corner hud-corner-tr"></div>
+    <div class="hud-corner hud-corner-bl"></div>
+    <div class="hud-corner hud-corner-br"></div>
+
+    <div class="exercise-head">
+      <p class="exercise-tag" id="exerciseTag">SECTOR 1 · HIPÉRBATO</p>
+      <h2 class="exercise-consigna" id="exerciseConsigna">Consigna</h2>
+    </div>
+
+    <div class="original-box">
+      <p class="box-label">▸ SEÑAL ORIGINAL RECIBIDA</p>
+      <p class="original-text" id="originalText"></p>
+      <button class="speak-btn-sm" id="speakOriginalBtn">🔊 REPRODUCIR SEÑAL</button>
+    </div>
+
+    <p class="hint-line" id="hintLine"></p>
+
+    <!-- Paso 1: el usuario escribe su intento a mano -->
+    <div class="step-block">
+      <div class="step-head">
+        <span class="step-num">01</span>
+        <h3 class="step-title">TU TRAYECTORIA MANUAL</h3>
+      </div>
+      <div class="toolbar">
+        <div class="tool-group">
+          <span class="tool-label">TRAZADOR</span>
+          <div class="ink-swatches" id="inkSwatchesUser"></div>
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">INTENSIDAD</span>
+          <input type="range" id="strokeWidthUser" min="2" max="14" value="5" class="tool-range">
+        </div>
+        <div class="tool-group">
+          <button class="toggle-btn" id="clearUserBtn">⨯ BORRAR</button>
+        </div>
+      </div>
+      <div class="canvas-wrap" id="userCanvasWrap">
+        <canvas id="ruledLinesUser"></canvas>
+        <canvas id="drawCanvasUser"></canvas>
+      </div>
+    </div>
+
+    <!-- Paso 2: revelar respuesta -->
+    <div class="reveal-row">
+      <button class="btn-primary" id="revealBtn">▣ DESPLEGAR SOLUCIÓN CORRECTA</button>
+    </div>
+
+    <!-- Paso 3: respuesta modelo + calco -->
+    <div class="step-block hidden" id="modelStep">
+      <div class="step-head">
+        <span class="step-num">02</span>
+        <h3 class="step-title">SOLUCIÓN — CALCA LA TRAYECTORIA ÓPTIMA</h3>
+      </div>
+      <div class="model-box">
+        <p class="model-text" id="modelText"></p>
+        <button class="speak-btn-sm" id="speakModelBtn">🔊 REPRODUCIR SOLUCIÓN</button>
+      </div>
+      <div class="toolbar">
+        <div class="tool-group">
+          <span class="tool-label">TRAZADOR</span>
+          <div class="ink-swatches" id="inkSwatchesModel"></div>
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">INTENSIDAD</span>
+          <input type="range" id="strokeWidthModel" min="2" max="14" value="5" class="tool-range">
+        </div>
+        <div class="tool-group">
+          <span class="tool-label">GUÍA</span>
+          <button class="toggle-btn active" id="toggleModelGuide">TRAZA ÓPTICA ON</button>
+        </div>
+        <div class="tool-group">
+          <button class="toggle-btn" id="clearModelBtn">⨯ BORRAR</button>
+        </div>
+      </div>
+      <div class="canvas-wrap" id="modelCanvasWrap">
+        <canvas id="ruledLinesModel"></canvas>
+        <canvas id="guideCanvasModel"></canvas>
+        <canvas id="drawCanvasModel"></canvas>
+      </div>
+
+      <div class="compare-row">
+        <button class="btn-secondary" id="markDoneBtn">✓ REGISTRAR MISIÓN COMO COMPLETADA</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>// 27 REGISTROS DE MISIÓN · DOS TRAZADORES: EL TUYO Y EL DE LA CONSOLA //</p>
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+window.__EJERCICIOS_DATA__ = {"BLOQUE_TITULOS":["Orden de palabras y disposición sintáctica","Concordancia y morfología flexiva","Tiempos, modos y aspecto verbal","Coordinación, subordinación y conexión lógica","Figuras retóricas de base sintáctica","Pronombres y deícticos","Estilo, registro y cohesión textual","Énfasis y modalidad expresiva","Formación y combinación de palabras","Puntuación al servicio del estilo"],"ejercicios":[{"id":1,"bloque":1,"tecnica":"Hiperbato","consigna":"Reescribe la oración usando un hiperbato de sujeto pospuesto.","original":"El invierno llegó pronto este año.","modelo":"Llegó pronto este año el invierno.","pista":"Mueve el verbo antes del sujeto."},{"id":2,"bloque":1,"tecnica":"Anteposición del adjetivo","consigna":"Antepone el adjetivo al sustantivo para darle un matiz poético.","original":"La nieve blanca cubría el tejado.","modelo":"La blanca nieve cubría el tejado.","pista":"Coloca el adjetivo justo antes del sustantivo."},{"id":3,"bloque":1,"tecnica":"Topicalización","consigna":"Adelanta el complemento directo al inicio y retómalo con un pronombre átono.","original":"Vi a tu hermano ayer en el parque.","modelo":"A tu hermano lo vi ayer en el parque.","pista":"El complemento se adelanta y se retoma con «lo»."},{"id":4,"bloque":2,"tecnica":"Concordancia con sujetos colectivos","consigna":"Corrige la concordancia verbal con el sujeto colectivo.","original":"El equipo ganaron el campeonato.","modelo":"El equipo ganó el campeonato.","pista":"Con sustantivos colectivos el verbo va en singular."},{"id":5,"bloque":2,"tecnica":"Diminutivo con valor afectivo","consigna":"Convierte el sustantivo en diminutivo afectivo para suavizar la petición.","original":"¿Me harías un favor?","modelo":"¿Me harías un favorcito?","pista":"Añade el sufijo -ito al sustantivo."},{"id":6,"bloque":3,"tecnica":"Presente histórico","consigna":"Reescribe el hecho histórico usando presente histórico en vez de pretérito.","original":"En 1492 Colón llegó a América.","modelo":"En 1492 Colón llega a América.","pista":"Cambia el verbo al presente."},{"id":7,"bloque":3,"tecnica":"Pretérito imperfecto de cortesía","consigna":"Suaviza la petición usando el imperfecto de cortesía.","original":"Quiero pedirle un favor.","modelo":"Quería pedirle un favor.","pista":"Cambia el presente «quiero» a imperfecto «quería»."},{"id":8,"bloque":3,"tecnica":"Perífrasis de inminencia","consigna":"Expresa la misma idea con la perífrasis «ir a + infinitivo».","original":"Saldré en cinco minutos.","modelo":"Voy a salir en cinco minutos.","pista":"Sustituye el futuro simple por «ir a» + infinitivo."},{"id":9,"bloque":4,"tecnica":"Subordinación concesiva","consigna":"Une las dos oraciones con un conector concesivo.","original":"Llovía mucho. Salimos a caminar.","modelo":"Aunque llovía mucho, salimos a caminar.","pista":"Usa «aunque» al inicio de la primera oración."},{"id":10,"bloque":4,"tecnica":"Coordinación adversativa","consigna":"Une las oraciones con «pero», marcando el contraste.","original":"Quería ir a la fiesta. No tenía tiempo.","modelo":"Quería ir a la fiesta, pero no tenía tiempo.","pista":"Coloca «pero» entre ambas ideas."},{"id":11,"bloque":4,"tecnica":"Relativas explicativas","consigna":"Convierte la información en un inciso explicativo entre comas.","original":"Mi hermano vive en Madrid. Viene a visitarnos.","modelo":"Mi hermano, que vive en Madrid, viene a visitarnos.","pista":"Inserta «que vive en Madrid» entre comas tras el sujeto."},{"id":12,"bloque":5,"tecnica":"Anáfora (retórica)","consigna":"Repite la misma palabra al inicio de ambas oraciones para crear anáfora.","original":"Nada queda de aquella casa. No permanece nada del jardín.","modelo":"Nada queda de aquella casa. Nada permanece del jardín.","pista":"Empieza ambas oraciones con la misma palabra."},{"id":13,"bloque":5,"tecnica":"Quiasmo (retórico)","consigna":"Reordena la segunda parte para crear un quiasmo (orden cruzado).","original":"El arte de vivir y vivir del arte.","modelo":"El arte de vivir, el vivir del arte.","pista":"Invierte el orden de los elementos en la segunda parte."},{"id":14,"bloque":5,"tecnica":"Elipsis","consigna":"Omite el verbo repetido en la segunda cláusula.","original":"Unos llegaron temprano; otros llegaron tarde.","modelo":"Unos llegaron temprano; otros, tarde.","pista":"Suprime el verbo que ya se entiende por el contexto."},{"id":15,"bloque":6,"tecnica":"Duplicación pronominal","consigna":"Adelanta el complemento directo y duplícalo con un pronombre átono.","original":"Vi a Juan ayer en el supermercado.","modelo":"A Juan lo vi ayer en el supermercado.","pista":"Adelanta «a Juan» y añade «lo» antes del verbo."},{"id":16,"bloque":6,"tecnica":"«Se» impersonal","consigna":"Convierte la oración en impersonal usando «se».","original":"La gente dice que el proyecto se cancelará.","modelo":"Se dice que el proyecto se cancelará.","pista":"Elimina el sujeto «la gente» y usa «se dice»."},{"id":17,"bloque":7,"tecnica":"Estilo nominal vs. verbal","consigna":"Convierte la acción verbal en un estilo nominal más formal.","original":"Implementaron el programa y generó resultados positivos.","modelo":"La implementación del programa generó resultados positivos.","pista":"Convierte «implementaron... el programa» en un sustantivo: «la implementación del programa»."},{"id":18,"bloque":7,"tecnica":"Pasiva refleja","consigna":"Convierte la oración activa en pasiva refleja con «se».","original":"Los obreros construyeron el puente en dos años.","modelo":"El puente se construyó en dos años.","pista":"El objeto pasa a sujeto y el verbo se acompaña de «se»."},{"id":19,"bloque":7,"tecnica":"Cláusulas absolutas de participio","consigna":"Convierte la primera oración en una cláusula absoluta de participio.","original":"La reunión terminó. Todos se fueron a casa.","modelo":"Terminada la reunión, todos se fueron a casa.","pista":"Usa el participio «terminada» al inicio, sin verbo conjugado."},{"id":20,"bloque":8,"tecnica":"Hipérbole sintáctica mediante superlativos","consigna":"Exagera la cualidad usando un superlativo.","original":"Es una persona muy generosa.","modelo":"Es la persona más generosa del mundo entero.","pista":"Usa una construcción superlativa de exageración."},{"id":21,"bloque":8,"tecnica":"Litote sintáctica","consigna":"Suaviza el elogio usando una negación atenuada (litote).","original":"Este restaurante está bien.","modelo":"Este restaurante no está mal.","pista":"Niega lo contrario de lo que quieres afirmar."},{"id":22,"bloque":8,"tecnica":"Perífrasis de cortesía","consigna":"Suaviza la orden convirtiéndola en pregunta cortés con condicional.","original":"Cierre la puerta, por favor.","modelo":"¿Podría usted cerrar la puerta, por favor?","pista":"Convierte el imperativo en pregunta con «podría»."},{"id":23,"bloque":9,"tecnica":"Derivación prefijal con valor negativo","consigna":"Invierte el significado del verbo añadiendo el prefijo «des-».","original":"El niño hizo el nudo.","modelo":"El niño deshizo el nudo.","pista":"Añade el prefijo «des-» al verbo «hizo»."},{"id":24,"bloque":9,"tecnica":"Acortamiento o apócope léxico","consigna":"Reduce la palabra usando el acortamiento coloquial habitual.","original":"La profesora llegó tarde a clase.","modelo":"La profe llegó tarde a clase.","pista":"Acorta «profesora» a su forma coloquial."},{"id":25,"bloque":10,"tecnica":"Raya para incisos enfáticos","consigna":"Sustituye las comas del inciso por rayas para darle más relieve.","original":"El anciano, cansado tras el largo viaje, se sentó junto al fuego.","modelo":"El anciano —cansado tras el largo viaje— se sentó junto al fuego.","pista":"Cambia las comas del inciso por rayas (—)."},{"id":26,"bloque":10,"tecnica":"Dos puntos de anuncio","consigna":"Introduce la enumeración con dos puntos en vez de con «que son».","original":"Necesito tres cosas que son tiempo, paciencia y dinero.","modelo":"Necesito tres cosas: tiempo, paciencia y dinero.","pista":"Sustituye «que son» por dos puntos."},{"id":27,"bloque":10,"tecnica":"Puntos suspensivos de suspensión","consigna":"Deja la oración inconclusa con puntos suspensivos para sugerir duda.","original":"No sé si decírtelo o no.","modelo":"No sé si decírtelo o no...","pista":"Añade puntos suspensivos al final para sugerir vacilación."}]};
+</script>
+<script>
+(function () {
+  "use strict";
+
+  const DATA = window.__EJERCICIOS_DATA__;
+  const EJERCICIOS = DATA.ejercicios;
+  const BLOQUES = DATA.BLOQUE_TITULOS;
+
+  const INK_COLORS = [
+    { name: "Cian", value: "#4DEAE0" },
+    { name: "Ámbar", value: "#FFB454" },
+    { name: "Magenta", value: "#FF6FB0" },
+    { name: "Lima", value: "#A8FF60" },
+    { name: "Blanco", value: "#E8F4F2" },
+    { name: "Rojo alerta", value: "#FF5C5C" },
+  ];
+
+  const STORAGE_KEY = "nave_sintaxis_done_v1";
+  function loadDone() {
+    try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? new Set(JSON.parse(raw)) : new Set(); }
+    catch (e) { return new Set(); }
+  }
+  function saveDone(set) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(set))); } catch (e) {}
+  }
+
+  let done = loadDone();
+  let currentIndex = 0;
+  let currentBlockFilter = 0;
+  let userInk = INK_COLORS[0].value;
+  let modelInk = INK_COLORS[0].value;
+  let userStroke = 5;
+  let modelStroke = 5;
+  let showModelGuide = true;
+
+  const blockNavEl = document.getElementById("blockNav");
+  const chipRowEl = document.getElementById("chipRow");
+  const pickerLabel = document.getElementById("pickerLabel");
+  const statDoneEl = document.getElementById("stat-done");
+  const toastEl = document.getElementById("toast");
+
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t = setTimeout(() => toastEl.classList.remove("show"), 1700);
+  }
+
+  function updateStats() { statDoneEl.textContent = done.size; }
+
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  // ---------- Block nav ----------
+  function buildBlockNav() {
+    const allBtn = document.createElement("button");
+    allBtn.className = "block-pill active";
+    allBtn.dataset.block = "0";
+    allBtn.textContent = "TODOS";
+    blockNavEl.appendChild(allBtn);
+    BLOQUES.forEach((title, i) => {
+      const n = i + 1;
+      const btn = document.createElement("button");
+      btn.className = "block-pill";
+      btn.dataset.block = String(n);
+      btn.title = title;
+      btn.textContent = `S${n} · ${title.split(" ").slice(0, 3).join(" ").toUpperCase()}`;
+      blockNavEl.appendChild(btn);
+    });
+    blockNavEl.addEventListener("click", (e) => {
+      const btn = e.target.closest(".block-pill");
+      if (!btn) return;
+      currentBlockFilter = Number(btn.dataset.block);
+      blockNavEl.querySelectorAll(".block-pill").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderChipRow();
+    });
+  }
+
+  function renderChipRow() {
+    chipRowEl.innerHTML = "";
+    const list = currentBlockFilter === 0 ? EJERCICIOS : EJERCICIOS.filter(e => e.bloque === currentBlockFilter);
+    list.forEach(ej => {
+      const chip = document.createElement("button");
+      chip.className = "word-chip" + (ej.id === EJERCICIOS[currentIndex].id ? " active" : "") + (done.has(ej.id) ? " done" : "");
+      chip.textContent = `${String(ej.id).padStart(2,"0")} · ${ej.tecnica.toUpperCase()}`;
+      chip.dataset.id = ej.id;
+      chip.addEventListener("click", () => {
+        const idx = EJERCICIOS.findIndex(x => x.id === ej.id);
+        loadExercise(idx);
+      });
+      chipRowEl.appendChild(chip);
+    });
+  }
+
+  function syncChipActive() {
+    const activeId = EJERCICIOS[currentIndex].id;
+    chipRowEl.querySelectorAll(".word-chip").forEach(chip => {
+      chip.classList.toggle("active", Number(chip.dataset.id) === activeId);
+    });
+  }
+
+  document.getElementById("prevBtn").addEventListener("click", () => loadExercise((currentIndex - 1 + EJERCICIOS.length) % EJERCICIOS.length));
+  document.getElementById("nextBtn").addEventListener("click", () => loadExercise((currentIndex + 1) % EJERCICIOS.length));
+  document.getElementById("randomBtn").addEventListener("click", () => {
+    let idx;
+    do { idx = Math.floor(Math.random() * EJERCICIOS.length); } while (idx === currentIndex && EJERCICIOS.length > 1);
+    loadExercise(idx);
+  });
+
+  function loadExercise(idx) {
+    currentIndex = idx;
+    const ej = EJERCICIOS[currentIndex];
+    pickerLabel.textContent = `REGISTRO ${String(currentIndex + 1).padStart(2, "0")} / ${EJERCICIOS.length}`;
+    document.getElementById("exerciseTag").textContent = `SECTOR ${ej.bloque} · ${ej.tecnica.toUpperCase()}`;
+    document.getElementById("exerciseConsigna").textContent = ej.consigna;
+    document.getElementById("originalText").textContent = ej.original;
+    document.getElementById("hintLine").textContent = "▸ PISTA DE NAVEGACIÓN: " + ej.pista;
+    document.getElementById("modelText").textContent = ej.modelo;
+    document.getElementById("modelStep").classList.add("hidden");
+    document.getElementById("revealBtn").disabled = false;
+    document.getElementById("revealBtn").textContent = "▣ DESPLEGAR SOLUCIÓN CORRECTA";
+
+    const markBtn = document.getElementById("markDoneBtn");
+    markBtn.classList.toggle("done", done.has(ej.id));
+    markBtn.textContent = done.has(ej.id) ? "✓ MISIÓN COMPLETADA" : "✓ REGISTRAR MISIÓN COMO COMPLETADA";
+
+    syncChipActive();
+    clearCanvas("drawCanvasUser");
+    clearCanvas("drawCanvasModel");
+    requestAnimationFrame(() => {
+      drawRuled("ruledLinesUser", "userCanvasWrap");
+      fitDrawCanvas("drawCanvasUser", "userCanvasWrap");
+    });
+  }
+
+  // ---------- Ink swatches ----------
+  function buildInkSwatches(containerId, onPick, initial) {
+    const wrap = document.getElementById(containerId);
+    INK_COLORS.forEach((c, i) => {
+      const btn = document.createElement("button");
+      btn.className = "ink-swatch" + (i === 0 ? " active" : "");
+      btn.style.background = c.value;
+      btn.title = c.name;
+      btn.setAttribute("aria-label", "Tinta " + c.name);
+      btn.addEventListener("click", () => {
+        onPick(c.value);
+        wrap.querySelectorAll(".ink-swatch").forEach(s => s.classList.remove("active"));
+        btn.classList.add("active");
+      });
+      wrap.appendChild(btn);
+    });
+  }
+
+  // ---------- Canvas: ruled lines (shared util for both stacks) ----------
+  function fitCanvasToWrap(canvasId, wrapId) {
+    const canvas = document.getElementById(canvasId);
+    const wrap = document.getElementById(wrapId);
+    const rect = wrap.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.round(rect.width * dpr);
+    canvas.height = Math.round(rect.height * dpr);
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: rect.width, h: rect.height, ctx, wrap };
+  }
+
+  function drawRuled(canvasId, wrapId) {
+    const { w, h, ctx, wrap } = fitCanvasToWrap(canvasId, wrapId);
+    ctx.clearRect(0, 0, w, h);
+    const margin = h * 0.12;
+    const usable = h - margin * 2;
+    const yTop = margin;
+    const yMid = margin + usable * 0.32;
+    const yBase = margin + usable * 0.72;
+    const yLow = margin + usable;
+    ctx.lineWidth = 1;
+    [[yTop, "rgba(77,234,224,0.18)"], [yMid, "rgba(77,234,224,0.14)"], [yBase, "rgba(255,180,84,0.30)"], [yLow, "rgba(255,92,92,0.22)"]].forEach(([y, color]) => {
+      ctx.strokeStyle = color;
+      ctx.beginPath(); ctx.moveTo(8, y); ctx.lineTo(w - 8, y); ctx.stroke();
+    });
+    ctx.lineWidth = 1.6;
+    ctx.strokeStyle = "rgba(255,180,84,0.55)";
+    ctx.beginPath(); ctx.moveTo(8, yBase); ctx.lineTo(w - 8, yBase); ctx.stroke();
+    // faint vertical tick marks along the baseline for a HUD ruler feel
+    ctx.strokeStyle = "rgba(77,234,224,0.10)";
+    ctx.lineWidth = 1;
+    for (let x = 20; x < w - 10; x += 28) {
+      ctx.beginPath(); ctx.moveTo(x, yBase - 5); ctx.lineTo(x, yBase + 5); ctx.stroke();
+    }
+    wrap.dataset.yTop = yTop; wrap.dataset.yMid = yMid; wrap.dataset.yBase = yBase; wrap.dataset.yLow = yLow;
+  }
+
+  function drawGuideText(canvasId, wrapId, text, visible) {
+    const { w, h, ctx, wrap } = fitCanvasToWrap(canvasId, wrapId);
+    ctx.clearRect(0, 0, w, h);
+    if (!visible) return;
+    const yBase = Number(wrap.dataset.yBase) || h * 0.72;
+    let fontSize = Math.min(h * 0.5, 40);
+    ctx.font = `600 ${fontSize}px "Share Tech Mono", monospace`;
+    let textWidth = ctx.measureText(text).width;
+    const maxWidth = w - 40;
+    while (textWidth > maxWidth && fontSize > 11) {
+      fontSize -= 1;
+      ctx.font = `600 ${fontSize}px "Share Tech Mono", monospace`;
+      textWidth = ctx.measureText(text).width;
+    }
+    const x = Math.max(16, (w - textWidth) / 2);
+    ctx.textBaseline = "alphabetic";
+    ctx.save();
+    ctx.strokeStyle = "rgba(77,234,224,0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.setLineDash([3, 4]);
+    ctx.strokeText(text, x, yBase);
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = "rgba(77,234,224,0.12)";
+    ctx.fillText(text, x, yBase);
+    ctx.restore();
+  }
+
+  // ---------- Drawing logic (generic, attached per canvas) ----------
+  function attachDrawing(canvasId, wrapId, getInk, getStroke) {
+    const canvas = document.getElementById(canvasId);
+    let ctx = canvas.getContext("2d");
+    let drawing = false;
+    let lastPoint = null;
+
+    function getRelativePoint(evt) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+    function start(evt) { evt.preventDefault(); drawing = true; lastPoint = getRelativePoint(evt); }
+    function move(evt) {
+      if (!drawing) return;
+      evt.preventDefault();
+      const p = getRelativePoint(evt);
+      ctx.strokeStyle = getInk();
+      ctx.lineWidth = getStroke();
+      ctx.lineCap = "round"; ctx.lineJoin = "round";
+      ctx.beginPath(); ctx.moveTo(lastPoint.x, lastPoint.y); ctx.lineTo(p.x, p.y); ctx.stroke();
+      lastPoint = p;
+    }
+    function end() { drawing = false; lastPoint = null; }
+
+    canvas.addEventListener("mousedown", start);
+    canvas.addEventListener("mousemove", move);
+    window.addEventListener("mouseup", end);
+    canvas.addEventListener("touchstart", start, { passive: false });
+    canvas.addEventListener("touchmove", move, { passive: false });
+    canvas.addEventListener("touchend", end);
+  }
+
+  function fitDrawCanvas(canvasId, wrapId) {
+    fitCanvasToWrap(canvasId, wrapId);
+  }
+  function clearCanvas(canvasId) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext("2d");
+    const rect = canvas.parentElement.getBoundingClientRect();
+    ctx.clearRect(0, 0, rect.width, rect.height);
+  }
+
+  // ---------- Speech synthesis ----------
+  const synth = window.speechSynthesis;
+  let voicesCache = [];
+  function loadVoices() { voicesCache = synth ? synth.getVoices() : []; }
+  if (synth) { loadVoices(); synth.addEventListener("voiceschanged", loadVoices); }
+  function pickVoice(lang) {
+    if (!voicesCache.length) loadVoices();
+    const exact = voicesCache.find(v => v.lang && v.lang.toLowerCase() === lang.toLowerCase());
+    if (exact) return exact;
+    const prefix = lang.split("-")[0];
+    return voicesCache.find(v => v.lang && v.lang.toLowerCase().startsWith(prefix)) || null;
+  }
+  function speak(text, lang, onEnd) {
+    if (!synth) { showToast("⚠ MÓDULO DE AUDIO NO DISPONIBLE EN ESTE TERMINAL."); if (onEnd) onEnd(); return; }
+    synth.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = lang;
+    const v = pickVoice(lang);
+    if (v) utter.voice = v;
+    utter.rate = 0.95;
+    if (onEnd) utter.addEventListener("end", onEnd);
+    synth.speak(utter);
+  }
+
+  document.getElementById("speakOriginalBtn").addEventListener("click", (e) => {
+    const ej = EJERCICIOS[currentIndex];
+    e.target.classList.add("speaking");
+    speak(ej.original, "es-ES", () => e.target.classList.remove("speaking"));
+  });
+  document.getElementById("speakModelBtn").addEventListener("click", (e) => {
+    const ej = EJERCICIOS[currentIndex];
+    e.target.classList.add("speaking");
+    speak(ej.modelo, "es-ES", () => e.target.classList.remove("speaking"));
+  });
+
+  // ---------- User canvas controls ----------
+  buildInkSwatches("inkSwatchesUser", (v) => userInk = v);
+  document.getElementById("strokeWidthUser").addEventListener("input", (e) => userStroke = Number(e.target.value));
+  document.getElementById("clearUserBtn").addEventListener("click", () => clearCanvas("drawCanvasUser"));
+  attachDrawing("drawCanvasUser", "userCanvasWrap", () => userInk, () => userStroke);
+
+  // ---------- Model canvas controls ----------
+  buildInkSwatches("inkSwatchesModel", (v) => { modelInk = v; drawGuideText("guideCanvasModel", "modelCanvasWrap", EJERCICIOS[currentIndex].modelo, showModelGuide); });
+  document.getElementById("strokeWidthModel").addEventListener("input", (e) => modelStroke = Number(e.target.value));
+  document.getElementById("clearModelBtn").addEventListener("click", () => clearCanvas("drawCanvasModel"));
+  attachDrawing("drawCanvasModel", "modelCanvasWrap", () => modelInk, () => modelStroke);
+
+  document.getElementById("toggleModelGuide").addEventListener("click", (e) => {
+    showModelGuide = !showModelGuide;
+    e.target.textContent = showModelGuide ? "TRAZA ÓPTICA ON" : "TRAZA ÓPTICA OFF";
+    e.target.classList.toggle("active", showModelGuide);
+    drawGuideText("guideCanvasModel", "modelCanvasWrap", EJERCICIOS[currentIndex].modelo, showModelGuide);
+  });
+
+  // ---------- Reveal flow ----------
+  document.getElementById("revealBtn").addEventListener("click", (e) => {
+    const modelStep = document.getElementById("modelStep");
+    modelStep.classList.remove("hidden");
+    e.target.disabled = true;
+    e.target.textContent = "SOLUCIÓN DESPLEGADA ↓";
+    requestAnimationFrame(() => {
+      drawRuled("ruledLinesModel", "modelCanvasWrap");
+      fitDrawCanvas("drawCanvasModel", "modelCanvasWrap");
+      drawGuideText("guideCanvasModel", "modelCanvasWrap", EJERCICIOS[currentIndex].modelo, showModelGuide);
+    });
+    modelStep.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+
+  document.getElementById("markDoneBtn").addEventListener("click", (e) => {
+    const ej = EJERCICIOS[currentIndex];
+    if (done.has(ej.id)) return;
+    done.add(ej.id);
+    saveDone(done);
+    updateStats();
+    e.target.classList.add("done");
+    e.target.textContent = "✓ MISIÓN COMPLETADA";
+    syncChipDoneState(ej.id);
+    showToast(`✓ MISIÓN N.º ${ej.id} COMPLETADA — ${done.size}/${EJERCICIOS.length}`);
+  });
+
+  function syncChipDoneState(id) {
+    const chip = chipRowEl.querySelector(`.word-chip[data-id="${id}"]`);
+    if (chip) chip.classList.add("done");
+  }
+
+  // ---------- Resize ----------
+  window.addEventListener("resize", () => {
+    clearTimeout(window.__resizeT);
+    window.__resizeT = setTimeout(() => {
+      drawRuled("ruledLinesUser", "userCanvasWrap");
+      fitDrawCanvas("drawCanvasUser", "userCanvasWrap");
+      if (!document.getElementById("modelStep").classList.contains("hidden")) {
+        drawRuled("ruledLinesModel", "modelCanvasWrap");
+        fitDrawCanvas("drawCanvasModel", "modelCanvasWrap");
+        drawGuideText("guideCanvasModel", "modelCanvasWrap", EJERCICIOS[currentIndex].modelo, showModelGuide);
+      }
+    }, 150);
+  });
+
+  // ---------- Init ----------
+  buildBlockNav();
+  renderChipRow();
+  updateStats();
+  loadExercise(0);
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => {
+      drawRuled("ruledLinesUser", "userCanvasWrap");
+      if (!document.getElementById("modelStep").classList.contains("hidden")) {
+        drawGuideText("guideCanvasModel", "modelCanvasWrap", EJERCICIOS[currentIndex].modelo, showModelGuide);
+      }
+    });
+  }
+})();
+
+</script>
+</body>
+</html>

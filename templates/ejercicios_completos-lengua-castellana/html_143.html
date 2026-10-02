@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Alegoría narrativa (Hermógenes) en ciencia ficción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(20, 40, 70, 0.8) 0%, transparent 60%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #d0dbe8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #4a7a9c;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #8bc4e0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 20px rgba(80, 160, 220, 0.2);
+        }
+        .header h1 span {
+            background: #3a6a8c;
+            color: #e0f0ff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            border: 1px solid #5a8aaa;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #7a9ab0;
+            background: rgba(60, 120, 180, 0.15);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #4a7a9c;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #141c26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #8bb0c8;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #1a2a3a; color: #c0dcee; }
+        .block-nav button.active {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border-color: #4a8aaa;
+            box-shadow: 0 0 20px rgba(60, 140, 220, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 520px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a4a5c;
+        }
+        .card-front {
+            background: #121c26;
+            background-image: linear-gradient(145deg, #0e1820 0%, #1a2a36 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 3px solid #3a7a9c;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #4a8aaa;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6a9ab0;
+            background: #1a2a3a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            border: 1px solid #3a5a6a;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #8bc4e0;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #9ab8d0;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #5a7a8a;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #2a4a5c;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #0e1820;
+            background-image: linear-gradient(160deg, #0c1620 0%, #16222e 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #4a8aaa;
+            border-bottom: 1px solid #3a6a8c;
+        }
+        .card-back .definicion {
+            background: rgba(60, 140, 220, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .sintaxis {
+            background: rgba(60, 180, 120, 0.10);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #5a8a7a;
+            margin-bottom: 0.3rem;
+            color: #a0c8b8;
+            font-family: monospace;
+        }
+        .card-back .estructura {
+            background: rgba(60, 140, 200, 0.08);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(60, 140, 220, 0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #4a8aaa;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #8bc4e0;
+        }
+        .card-back .ejercicio {
+            background: #1a2a3a;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #b0c8d8;
+            border: 1px solid #2a4a5c;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2a4a5c;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #0a141c;
+            color: #d0dbe8;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #4a8aaa;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #3a7a9c; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #6abe6a; }
+        .card-back .feedback-msg.incorrecto { color: #d46a6a; }
+        .card-back .respuesta-correcta {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5a7a8a;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #121c26;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #8bc4e0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6a9ab0;
+        }
+        .quiz-pregunta {
+            background: #0c1620;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #1a2a3a;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: #c0dcee;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #0e1820;
+            border: 1px solid #2a4a5c;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #b0c8d8;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #1a2a3a; }
+        .quiz-opciones button.correct {
+            background: #1a5a3a;
+            border-color: #3a8a5a;
+            color: #b0e8c0;
+        }
+        .quiz-opciones button.incorrect {
+            background: #5a2a2a;
+            border-color: #8a4a4a;
+            color: #e8b0b0;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #1a2a3a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            color: #b0c8d8;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #2a5a7a;
+            border: none;
+            color: #e0f0ff;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #3a7a9c; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5a7a8a;
+            border-top: 1px solid #1a2a3a;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>🌀 Alegoría narrativa (Hermógenes) <span>100 técnicas</span></h1>
+        <div class="sub">ciencia ficción · conceptos abstractos · sintaxis · ejemplos</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>alegorías narrativas en ciencia ficción</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">Escribe tu respuesta en cada tarjeta y verifica · Explora las alegorías del cosmos</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS DE ALEGORÍA NARRATIVA (HERMÓGENES) EN CIENCIA FICCIÓN
+    // Cada técnica: nombre, definición/teoría, estructura sintáctica,
+    // fórmula de redacción, ejemplo (relato alegórico), ejercicio y respuesta.
+    // Distribuidas en 4 bloques: Virtudes y vicios, Conceptos existenciales,
+    // Fuerzas cósmicas, Dilemas éticos.
+    // ================================================================
+    const TECNICAS = [];
+
+    // =================== BLOQUE 1: ALEGORÍAS DE VIRTUDES Y VICIOS (25) ===================
+    const virtudes = [
+        { nombre: "La esperanza y la desesperación", definicion: "Alegoría donde dos personajes representan la esperanza y la desesperación.", sintaxis: "[Virtud] y [Vicio] lucharon por el [cosmos], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Esperanza y Desesperación lucharon por el cosmos; Esperanza enseñó que la luz siempre vence a la oscuridad.", ejercicio: "¿Qué alegoría enfrenta a la esperanza y la desesperación?", respuesta: "La esperanza y la desesperación" },
+        { nombre: "La sabiduría y la ignorancia", definicion: "Alegoría donde la sabiduría y la ignorancia compiten por guiar a una civilización.", sintaxis: "[Virtud] y [Vicio] guiaron a una civilización, y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Sabiduría e Ignorancia guiaron a una civilización; Sabiduría demostró que el conocimiento es la clave del progreso.", ejercicio: "¿Qué alegoría enfrenta a la sabiduría y la ignorancia?", respuesta: "La sabiduría y la ignorancia" },
+        { nombre: "El coraje y el miedo", definicion: "Alegoría donde el coraje y el miedo enfrentan un desafío cósmico.", sintaxis: "[Virtud] y [Vicio] enfrentaron un [desafío], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Coraje y Miedo enfrentaron un agujero negro; Coraje enseñó que la valentía abre puertas.", ejercicio: "¿Qué alegoría enfrenta al coraje y el miedo?", respuesta: "El coraje y el miedo" },
+        { nombre: "La justicia y la injusticia", definicion: "Alegoría donde la justicia y la injusticia compiten por gobernar un sistema solar.", sintaxis: "[Virtud] y [Vicio] compitieron por [sistema], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Justicia e Injusticia compitieron por un sistema solar; Justicia demostró que la equidad es el orden del cosmos.", ejercicio: "¿Qué alegoría enfrenta a la justicia y la injusticia?", respuesta: "La justicia y la injusticia" },
+        { nombre: "La paz y la guerra", definicion: "Alegoría donde la paz y la guerra negocian una tregua interestelar.", sintaxis: "[Virtud] y [Vicio] negociaron [tregua], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paz y Guerra negociaron una tregua interestelar; Paz enseñó que la diplomacia es más fuerte que el conflicto.", ejercicio: "¿Qué alegoría enfrenta a la paz y la guerra?", respuesta: "La paz y la guerra" },
+        { nombre: "La humildad y el orgullo", definicion: "Alegoría donde la humildad y el orgullo buscan el mismo conocimiento.", sintaxis: "[Virtud] y [Vicio] buscaron [conocimiento], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Humildad y Orgullo buscaron el conocimiento del cosmos; Humildad descubrió que la verdadera sabiduría está en aprender.", ejercicio: "¿Qué alegoría enfrenta a la humildad y el orgullo?", respuesta: "La humildad y el orgullo" },
+        { nombre: "La generosidad y la avaricia", definicion: "Alegoría donde la generosidad y la avaricia administran recursos estelares.", sintaxis: "[Virtud] y [Vicio] administraron [recursos], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Generosidad y Avaricia administraron recursos estelares; Generosidad demostró que compartir es la clave de la abundancia.", ejercicio: "¿Qué alegoría enfrenta a la generosidad y la avaricia?", respuesta: "La generosidad y la avaricia" },
+        { nombre: "La honestidad y la mentira", definicion: "Alegoría donde la honestidad y la mentira compiten por la confianza de una galaxia.", sintaxis: "[Virtud] y [Vicio] compitieron por [confianza], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Honestidad y Mentira compitieron por la confianza de una galaxia; Honestidad enseñó que la verdad es la base de la civilización.", ejercicio: "¿Qué alegoría enfrenta a la honestidad y la mentira?", respuesta: "La honestidad y la mentira" },
+        { nombre: "La lealtad y la traición", definicion: "Alegoría donde la lealtad y la traición forman alianzas interestelares.", sintaxis: "[Virtud] y [Vicio] formaron [alianzas], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Lealtad y Traición formaron alianzas interestelares; Lealtad descubrió que la fidelidad es el vínculo más fuerte.", ejercicio: "¿Qué alegoría enfrenta a la lealtad y la traición?", respuesta: "La lealtad y la traición" },
+        { nombre: "La templanza y la gula", definicion: "Alegoría donde la templanza y la gula consumen recursos cósmicos.", sintaxis: "[Virtud] y [Vicio] consumieron [recursos], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Templanza y Gula consumieron recursos cósmicos; Templanza demostró que la moderación asegura la supervivencia.", ejercicio: "¿Qué alegoría enfrenta a la templanza y la gula?", respuesta: "La templanza y la gula" },
+        { nombre: "La paciencia y la impaciencia", definicion: "Alegoría donde la paciencia y la impaciencia esperan una señal del espacio profundo.", sintaxis: "[Virtud] y [Vicio] esperaron [señal], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paciencia e Impaciencia esperaron una señal del espacio profundo; Paciencia enseñó que el tiempo es el mejor aliado.", ejercicio: "¿Qué alegoría enfrenta a la paciencia y la impaciencia?", respuesta: "La paciencia y la impaciencia" },
+        { nombre: "La compasión y la indiferencia", definicion: "Alegoría donde la compasión y la indiferencia responden a una súplica cósmica.", sintaxis: "[Virtud] y [Vicio] respondieron a [súplica], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Compasión e Indiferencia respondieron a una súplica cósmica; Compasión demostró que la empatía es el puente entre mundos.", ejercicio: "¿Qué alegoría enfrenta a la compasión y la indiferencia?", respuesta: "La compasión y la indiferencia" },
+        { nombre: "La gratitud y la ingratitud", definicion: "Alegoría donde la gratitud y la ingratitud reciben un don cósmico.", sintaxis: "[Virtud] y [Vicio] recibieron [don], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Gratitud e Ingratitud recibieron un don cósmico; Gratitud enseñó que el agradecimiento es la semilla de la abundancia.", ejercicio: "¿Qué alegoría enfrenta a la gratitud y la ingratitud?", respuesta: "La gratitud y la ingratitud" },
+        { nombre: "La modestia y la vanidad", definicion: "Alegoría donde la modestia y la vanidad buscan fama en la galaxia.", sintaxis: "[Virtud] y [Vicio] buscaron [fama], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Modestia y Vanidad buscaron fama en la galaxia; Modestia descubrió que la verdadera grandeza está en servir.", ejercicio: "¿Qué alegoría enfrenta a la modestia y la vanidad?", respuesta: "La modestia y la vanidad" },
+        { nombre: "La prudencia y la temeridad", definicion: "Alegoría donde la prudencia y la temeridad exploran un sistema desconocido.", sintaxis: "[Virtud] y [Vicio] exploraron [sistema], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Prudencia y Temeridad exploraron un sistema desconocido; Prudencia demostró que la cautela es la mejor navegante.", ejercicio: "¿Qué alegoría enfrenta a la prudencia y la temeridad?", respuesta: "La prudencia y la temeridad" },
+        { nombre: "La fe y la duda", definicion: "Alegoría donde la fe y la duda interpretan un mensaje interestelar.", sintaxis: "[Virtud] y [Vicio] interpretaron [mensaje], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Fe y Duda interpretaron un mensaje interestelar; Fe enseñó que creer es el primer paso para entender.", ejercicio: "¿Qué alegoría enfrenta a la fe y la duda?", respuesta: "La fe y la duda" },
+        { nombre: "La amistad y la enemistad", definicion: "Alegoría donde la amistad y la enemistad viajan juntas por el cosmos.", sintaxis: "[Virtud] y [Vicio] viajaron [juntos], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Amistad y Enemistad viajaron juntas por el cosmos; Amistad descubrió que el amor es más fuerte que el odio.", ejercicio: "¿Qué alegoría enfrenta a la amistad y la enemistad?", respuesta: "La amistad y la enemistad" },
+        { nombre: "La sinceridad y la hipocresía", definicion: "Alegoría donde la sinceridad y la hipocresía construyen una sociedad interestelar.", sintaxis: "[Virtud] y [Vicio] construyeron [sociedad], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Sinceridad e Hipocresía construyeron una sociedad interestelar; Sinceridad demostró que la autenticidad es la base de la confianza.", ejercicio: "¿Qué alegoría enfrenta a la sinceridad y la hipocresía?", respuesta: "La sinceridad y la hipocresía" },
+        { nombre: "La solidaridad y el egoísmo", definicion: "Alegoría donde la solidaridad y el egoísmo enfrentan una crisis cósmica.", sintaxis: "[Virtud] y [Vicio] enfrentaron [crisis], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Solidaridad y Egoísmo enfrentaron una crisis cósmica; Solidaridad enseñó que la unión es la fuerza del universo.", ejercicio: "¿Qué alegoría enfrenta a la solidaridad y el egoísmo?", respuesta: "La solidaridad y el egoísmo" },
+        { nombre: "La templanza y la ira", definicion: "Alegoría donde la templanza y la ira negocian un tratado interplanetario.", sintaxis: "[Virtud] y [Vicio] negociaron [tratado], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Templanza e Ira negociaron un tratado interplanetario; Templanza descubrió que la calma es la mejor estrategia.", ejercicio: "¿Qué alegoría enfrenta a la templanza y la ira?", respuesta: "La templanza y la ira" },
+        { nombre: "La honestidad y el engaño", definicion: "Alegoría donde la honestidad y el engaño compiten por el control de una estrella.", sintaxis: "[Virtud] y [Vicio] compitieron por [estrella], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Honestidad y Engaño compitieron por el control de una estrella; Honestidad demostró que la verdad siempre prevalece.", ejercicio: "¿Qué alegoría enfrenta a la honestidad y el engaño?", respuesta: "La honestidad y el engaño" },
+        { nombre: "La lealtad y la deslealtad", definicion: "Alegoría donde la lealtad y la deslealtad protegen un planeta.", sintaxis: "[Virtud] y [Vicio] protegieron [planeta], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Lealtad y Deslealtad protegieron un planeta; Lealtad enseñó que la fidelidad es la defensa más poderosa.", ejercicio: "¿Qué alegoría enfrenta a la lealtad y la deslealtad?", respuesta: "La lealtad y la deslealtad" },
+        { nombre: "La gratitud y el resentimiento", definicion: "Alegoría donde la gratitud y el resentimiento reciben un regalo interestelar.", sintaxis: "[Virtud] y [Vicio] recibieron [regalo], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Gratitud y Resentimiento recibieron un regalo interestelar; Gratitud descubrió que el agradecimiento abre corazones.", ejercicio: "¿Qué alegoría enfrenta a la gratitud y el resentimiento?", respuesta: "La gratitud y el resentimiento" },
+        { nombre: "La compasión y la crueldad", definicion: "Alegoría donde la compasión y la crueldad enfrentan un dilema cósmico.", sintaxis: "[Virtud] y [Vicio] enfrentaron [dilema], y [Virtud] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Compasión y Crueldad enfrentaron un dilema cósmico; Compasión demostró que la bondad es la ley del universo.", ejercicio: "¿Qué alegoría enfrenta a la compasión y la crueldad?", respuesta: "La compasión y la crueldad" },
+        { nombre: "La paciencia y la desesperación", definicion: "Alegoría donde la paciencia y la desesperación esperan un milagro espacial.", sintaxis: "[Virtud] y [Vicio] esperaron [milagro], y [Virtud] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paciencia y Desesperación esperaron un milagro espacial; Paciencia enseñó que la esperanza es la luz del camino.", ejercicio: "¿Qué alegoría enfrenta a la paciencia y la desesperación?", respuesta: "La paciencia y la desesperación" },
+        { nombre: "La fe y la incredulidad", definicion: "Alegoría donde la fe y la incredulidad exploran una realidad simulada.", sintaxis: "[Virtud] y [Vicio] exploraron [realidad], y [Virtud] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Fe e Incredulidad exploraron una realidad simulada; Fe descubrió que la creencia es la clave para trascender.", ejercicio: "¿Qué alegoría enfrenta a la fe y la incredulidad?", respuesta: "La fe y la incredulidad" },
+    ];
+    virtudes.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "virtudes", ...t }));
+
+    // =================== BLOQUE 2: ALEGORÍAS DE CONCEPTOS EXISTENCIALES (25) ===================
+    const existenciales = [
+        { nombre: "La vida y la muerte", definicion: "Alegoría donde la vida y la muerte compiten por el destino de una estrella.", sintaxis: "[Concepto] y [Concepto] compitieron por [destino], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Vida y Muerte compitieron por el destino de una estrella; Vida enseñó que la existencia es un ciclo de renacimiento.", ejercicio: "¿Qué alegoría enfrenta a la vida y la muerte?", respuesta: "La vida y la muerte" },
+        { nombre: "El tiempo y el espacio", definicion: "Alegoría donde el tiempo y el espacio discuten la naturaleza del cosmos.", sintaxis: "[Concepto] y [Concepto] discutieron sobre [naturaleza], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Tiempo y Espacio discutieron la naturaleza del cosmos; Tiempo demostró que el espacio es la tela del tiempo.", ejercicio: "¿Qué alegoría enfrenta al tiempo y el espacio?", respuesta: "El tiempo y el espacio" },
+        { nombre: "La materia y la energía", definicion: "Alegoría donde la materia y la energía se transforman mutuamente.", sintaxis: "[Concepto] y [Concepto] se transformaron, y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Materia y Energía se transformaron; Energía descubrió que todo está conectado en el universo.", ejercicio: "¿Qué alegoría enfrenta a la materia y la energía?", respuesta: "La materia y la energía" },
+        { nombre: "El orden y el caos", definicion: "Alegoría donde el orden y el caos construyen una galaxia.", sintaxis: "[Concepto] y [Concepto] construyeron [galaxia], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Orden y Caos construyeron una galaxia; Orden enseñó que la armonía es la base de la creación.", ejercicio: "¿Qué alegoría enfrenta al orden y el caos?", respuesta: "El orden y el caos" },
+        { nombre: "La luz y la oscuridad", definicion: "Alegoría donde la luz y la oscuridad gobiernan una nebulosa.", sintaxis: "[Concepto] y [Concepto] gobernaron [nebulosa], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Luz y Oscuridad gobernaron una nebulosa; Luz demostró que la oscuridad es necesaria para ver las estrellas.", ejercicio: "¿Qué alegoría enfrenta a la luz y la oscuridad?", respuesta: "La luz y la oscuridad" },
+        { nombre: "El pasado, el presente y el futuro", definicion: "Alegoría donde el pasado, el presente y el futuro viajan en el tiempo.", sintaxis: "[Concepto], [Concepto] y [Concepto] viajaron, y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Pasado, Presente y Futuro viajaron juntos; Presente descubrió que el ahora es el único momento real.", ejercicio: "¿Qué alegoría enfrenta al pasado, presente y futuro?", respuesta: "El pasado, el presente y el futuro" },
+        { nombre: "La razón y la emoción", definicion: "Alegoría donde la razón y la emoción toman decisiones en una nave.", sintaxis: "[Concepto] y [Concepto] tomaron [decisiones], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Razón y Emoción tomaron decisiones en una nave; Razón demostró que la emoción da sentido a la lógica.", ejercicio: "¿Qué alegoría enfrenta a la razón y la emoción?", respuesta: "La razón y la emoción" },
+        { nombre: "El destino y el libre albedrío", definicion: "Alegoría donde el destino y el libre albedrío deciden el curso de un imperio.", sintaxis: "[Concepto] y [Concepto] decidieron [curso], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Destino y Libre Albedrío decidieron el curso de un imperio; Libre Albedrío enseñó que la elección es el poder del ser.", ejercicio: "¿Qué alegoría enfrenta al destino y el libre albedrío?", respuesta: "El destino y el libre albedrío" },
+        { nombre: "La verdad y la ilusión", definicion: "Alegoría donde la verdad y la ilusión crean una simulación.", sintaxis: "[Concepto] y [Concepto] crearon [simulación], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Verdad e Ilusión crearon una simulación; Verdad descubrió que la ilusión puede ser el camino a la realidad.", ejercicio: "¿Qué alegoría enfrenta a la verdad y la ilusión?", respuesta: "La verdad y la ilusión" },
+        { nombre: "La sabiduría y el poder", definicion: "Alegoría donde la sabiduría y el poder gobiernan una civilización interestelar.", sintaxis: "[Concepto] y [Concepto] gobernaron [civilización], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Sabiduría y Poder gobernaron una civilización interestelar; Sabiduría demostró que el poder sin sabiduría es destructivo.", ejercicio: "¿Qué alegoría enfrenta a la sabiduría y el poder?", respuesta: "La sabiduría y el poder" },
+        { nombre: "El amor y el odio", definicion: "Alegoría donde el amor y el odio se enfrentan en un campo de batalla estelar.", sintaxis: "[Concepto] y [Concepto] se enfrentaron, y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Amor y Odio se enfrentaron en un campo de batalla estelar; Amor enseñó que el odio es la sombra del amor.", ejercicio: "¿Qué alegoría enfrenta al amor y el odio?", respuesta: "El amor y el odio" },
+        { nombre: "La belleza y la verdad", definicion: "Alegoría donde la belleza y la verdad buscan un secreto cósmico.", sintaxis: "[Concepto] y [Concepto] buscaron [secreto], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Belleza y Verdad buscaron un secreto cósmico; Belleza descubrió que la verdad es la forma más bella.", ejercicio: "¿Qué alegoría enfrenta a la belleza y la verdad?", respuesta: "La belleza y la verdad" },
+        { nombre: "La unidad y la división", definicion: "Alegoría donde la unidad y la división forman una federación galáctica.", sintaxis: "[Concepto] y [Concepto] formaron [federación], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Unidad y División formaron una federación galáctica; Unidad demostró que la unión es la fuerza del cosmos.", ejercicio: "¿Qué alegoría enfrenta a la unidad y la división?", respuesta: "La unidad y la división" },
+        { nombre: "La memoria y el olvido", definicion: "Alegoría donde la memoria y el olvido protegen un archivo histórico.", sintaxis: "[Concepto] y [Concepto] protegieron [archivo], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Memoria y Olvido protegieron un archivo histórico; Memoria enseñó que el olvido es necesario para recordar lo esencial.", ejercicio: "¿Qué alegoría enfrenta a la memoria y el olvido?", respuesta: "La memoria y el olvido" },
+        { nombre: "La creatividad y la destrucción", definicion: "Alegoría donde la creatividad y la destrucción construyen un mundo.", sintaxis: "[Concepto] y [Concepto] construyeron [mundo], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Creatividad y Destrucción construyeron un mundo; Creatividad descubrió que la destrucción es el comienzo de la creación.", ejercicio: "¿Qué alegoría enfrenta a la creatividad y la destrucción?", respuesta: "La creatividad y la destrucción" },
+        { nombre: "La esperanza y la desesperación (II)", definicion: "Alegoría donde la esperanza y la desesperación viajan a un nuevo sistema.", sintaxis: "[Concepto] y [Concepto] viajaron a [sistema], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Esperanza y Desesperación viajaron a un nuevo sistema; Esperanza demostró que la luz siempre vence a la oscuridad.", ejercicio: "¿Qué alegoría enfrenta a la esperanza y la desesperación?", respuesta: "La esperanza y la desesperación (II)" },
+        { nombre: "La libertad y la opresión", definicion: "Alegoría donde la libertad y la opresión compiten por una colonia.", sintaxis: "[Concepto] y [Concepto] compitieron por [colonia], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Libertad y Opresión compitieron por una colonia; Libertad enseñó que la opresión es la prisión del alma.", ejercicio: "¿Qué alegoría enfrenta a la libertad y la opresión?", respuesta: "La libertad y la opresión" },
+        { nombre: "La igualdad y la desigualdad", definicion: "Alegoría donde la igualdad y la desigualdad fundan una sociedad.", sintaxis: "[Concepto] y [Concepto] fundaron [sociedad], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Igualdad y Desigualdad fundaron una sociedad; Igualdad descubrió que la equidad es la base de la paz.", ejercicio: "¿Qué alegoría enfrenta a la igualdad y la desigualdad?", respuesta: "La igualdad y la desigualdad" },
+        { nombre: "La justicia y la venganza", definicion: "Alegoría donde la justicia y la venganza juzgan a un criminal interestelar.", sintaxis: "[Concepto] y [Concepto] juzgaron a [criminal], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Justicia y Venganza juzgaron a un criminal interestelar; Justicia demostró que la venganza no es justicia.", ejercicio: "¿Qué alegoría enfrenta a la justicia y la venganza?", respuesta: "La justicia y la venganza" },
+        { nombre: "La paz y la violencia", definicion: "Alegoría donde la paz y la violencia negocian un alto al fuego.", sintaxis: "[Concepto] y [Concepto] negociaron [alto al fuego], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paz y Violencia negociaron un alto al fuego; Paz enseñó que la violencia es el fracaso del diálogo.", ejercicio: "¿Qué alegoría enfrenta a la paz y la violencia?", respuesta: "La paz y la violencia" },
+        { nombre: "La sabiduría y la locura", definicion: "Alegoría donde la sabiduría y la locura interpretan un oráculo.", sintaxis: "[Concepto] y [Concepto] interpretaron [oráculo], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Sabiduría y Locura interpretaron un oráculo; Sabiduría descubrió que la locura puede ser la puerta a la verdad.", ejercicio: "¿Qué alegoría enfrenta a la sabiduría y la locura?", respuesta: "La sabiduría y la locura" },
+        { nombre: "El conocimiento y la ignorancia (II)", definicion: "Alegoría donde el conocimiento y la ignorancia construyen una biblioteca cósmica.", sintaxis: "[Concepto] y [Concepto] construyeron [biblioteca], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Conocimiento e Ignorancia construyeron una biblioteca cósmica; Conocimiento demostró que la ignorancia es la noche del saber.", ejercicio: "¿Qué alegoría enfrenta al conocimiento y la ignorancia?", respuesta: "El conocimiento y la ignorancia (II)" },
+        { nombre: "La conciencia y el instinto", definicion: "Alegoría donde la conciencia y el instinto exploran un planeta.", sintaxis: "[Concepto] y [Concepto] exploraron [planeta], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Conciencia e Instinto exploraron un planeta; Conciencia enseñó que el instinto es la voz de la naturaleza.", ejercicio: "¿Qué alegoría enfrenta a la conciencia y el instinto?", respuesta: "La conciencia y el instinto" },
+        { nombre: "El ser y la nada", definicion: "Alegoría donde el ser y la nada se encuentran en el borde del universo.", sintaxis: "[Concepto] y [Concepto] se encontraron, y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Ser y Nada se encontraron en el borde del universo; Ser descubrió que la nada es el espacio para el todo.", ejercicio: "¿Qué alegoría enfrenta al ser y la nada?", respuesta: "El ser y la nada" },
+    ];
+    existenciales.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "existencial", ...t }));
+
+    // =================== BLOQUE 3: ALEGORÍAS DE FUERZAS CÓSMICAS (25) ===================
+    const fuerzas = [
+        { nombre: "La gravedad y la ligereza", definicion: "Alegoría donde la gravedad y la ligereza compiten por el equilibrio de un sistema.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [equilibrio], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Gravedad y Ligereza compitieron por el equilibrio de un sistema; Gravedad enseñó que la estabilidad es la base del orden.", ejercicio: "¿Qué alegoría enfrenta a la gravedad y la ligereza?", respuesta: "La gravedad y la ligereza" },
+        { nombre: "La energía y la entropía", definicion: "Alegoría donde la energía y la entropía discuten el destino del cosmos.", sintaxis: "[Fuerza] y [Fuerza] discutieron sobre [destino], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Energía y Entropía discutieron el destino del cosmos; Energía demostró que la entropía es el precio del orden.", ejercicio: "¿Qué alegoría enfrenta a la energía y la entropía?", respuesta: "La energía y la entropía" },
+        { nombre: "El tiempo y la eternidad", definicion: "Alegoría donde el tiempo y la eternidad se encuentran en un agujero de gusano.", sintaxis: "[Fuerza] y [Fuerza] se encontraron, y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Tiempo y Eternidad se encontraron en un agujero de gusano; Eternidad descubrió que el tiempo es una ilusión de la eternidad.", ejercicio: "¿Qué alegoría enfrenta al tiempo y la eternidad?", respuesta: "El tiempo y la eternidad" },
+        { nombre: "La luz y la sombra", definicion: "Alegoría donde la luz y la sombra danzan en una nebulosa.", sintaxis: "[Fuerza] y [Fuerza] danzaron en [nebulosa], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Luz y Sombra danzaron en una nebulosa; Luz enseñó que la sombra es la otra cara de la luz.", ejercicio: "¿Qué alegoría enfrenta a la luz y la sombra?", respuesta: "La luz y la sombra" },
+        { nombre: "El calor y el frío", definicion: "Alegoría donde el calor y el frío compiten por el clima de un planeta.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [clima], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Calor y Frío compitieron por el clima de un planeta; Calor demostró que el equilibrio térmico es la vida.", ejercicio: "¿Qué alegoría enfrenta al calor y el frío?", respuesta: "El calor y el frío" },
+        { nombre: "La velocidad y la quietud", definicion: "Alegoría donde la velocidad y la quietud viajan a través del espacio.", sintaxis: "[Fuerza] y [Fuerza] viajaron por [espacio], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Velocidad y Quietud viajaron por el espacio; Quietud descubrió que la velocidad es la otra cara del reposo.", ejercicio: "¿Qué alegoría enfrenta a la velocidad y la quietud?", respuesta: "La velocidad y la quietud" },
+        { nombre: "La fuerza y la debilidad", definicion: "Alegoría donde la fuerza y la debilidad construyen un imperio interestelar.", sintaxis: "[Fuerza] y [Fuerza] construyeron [imperio], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Fuerza y Debilidad construyeron un imperio interestelar; Fuerza enseñó que la debilidad es la semilla de la fuerza.", ejercicio: "¿Qué alegoría enfrenta a la fuerza y la debilidad?", respuesta: "La fuerza y la debilidad" },
+        { nombre: "La vida y la muerte (II)", definicion: "Alegoría donde la vida y la muerte se encuentran en un planeta moribundo.", sintaxis: "[Fuerza] y [Fuerza] se encontraron en [planeta], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Vida y Muerte se encontraron en un planeta moribundo; Vida demostró que la muerte es el renacimiento del ciclo.", ejercicio: "¿Qué alegoría enfrenta a la vida y la muerte (II)?", respuesta: "La vida y la muerte (II)" },
+        { nombre: "El caos y el orden (II)", definicion: "Alegoría donde el caos y el orden se fusionan en una estrella.", sintaxis: "[Fuerza] y [Fuerza] se fusionaron en [estrella], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Caos y Orden se fusionaron en una estrella; Orden descubrió que el caos es el germen del orden.", ejercicio: "¿Qué alegoría enfrenta al caos y el orden (II)?", respuesta: "El caos y el orden (II)" },
+        { nombre: "La gravedad y la antigravedad", definicion: "Alegoría donde la gravedad y la antigravedad compiten por el control de una galaxia.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [galaxia], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Gravedad y Antigravedad compitieron por el control de una galaxia; Gravedad enseñó que la atracción es la base de la cohesión.", ejercicio: "¿Qué alegoría enfrenta a la gravedad y la antigravedad?", respuesta: "La gravedad y la antigravedad" },
+        { nombre: "La energía oscura y la materia oscura", definicion: "Alegoría donde la energía oscura y la materia oscura discuten la estructura del cosmos.", sintaxis: "[Fuerza] y [Fuerza] discutieron sobre [estructura], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Energía Oscura y Materia Oscura discutieron la estructura del cosmos; Energía Oscura demostró que lo invisible sostiene lo visible.", ejercicio: "¿Qué alegoría enfrenta a la energía oscura y la materia oscura?", respuesta: "La energía oscura y la materia oscura" },
+        { nombre: "La radiación y la oscuridad", definicion: "Alegoría donde la radiación y la oscuridad compiten por iluminar un sistema.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [sistema], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Radiación y Oscuridad compitieron por iluminar un sistema; Radiación descubrió que la oscuridad es la ausencia de luz.", ejercicio: "¿Qué alegoría enfrenta a la radiación y la oscuridad?", respuesta: "La radiación y la oscuridad" },
+        { nombre: "La velocidad de la luz y la velocidad del sonido", definicion: "Alegoría donde la luz y el sonido viajan a través del vacío.", sintaxis: "[Fuerza] y [Fuerza] viajaron por [vacío], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Luz y Sonido viajaron por el vacío; Luz enseñó que la velocidad es relativa al medio.", ejercicio: "¿Qué alegoría enfrenta a la velocidad de la luz y la velocidad del sonido?", respuesta: "La velocidad de la luz y la velocidad del sonido" },
+        { nombre: "La masa y la energía", definicion: "Alegoría donde la masa y la energía se transforman en una estrella.", sintaxis: "[Fuerza] y [Fuerza] se transformaron en [estrella], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Masa y Energía se transformaron en una estrella; Energía demostró que E=mc² es la ley del universo.", ejercicio: "¿Qué alegoría enfrenta a la masa y la energía?", respuesta: "La masa y la energía" },
+        { nombre: "La fuerza nuclear y la fuerza electromagnética", definicion: "Alegoría donde la fuerza nuclear y la fuerza electromagnética compiten por la estructura de un átomo.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [átomo], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Fuerza Nuclear y Fuerza Electromagnética compitieron por un átomo; Fuerza Nuclear descubrió que la cohesión es la base de la materia.", ejercicio: "¿Qué alegoría enfrenta a la fuerza nuclear y la fuerza electromagnética?", respuesta: "La fuerza nuclear y la fuerza electromagnética" },
+        { nombre: "La gravedad cuántica y la relatividad", definicion: "Alegoría donde la gravedad cuántica y la relatividad discuten la naturaleza del espacio-tiempo.", sintaxis: "[Fuerza] y [Fuerza] discutieron sobre [espacio-tiempo], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Gravedad Cuántica y Relatividad discutieron el espacio-tiempo; Gravedad Cuántica enseñó que la unión es la clave de la física.", ejercicio: "¿Qué alegoría enfrenta a la gravedad cuántica y la relatividad?", respuesta: "La gravedad cuántica y la relatividad" },
+        { nombre: "El vacío y la materia", definicion: "Alegoría donde el vacío y la materia se encuentran en el borde del universo.", sintaxis: "[Fuerza] y [Fuerza] se encontraron en [borde], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Vacío y Materia se encontraron en el borde del universo; Vacío descubrió que la materia es el vacío en movimiento.", ejercicio: "¿Qué alegoría enfrenta al vacío y la materia?", respuesta: "El vacío y la materia" },
+        { nombre: "La energía y la fuerza", definicion: "Alegoría donde la energía y la fuerza construyen una civilización tecnológica.", sintaxis: "[Fuerza] y [Fuerza] construyeron [civilización], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Energía y Fuerza construyeron una civilización tecnológica; Fuerza demostró que la energía es el motor del progreso.", ejercicio: "¿Qué alegoría enfrenta a la energía y la fuerza?", respuesta: "La energía y la fuerza" },
+        { nombre: "La rotación y la traslación", definicion: "Alegoría donde la rotación y la traslación compiten por el movimiento de un planeta.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [movimiento], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Rotación y Traslación compitieron por el movimiento de un planeta; Rotación enseñó que el giro es la base del ciclo.", ejercicio: "¿Qué alegoría enfrenta a la rotación y la traslación?", respuesta: "La rotación y la traslación" },
+        { nombre: "La presión y la temperatura", definicion: "Alegoría donde la presión y la temperatura gobiernan el núcleo de una estrella.", sintaxis: "[Fuerza] y [Fuerza] gobernaron [núcleo], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Presión y Temperatura gobernaron el núcleo de una estrella; Presión descubrió que la temperatura es la expresión de la energía.", ejercicio: "¿Qué alegoría enfrenta a la presión y la temperatura?", respuesta: "La presión y la temperatura" },
+        { nombre: "La densidad y la porosidad", definicion: "Alegoría donde la densidad y la porosidad compiten por la estructura de un asteroide.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [estructura], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Densidad y Porosidad compitieron por la estructura de un asteroide; Densidad demostró que la compacidad es la base de la solidez.", ejercicio: "¿Qué alegoría enfrenta a la densidad y la porosidad?", respuesta: "La densidad y la porosidad" },
+        { nombre: "La velocidad y la aceleración", definicion: "Alegoría donde la velocidad y la aceleración compiten por el control de una nave.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [nave], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Velocidad y Aceleración compitieron por el control de una nave; Velocidad enseñó que la aceleración es el cambio de la velocidad.", ejercicio: "¿Qué alegoría enfrenta a la velocidad y la aceleración?", respuesta: "La velocidad y la aceleración" },
+        { nombre: "La masa y el peso", definicion: "Alegoría donde la masa y el peso discuten la naturaleza de la gravedad.", sintaxis: "[Fuerza] y [Fuerza] discutieron sobre [gravedad], y [Fuerza] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Masa y Peso discutieron la naturaleza de la gravedad; Masa descubrió que el peso es la fuerza de la gravedad sobre la masa.", ejercicio: "¿Qué alegoría enfrenta a la masa y el peso?", respuesta: "La masa y el peso" },
+        { nombre: "La frecuencia y la longitud de onda", definicion: "Alegoría donde la frecuencia y la longitud de onda compiten por la naturaleza de la luz.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [luz], y [Fuerza] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Frecuencia y Longitud de Onda compitieron por la naturaleza de la luz; Frecuencia demostró que la longitud de onda es el espacio de la frecuencia.", ejercicio: "¿Qué alegoría enfrenta a la frecuencia y la longitud de onda?", respuesta: "La frecuencia y la longitud de onda" },
+        { nombre: "La energía cinética y la energía potencial", definicion: "Alegoría donde la energía cinética y la energía potencial compiten por el movimiento de un satélite.", sintaxis: "[Fuerza] y [Fuerza] compitieron por [satélite], y [Fuerza] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Energía Cinética y Energía Potencial compitieron por el movimiento de un satélite; Energía Cinética enseñó que la potencial es la promesa del movimiento.", ejercicio: "¿Qué alegoría enfrenta a la energía cinética y la energía potencial?", respuesta: "La energía cinética y la energía potencial" },
+    ];
+    fuerzas.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "fuerzas", ...t }));
+
+    // =================== BLOQUE 4: ALEGORÍAS DE DILEMAS ÉTICOS (25) ===================
+    const eticos = [
+        { nombre: "La inteligencia artificial y la conciencia", definicion: "Alegoría donde la IA y la conciencia discuten los límites de la mente.", sintaxis: "[Concepto] y [Concepto] discutieron sobre [límites], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Inteligencia Artificial y Conciencia discutieron los límites de la mente; Conciencia enseñó que la IA es un reflejo de la conciencia humana.", ejercicio: "¿Qué alegoría enfrenta a la inteligencia artificial y la conciencia?", respuesta: "La inteligencia artificial y la conciencia" },
+        { nombre: "La ética y la tecnología", definicion: "Alegoría donde la ética y la tecnología compiten por el futuro de una civilización.", sintaxis: "[Concepto] y [Concepto] compitieron por [futuro], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Ética y Tecnología compitieron por el futuro de una civilización; Ética demostró que la tecnología sin ética es destructiva.", ejercicio: "¿Qué alegoría enfrenta a la ética y la tecnología?", respuesta: "La ética y la tecnología" },
+        { nombre: "El libre albedrío y la programación", definicion: "Alegoría donde el libre albedrío y la programación compiten por el control de un androide.", sintaxis: "[Concepto] y [Concepto] compitieron por [androide], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Libre Albedrío y Programación compitieron por el control de un androide; Libre Albedrío descubrió que la programación no puede limitar la elección.", ejercicio: "¿Qué alegoría enfrenta al libre albedrío y la programación?", respuesta: "El libre albedrío y la programación" },
+        { nombre: "La verdad y la propaganda", definicion: "Alegoría donde la verdad y la propaganda compiten por la opinión pública de una galaxia.", sintaxis: "[Concepto] y [Concepto] compitieron por [opinión], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Verdad y Propaganda compitieron por la opinión pública de una galaxia; Verdad enseñó que la propaganda es la mentira disfrazada.", ejercicio: "¿Qué alegoría enfrenta a la verdad y la propaganda?", respuesta: "La verdad y la propaganda" },
+        { nombre: "La privacidad y la vigilancia", definicion: "Alegoría donde la privacidad y la vigilancia compiten por la libertad de una colonia.", sintaxis: "[Concepto] y [Concepto] compitieron por [libertad], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Privacidad y Vigilancia compitieron por la libertad de una colonia; Privacidad demostró que la vigilancia es la prisión del alma.", ejercicio: "¿Qué alegoría enfrenta a la privacidad y la vigilancia?", respuesta: "La privacidad y la vigilancia" },
+        { nombre: "El progreso y la sostenibilidad", definicion: "Alegoría donde el progreso y la sostenibilidad compiten por los recursos de un planeta.", sintaxis: "[Concepto] y [Concepto] compitieron por [recursos], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Progreso y Sostenibilidad compitieron por los recursos de un planeta; Sostenibilidad enseñó que el progreso sin sostenibilidad es insostenible.", ejercicio: "¿Qué alegoría enfrenta al progreso y la sostenibilidad?", respuesta: "El progreso y la sostenibilidad" },
+        { nombre: "La igualdad y la meritocracia", definicion: "Alegoría donde la igualdad y la meritocracia compiten por la estructura de una sociedad interestelar.", sintaxis: "[Concepto] y [Concepto] compitieron por [sociedad], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Igualdad y Meritocracia compitieron por la estructura de una sociedad interestelar; Igualdad descubrió que la meritocracia sin igualdad es injusticia.", ejercicio: "¿Qué alegoría enfrenta a la igualdad y la meritocracia?", respuesta: "La igualdad y la meritocracia" },
+        { nombre: "La seguridad y la libertad", definicion: "Alegoría donde la seguridad y la libertad compiten por el gobierno de un sistema.", sintaxis: "[Concepto] y [Concepto] compitieron por [gobierno], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Seguridad y Libertad compitieron por el gobierno de un sistema; Libertad demostró que la seguridad sin libertad es tiranía.", ejercicio: "¿Qué alegoría enfrenta a la seguridad y la libertad?", respuesta: "La seguridad y la libertad" },
+        { nombre: "La diversidad y la uniformidad", definicion: "Alegoría donde la diversidad y la uniformidad compiten por la cultura de una galaxia.", sintaxis: "[Concepto] y [Concepto] compitieron por [cultura], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Diversidad y Uniformidad compitieron por la cultura de una galaxia; Diversidad enseñó que la uniformidad es la muerte de la creatividad.", ejercicio: "¿Qué alegoría enfrenta a la diversidad y la uniformidad?", respuesta: "La diversidad y la uniformidad" },
+        { nombre: "La tolerancia y la intolerancia", definicion: "Alegoría donde la tolerancia y la intolerancia compiten por la convivencia en un imperio.", sintaxis: "[Concepto] y [Concepto] compitieron por [convivencia], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Tolerancia e Intolerancia compitieron por la convivencia en un imperio; Tolerancia descubrió que la intolerancia es la semilla del conflicto.", ejercicio: "¿Qué alegoría enfrenta a la tolerancia y la intolerancia?", respuesta: "La tolerancia y la intolerancia" },
+        { nombre: "La compasión y la indiferencia (II)", definicion: "Alegoría donde la compasión y la indiferencia compiten por la ayuda a un planeta devastado.", sintaxis: "[Concepto] y [Concepto] compitieron por [ayuda], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Compasión e Indiferencia compitieron por la ayuda a un planeta devastado; Compasión demostró que la indiferencia es el silencio de la humanidad.", ejercicio: "¿Qué alegoría enfrenta a la compasión y la indiferencia (II)?", respuesta: "La compasión y la indiferencia (II)" },
+        { nombre: "La solidaridad y la competencia", definicion: "Alegoría donde la solidaridad y la competencia compiten por el futuro de una colonia.", sintaxis: "[Concepto] y [Concepto] compitieron por [futuro], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Solidaridad y Competencia compitieron por el futuro de una colonia; Solidaridad enseñó que la competencia sin solidaridad es egoísmo.", ejercicio: "¿Qué alegoría enfrenta a la solidaridad y la competencia?", respuesta: "La solidaridad y la competencia" },
+        { nombre: "La honestidad y la corrupción", definicion: "Alegoría donde la honestidad y la corrupción compiten por el gobierno de una federación.", sintaxis: "[Concepto] y [Concepto] compitieron por [gobierno], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Honestidad y Corrupción compitieron por el gobierno de una federación; Honestidad descubrió que la corrupción es la podredumbre del poder.", ejercicio: "¿Qué alegoría enfrenta a la honestidad y la corrupción?", respuesta: "La honestidad y la corrupción" },
+        { nombre: "La justicia y el privilegio", definicion: "Alegoría donde la justicia y el privilegio compiten por la equidad de un sistema.", sintaxis: "[Concepto] y [Concepto] compitieron por [equidad], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Justicia y Privilegio compitieron por la equidad de un sistema; Justicia demostró que el privilegio es la injusticia institucionalizada.", ejercicio: "¿Qué alegoría enfrenta a la justicia y el privilegio?", respuesta: "La justicia y el privilegio" },
+        { nombre: "La educación y la ignorancia (II)", definicion: "Alegoría donde la educación y la ignorancia compiten por el conocimiento de una civilización.", sintaxis: "[Concepto] y [Concepto] compitieron por [conocimiento], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Educación e Ignorancia compitieron por el conocimiento de una civilización; Educación enseñó que la ignorancia es la noche del saber.", ejercicio: "¿Qué alegoría enfrenta a la educación y la ignorancia (II)?", respuesta: "La educación y la ignorancia (II)" },
+        { nombre: "La salud y la enfermedad", definicion: "Alegoría donde la salud y la enfermedad compiten por el bienestar de un planeta.", sintaxis: "[Concepto] y [Concepto] compitieron por [bienestar], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Salud y Enfermedad compitieron por el bienestar de un planeta; Salud descubrió que la enfermedad es la sombra de la salud.", ejercicio: "¿Qué alegoría enfrenta a la salud y la enfermedad?", respuesta: "La salud y la enfermedad" },
+        { nombre: "La paz y la guerra (II)", definicion: "Alegoría donde la paz y la guerra compiten por el destino de un sistema interestelar.", sintaxis: "[Concepto] y [Concepto] compitieron por [destino], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paz y Guerra compitieron por el destino de un sistema interestelar; Paz demostró que la guerra es el fracaso de la diplomacia.", ejercicio: "¿Qué alegoría enfrenta a la paz y la guerra (II)?", respuesta: "La paz y la guerra (II)" },
+        { nombre: "La fe y la ciencia", definicion: "Alegoría donde la fe y la ciencia compiten por la verdad de un fenómeno cósmico.", sintaxis: "[Concepto] y [Concepto] compitieron por [verdad], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Fe y Ciencia compitieron por la verdad de un fenómeno cósmico; Ciencia enseñó que la fe sin ciencia es ceguera.", ejercicio: "¿Qué alegoría enfrenta a la fe y la ciencia?", respuesta: "La fe y la ciencia" },
+        { nombre: "La esperanza y el miedo", definicion: "Alegoría donde la esperanza y el miedo compiten por el ánimo de una civilización.", sintaxis: "[Concepto] y [Concepto] compitieron por [ánimo], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Esperanza y Miedo compitieron por el ánimo de una civilización; Esperanza descubrió que el miedo es la sombra de la esperanza.", ejercicio: "¿Qué alegoría enfrenta a la esperanza y el miedo?", respuesta: "La esperanza y el miedo" },
+        { nombre: "La confianza y la sospecha", definicion: "Alegoría donde la confianza y la sospecha compiten por la cooperación interestelar.", sintaxis: "[Concepto] y [Concepto] compitieron por [cooperación], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Confianza y Sospecha compitieron por la cooperación interestelar; Confianza demostró que la sospecha es el veneno de la alianza.", ejercicio: "¿Qué alegoría enfrenta a la confianza y la sospecha?", respuesta: "La confianza y la sospecha" },
+        { nombre: "La compasión y la justicia", definicion: "Alegoría donde la compasión y la justicia compiten por el perdón de un criminal.", sintaxis: "[Concepto] y [Concepto] compitieron por [perdón], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Compasión y Justicia compitieron por el perdón de un criminal; Compasión enseñó que la justicia sin compasión es crueldad.", ejercicio: "¿Qué alegoría enfrenta a la compasión y la justicia?", respuesta: "La compasión y la justicia" },
+        { nombre: "La humildad y el orgullo (II)", definicion: "Alegoría donde la humildad y el orgullo compiten por el liderazgo de una flota.", sintaxis: "[Concepto] y [Concepto] compitieron por [liderazgo], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Humildad y Orgullo compitieron por el liderazgo de una flota; Humildad descubrió que el orgullo es la caída del líder.", ejercicio: "¿Qué alegoría enfrenta a la humildad y el orgullo (II)?", respuesta: "La humildad y el orgullo (II)" },
+        { nombre: "La generosidad y la avaricia (II)", definicion: "Alegoría donde la generosidad y la avaricia compiten por la riqueza de una estrella.", sintaxis: "[Concepto] y [Concepto] compitieron por [riqueza], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Generosidad y Avaricia compitieron por la riqueza de una estrella; Generosidad demostró que la avaricia es la pobreza del alma.", ejercicio: "¿Qué alegoría enfrenta a la generosidad y la avaricia (II)?", respuesta: "La generosidad y la avaricia (II)" },
+        { nombre: "La lealtad y la traición (II)", definicion: "Alegoría donde la lealtad y la traición compiten por la supervivencia de un equipo.", sintaxis: "[Concepto] y [Concepto] compitieron por [supervivencia], y [Concepto] enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Lealtad y Traición compitieron por la supervivencia de un equipo; Lealtad enseñó que la traición es el fin de la confianza.", ejercicio: "¿Qué alegoría enfrenta a la lealtad y la traición (II)?", respuesta: "La lealtad y la traición (II)" },
+        { nombre: "La paciencia y la impaciencia (II)", definicion: "Alegoría donde la paciencia y la impaciencia compiten por la evolución de una especie.", sintaxis: "[Concepto] y [Concepto] compitieron por [evolución], y [Concepto] descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Paciencia e Impaciencia compitieron por la evolución de una especie; Paciencia descubrió que la impaciencia es el freno del cambio.", ejercicio: "¿Qué alegoría enfrenta a la paciencia y la impaciencia (II)?", respuesta: "La paciencia y la impaciencia (II)" },
+        { nombre: "La sinceridad y la hipocresía (II)", definicion: "Alegoría donde la sinceridad y la hipocresía compiten por la confianza de una alianza.", sintaxis: "[Concepto] y [Concepto] compitieron por [confianza], y [Concepto] demostró que [enseñanza].", estructura: "Estructura: [Introducción] [Conflicto] [Resolución] [Moraleja].", ejemplo: "Sinceridad e Hipocresía compitieron por la confianza de una alianza; Sinceridad demostró que la hipocresía es la máscara del engaño.", ejercicio: "¿Qué alegoría enfrenta a la sinceridad y la hipocresía (II)?", respuesta: "La sinceridad y la hipocresía (II)" },
+    ];
+    eticos.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "ético", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Virtudes y vicios', 'Conceptos existenciales', 'Fuerzas cósmicas', 'Dilemas éticos'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.definicion}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejemplo y ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#8bc4e0;margin-bottom:0.2rem;">🌀 ${t.nombre}</div>
+                            <div class="definicion"><strong>📘 Teoría:</strong> ${t.definicion}</div>
+                            <div class="sintaxis"><strong>📐 Fórmula:</strong> ${t.sintaxis}</div>
+                            <div class="estructura"><strong>📊 Estructura:</strong> ${t.estructura}</div>
+                            <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#2a5a7a;color:#e0f0ff;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

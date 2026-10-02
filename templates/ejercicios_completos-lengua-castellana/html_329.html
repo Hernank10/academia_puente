@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧩 Flota Morfológica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-dorado: #ffd54f;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🧩 FLOTA MORFOLÓGICA<small>100 TÉCNICAS · MORFOLOGÍA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="flexia" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Flexia <span class="badge-personaje bg-azul">Flexión</span></a>
+        <a class="nav-link" data-section="deriva" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Deriva <span class="badge-personaje bg-verde">Derivación</span></a>
+        <a class="nav-link" data-section="composia" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Composia <span class="badge-personaje bg-dorado">Composición</span></a>
+        <a class="nav-link" data-section="lexia" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Lexia <span class="badge-personaje bg-purpura">Léxico</span></a>
+        <a class="nav-link" data-section="escritia" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Escritia <span class="badge-personaje bg-rojo">Ortografía</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main-stellar">
+        <!-- DASHBOARD -->
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🧩</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Flexión, Derivación, Composición</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Morfología del castellano</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la morfología:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-azul);">Flexia</strong> – Flexión: género, número, persona, tiempo, modo, aspecto.</li>
+                    <li><strong style="color:var(--neon-verde);">Deriva</strong> – Derivación: prefijos, sufijos, interfijos, parasíntesis.</li>
+                    <li><strong style="color:var(--neon-dorado);">Composia</strong> – Composición: palabras compuestas, yuxtaposición.</li>
+                    <li><strong style="color:var(--neon-purpura);">Lexia</strong> – Léxico y formación de palabras: familias léxicas, etimología.</li>
+                    <li><strong style="color:var(--neon-rojo);">Escritia</strong> – Ortografía morfológica: reglas de escritura de morfemas.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Secciones dinámicas -->
+        <div id="section-flexia" class="section-content" style="display:none;"></div>
+        <div id="section-deriva" class="section-content" style="display:none;"></div>
+        <div id="section-composia" class="section-content" style="display:none;"></div>
+        <div id="section-lexia" class="section-content" style="display:none;"></div>
+        <div id="section-escritia" class="section-content" style="display:none;"></div>
+
+        <!-- SEGUIMIENTO -->
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    flexia: {
+        nombre: "Flexia", color: "azul", icono: "bi-robot",
+        especialidad: "Flexión: género, número, persona, tiempo, modo, aspecto",
+        tecnicas: [
+            { titulo: "Género gramatical", teoria: "El género es un rasgo gramatical que distingue masculino y femenino en sustantivos y adjetivos. Puede ser natural (sexo) o gramatical (arbitrario).", ejemplo: "'niño' (masculino) vs 'niña' (femenino); 'el problema' (masculino) vs 'la mano' (femenino).", ejercicio: "Clasifica 10 sustantivos por su género.", reto: "Escribe 5 pares de palabras que cambien de género." },
+            { titulo: "Número gramatical", teoria: "El número indica si el sustantivo o adjetivo está en singular (uno) o plural (varios). El plural se forma con -s o -es.", ejemplo: "'casa' (singular) → 'casas' (plural); 'pez' → 'peces' (plural con -es).", ejercicio: "Forma el plural de 10 palabras.", reto: "Escribe 3 oraciones con sustantivos en singular y plural." },
+            { titulo: "Persona gramatical", teoria: "La persona indica quién realiza la acción: primera (yo, nosotros), segunda (tú, vosotros) o tercera (él, ellos).", ejemplo: "'yo canto' (1ª), 'tú cantas' (2ª), 'él canta' (3ª).", ejercicio: "Conjuga un verbo en las tres personas del singular.", reto: "Escribe 3 oraciones con cada persona." },
+            { titulo: "Tiempo verbal", teoria: "El tiempo verbal sitúa la acción en el pasado, presente o futuro. Hay tiempos simples y compuestos.", ejemplo: "'canto' (presente), 'canté' (pasado perfecto), 'cantaré' (futuro).", ejercicio: "Conjuga el verbo 'comer' en presente, pasado y futuro.", reto: "Escribe 3 oraciones en diferentes tiempos verbales." },
+            { titulo: "Modo verbal", teoria: "El modo indica la actitud del hablante: indicativo (realidad), subjuntivo (deseo, duda) e imperativo (orden).", ejemplo: "'canto' (indicativo), 'cante' (subjuntivo), 'canta' (imperativo).", ejercicio: "Conjuga un verbo en los tres modos.", reto: "Escribe 3 oraciones con cada modo." },
+            { titulo: "Aspecto verbal", teoria: "El aspecto indica si la acción está terminada (perfecto) o no (imperfecto).", ejemplo: "'he cantado' (perfecto), 'cantaba' (imperfecto).", ejercicio: "Escribe 3 oraciones con aspecto perfecto e imperfecto.", reto: "Conjuga el verbo 'vivir' en todos los tiempos." },
+            { titulo: "Flexión nominal", teoria: "Los sustantivos y adjetivos varían en género y número. La flexión nominal es el conjunto de estas variaciones.", ejemplo: "'el gato' → 'los gatos' (número); 'el gato' → 'la gata' (género).", ejercicio: "Flexiona 5 sustantivos en género y número.", reto: "Escribe 5 pares con todas las combinaciones de género y número." },
+            { titulo: "Flexión verbal: presente", teoria: "El presente de indicativo expresa acciones actuales o habituales. Las terminaciones varían según la conjugación.", ejemplo: "'amar' → 'amo, amas, ama, amamos, amáis, aman'.", ejercicio: "Conjuga el verbo 'beber' en presente.", reto: "Escribe 3 oraciones con verbos en presente." },
+            { titulo: "Flexión verbal: pretérito perfecto", teoria: "El pretérito perfecto simple indica acciones pasadas y terminadas. Las terminaciones son -é, -aste, -ó, etc.", ejemplo: "'cantar' → 'canté, cantaste, cantó, cantamos, cantasteis, cantaron'.", ejercicio: "Conjuga el verbo 'escribir' en pretérito perfecto.", reto: "Escribe 3 oraciones con verbos en pretérito perfecto." },
+            { titulo: "Flexión verbal: futuro", teoria: "El futuro de indicativo expresa acciones futuras. Se forma con el infinitivo + terminaciones.", ejemplo: "'amar' → 'amaré, amarás, amará, amaremos, amaréis, amarán'.", ejercicio: "Conjuga el verbo 'vivir' en futuro.", reto: "Escribe 3 oraciones con verbos en futuro." },
+            { titulo: "Flexión adjetival", teoria: "Los adjetivos concuerdan en género y número con el sustantivo al que modifican.", ejemplo: "'niño alto' (masculino singular) → 'niña alta' (femenino singular).", ejercicio: "Flexiona 5 adjetivos en género y número.", reto: "Escribe 3 oraciones con adjetivos flexionados." },
+            { titulo: "Flexión pronominal", teoria: "Los pronombres personales varían según persona, número, género y caso.", ejemplo: "'yo' (1ª singular), 'nosotros' (1ª plural), 'tú' (2ª singular).", ejercicio: "Escribe los pronombres personales en todas las personas y números.", reto: "Escribe 3 oraciones con diferentes pronombres." },
+            { titulo: "Flexión en el subjuntivo", teoria: "El subjuntivo se usa para expresar duda, deseo, posibilidad. Sus terminaciones son distintas al indicativo.", ejemplo: "'amar' → 'ame, ames, ame, amemos, améis, amen'.", ejercicio: "Conjuga el verbo 'comer' en presente de subjuntivo.", reto: "Escribe 3 oraciones con subjuntivo." },
+            { titulo: "Flexión en el imperativo", teoria: "El imperativo se usa para dar órdenes. Solo tiene formas para segunda persona.", ejemplo: "'amar' → 'ama' (tú), 'amad' (vosotros), 'ame' (usted).", ejercicio: "Conjuga el verbo 'escribir' en imperativo.", reto: "Escribe 3 oraciones imperativas." },
+            { titulo: "Verbos irregulares en flexión", teoria: "Algunos verbos tienen irregularidades en su flexión: diptongos, cambios vocálicos, etc.", ejemplo: "'poder' → 'puedo' (diptongo), 'decir' → 'digo' (cambio).", ejercicio: "Conjuga 3 verbos irregulares en presente.", reto: "Escribe 3 oraciones con verbos irregulares." },
+            { titulo: "Flexión de participios", teoria: "Los participios tienen flexión de género y número en función adjetiva (cuando no son verbos auxiliares).", ejemplo: "'escrito' → 'escrita' (femenino), 'escritos' (plural).", ejercicio: "Flexiona 5 participios en género y número.", reto: "Escribe 3 oraciones con participios como adjetivos." },
+            { titulo: "Flexión de gerundios", teoria: "El gerundio no tiene flexión de género o número; es invariable.", ejemplo: "'cantando', 'bebiendo', 'viviendo'.", ejercicio: "Escribe 3 gerundios de diferentes verbos.", reto: "Escribe 3 oraciones con gerundios." },
+            { titulo: "Flexión de infinitivos", teoria: "Los infinitivos no tienen flexión de persona, número o tiempo; son la forma base del verbo.", ejemplo: "'amar', 'temer', 'partir'.", ejercicio: "Escribe 5 infinitivos.", reto: "Escribe 3 oraciones con infinitivos." },
+            { titulo: "Flexión en la concordancia", teoria: "La concordancia exige que el verbo concuerde con el sujeto en persona y número, y el adjetivo con el sustantivo en género y número.", ejemplo: "'Los niños juegan en el parque' (plural).", ejercicio: "Corrige 3 oraciones con errores de concordancia.", reto: "Escribe 3 oraciones con concordancia correcta." },
+            { titulo: "Flexión en la formación de tiempos compuestos", teoria: "Los tiempos compuestos se forman con el verbo 'haber' + participio. El auxiliar 'haber' se flexiona.", ejemplo: "'he cantado', 'había comido', 'habré vivido'.", ejercicio: "Conjuga el verbo 'correr' en todos los tiempos compuestos.", reto: "Escribe 3 oraciones con tiempos compuestos." }
+        ]
+    },
+    deriva: {
+        nombre: "Deriva", color: "verde", icono: "bi-robot",
+        especialidad: "Derivación: prefijos, sufijos, interfijos, parasíntesis",
+        tecnicas: [
+            { titulo: "Prefijación", teoria: "Los prefijos se añaden al principio de una palabra para modificar su significado (negación, intensidad, localización, etc.).", ejemplo: "'hacer' → 'rehacer' (repetición), 'legal' → 'ilegal' (negación).", ejercicio: "Escribe 5 palabras con prefijo.", reto: "Crea 5 palabras derivadas con prefijos y escribe oraciones." },
+            { titulo: "Sufijación", teoria: "Los sufijos se añaden al final de una palabra para crear nuevas palabras o cambiar su categoría gramatical.", ejemplo: "'pan' → 'panadería' (lugar), 'lento' → 'lentamente' (adverbio).", ejercicio: "Escribe 5 palabras con sufijo.", reto: "Crea 5 palabras derivadas con sufijos y escribe oraciones." },
+            { titulo: "Interfijación", teoria: "Los interfijos son elementos que se insertan entre la raíz y el sufijo, sin significado propio, para facilitar la pronunciación.", ejemplo: "'café' → 'cafetera' (interfijo -et-), 'sangre' → 'sangriento' (interfijo -ient-).", ejercicio: "Escribe 3 palabras con interfijo.", reto: "Encuentra 5 palabras con interfijo en un texto." },
+            { titulo: "Parasíntesis", teoria: "La parasíntesis es la formación de palabras con prefijo y sufijo a la vez, donde la palabra simple resultante no existe o se forma simultáneamente.", ejemplo: "'enriquecer' (en- + rico + -ecer), 'enternecer' (en- + tierno + -ecer).", ejercicio: "Escribe 3 palabras parasintéticas.", reto: "Explica por qué son parasintéticas." },
+            { titulo: "Prefijos de negación", teoria: "Los prefijos de negación (a-, des-, in-, i-, im-) indican oposición o carencia.", ejemplo: "'moral' → 'amoral' (a-), 'hacer' → 'deshacer' (des-), 'útil' → 'inútil' (in-).", ejercicio: "Escribe 5 palabras con prefijos de negación.", reto: "Crea 5 oraciones con prefijos de negación." },
+            { titulo: "Prefijos de intensidad", teoria: "Los prefijos de intensidad (re-, super-, extra-, hiper-, ultra-) indican aumento o énfasis.", ejemplo: "'hacer' → 'rehacer' (re-), 'mercado' → 'supermercado' (super-).", ejercicio: "Escribe 5 palabras con prefijos de intensidad.", reto: "Crea 5 oraciones con prefijos de intensidad." },
+            { titulo: "Prefijos de localización", teoria: "Los prefijos de localización (ante-, pre-, post-, sub-, inter-, entre-) indican posición espacial o temporal.", ejemplo: "'poner' → 'anteponer' (ante-), 'guerra' → 'posguerra' (post-).", ejercicio: "Escribe 5 palabras con prefijos de localización.", reto: "Crea 5 oraciones con prefijos de localización." },
+            { titulo: "Sufijos diminutivos", teoria: "Los sufijos diminutivos (-ito, -ita, -illo, -illa, -ín, -ina) indican tamaño pequeño o afecto.", ejemplo: "'casa' → 'casita', 'perro' → 'perrito'.", ejercicio: "Escribe 5 palabras con sufijos diminutivos.", reto: "Crea 5 oraciones con diminutivos." },
+            { titulo: "Sufijos aumentativos", teoria: "Los sufijos aumentativos (-ón, -ona, -azo, -aza) indican gran tamaño o intensidad.", ejemplo: "'casa' → 'casona' (-ona), 'golpe' → 'golpazo' (-azo).", ejercicio: "Escribe 5 palabras con sufijos aumentativos.", reto: "Crea 5 oraciones con aumentativos." },
+            { titulo: "Sufijos despectivos", teoria: "Los sufijos despectivos (-aco, -ajo, -ucho, -uelo) indican desprecio o menosprecio.", ejemplo: "'casa' → 'casucha' (-ucha), 'gente' → 'gentuza' (-uza).", ejercicio: "Escribe 5 palabras con sufijos despectivos.", reto: "Crea 5 oraciones con despectivos." },
+            { titulo: "Sufijos de profesión", teoria: "Los sufijos de profesión (-ero, -ista, -dor, -ente) indican oficio o actividad.", ejemplo: "'pan' → 'panadero' (-ero), 'arte' → 'artista' (-ista).", ejercicio: "Escribe 5 palabras con sufijos de profesión.", reto: "Crea 5 oraciones con profesiones." },
+            { titulo: "Sufijos de cualidad", teoria: "Los sufijos de cualidad (-ez, -eza, -ura, -ía) forman sustantivos abstractos a partir de adjetivos.", ejemplo: "'bello' → 'belleza' (-eza), 'alto' → 'altura' (-ura).", ejercicio: "Escribe 5 palabras con sufijos de cualidad.", reto: "Crea 5 oraciones con sustantivos abstractos." },
+            { titulo: "Sufijos de lugar", teoria: "Los sufijos de lugar (-ería, -ero, -dor) indican el lugar donde se realiza una actividad.", ejemplo: "'pan' → 'panadería' (ería), 'zapato' → 'zapatería' (ería).", ejercicio: "Escribe 5 palabras con sufijos de lugar.", reto: "Crea 5 oraciones con lugares." },
+            { titulo: "Sufijos de acción", teoria: "Los sufijos de acción (-ción, -sión, -aje, -miento) forman sustantivos de acción a partir de verbos.", ejemplo: "'construir' → 'construcción' (-ción), 'viajar' → 'viaje' (-je).", ejercicio: "Escribe 5 palabras con sufijos de acción.", reto: "Crea 5 oraciones con sustantivos de acción." },
+            { titulo: "Sufijos de instrumento", teoria: "Los sufijos de instrumento (-dor, -ero, -nte) indican el objeto o herramienta que realiza la acción.", ejemplo: "'cortar' → 'cortador' (-dor), 'hervir' → 'hervidor' (-dor).", ejercicio: "Escribe 5 palabras con sufijos de instrumento.", reto: "Crea 5 oraciones con instrumentos." },
+            { titulo: "Derivación regresiva", teoria: "La derivación regresiva forma una palabra a partir de otra eliminando el sufijo (ej. 'paseo' de 'pasear').", ejemplo: "'pasear' → 'paseo', 'pescar' → 'pesca'.", ejercicio: "Escribe 3 ejemplos de derivación regresiva.", reto: "Crea 3 oraciones con derivación regresiva." },
+            { titulo: "Acortamiento", teoria: "El acortamiento reduce una palabra larga a una más corta (ej. 'bicicleta' → 'bici').", ejemplo: "'automóvil' → 'auto', 'computadora' → 'compu'.", ejercicio: "Escribe 5 ejemplos de acortamiento.", reto: "Crea 5 oraciones con acortamientos." },
+            { titulo: "Siglas y acrónimos", teoria: "Las siglas se forman con las letras iniciales de varias palabras (ONU, OTAN). Los acrónimos se leen como una palabra (UNESCO, RAE).", ejemplo: "'ONU' (Organización de las Naciones Unidas), 'RAE' (Real Academia Española).", ejercicio: "Escribe 5 siglas o acrónimos.", reto: "Crea 3 oraciones con siglas." },
+            { titulo: "Extranjerismos y préstamos", teoria: "Los extranjerismos son palabras tomadas de otros idiomas (anglicismos, galicismos).", ejemplo: "'software' (inglés), 'champú' (francés).", ejercicio: "Escribe 5 extranjerismos.", reto: "Crea 5 oraciones con extranjerismos." },
+            { titulo: "Neologismos", teoria: "Los neologismos son palabras nuevas creadas por la necesidad de nombrar conceptos nuevos.", ejemplo: "'ciberespacio', 'selfi', 'clickear'.", ejercicio: "Escribe 5 neologismos.", reto: "Crea 5 oraciones con neologismos." }
+        ]
+    },
+    composia: {
+        nombre: "Composia", color: "dorado", icono: "bi-robot",
+        especialidad: "Composición: palabras compuestas, yuxtaposición, sinapsia",
+        tecnicas: [
+            { titulo: "Palabras compuestas", teoria: "Una palabra compuesta está formada por dos o más palabras simples que se unen para crear un nuevo significado.", ejemplo: "'paraguas' (parar + aguas), 'abrelatas' (abrir + latas).", ejercicio: "Escribe 5 palabras compuestas.", reto: "Crea 5 oraciones con palabras compuestas." },
+            { titulo: "Composición por yuxtaposición", teoria: "La yuxtaposición une dos palabras sin cambios ortográficos, manteniendo su forma original.", ejemplo: "'el hombre rana', 'la hoja de ruta', 'tío abuelo'.", ejercicio: "Escribe 5 compuestos yuxtapuestos.", reto: "Crea 5 oraciones con yuxtaposición." },
+            { titulo: "Composición por sinapsia", teoria: "La sinapsia une dos palabras con un elemento de relación (preposición, conjunción).", ejemplo: "'lavavajillas' (lavar + vajillas), 'saca-corchos' (sacar + corchos).", ejercicio: "Escribe 5 compuestos por sinapsia.", reto: "Crea 5 oraciones con sinapsia." },
+            { titulo: "Composición por aglutinación", teoria: "La aglutinación une dos palabras con pérdida de algún elemento fonético (como en 'hidalgo' de 'hijo de algo').", ejemplo: "'hidalgo' (hijo + de + algo), 'bocamanga' (boca + manga).", ejercicio: "Escribe 3 ejemplos de aglutinación.", reto: "Crea 3 oraciones con aglutinaciones." },
+            { titulo: "Compuestos con prefijos y sufijos", teoria: "Las palabras compuestas también pueden incluir prefijos y sufijos, combinando composición y derivación.", ejemplo: "'portaaviones' (portar + aviones), 'limpiaparabrisas' (limpiar + para + brisas).", ejercicio: "Escribe 3 compuestos con prefijos/sufijos.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos verbales", teoria: "Los compuestos verbales son verbos formados por dos palabras, como 'menospreciar' o 'sacrificar'.", ejemplo: "'menospreciar' (menos + preciar), 'sacrificar' (sacro + hacer).", ejercicio: "Escribe 3 compuestos verbales.", reto: "Crea 3 oraciones con compuestos verbales." },
+            { titulo: "Compuestos nominales", teoria: "Los compuestos nominales son sustantivos formados por dos palabras, como 'guardabosques' o 'cumpleaños'.", ejemplo: "'guardabosques' (guardar + bosques), 'cumpleaños' (cumplir + años).", ejercicio: "Escribe 5 compuestos nominales.", reto: "Crea 5 oraciones con compuestos nominales." },
+            { titulo: "Compuestos adjetivales", teoria: "Los compuestos adjetivales son adjetivos formados por dos palabras, como 'cielo raso' o 'nuevo rico'.", ejemplo: "'cielo raso' (cielo + raso), 'nuevo rico' (nuevo + rico).", ejercicio: "Escribe 3 compuestos adjetivales.", reto: "Crea 3 oraciones con compuestos adjetivales." },
+            { titulo: "Compuestos con elementos cultos", teoria: "Los compuestos con elementos cultos usan raíces grecolatinas (ej. 'teléfono', 'biología').", ejemplo: "'teléfono' (tele + fono), 'biología' (bio + logía).", ejercicio: "Escribe 5 compuestos con elementos cultos.", reto: "Crea 5 oraciones con estos compuestos." },
+            { titulo: "Compuestos con elementos patrimoniales", teoria: "Los compuestos con elementos patrimoniales usan palabras del español común (ej. 'pasatiempo', 'portavoz').", ejemplo: "'pasatiempo' (pasar + tiempo), 'portavoz' (portar + voz).", ejercicio: "Escribe 5 compuestos patrimoniales.", reto: "Crea 5 oraciones con estos compuestos." },
+            { titulo: "Compuestos con adverbios", teoria: "Algunos compuestos incluyen adverbios, como 'bienestar' o 'malhumorado'.", ejemplo: "'bienestar' (bien + estar), 'malhumorado' (mal + humor + ado).", ejercicio: "Escribe 3 compuestos con adverbios.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos con verbos y sustantivos", teoria: "Compuestos del tipo verbo + sustantivo, como 'cortaúñas' o 'sacaarrugas'.", ejemplo: "'cortaúñas' (cortar + uñas), 'sacaarrugas' (sacar + arrugas).", ejercicio: "Escribe 5 compuestos de verbo + sustantivo.", reto: "Crea 5 oraciones con estos compuestos." },
+            { titulo: "Compuestos con sustantivo + adjetivo", teoria: "Compuestos del tipo sustantivo + adjetivo, como 'boquiabierto' o 'caricorto'.", ejemplo: "'boquiabierto' (boca + abierto), 'caricorto' (cara + corto).", ejercicio: "Escribe 3 compuestos de sustantivo + adjetivo.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos con adjetivo + sustantivo", teoria: "Compuestos del tipo adjetivo + sustantivo, como 'altavoz' o 'bajamar'.", ejemplo: "'altavoz' (alto + voz), 'bajamar' (baja + mar).", ejercicio: "Escribe 3 compuestos de adjetivo + sustantivo.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos con dos sustantivos", teoria: "Compuestos del tipo sustantivo + sustantivo, como 'tiempo récord' o 'hombre rana'.", ejemplo: "'tiempo récord' (tiempo + récord), 'hombre rana' (hombre + rana).", ejercicio: "Escribe 3 compuestos de dos sustantivos.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos con prefijos y elementos cultos", teoria: "Compuestos que combinan prefijos griegos o latinos con raíces cultas (ej. 'antropología', 'contraindicación').", ejemplo: "'antropología' (antro + logía), 'contraindicación' (contra + indicación).", ejercicio: "Escribe 5 compuestos con prefijos cultos.", reto: "Crea 5 oraciones con estos compuestos." },
+            { titulo: "Compuestos con elementos onomatopéyicos", teoria: "Algunos compuestos incluyen onomatopeyas o palabras imitativas, como 'piojito' o 'cucurucho'.", ejemplo: "'cucurucho' (de 'cucú'), 'piojito' (de 'pío').", ejercicio: "Escribe 3 compuestos onomatopéyicos.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos con elementos de otras lenguas", teoria: "Compuestos que integran palabras de otras lenguas (ej. 'chocolatería' de 'chocolate' + -ería).", ejemplo: "'chocolatería' (chocolate + ería), 'jardín infantil' (jardín + infantil).", ejercicio: "Escribe 3 compuestos con extranjerismos.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos complejos", teoria: "Compuestos que combinan más de dos elementos, como 'limpiaparabrisas' o 'portabrocas'.", ejemplo: "'limpiaparabrisas' (limpiar + para + brisas), 'portabrocas' (portar + brocas).", ejercicio: "Escribe 3 compuestos complejos.", reto: "Crea 3 oraciones con estos compuestos." },
+            { titulo: "Compuestos y plurales", teoria: "Los compuestos forman el plural de forma especial: se pluraliza el primer o el segundo elemento, o ambos.", ejemplo: "'paraguas' (invariable), 'cortaúñas' (invariable), 'ojos azules' (ambos).", ejercicio: "Escribe el plural de 5 compuestos.", reto: "Crea 3 oraciones con compuestos en plural." }
+        ]
+    },
+    lexia: {
+        nombre: "Lexia", color: "purpura", icono: "bi-robot",
+        especialidad: "Léxico y formación de palabras: familias léxicas, etimología",
+        tecnicas: [
+            { titulo: "Familia léxica", teoria: "Una familia léxica es el conjunto de palabras que comparten la misma raíz (morfema léxico).", ejemplo: "'pan' → 'panadero', 'panadería', 'panificadora', 'empanar'.", ejercicio: "Escribe 5 palabras de la familia de 'casa'.", reto: "Crea 5 oraciones con palabras de una misma familia léxica." },
+            { titulo: "Raíz o lexema", teoria: "La raíz es la parte de la palabra que contiene el significado básico, que comparten todas las palabras de su familia léxica.", ejemplo: "La raíz de 'cantar', 'canto', 'cancionero' es 'cant-'.", ejercicio: "Extrae la raíz de 5 palabras.", reto: "Escribe 5 palabras con la raíz 'flor-'." },
+            { titulo: "Morfemas derivativos", teoria: "Los morfemas derivativos (prefijos y sufijos) se añaden a la raíz para formar nuevas palabras.", ejemplo: "'des- + hacer' → 'deshacer'; 'pan + -adero' → 'panadero'.", ejercicio: "Identifica los morfemas derivativos en 5 palabras.", reto: "Crea 5 palabras con morfemas derivativos." },
+            { titulo: "Morfemas flexivos", teoria: "Los morfemas flexivos indican género, número, persona, tiempo, modo y aspecto.", ejemplo: "'niño-s' (plural), 'cant-é' (pasado).", ejercicio: "Identifica los morfemas flexivos en 5 palabras.", reto: "Escribe 5 palabras con morfemas flexivos." },
+            { titulo: "Etimología latina", teoria: "La mayoría de las palabras del español provienen del latín (patrimoniales o cultismos).", ejemplo: "'casa' (del latín 'casa'), 'luna' (del latín 'luna').", ejercicio: "Investiga el origen de 5 palabras.", reto: "Escribe 5 palabras con su etimología latina." },
+            { titulo: "Etimología griega", teoria: "Muchas palabras científicas y cultas provienen del griego (ej. 'filosofía', 'biología').", ejemplo: "'filosofía' (philos + sophia), 'biología' (bios + logos).", ejercicio: "Investiga el origen de 3 palabras griegas.", reto: "Escribe 3 palabras con su etimología griega." },
+            { titulo: "Etimología árabe", teoria: "El español tiene muchas palabras de origen árabe (ej. 'azúcar', 'almohada').", ejemplo: "'azúcar' (del árabe 'assukkar'), 'almohada' (del árabe 'almukhadda').", ejercicio: "Investiga el origen de 3 palabras árabes.", reto: "Escribe 3 palabras con su etimología árabe." },
+            { titulo: "Cultismos", teoria: "Los cultismos son palabras que conservan su forma latina original, sin evolución fonética.", ejemplo: "'cándido' (del latín 'candidus'), 'débil' (del latín 'debile').", ejercicio: "Escribe 5 cultismos.", reto: "Crea 5 oraciones con cultismos." },
+            { titulo: "Palabras patrimoniales", teoria: "Las palabras patrimoniales son las que han evolucionado desde el latín popular.", ejemplo: "'puerta' (del latín 'porta'), 'hermano' (del latín 'germanus').", ejercicio: "Escribe 5 palabras patrimoniales.", reto: "Crea 5 oraciones con palabras patrimoniales." },
+            { titulo: "Dobletes", teoria: "Los dobletes son pares de palabras de un mismo origen latino que han evolucionado de forma diferente.", ejemplo: "'cátedra' (cultismo) y 'cadera' (patrimonial) vienen de 'cathedra'.", ejercicio: "Encuentra 3 dobletes.", reto: "Escribe 3 oraciones con dobletes." },
+            { titulo: "Prefijos cultos", teoria: "Los prefijos cultos tienen origen griego o latino y forman palabras técnicas (ej. 'antropo-', 'geo-', 'bio-').", ejemplo: "'antropología' (antro + logía), 'geografía' (geo + grafía).", ejercicio: "Escribe 5 palabras con prefijos cultos.", reto: "Crea 5 oraciones con prefijos cultos." },
+            { titulo: "Sufijos cultos", teoria: "Los sufijos cultos tienen origen griego o latino y forman palabras abstractas o técnicas.", ejemplo: "'-logía' (estudio de), '-grafía' (escritura), '-cracia' (gobierno).", ejercicio: "Escribe 5 palabras con sufijos cultos.", reto: "Crea 5 oraciones con sufijos cultos." },
+            { titulo: "Palabras compuestas cultas", teoria: "Las palabras compuestas cultas combinan raíces griegas o latinas (ej. 'astronomía', 'psicología').", ejemplo: "'astronomía' (astro + nomos), 'psicología' (psico + logos).", ejercicio: "Escribe 5 compuestos cultos.", reto: "Crea 5 oraciones con compuestos cultos." },
+            { titulo: "Neologismos y préstamos", teoria: "Los neologismos son palabras nuevas; los préstamos son tomados de otros idiomas.", ejemplo: "'teletrabajo' (neologismo), 'ceviche' (préstamo del quechua).", ejercicio: "Escribe 5 neologismos o préstamos.", reto: "Crea 5 oraciones con ellos." },
+            { titulo: "Arcaísmos", teoria: "Los arcaísmos son palabras en desuso, pero que aún se usan en algunos contextos o regiones.", ejemplo: "'ansí' (así), 'facer' (hacer), 'guisa' (manera).", ejercicio: "Escribe 5 arcaísmos.", reto: "Crea 3 oraciones con arcaísmos." },
+            { titulo: "Voces onomatopéyicas", teoria: "Las voces onomatopéyicas imitan sonidos naturales (ej. 'cucú', 'miau', 'pío').", ejemplo: "'cucú' (sonido del cuco), 'miau' (sonido del gato).", ejercicio: "Escribe 5 onomatopeyas.", reto: "Crea 5 oraciones con onomatopeyas." },
+            { titulo: "Palabras de origen indígena americano", teoria: "El español americano tiene muchas palabras de origen indígena (náhuatl, quechua, guaraní).", ejemplo: "'tomate' (náhuatl), 'cóndor' (quechua), 'tapioca' (guaraní).", ejercicio: "Escribe 5 palabras de origen indígena.", reto: "Crea 5 oraciones con ellas." },
+            { titulo: "Palabras de origen germánico", teoria: "El español tiene algunas palabras de origen germánico (de los visigodos).", ejemplo: "'guerra' (del germánico 'werra'), 'jabón' (del germánico 'saipun').", ejercicio: "Escribe 3 palabras de origen germánico.", reto: "Crea 3 oraciones con ellas." },
+            { titulo: "Palabras de origen celta", teoria: "El español tiene algunas palabras de origen celta (de los celtas).", ejemplo: "'camisa' (del celta 'camisia'), 'carro' (del celta 'carrum').", ejercicio: "Escribe 3 palabras de origen celta.", reto: "Crea 3 oraciones con ellas." },
+            { titulo: "Palabras de origen incierto o preindoeuropeo", teoria: "Algunas palabras tienen un origen desconocido o preindoeuropeo (ej. 'perro', 'carrasca').", ejemplo: "'perro' (origen incierto), 'carrasca' (preindoeuropeo).", ejercicio: "Escribe 3 palabras de origen incierto.", reto: "Crea 3 oraciones con ellas." }
+        ]
+    },
+    escritia: {
+        nombre: "Escritia", color: "rojo", icono: "bi-robot",
+        especialidad: "Ortografía morfológica: reglas de escritura de morfemas",
+        tecnicas: [
+            { titulo: "Reglas de escritura de prefijos", teoria: "Los prefijos se escriben siempre pegados a la raíz (aunque antes se separaban con guion).", ejemplo: "'prefijo' (pre- + fijo), 'subdirector' (sub- + director).", ejercicio: "Escribe 5 palabras con prefijos bien escritos.", reto: "Crea 5 oraciones con prefijos." },
+            { titulo: "Reglas de escritura de sufijos", teoria: "Los sufijos se escriben pegados a la raíz. Algunos sufijos tienen variantes ortográficas.", ejemplo: "'bondad' (-dad), 'sencillez' (-ez), 'fortaleza' (-eza).", ejercicio: "Escribe 5 palabras con sufijos.", reto: "Crea 5 oraciones con sufijos." },
+            { titulo: "Reglas de escritura de la B", teoria: "Se escribe B después de M (ej. 'hombre'), y en verbos terminados en -bir (excepto hervir, servir, vivir).", ejemplo: "'hombre', 'escribir', 'recibir'.", ejercicio: "Escribe 5 palabras con B.", reto: "Crea 5 oraciones con B." },
+            { titulo: "Reglas de escritura de la V", teoria: "Se escribe V en los adjetivos terminados en -ava, -ave, -evo, -eve, -ivo, -iva.", ejemplo: "'suave', 'nueve', 'activo'.", ejercicio: "Escribe 5 palabras con V.", reto: "Crea 5 oraciones con V." },
+            { titulo: "Reglas de escritura de la G y J", teoria: "La G se escribe ante E/I en verbos terminados en -ger, -gir (excepto 'tejer' y 'crujir'). La J en el resto.", ejemplo: "'coger' (G), 'tejer' (J), 'jirafa' (J).", ejercicio: "Escribe 5 palabras con G y J.", reto: "Crea 5 oraciones con G y J." },
+            { titulo: "Reglas de escritura de la C y Z", teoria: "La C se escribe ante E/I en verbos terminados en -cer, -cir. La Z en sustantivos con -anza, -azgo.", ejemplo: "'conocer' (C), 'esperanza' (Z), 'liderazgo' (Z).", ejercicio: "Escribe 5 palabras con C y Z.", reto: "Crea 5 oraciones con C y Z." },
+            { titulo: "Reglas de escritura de la S y X", teoria: "La S se escribe en adjetivos terminados en -oso, -osa; la X en palabras que comienzan con 'ex-' + consonante.", ejemplo: "'peligroso' (S), 'explicar' (X), 'extraño' (X).", ejercicio: "Escribe 5 palabras con S y X.", reto: "Crea 5 oraciones con S y X." },
+            { titulo: "Reglas de escritura de la H", teoria: "La H se escribe en palabras que comienzan con 'hie-' (ej. 'hierro'), 'hue-' (ej. 'hueso'), y en los verbos 'haber', 'hacer', etc.", ejemplo: "'hierro', 'hueso', 'hacer', 'haber'.", ejercicio: "Escribe 5 palabras con H.", reto: "Crea 5 oraciones con H." },
+            { titulo: "Reglas de escritura de la Y", teoria: "La Y se escribe al final de palabra cuando no es vocal (ej. 'hay', 'muy'), y en 'y' como conjunción.", ejemplo: "'hay', 'muy', 'rey', 'ley'.", ejercicio: "Escribe 5 palabras con Y.", reto: "Crea 5 oraciones con Y." },
+            { titulo: "Reglas de escritura de la LL", teoria: "La LL se escribe en palabras que provienen de 'li-', 'le-', etc., y en aquellas que no se escriben con Y.", ejemplo: "'llave', 'lluvia', 'pollo'.", ejercicio: "Escribe 5 palabras con LL.", reto: "Crea 5 oraciones con LL." },
+            { titulo: "Reglas de escritura de la Ñ", teoria: "La Ñ se escribe en palabras que provienen de 'ni-', 'ne-', 'na-', etc., y en aquellas con el sonido nasal palatal.", ejemplo: "'niño', 'leña', 'enseñar'.", ejercicio: "Escribe 5 palabras con Ñ.", reto: "Crea 5 oraciones con Ñ." },
+            { titulo: "Acentuación de palabras compuestas", teoria: "Las palabras compuestas mantienen la tilde de sus componentes, pero tienen una única sílaba tónica.", ejemplo: "'cántaro' + 'camisa' = 'cantarocamisa' (la tilde en 'cántaro').", ejercicio: "Acentúa 5 palabras compuestas.", reto: "Crea 5 oraciones con compuestos acentuados." },
+            { titulo: "Acentuación de compuestos con guion", teoria: "Los compuestos con guion mantienen la tilde en cada componente.", ejemplo: "'teórico-práctico' (tilde en 'teórico' y 'práctico').", ejercicio: "Escribe 3 compuestos con guion y acentúalos.", reto: "Crea 3 oraciones con compuestos con guion." },
+            { titulo: "Escritura de extranjerismos", teoria: "Los extranjerismos se adaptan a la ortografía española cuando es posible, o se mantienen con la grafía original.", ejemplo: "'software' (adaptado: 'sofware' no es aceptado), 'web' (adaptado: 'web' con W).", ejercicio: "Escribe 5 extranjerismos adaptados.", reto: "Crea 5 oraciones con extranjerismos." },
+            { titulo: "Escritura de siglas", teoria: "Las siglas se escriben sin puntos ni espacios, y en mayúsculas (ONU, RAE, OTAN).", ejemplo: "'ONU' (Organización de las Naciones Unidas), 'RAE' (Real Academia Española).", ejercicio: "Escribe 5 siglas correctamente.", reto: "Crea 5 oraciones con siglas." },
+            { titulo: "Escritura de acrónimos", teoria: "Los acrónimos se escriben con mayúscula inicial o completamente en mayúsculas, y se pronuncian como palabras.", ejemplo: "'UNESCO', 'OSCE', 'RENFE'.", ejercicio: "Escribe 5 acrónimos.", reto: "Crea 5 oraciones con acrónimos." },
+            { titulo: "Escritura de números y fechas", teoria: "Los números se escriben con letras o cifras según el contexto. Las fechas con cifras (04/03/2025).", ejemplo: "'10 de marzo de 2025', 'diez de marzo del dos mil veinticinco'.", ejercicio: "Escribe 3 fechas en letra y en cifra.", reto: "Crea 3 oraciones con fechas." },
+            { titulo: "Escritura de abreviaturas", teoria: "Las abreviaturas son formas cortas con punto final (ej. 'Sr.' para 'Señor').", ejemplo: "'Sr.' (señor), 'Sra.' (señora), 'Dr.' (doctor).", ejercicio: "Escribe 5 abreviaturas.", reto: "Crea 5 oraciones con abreviaturas." },
+            { titulo: "Escritura de símbolos", teoria: "Los símbolos (km, kg, €) se escriben sin punto, sin plural y con un espacio antes de la cifra.", ejemplo: "'10 km', '5 kg', '20 €'.", ejercicio: "Escribe 5 símbolos correctamente.", reto: "Crea 5 oraciones con símbolos." },
+            { titulo: "Escritura de gentilicios", teoria: "Los gentilicios se escriben con minúscula y se forman con sufijos como -ano, -ense, -ino, -és.", ejemplo: "'español', 'mexicano', 'argentino', 'peruano'.", ejercicio: "Escribe 5 gentilicios.", reto: "Crea 5 oraciones con gentilicios." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+// Navegación
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['flexia','deriva','composia','lexia','escritia'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+// Lector de voz
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+// Renderizar una amazona
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        // Flashcard: se usa el título como "pregunta" y la teoría como "respuesta"
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_morfologica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📜 Flota Stoicum · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .frase-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .frase-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📜 FLOTA STOICUM<small>100 TÉCNICAS · ESTOICISMO</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="mente" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Mente <span class="badge-personaje bg-dorado">Dominio</span></a>
+        <a class="nav-link" data-section="emocion" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Emoción <span class="badge-personaje bg-azul">Control</span></a>
+        <a class="nav-link" data-section="accion" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Acción <span class="badge-personaje bg-verde">Virtud</span></a>
+        <a class="nav-link" data-section="naturaleza" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Naturaleza <span class="badge-personaje bg-purpura">Logos</span></a>
+        <a class="nav-link" data-section="sabiduria" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Sabiduría <span class="badge-personaje bg-rojo">Práctica</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📜</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Sabiduría estoica</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> El estoicismo</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la filosofía estoica:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Mente</strong> – Dominio de la mente: control, percepción, juicio, disciplina.</li>
+                    <li><strong style="color:var(--neon-azul);">Emoción</strong> – Control de las emociones: ira, miedo, ansiedad, deseo.</li>
+                    <li><strong style="color:var(--neon-verde);">Acción</strong> – Acción virtuosa: deber, justicia, coraje, temple.</li>
+                    <li><strong style="color:var(--neon-purpura);">Naturaleza</strong> – Aceptación de la naturaleza: logos, destino, muerte, cambio.</li>
+                    <li><strong style="color:var(--neon-rojo);">Sabiduría</strong> – Sabiduría práctica: atención, contemplación, autoconocimiento, legado.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-mente" class="section-content" style="display:none;"></div>
+        <div id="section-emocion" class="section-content" style="display:none;"></div>
+        <div id="section-accion" class="section-content" style="display:none;"></div>
+        <div id="section-naturaleza" class="section-content" style="display:none;"></div>
+        <div id="section-sabiduria" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    mente: {
+        nombre: "Mente", color: "dorado", icono: "bi-robot",
+        especialidad: "Dominio de la mente: control, percepción, juicio, disciplina",
+        tecnicas: [
+            { titulo: "El control de las impresiones", teoria: "No son las cosas las que nos perturban, sino el juicio que hacemos de ellas. Podemos controlar nuestras impresiones y elegir cómo responder.", frase: "El mundo que ves es el mundo que juzgas.", ejemplo: "Epicteto: 'No son las cosas en sí mismas las que nos perturban, sino el juicio que hacemos de ellas.'", ejercicio: "Identifica una impresión que hayas juzgado mal hoy.", reto: "Durante un día, observa tus juicios sin reaccionar a ellos." },
+            { titulo: "La dicotomía del control", teoria: "Hay cosas que dependen de nosotros (juicios, deseos) y cosas que no (cuerpo, riqueza, reputación). Concéntrate solo en lo que sí puedes controlar.", frase: "Distingue lo que depende de ti.", ejemplo: "Epicteto: 'De las cosas, unas dependen de nosotros y otras no.'", ejercicio: "Haz una lista de lo que controlas y lo que no.", reto: "Durante una semana, enfócate solo en lo que puedes controlar." },
+            { titulo: "El juicio suspensivo", teoria: "Antes de juzgar, suspende el juicio. No des por hecho que algo es bueno o malo sin examinarlo con atención.", frase: "No juzgues sin examinar.", ejemplo: "Séneca: 'No hay nada tan engañoso como el juicio precipitado.'", ejercicio: "Suspende un juicio que hayas hecho hoy.", reto: "Practica la suspensión del juicio durante un día completo." },
+            { titulo: "La disciplina del asentimiento", teoria: "No des tu asentimiento a cualquier impresión. Examínala, cuestiónala, y solo entonces acepta lo que es verdadero.", frase: "No te precipites.", ejemplo: "Epicteto: 'No te precipites a dar tu asentimiento a las impresiones.'", ejercicio: "Cuestiona una creencia que des por sentada.", reto: "Practica el asentimiento consciente durante una semana." },
+            { titulo: "La atención al momento presente", teoria: "El único momento que podemos controlar es el presente. El pasado ya fue, el futuro es incierto. Concéntrate en el ahora.", frase: "Vive el presente.", ejemplo: "Marco Aurelio: 'Limítate al presente.'", ejercicio: "Presta atención plena a una actividad cotidiana.", reto: "Practica la atención plena durante 10 minutos al día." },
+            { titulo: "La perspectiva del observador", teoria: "Obsérvate a ti mismo como si fueras un espectador. Distánciate de tus emociones y pensamientos para verlos con claridad.", frase: "Obsérvate a ti mismo.", ejemplo: "Séneca: 'Obsérvate a ti mismo como si fueras un espectador.'", ejercicio: "Obsérvate a ti mismo durante una situación tensa.", reto: "Practica la observación de ti mismo durante una semana." },
+            { titulo: "El arte de la indiferencia", teoria: "No te apegues a lo que no depende de ti. La indiferencia no es apatía, sino libertad frente a lo que no controlas.", frase: "Sé indiferente a lo que no te pertenece.", ejemplo: "Epicteto: 'La indiferencia es la madre de la tranquilidad.'", ejercicio: "Identifica tres cosas a las que estás apegado y suelta el apego.", reto: "Practica la indiferencia ante las pequeñas molestias cotidianas." },
+            { titulo: "La contemplación de la muerte", teoria: "La muerte es natural y forma parte de la vida. Contemplarla nos da perspectiva y nos ayuda a valorar cada momento.", frase: "Memento mori.", ejemplo: "Marco Aurelio: 'Recuerda que algún día morirás.'", ejercicio: "Escribe una reflexión sobre tu propia mortalidad.", reto: "Practica la contemplación de la muerte durante una semana." },
+            { titulo: "El amor al destino (Amor fati)", teoria: "Acepta todo lo que sucede, incluso lo que parece adverso, como parte de un destino que te conviene. Ama tu destino.", frase: "Ama lo que te sucede.", ejemplo: "Nietzsche (estoico moderno): 'Amor fati, ama tu destino.'", ejercicio: "Acepta algo que te haya ocurrido y que no pudiste controlar.", reto: "Practica el amor al destino durante un mes." },
+            { titulo: "El poder de la razón", teoria: "La razón es nuestra herramienta principal. Usa la razón para examinar tus impresiones, tus emociones y tus acciones.", frase: "Usa la razón.", ejemplo: "Marco Aurelio: 'Usa la razón para ver las cosas como son.'", ejercicio: "Aplica la razón a una decisión difícil.", reto: "Practica el uso de la razón durante una semana." },
+            { titulo: "La atención a los pensamientos", teoria: "Los pensamientos son la raíz de las emociones. Observa tus pensamientos y elige los que te sirven.", frase: "Elige tus pensamientos.", ejemplo: "Epicteto: 'No eres tus pensamientos, eres quien los elige.'", ejercicio: "Observa tus pensamientos durante 10 minutos.", reto: "Elige conscientemente un pensamiento positivo cada día." },
+            { titulo: "El autoconocimiento", teoria: "Conócete a ti mismo. Conoce tus fortalezas y debilidades, tus deseos y miedos. Solo así podrás mejorar.", frase: "Conócete a ti mismo.", ejemplo: "Séneca: 'Conócete a ti mismo para poder gobernarte.'", ejercicio: "Escribe una lista de tus virtudes y defectos.", reto: "Practica el autoconocimiento durante un mes." },
+            { titulo: "La mente como fortaleza interior", teoria: "Nadie puede herir tu mente si tú no lo permites. Construye una fortaleza interior que nadie pueda penetrar.", frase: "Construye tu fortaleza interior.", ejemplo: "Marco Aurelio: 'Construye una fortaleza interior que nadie pueda penetrar.'", ejercicio: "Imagina tu mente como una fortaleza.", reto: "Practica la construcción de tu fortaleza interior." },
+            { titulo: "La disciplina de la atención", teoria: "La atención es la base de todo. Entrena tu atención para enfocarte en lo que importa y evitar distracciones.", frase: "Entrena tu atención.", ejemplo: "Séneca: 'La atención es la madre del saber.'", ejercicio: "Practica la atención plena durante 5 minutos.", reto: "Entrena tu atención durante una semana." },
+            { titulo: "El ejercicio del juicio", teoria: "El juicio es una habilidad que se entrena. Practica el juicio en situaciones cotidianas para mejorarlo.", frase: "Ejercita tu juicio.", ejemplo: "Epicteto: 'El juicio se entrena como se entrena un músculo.'", ejercicio: "Analiza una situación desde diferentes perspectivas.", reto: "Practica el juicio durante un mes." },
+            { titulo: "La percepción correcta", teoria: "La percepción correcta es la base del juicio. Aprende a ver las cosas como son, no como temes que sean.", frase: "Ve las cosas como son.", ejemplo: "Marco Aurelio: 'Ve las cosas como son, no como las pintas.'", ejercicio: "Practica ver una situación sin juicios previos.", reto: "Entrena tu percepción durante una semana." },
+            { titulo: "La pausa antes de actuar", teoria: "Antes de actuar, haz una pausa. Examina la situación, las consecuencias y tus motivos.", frase: "Actúa con pausa.", ejemplo: "Séneca: 'Actúa con pausa, piensa antes de obrar.'", ejercicio: "Haz una pausa antes de tomar una decisión.", reto: "Practica la pausa antes de actuar durante una semana." },
+            { titulo: "La conciencia de los sesgos", teoria: "Todos tenemos sesgos que nublan nuestro juicio. Reconócelos para tomar decisiones más objetivas.", frase: "Reconoce tus sesgos.", ejemplo: "Marco Aurelio: 'Reconoce que tu mente tiene sesgos.'", ejercicio: "Identifica un sesgo en tu pensamiento.", reto: "Practica el reconocimiento de sesgos durante un mes." },
+            { titulo: "La voluntad como herramienta", teoria: "La voluntad es la herramienta que nos permite actuar según la razón. Fortalece tu voluntad para resistir las tentaciones.", frase: "Fortalece tu voluntad.", ejemplo: "Epicteto: 'La voluntad es la herramienta del sabio.'", ejercicio: "Practica un acto de voluntad pequeña cada día.", reto: "Fortalece tu voluntad durante un mes." },
+            { titulo: "La independencia mental", teoria: "Tu mente es tuya y de nadie más. No dejes que otros la controlen ni te dicten lo que debes pensar.", frase: "Sé dueño de tu mente.", ejemplo: "Marco Aurelio: 'Tu mente es tuya, no dejes que otros la controlen.'", ejercicio: "Cuestiona una influencia externa en tu pensamiento.", reto: "Practica la independencia mental durante una semana." }
+        ]
+    },
+    emocion: {
+        nombre: "Emoción", color: "azul", icono: "bi-robot",
+        especialidad: "Control de las emociones: ira, miedo, ansiedad, deseo",
+        tecnicas: [
+            { titulo: "El control de la ira", teoria: "La ira es una emoción que nubla el juicio. Antes de reaccionar con ira, haz una pausa y examina la situación con calma.", frase: "Domina la ira.", ejemplo: "Séneca: 'La ira es una locura breve.'", ejercicio: "Practica una pausa antes de reaccionar con ira.", reto: "Controla la ira durante una semana." },
+            { titulo: "La superación del miedo", teoria: "El miedo es una anticipación del dolor. Examina si lo que temes está bajo tu control. Si no lo está, suelta el miedo.", frase: "Enfrenta el miedo.", ejemplo: "Marco Aurelio: 'El miedo es la anticipación del dolor.'", ejercicio: "Examina un miedo que tengas y suelta lo que no controlas.", reto: "Enfrenta un miedo pequeño cada día." },
+            { titulo: "La gestión de la ansiedad", teoria: "La ansiedad es preocupación por el futuro. Concéntrate en el presente y en lo que puedes hacer ahora.", frase: "Vive el presente.", ejemplo: "Epicteto: 'La ansiedad es el precio de vivir en el futuro.'", ejercicio: "Practica la atención plena para reducir la ansiedad.", reto: "Gestiónate la ansiedad durante un mes." },
+            { titulo: "El control del deseo", teoria: "El deseo insatisfecho causa sufrimiento. Aprende a desear solo lo que depende de ti.", frase: "Controla el deseo.", ejemplo: "Epicteto: 'El deseo insatisfecho es la fuente de todo sufrimiento.'", ejercicio: "Identifica un deseo que no dependa de ti y suéltalo.", reto: "Practica el control del deseo durante un mes." },
+            { titulo: "La aceptación de la tristeza", teoria: "La tristeza es una emoción natural. Acéptala sin resistencia, pero no te dejes dominar por ella.", frase: "Acepta la tristeza.", ejemplo: "Séneca: 'La tristeza es una emoción humana, no dejes que te domine.'", ejercicio: "Permítete sentir tristeza sin resistencia.", reto: "Practica la aceptación de la tristeza." },
+            { titulo: "La ecuanimidad", teoria: "La ecuanimidad es la capacidad de mantener la calma en medio de las tormentas. Cultiva la serenidad interior.", frase: "Mantén la calma.", ejemplo: "Marco Aurelio: 'La ecuanimidad es la virtud del sabio.'", ejercicio: "Practica la calma en una situación estresante.", reto: "Cultiva la ecuanimidad durante un mes." },
+            { titulo: "La ausencia de envidia", teoria: "La envidia es el dolor por el bien ajeno. Concéntrate en tu propio camino y no compares.", frase: "No envidies.", ejemplo: "Séneca: 'La envidia es el veneno del alma.'", ejercicio: "Observa un sentimiento de envidia y suéltalo.", reto: "Practica la ausencia de envidia durante un mes." },
+            { titulo: "La superación de la vanidad", teoria: "La vanidad es la búsqueda de aprobación externa. No dependas de la opinión de los demás para sentirte bien.", frase: "No busques aprobación.", ejemplo: "Epicteto: 'No dependas de la opinión de los demás.'", ejercicio: "Actúa sin buscar aprobación externa.", reto: "Practica la superación de la vanidad." },
+            { titulo: "El control de la avaricia", teoria: "La avaricia es el deseo insaciable de poseer. Aprende a contentarte con lo que tienes.", frase: "Conténtate con lo que tienes.", ejemplo: "Marco Aurelio: 'La avaricia es la pobreza del alma.'", ejercicio: "Practica la gratitud por lo que tienes.", reto: "Supera la avaricia durante un mes." },
+            { titulo: "La superación de la envidia", teoria: "La envidia es el dolor por el bien ajeno. Concéntrate en tu propio camino y no compares.", frase: "No envidies.", ejemplo: "Séneca: 'La envidia es el veneno del alma.'", ejercicio: "Observa un sentimiento de envidia y suéltalo.", reto: "Practica la superación de la envidia." },
+            { titulo: "La gestión del resentimiento", teoria: "El resentimiento es el dolor por lo que otros nos han hecho. Perdonar es liberarse.", frase: "Perdona y libérate.", ejemplo: "Marco Aurelio: 'El resentimiento es una prisión que construyes para ti.'", ejercicio: "Perdona a alguien que te haya ofendido.", reto: "Practica el perdón durante un mes." },
+            { titulo: "La superación de la vergüenza", teoria: "La vergüenza es el miedo al juicio de los demás. No dejes que la opinión ajena te limite.", frase: "Supera la vergüenza.", ejemplo: "Epicteto: 'La vergüenza es el miedo al juicio de los demás.'", ejercicio: "Actúa sin preocuparte por el juicio ajeno.", reto: "Supera la vergüenza durante una semana." },
+            { titulo: "El control de la impaciencia", teoria: "La impaciencia es el deseo de que las cosas sucedan rápido. Acepta el tiempo de las cosas.", frase: "Acepta el tiempo.", ejemplo: "Séneca: 'La impaciencia es la hermana del deseo.'", ejercicio: "Practica la paciencia en una situación cotidiana.", reto: "Cultiva la paciencia durante un mes." },
+            { titulo: "La aceptación de la incertidumbre", teoria: "La incertidumbre es parte de la vida. Aprende a vivir con ella sin ansiedad.", frase: "Acepta la incertidumbre.", ejemplo: "Marco Aurelio: 'La incertidumbre es la naturaleza de la vida.'", ejercicio: "Acepta una situación incierta sin ansiedad.", reto: "Practica la aceptación de la incertidumbre." },
+            { titulo: "El control de la autoexigencia", teoria: "La autoexigencia excesiva es una forma de tiranía interna. Permítete ser humano y cometer errores.", frase: "Permítete errar.", ejemplo: "Epicteto: 'No te exijas la perfección, solo la mejora.'", ejercicio: "Permítete cometer un error sin castigarte.", reto: "Practica la autoaceptación." },
+            { titulo: "La superación del apego", teoria: "El apego a las cosas y a las personas causa sufrimiento cuando las perdemos. Ama sin apego.", frase: "Ama sin apego.", ejemplo: "Séneca: 'No te apegues a lo que no es tuyo.'", ejercicio: "Practica el desapego con un objeto pequeño.", reto: "Cultiva el amor sin apego." },
+            { titulo: "La gestión del estrés", teoria: "El estrés es la respuesta a la presión. Encuentra momentos de pausa y respiración para aliviarlo.", frase: "Respira y pausa.", exemplo: "Marco Aurelio: 'El estrés es la respuesta a la falta de control.'", ejercicio: "Practica la respiración consciente para reducir el estrés.", reto: "Gestiona el estrés durante un mes." },
+            { titulo: "La superación de la culpa", teoria: "La culpa es el remordimiento por lo que hiciste. Aprende de tus errores y suelta la culpa.", frase: "Aprende y suelta.", ejemplo: "Epicteto: 'La culpa es el recordatorio de que puedes mejorar.'", ejercicio: "Aprende de un error y suelta la culpa.", reto: "Supera la culpa durante una semana." },
+            { titulo: "El control del orgullo", teoria: "El orgullo es la sobrevaloración de uno mismo. La humildad es la base del aprendizaje.", frase: "Sé humilde.", ejemplo: "Séneca: 'El orgullo es el enemigo del aprendizaje.'", ejercicio: "Practica la humildad en una situación cotidiana.", reto: "Cultiva la humildad durante un mes." },
+            { titulo: "La gestión del deseo de control", teoria: "El deseo de controlar todo es una ilusión. Acepta lo que no puedes controlar y enfócate en lo que sí.", frase: "Acepta el control limitado.", ejemplo: "Marco Aurelio: 'Acepta lo que no puedes controlar.'", ejercicio: "Identifica algo que quieras controlar y suéltalo.", reto: "Practica la aceptación del control limitado." }
+        ]
+    },
+    accion: {
+        nombre: "Acción", color: "verde", icono: "bi-robot",
+        especialidad: "Acción virtuosa: deber, justicia, coraje, temple",
+        tecnicas: [
+            { titulo: "El deber como guía", teoria: "El deber es la brújula del estoico. Actúa siempre según lo que es correcto, no según lo que es fácil.", frase: "Actúa por deber.", ejemplo: "Marco Aurelio: 'El deber es la guía del sabio.'", ejercicio: "Realiza una acción por deber, no por interés.", reto: "Practica el deber durante un mes." },
+            { titulo: "La justicia como virtud", teoria: "La justicia es la base de la convivencia. Actúa con justicia, incluso cuando nadie te vea.", frase: "Sé justo.", ejemplo: "Séneca: 'La justicia es el alma de la virtud.'", ejercicio: "Actúa con justicia en una situación cotidiana.", reto: "Practica la justicia durante un mes." },
+            { titulo: "El coraje ante la adversidad", teoria: "El coraje no es la ausencia de miedo, sino la capacidad de actuar a pesar de él.", frase: "Ten coraje.", ejemplo: "Epicteto: 'El coraje es la victoria sobre el miedo.'", ejercicio: "Enfrenta una situación difícil con coraje.", reto: "Practica el coraje durante un mes." },
+            { titulo: "El temple ante el dolor", teoria: "El dolor es inevitable, pero el sufrimiento es opcional. Acepta el dolor sin resistencia.", frase: "Acepta el dolor.", ejemplo: "Marco Aurelio: 'El dolor es inevitable, el sufrimiento es opcional.'", ejercicio: "Acepta un dolor físico o emocional sin resistencia.", reto: "Practica el temple durante un mes." },
+            { titulo: "La templanza como virtud", teoria: "La templanza es el equilibrio entre el exceso y la carencia. Actúa con moderación en todo.", frase: "Sé templado.", ejemplo: "Séneca: 'La templanza es la virtud del equilibrio.'", ejercicio: "Practica la moderación en una actividad cotidiana.", reto: "Cultiva la templanza durante un mes." },
+            { titulo: "La acción correcta", teoria: "La acción correcta es aquella que sigue a la razón y a la virtud. Actúa siempre según tu mejor juicio.", frase: "Actúa correctamente.", ejemplo: "Epicteto: 'La acción correcta es la que sigue a la razón.'", ejercicio: "Actúa según tu mejor juicio en una decisión.", reto: "Practica la acción correcta durante un mes." },
+            { titulo: "El deber hacia los demás", teoria: "Tenemos un deber hacia los demás: ayudar, apoyar, ser justos. La comunidad es parte de la naturaleza humana.", frase: "Ayuda a los demás.", ejemplo: "Marco Aurelio: 'Estamos hechos para ayudarnos unos a otros.'", ejercicio: "Realiza un acto de ayuda hacia alguien.", reto: "Practica el deber hacia los demás durante un mes." },
+            { titulo: "El coraje civil", teoria: "El coraje civil es la defensa de la justicia y la verdad en la esfera pública. Actúa con valentía.", frase: "Defiende la justicia.", ejemplo: "Séneca: 'El coraje civil es la defensa de la verdad.'", ejercicio: "Defiende una verdad que sea incómoda.", reto: "Practica el coraje civil durante un mes." },
+            { titulo: "La responsabilidad personal", teoria: "Eres responsable de tus actos y de sus consecuencias. Asume tu responsabilidad sin excusas.", frase: "Asume tu responsabilidad.", ejemplo: "Epicteto: 'Eres responsable de tus actos.'", ejercicio: "Asume la responsabilidad de una decisión.", reto: "Practica la responsabilidad personal durante un mes." },
+            { titulo: "El compromiso con la virtud", teoria: "La virtud es su propia recompensa. Comprométete con la virtud por sí misma, no por lo que te reporte.", frase: "Comprométete con la virtud.", ejemplo: "Marco Aurelio: 'La virtud es su propia recompensa.'", ejercicio: "Actúa virtuosamente sin esperar nada a cambio.", reto: "Practica el compromiso con la virtud." },
+            { titulo: "La perseverancia", teoria: "La perseverancia es la clave del logro. No te rindas ante los obstáculos, sigue adelante.", frase: "Persevera.", ejemplo: "Séneca: 'La perseverancia es la madre del logro.'", ejercicio: "Persevera en una tarea difícil.", reto: "Practica la perseverancia durante un mes." },
+            { titulo: "La integridad", teoria: "La integridad es la coherencia entre lo que piensas, dices y haces. Sé íntegro en todo momento.", frase: "Sé íntegro.", ejemplo: "Epicteto: 'La integridad es la coherencia del sabio.'", ejercicio: "Actúa con coherencia entre tus palabras y tus actos.", reto: "Practica la integridad durante un mes." },
+            { titulo: "La honestidad", teoria: "La honestidad es la base de la confianza. Di siempre la verdad, aunque sea incómoda.", frase: "Sé honesto.", ejemplo: "Marco Aurelio: 'La honestidad es la base de la confianza.'", ejercicio: "Di una verdad que sea incómoda.", reto: "Practica la honestidad durante un mes." },
+            { titulo: "La justicia en la comunidad", teoria: "La justicia no es solo individual, también es social. Trabaja por una sociedad más justa.", frase: "Trabaja por la justicia.", ejemplo: "Séneca: 'La justicia es el bien común.'", ejercicio: "Realiza una acción a favor de la justicia social.", reto: "Practica la justicia en la comunidad." },
+            { titulo: "El deber hacia uno mismo", teoria: "Tienes el deber de cuidarte, de crecer, de mejorar. No te descuides.", frase: "Cuídate a ti mismo.", ejemplo: "Epicteto: 'El deber hacia uno mismo es el primer deber.'", ejercicio: "Realiza una acción de autocuidado.", reto: "Practica el deber hacia ti mismo durante un mes." },
+            { titulo: "La acción consciente", teoria: "Actúa con conciencia, no por impulso. Cada acción debe ser deliberada y reflexiva.", frase: "Actúa con conciencia.", ejemplo: "Marco Aurelio: 'Cada acción debe ser deliberada.'", ejercicio: "Actúa con conciencia en una actividad rutinaria.", reto: "Practica la acción consciente durante un mes." },
+            { titulo: "El coraje de ser uno mismo", teoria: "El coraje de ser uno mismo es la capacidad de vivir según tus propios valores, sin importar la opinión de los demás.", frase: "Sé tú mismo.", ejemplo: "Séneca: 'El coraje de ser uno mismo es la mayor virtud.'", ejercicio: "Actúa según tus valores, aunque sea incómodo.", reto: "Practica el coraje de ser uno mismo." },
+            { titulo: "La acción virtuosa en el trabajo", teoria: "El trabajo es una oportunidad para practicar la virtud. Haz tu trabajo con excelencia y ética.", frase: "Trabaja con virtud.", ejemplo: "Epicteto: 'El trabajo es la oportunidad de practicar la virtud.'", ejercicio: "Realiza tu trabajo con excelencia y ética.", reto: "Practica la virtud en el trabajo durante un mes." },
+            { titulo: "El deber hacia la humanidad", teoria: "Pertenecemos a la humanidad. Nuestro deber es contribuir al bien común.", frase: "Contribuye al bien común.", ejemplo: "Marco Aurelio: 'Pertenecemos a la humanidad.'", ejercicio: "Realiza una acción a favor de la humanidad.", reto: "Practica el deber hacia la humanidad." },
+            { titulo: "La acción sin apego al resultado", teoria: "Actúa correctamente, sin apego al resultado. El resultado no depende de ti, solo la acción.", frase: "Actúa sin apego.", ejemplo: "Epicteto: 'Actúa correctamente, sin apego al resultado.'", ejercicio: "Actúa sin esperar un resultado específico.", reto: "Practica la acción sin apego." }
+        ]
+    },
+    naturaleza: {
+        nombre: "Naturaleza", color: "purpura", icono: "bi-robot",
+        especialidad: "Aceptación de la naturaleza: logos, destino, muerte, cambio",
+        tecnicas: [
+            { titulo: "El logos como principio", teoria: "El logos es la razón universal que gobierna el mundo. Vivir de acuerdo con el logos es vivir en armonía con la naturaleza.", frase: "Vive según el logos.", ejemplo: "Marco Aurelio: 'El logos gobierna el mundo, vive según él.'", ejercicio: "Reflexiona sobre el orden natural del universo.", reto: "Practica el vivir según el logos durante un mes." },
+            { titulo: "La aceptación del destino", teoria: "El destino es la trama de la vida. No luches contra él, acéptalo y trabaja con él.", frase: "Acepta tu destino.", ejemplo: "Séneca: 'El destino es la trama de la vida.'", ejercicio: "Acepta una situación que no puedas cambiar.", reto: "Practica la aceptación del destino durante un mes." },
+            { titulo: "La muerte como parte de la vida", teoria: "La muerte es un proceso natural. Aceptarla nos da perspectiva y valor para vivir plenamente.", frase: "Acepta la muerte.", ejemplo: "Epicteto: 'La muerte es parte de la vida.'", ejercicio: "Reflexiona sobre la muerte como proceso natural.", reto: "Practica la aceptación de la muerte durante un mes." },
+            { titulo: "El cambio como constante", teoria: "Todo cambia, todo fluye. Acepta el cambio como parte de la naturaleza.", frase: "Acepta el cambio.", ejemplo: "Marco Aurelio: 'Todo cambia, acepta el cambio.'", ejercicio: "Acepta un cambio en tu vida.", reto: "Practica la aceptación del cambio durante un mes." },
+            { titulo: "La naturaleza como maestra", teoria: "La naturaleza es la mejor maestra. Observa sus ciclos y aprende de su sabiduría.", frase: "Aprende de la naturaleza.", ejemplo: "Séneca: 'La naturaleza es la mejor maestra.'", ejercicio: "Observa la naturaleza y aprende de ella.", reto: "Practica el aprendizaje de la naturaleza." },
+            { titulo: "La interconexión universal", teoria: "Todo está conectado en el universo. Nuestras acciones afectan al todo.", frase: "Todo está conectado.", ejemplo: "Marco Aurelio: 'Todo está conectado en el universo.'", ejercicio: "Reflexiona sobre cómo tus acciones afectan al todo.", reto: "Practica la conciencia de la interconexión." },
+            { titulo: "La aceptación del sufrimiento", teoria: "El sufrimiento es parte de la vida. Acéptalo y transfórmalo en crecimiento.", frase: "Acepta el sufrimiento.", ejemplo: "Epicteto: 'El sufrimiento es la oportunidad de crecer.'", ejercicio: "Acepta un sufrimiento y aprende de él.", reto: "Practica la aceptación del sufrimiento." },
+            { titulo: "El ciclo de la vida", teoria: "La vida es un ciclo de nacimiento, crecimiento, decadencia y muerte. Acéptalo como parte de la naturaleza.", frase: "Acepta el ciclo de la vida.", ejemplo: "Séneca: 'La vida es un ciclo, acéptalo.'", ejercicio: "Reflexiona sobre el ciclo de la vida.", reto: "Practica la aceptación del ciclo de la vida." },
+            { titulo: "La sabiduría de la naturaleza", teoria: "La naturaleza es sabia. Observa sus leyes y aprende de su equilibrio.", frase: "Observa la naturaleza.", ejemplo: "Marco Aurelio: 'La naturaleza es sabia.'", ejercicio: "Observa una ley de la naturaleza y aprende de ella.", reto: "Practica la observación de la naturaleza." },
+            { titulo: "El orden natural", teoria: "El universo tiene un orden natural. Vivir en armonía con ese orden es la clave de la paz interior.", frase: "Vive en armonía con el orden natural.", ejemplo: "Epicteto: 'El orden natural es la clave de la paz.'", ejercicio: "Reflexiona sobre el orden natural del universo.", reto: "Practica el vivir en armonía con el orden natural." },
+            { titulo: "La fugacidad de la vida", teoria: "La vida es breve. Aprovecha cada momento y no lo desperdicies.", frase: "Vive cada momento.", ejemplo: "Séneca: 'La vida es breve, no la desperdicies.'", ejercicio: "Aprovecha un momento que sueles desperdiciar.", reto: "Practica el aprovechamiento del tiempo." },
+            { titulo: "La impermanencia de todas las cosas", teoria: "Todo es impermanente. Nada dura para siempre. Acepta la impermanencia.", frase: "Acepta la impermanencia.", ejemplo: "Marco Aurelio: 'Todo es impermanente.'", ejercicio: "Reflexiona sobre la impermanencia de las cosas.", reto: "Practica la aceptación de la impermanencia." },
+            { titulo: "La naturaleza como refugio", teoria: "La naturaleza es un refugio para el alma. Pasa tiempo en ella para renovarte.", frase: "Refúgiate en la naturaleza.", ejemplo: "Epicteto: 'La naturaleza es un refugio.'", ejercicio: "Pasa tiempo en la naturaleza.", reto: "Practica el refugio en la naturaleza." },
+            { titulo: "El respeto por la naturaleza", teoria: "Respeta la naturaleza y sus ciclos. No la dañes, cuídala.", frase: "Respeta la naturaleza.", ejemplo: "Séneca: 'Respeta la naturaleza.'", ejercicio: "Realiza una acción de cuidado hacia la naturaleza.", reto: "Practica el respeto por la naturaleza." },
+            { titulo: "La naturaleza y la razón", teoria: "La razón es la herramienta que nos permite comprender la naturaleza y vivir en armonía con ella.", frase: "Usa la razón para comprender la naturaleza.", ejemplo: "Marco Aurelio: 'La razón es la herramienta del sabio.'", ejercicio: "Usa la razón para comprender un fenómeno natural.", reto: "Practica el uso de la razón para comprender la naturaleza." },
+            { titulo: "La aceptación del cuerpo", teoria: "El cuerpo es parte de la naturaleza. Acéptalo con sus limitaciones y su fragilidad.", frase: "Acepta tu cuerpo.", ejemplo: "Epicteto: 'El cuerpo es parte de la naturaleza.'", ejercicio: "Acepta una limitación de tu cuerpo.", reto: "Practica la aceptación del cuerpo." },
+            { titulo: "La naturaleza y la muerte", teoria: "La muerte es parte de la naturaleza. Acéptala como el fin natural de la vida.", frase: "Acepta la muerte como parte de la naturaleza.", ejemplo: "Séneca: 'La muerte es el fin natural de la vida.'", ejercicio: "Reflexiona sobre la muerte como parte de la naturaleza.", reto: "Practica la aceptación de la muerte como parte de la naturaleza." },
+            { titulo: "La naturaleza y el tiempo", teoria: "El tiempo es parte de la naturaleza. Acepta su flujo y vive en el presente.", frase: "Acepta el tiempo.", ejemplo: "Marco Aurelio: 'El tiempo es parte de la naturaleza.'", ejercicio: "Vive un momento sin preocuparte por el tiempo.", reto: "Practica la aceptación del tiempo." },
+            { titulo: "La naturaleza y la necesidad", teoria: "La necesidad es parte de la naturaleza. Acepta lo que es necesario y no luches contra ello.", frase: "Acepta la necesidad.", ejemplo: "Epicteto: 'La necesidad es parte de la naturaleza.'", ejercicio: "Acepta una necesidad que no puedas cambiar.", reto: "Practica la aceptación de la necesidad." },
+            { titulo: "La naturaleza y la libertad", teoria: "La libertad no es hacer lo que quieres, sino aceptar lo que la naturaleza te da y actuar según la razón.", frase: "La libertad es la aceptación de la naturaleza.", ejemplo: "Séneca: 'La libertad es la aceptación de la naturaleza.'", ejercicio: "Practica la libertad como aceptación de la naturaleza.", reto: "Practica la libertad estoica." }
+        ]
+    },
+    sabiduria: {
+        nombre: "Sabiduría", color: "rojo", icono: "bi-robot",
+        especialidad: "Sabiduría práctica: atención, contemplación, autoconocimiento, legado",
+        tecnicas: [
+            { titulo: "La práctica de la atención", teoria: "La atención es la base de la sabiduría. Presta atención a tus pensamientos, emociones y acciones.", frase: "Presta atención.", ejemplo: "Marco Aurelio: 'La atención es la base de la sabiduría.'", ejercicio: "Practica la atención plena durante 10 minutos.", reto: "Practica la atención durante un mes." },
+            { titulo: "La práctica de la contemplación", teoria: "La contemplación es la observación de la realidad sin juicios. Contempla el mundo con asombro.", frase: "Contempla la realidad.", ejemplo: "Séneca: 'La contemplación es la observación de la realidad.'", ejercicio: "Contempla un paisaje sin juzgarlo.", reto: "Practica la contemplación durante un mes." },
+            { titulo: "El autoconocimiento como camino", teoria: "Conocerse a uno mismo es el primer paso hacia la sabiduría. Examina tus pensamientos, emociones y acciones.", frase: "Conócete a ti mismo.", ejemplo: "Epicteto: 'El autoconocimiento es el primer paso.'", ejercicio: "Escribe una reflexión sobre ti mismo.", reto: "Practica el autoconocimiento durante un mes." },
+            { titulo: "El legado como propósito", teoria: "Vive con un propósito que trascienda tu vida. Deja un legado de sabiduría y virtud.", frase: "Deja un legado.", ejemplo: "Marco Aurelio: 'Vive con un propósito que trascienda tu vida.'", ejercicio: "Reflexiona sobre tu legado.", reto: "Practica la construcción de tu legado." },
+            { titulo: "La sabiduría como práctica", teoria: "La sabiduría no es un destino, es una práctica diaria. Cultívala cada día.", frase: "Practica la sabiduría.", ejemplo: "Séneca: 'La sabiduría es una práctica diaria.'", ejercicio: "Realiza una acción sabia hoy.", reto: "Practica la sabiduría durante un mes." },
+            { titulo: "La atención a los detalles", teoria: "La sabiduría está en los detalles. Presta atención a lo pequeño, porque en ellos se esconde lo grande.", frase: "Atiende a los detalles.", ejemplo: "Epicteto: 'La sabiduría está en los detalles.'", ejercicio: "Presta atención a un detalle que sueles ignorar.", reto: "Practica la atención a los detalles." },
+            { titulo: "La contemplación de la naturaleza", teoria: "La naturaleza es la fuente de la sabiduría. Contémplala y aprende de ella.", frase: "Contempla la naturaleza.", ejemplo: "Marco Aurelio: 'La naturaleza es la fuente de la sabiduría.'", ejercicio: "Contempla la naturaleza y aprende de ella.", reto: "Practica la contemplación de la naturaleza." },
+            { titulo: "El autoconocimiento en la acción", teoria: "Conócete a ti mismo en la acción. Observa cómo actúas en las diferentes situaciones.", frase: "Conócete en la acción.", ejemplo: "Séneca: 'El autoconocimiento se revela en la acción.'", ejercicio: "Observa tus acciones en una situación cotidiana.", reto: "Practica el autoconocimiento en la acción." },
+            { titulo: "La sabiduría como guía", teoria: "Deja que la sabiduría te guíe en cada decisión. La sabiduría es la brújula del sabio.", frase: "Deja que la sabiduría te guíe.", ejemplo: "Epicteto: 'La sabiduría es la brújula del sabio.'", ejercicio: "Deja que la sabiduría te guíe en una decisión.", reto: "Practica la guía de la sabiduría." },
+            { titulo: "La atención al momento presente", teoria: "El presente es el único momento que tenemos. Presta atención a él y no te pierdas en el pasado o en el futuro.", frase: "Vive el presente.", ejemplo: "Marco Aurelio: 'El presente es el único momento que tenemos.'", ejercicio: "Vive un momento presente con plena atención.", reto: "Practica la atención al momento presente." },
+            { titulo: "La contemplación de la muerte", teoria: "Contemplar la muerte nos da perspectiva y nos ayuda a vivir con más intensidad.", frase: "Contempla la muerte.", ejemplo: "Séneca: 'Contemplar la muerte da perspectiva.'", ejercicio: "Reflexiona sobre tu propia muerte.", reto: "Practica la contemplación de la muerte." },
+            { titulo: "El autoconocimiento como fuente de libertad", teoria: "Conocerse a uno mismo es la fuente de la libertad. El autoconocimiento nos libera de los juicios ajenos.", frase: "El autoconocimiento es libertad.", ejemplo: "Epicteto: 'El autoconocimiento es la fuente de la libertad.'", ejercicio: "Conócete a ti mismo y actúa con libertad.", reto: "Practica el autoconocimiento como fuente de libertad." },
+            { titulo: "La sabiduría como servicio", teoria: "La sabiduría no es para uno mismo, es para servir a los demás. Comparte tu sabiduría.", frase: "Comparte tu sabiduría.", ejemplo: "Marco Aurelio: 'La sabiduría es para servir.'", ejercicio: "Comparte un consejo sabio con alguien.", reto: "Practica la sabiduría como servicio." },
+            { titulo: "La atención a los demás", teoria: "Presta atención a los demás. Escucha con atención y comprende sus necesidades.", frase: "Atiende a los demás.", ejemplo: "Séneca: 'La atención a los demás es la base de la compasión.'", ejercicio: "Escucha a alguien con atención plena.", reto: "Practica la atención a los demás." },
+            { titulo: "La contemplación del sufrimiento ajeno", teoria: "Contempla el sufrimiento ajeno con compasión. La compasión es la base de la acción justa.", frase: "Contempla el sufrimiento ajeno.", ejemplo: "Epicteto: 'La compasión es la base de la acción justa.'", ejercicio: "Contempla el sufrimiento ajeno con compasión.", reto: "Practica la contemplación compasiva." },
+            { titulo: "El autoconocimiento y la humildad", teoria: "El autoconocimiento lleva a la humildad. Conocerse a uno mismo es saber que siempre se puede mejorar.", frase: "La humildad nace del autoconocimiento.", ejemplo: "Marco Aurelio: 'El autoconocimiento lleva a la humildad.'", ejercicio: "Practica la humildad en una situación cotidiana.", reto: "Practica la humildad durante un mes." },
+            { titulo: "La sabiduría y la paciencia", teoria: "La sabiduría requiere paciencia. No te apresures, observa, reflexiona y actúa con calma.", frase: "La paciencia es la hermana de la sabiduría.", ejemplo: "Séneca: 'La paciencia es la hermana de la sabiduría.'", ejercicio: "Practica la paciencia en una situación cotidiana.", reto: "Practica la paciencia durante un mes." },
+            { titulo: "La atención a la respiración", teoria: "La respiración es el ancla del presente. Presta atención a tu respiración para centrarte.", frase: "Respira y centrate.", ejemplo: "Epicteto: 'La respiración es el ancla del presente.'", ejercicio: "Practica la respiración consciente durante 5 minutos.", reto: "Practica la atención a la respiración." },
+            { titulo: "La contemplación del cosmos", teoria: "Contempla el cosmos y tu lugar en él. El cosmos es grande y tú eres parte de él.", frase: "Contempla el cosmos.", ejemplo: "Marco Aurelio: 'Contempla el cosmos y tu lugar en él.'", ejercicio: "Contempla el cielo estrellado y reflexiona sobre tu lugar en él.", reto: "Practica la contemplación del cosmos." },
+            { titulo: "El legado de la sabiduría", teoria: "La sabiduría es un legado que se transmite. Comparte tus enseñanzas con las futuras generaciones.", frase: "Transmite tu sabiduría.", ejemplo: "Séneca: 'La sabiduría es un legado que se transmite.'", ejercicio: "Enseña algo que hayas aprendido a alguien.", reto: "Practica la transmisión de la sabiduría." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['mente','emocion','accion','naturaleza','sabiduria'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="frase-clave">
+                        <span>${t.frase}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_stoicum_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Londres bajo la lluvia: 100 técnicas para ciclistas y peatones – seco, abrigado y seguro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #e6f0fa; font-family: 'Segoe UI', system-ui; }
+        .hero { background: linear-gradient(135deg, #1a2a4f 0%, #2c3e66 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; border-radius: 0 0 1rem 1rem; }
+        .card-flash { border: none; border-radius: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: 0.2s; }
+        .card-flash:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .btn-sound { background: #1e4663; color: white; border-radius: 40px; padding: 0.25rem 0.9rem; font-size: 0.75rem; }
+        .btn-sound:hover { background: #ffc107; color: #1e4663; }
+        .footer { background: #0b2f5c; color: #cddde9; margin-top: 3rem; padding: 1.5rem 0; text-align: center; }
+        .float-voice-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #1e4663; color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s; }
+        .float-voice-btn:hover { background: #ffc107; color: #1e4663; transform: scale(1.1); }
+        .voice-controls { position: fixed; bottom: 100px; right: 30px; background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold"><i class="fas fa-umbrella me-3"></i>100 técnicas para Londres bajo la lluvia</h1>
+        <p class="lead">Ciclismo, refugios, transporte público y consejos para mantenerte seco, limpio y abrigado en la capital británica.</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-bicycle"></i> Ciclista urbano</span>
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-subway"></i> Refugios TfL</span>
+            <span class="badge bg-light text-dark"><i class="fas fa-mug-hot"></i> Cafés y tiendas</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="alert alert-info rounded-pill text-center mb-4">
+        <i class="fas fa-microphone-alt"></i> Activa el lector de voz (botón flotante) para escuchar cada técnica. <strong>Prepárate para el clima londinense</strong>
+    </div>
+    <div class="row g-4" id="cardsContainer"></div>
+</div>
+
+<footer class="footer">
+    <div class="container"><small><i class="fas fa-cloud-rain"></i> 100 técnicas para ciclistas y peatones en Londres · basado en experiencia local, consejos de TfL y cultura climática británica</small></div>
+</footer>
+
+<button class="float-voice-btn" id="floatVoiceBtn" onclick="toggleVoiceControls()"><i class="fas fa-head-side-vr fa-2x"></i></button>
+<div class="voice-controls" id="voiceControls">
+    <div class="d-flex flex-column gap-2">
+        <button class="btn btn-sm btn-primary" onclick="readPageContent()"><i class="fas fa-play"></i> Leer página</button>
+        <button class="btn btn-sm btn-secondary" onclick="stopSpeech()"><i class="fas fa-stop"></i> Detener</button>
+        <select id="voiceSelect" class="form-select form-select-sm" onchange="setVoice()"></select>
+        <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="0.9" onchange="setRate()">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const tecnicas = [
+        { id:1, name:"Ciclismo con chaqueta reflectante impermeable", category:"Equipo ciclista", teoria:"Usar una chaqueta de ciclismo de alta visibilidad con membrana impermeable y respirable mantiene seco y te hace visible en las grises calles londinenses.", ejemplo:"Chaqueta Gore-Tex con tiras reflectantes.", ejercicio:"¿Qué color es más visible bajo la lluvia londinense?", suggestedAnswer:"Amarillo flúor o naranja." },
+        { id:2, name:"Cubrepantalones para bicicleta", category:"Equipo ciclista", teoria:"Los cubrepantalones de nailon con cremalleras laterales permiten cubrir los pantalones de trabajo sin quitarte las zapatillas.", ejemplo:"Rainlegs o pantalones overshoe.", ejercicio:"¿Por qué es importante cubrir los muslos?", suggestedAnswer:"El muslo mojado enfría rápido y puede causar sabañones." },
+        { id:3, name:"Guardabarros (mudguards) largos", category:"Bicicleta", teoria:"Guardabarros que cubren casi toda la rueda evitan que el agua y barro te salpiquen la espalda y los pies.", ejemplo:"SKS Longboard o guardabarros tipo raceblade.", ejercicio:"¿Qué anchura de guardabarros es ideal para neumáticos de 28mm?", suggestedAnswer:"35-40 mm." },
+        { id:4, name:"Uso de la Cycle Superhighway y Quietways", category:"Rutas", teoria:"En Londres, las Cycle Superhighways (CS) y Quietways son rutas señalizadas, a menudo con mejor drenaje y menos charcos.", ejemplo:"CS3 desde la Torre de Londres hasta Barking.", ejercicio:"¿Qué aplicación muestra las rutas ciclistas con menos inundaciones?", suggestedAnswer:"Citymapper o Komoot con capa de lluvia." },
+        { id:5, name:"Refugiarse en estaciones de metro (TfL)", category:"Refugios", teoria:"Las estaciones de Tube (especialmente las de gran aforo como Waterloo, King's Cross) ofrecen zonas secas, bancos y, a veces, aire caliente.", ejemplo:"Entrar por la taquilla y esperar en el pasillo superior.", ejercicio:"¿Qué estación tiene áreas libres de corriente de aire?", suggestedAnswer:"Muchas tienen vestíbulos grandes; evitar escaleras mecánicas." },
+        { id:6, name:"Cafés y cadenas (Pret, Costa, Nero)", category:"Refugios", teoria:"Las cafeterías tienen calefacción, baños y enchufes; no es necesario consumir si entras a secarte, pero es cortés pedir algo pequeño.", ejemplo:"Pret A Manger permite quedarse hasta 30 min.", ejercicio:"¿Qué cadena suele tener secadores de manos potentes para calentar pies?", suggestedAnswer:"Los baños de Costa Coffee tienen secadores de mano potentes." },
+        { id:7, name:"Mochila impermeable o funda de mochila", category:"Equipo", teoria:"Una mochila con cubierta impermeable (o bolsa de basura interna) protege ropa seca, documentos y portátil.", ejemplo:"Fundas amarillas reflectantes de Decathlon.", ejercicio:"¿Qué hacer si la mochila se moja por fuera?", suggestedAnswer:"Secar con toalla microfibra y colocar en un lugar ventilado." },
+        { id:8, name:"Botas de agua con caña alta", category:"Calzado", teoria:"Botas de goma (Hunter o similares) evitan que el agua entre incluso en charcos profundos; ideales para peatones.", ejemplo:"Botas Wellington con plantilla térmica.", ejercicio:"¿Qué usar para ciclismo con botas altas?", suggestedAnswer:"Calzas impermeables sobre las botas para proteger los pantalones." },
+        { id:9, name:"Paraguas tipo 'golf' robusto", category:"Peatones", teoria:"Un paraguas grande de estructura reforzada y doble capa resiste el viento típico de Londres.", ejemplo:"Paraguas Fulton Stormshield.", ejercicio:"¿Cómo evitar que se voltee en rachas?", suggestedAnswer:"Inclinarlo contra el viento y usar mango ergonómico." },
+        { id:10, name:"Guantes de neopreno para ciclismo", category:"Extremidades", teoria:"Guantes de neopreno de 3 mm mantienen las manos calientes incluso empapadas; ideales para invierno lluvioso.", ejemplo:"Guantes de surf cortos.", ejercicio:"¿Desventaja? No protegen contra impacto.", suggestedAnswer:"Usar guantes con refuerzo de palma." },
+        { id:11, name:"Calcetines de lana merino", category:"Extremidades", teoria:"La lana merino aísla y calienta incluso mojada; evita ampollas y mal olor.", ejemplo:"Calcetines Smartwool o Bridgedale.", ejercicio:"¿Cuántos pares llevar para un día de trabajo?", suggestedAnswer:"2 pares (uno de repuesto)." },
+        { id:12, name:"Refugios en los soportales de tiendas", category:"Refugios", teoria:"Las calles comerciales de Oxford Street, Covent Garden y muchas zonas tienen soportales cubiertos que protegen de la lluvia.", ejemplo:"Bajo el pórtico del British Museum.", ejercicio:"¿Qué zona tiene soportales continuos?", suggestedAnswer:"Regent Street, Piccadilly Circus." },
+        { id:13, name:"Utilizar el bus londinense (double-decker)", category:"Transporte público", teoria:"Los autobuses rojos tienen calefacción, son frecuentes y permiten subir con bicicleta plegable (no todas las rutas admiten bicis normales).", ejemplo:"Tomar el bus 24 para recorrer Westminster.", ejercicio:"¿Dónde llevar la bicicleta en un bus londinense?", suggestedAnswer:"Solo plegables; las normales no están permitidas." },
+        { id:14, name:"Impermeabilización de sillín", category:"Bicicleta", teoria:"Una funda de silicona o una bolsa de plástico sobre el sillín evita que te mojes los pantalones al montar después de la lluvia.", ejemplo:"Bolsa de basura atada.", ejercicio:"¿Alternativa comercial?", suggestedAnswer:"Cubresillín de neopreno." },
+        { id:15, name:"Secadores de mano para pies en bibliotecas", category:"Higiene", teoria:"Las bibliotecas públicas (British Library, Barbican) tienen baños con secadores de mano que pueden usarse para secar calcetines húmedos.", ejemplo:"British Library, nivel 1.", ejercicio:"¿Precaución?", suggestedAnswer:"No usar en zapatos mojados directamente (olor)." },
+        { id:16, name:"Llevar una toalla microfibra pequeña", category:"Higiene", teoria:"Una toalla microfibra de bolsillo permite secarse la cara, el cuello y el cabello al llegar a un refugio.", ejemplo:"Toalla de viaje Sea to Summit.", ejercicio:"¿Cómo evitar mal olor en la microfibra?", suggestedAnswer:"Lavarla con vinagre blanco." },
+        { id:17, name:"Abrigo tipo trench con forro desmontable", category:"Ropa", teoria:"El clásico trench coat inglés con forro interior quitável es versátil para lluvia moderada y frío.", ejemplo:"Aquascutum o Burberry (alternativas baratas).", ejercicio:"¿Qué tejido es mejor para el exterior?", suggestedAnswer:"Algodón encerado o poliéster impermeable." },
+        { id:18, name:"Capacete de bicicleta con cubierta impermeable", category:"Seguridad", teoria:"Las cubiertas para casco (helmet cover) evitan que el agua entre por los orificios de ventilación.", ejemplo:"Cubierta de silicona o nylon.", ejercicio:"¿Por qué no usar gorro de lana debajo del casco sin cubierta?", suggestedAnswer:"La lana empapada anula la ventilación y puede resbalar." },
+        { id:19, name:"Uso de los túneles peatonales subterráneos", category:"Refugios", teoria:"En zonas como el South Bank o Canary Wharf hay túneles peatonales que conectan edificios y protegen de la lluvia.", ejemplo:"Pasaje subterráneo entre Canary Wharf y la estación DLR.", ejercicio:"¿Otro ejemplo?", suggestedAnswer:"Tunel del Bank of England." },
+        { id:20, name:"Crema barrera en manos y cara", category:"Piel", teoria:"El frío y la lluvia londinense resecan; aplicar crema grasa (lanolina, vaselina) antes de salir.", ejemplo:"Udder cream (crema de ubre) o Neutrogena.", ejercicio:"¿Qué ingrediente evitar en cremas?", suggestedAnswer:"Agua (se diluye)." },
+        { id:21, name:"Luz delantera potente para ver charcos", category:"Seguridad ciclista", teoria:"Una luz delantera de al menos 500 lúmenes ayuda a identificar baches y charcos profundos.", ejemplo:"Luz Lezyne o Cateye.", ejercicio:"¿Qué temperatura de luz es mejor bajo la lluvia?", suggestedAnswer:"Luz cálida (3000K) que penetra mejor la cortina de agua." },
+        { id:22, name:"Reflejos en el asfalto (no pisar manchas brillantes)", category:"Seguridad peatón", teoria:"Las manchas con reflejo aceitoso suelen ser baches con agua aceitosa o hielo negro.", ejemplo:"Evitar las áreas que reflejan luz de farolas.", ejercicio:"¿Cómo identificar hielo negro?", suggestedAnswer:"Superficie oscura y brillante sin textura." },
+        { id:23, name:"Cubrezapatillas desechables", category:"Calzado", teoria:"Fundas de plástico con elástico para calzado, muy baratas, protegen zapatos de oficina.", ejemplo:"Shoe covers de Decathlon.", ejercicio:"¿Dónde comprarlas en Londres?", suggestedAnswer:"Primark, Sports Direct o tiendas de ciclismo." },
+        { id:24, name:"Secado rápido con periódicos", category:"Higiene", teoria:"En una oficina o cafetería, meter periódico arrugado dentro de las zapatillas acelera el secado.", ejemplo:"Periódico Metro o Evening Standard.", ejercicio:"¿Cambiar cada cuánto?", suggestedAnswer:"Cada 2 horas." },
+        { id:25, name:"Bufanda tubular (buff) para cuello y nariz", category:"Protección", teoria:"Un buff de poliéster puede usarse como braga, cubrenariz o gorra bajo el casco.", ejemplo:"Buff de doble capa.", ejercicio:"¿Por qué es útil contra el viento?", suggestedAnswer:"Reduce la sensación térmica." },
+        { id:26, name:"Evitar las calles con drenaje deficiente", category:"Navegación", teoria:"Usar apps como Citymapper con capa de inundaciones para evitar calles anegadas.", ejemplo:"En Westminster, Horseferry Road tiene mal drenaje.", ejercicio:"¿Qué área londinense se inunda rápido?", suggestedAnswer:"Tooting Broadway, algunos pasos subterráneos." },
+        { id:27, name:"Cobertizos de bicicletas TfL", category:"Estacionamiento", teoria:"En muchas estaciones hay cobertizos para bicis con techo, pero no laterales; combinar con funda.", ejemplo:"Estación de Waterloo, CycleHub.", ejercicio:"¿Es gratuito?", suggestedAnswer:"A menudo sí, pero algunos requieren registro." },
+        { id:28, name:"Gafas antiparras de ciclismo con lente amarilla", category:"Visión", teoria:"La lente amarilla aumenta el contraste con la lluvia y el gris londinense.", ejemplo:"Gafas de la marca Bollé o Decathlon.", ejercicio:"¿Qué lente usar de noche?", suggestedAnswer:"Transparente o amarilla clara." },
+        { id:29, name:"Abrigo de plumón sintético", category:"Aislamiento", teoria:"El plumón sintético (Primaloft) mantiene el calor incluso húmedo; evita el plumón natural en Londres.", ejemplo:"Chaqueta Decathlon Trek 100 sintética.", ejercicio:"¿Ventaja frente al plumón natural?", suggestedAnswer:"Aísla mojado." },
+        { id:30, name:"Refugio en las galerías comerciales", category:"Refugios", teoria:"Las galerías cubiertas como Burlington Arcade o The Royal Arcade ofertan espacios secos.", ejemplo:"Burlington Arcade (Piccadilly).", ejercicio:"¿Funcionan de noche?", suggestedAnswer:"Cierran al anochecer." },
+        { id:31, name:"Uso de la aplicación 'Rain Today'", category:"Tecnología", teoria:"Apps de radar meteorológico con predicción a 5 minutos evitan que te pille un chubasco sin aviso.", ejemplo:"Rain Today o Met Office.", ejercicio:"¿Qué parámetro mirar para ciclismo?", suggestedAnswer:"Intensidad mm/h." },
+        { id:32, name:"Mochila con compartimento para portátil impermeable", category:"Equipo", teoria:"Una mochila con funda integrada para laptop protege tu ordenador.", ejemplo:"Mochila Targus con cubierta.", ejercicio:"¿Qué hacer si la mochila se cae a un charco?", suggestedAnswer:"Sacar todo y secar con toalla." },
+        { id:33, name:"Pantalones de peto impermeables", category:"Ropa", teoria:"El peto evita el hueco lumbar y cubre la espalda baja, muy útil en bicicleta.", ejemplo:"Peto de montaña de PVC.", ejercicio:"¿Ventaja sobre el pantalón normal?", suggestedAnswer:"No se desliza hacia abajo." },
+        { id:34, name:"Secadores de manos en estaciones de tren", category:"Higiene", teoria:"En baños de grandes estaciones (Paddington, Liverpool Street) hay secadores de mano potentes para guantes y calcetines.", ejemplo:"Secador Dyson Airblade.", ejercicio:"¿Cómo secar guantes de lana?", suggestedAnswer:"Ponerlos sobre la rejilla de aire caliente." },
+        { id:35, name:"Capucha con visera y cuello alto", category:"Ropa", teoria:"Una chaqueta con capucha ajustable y cuello alto evita que el agua entre por la nuca.", ejemplo:"Chaqueta Montane o Rab.", ejercicio:"¿Por qué es importante la visera?", suggestedAnswer:"Desvía la lluvia de los ojos." },
+        { id:36, name:"Cinta reflectante en el casco", category:"Seguridad", teoria:"Añadir cinta reflectante al casco mejora la visibilidad lateral.", ejemplo:"Cinta 3M Scotchlite.", ejercicio:"¿Dónde comprarla?", suggestedAnswer:"Tiendas de ciclismo." },
+        { id:37, name:"Refugiarse en tiendas 24 horas", category:"Refugios", teoria:"Las tiendas Tesco Express, Sainsbury's Local o Co-op permanecen abiertas hasta tarde y ofrecen calor.", ejemplo:"Tesco Metro en Holborn.", ejercicio:"¿Permiten sentarse?", suggestedAnswer:"No suelen tener asientos, pero puedes pararte a secarte." },
+        { id:38, name:"Calcetín de repuesto en bolsa estanca", category:"Previsión", teoria:"Guardar un par de calcetines en una bolsa Ziploc dentro de la mochila asegura pies secos.", ejemplo:"Bolsa de 1 litro.", ejercicio:"¿Qué hacer con los mojados?", suggestedAnswer:"Guardar en otra bolsa para no humedecer." },
+        { id:39, name:"Poncho de bicicleta cubre manillar", category:"Equipo", teoria:"Poncho especial con ganchos para las manos permite cubrir el manillar y el torso.", ejemplo:"Poncho de ciclismo 'People's Poncho'.", ejercicio:"¿Ventaja sobre chaqueta?", suggestedAnswer:"Cubre muslos y manillar." },
+        { id:40, name:"Uso de los baños públicos gratuitos (Community Toilets)", category:"Higiene", teoria:"Algunos ayuntamientos tienen baños públicos gratuitos con secadores y calefacción.", ejemplo:"Baños de la Plaza de Trafalgar.", ejercicio:"¿Qué día cierran?", suggestedAnswer:"Abren todos los días." },
+        { id:41, name:"Cera de abeja para botas de cuero", category:"Mantenimiento", teoria:"Aplicar cera de abeja a las botas de cuero antes de la temporada de lluvias las hace resistentes al agua.", ejemplo:"Cera Nikwax o Sapphir.", ejercicio:"¿Cada cuánto reaplicar?", suggestedAnswer:"Cada 3 meses." },
+        { id:42, name:"Calefacción en los buses (calefacción baja)", category:"Calor", teoria:"Los autobuses londinenses tienen calefacción; subirte unos minutos calienta manos y pies.", ejemplo:"Bus 73, 38, etc.", ejercicio:"¿Cuánto tiempo mínimo?", suggestedAnswer:"5-10 minutos." },
+        { id:43, name:"Guantes de repuesto en la mochila", category:"Previsión", teoria:"Un segundo par de guantes finos (merino o poliéster) permite cambiar si los primeros se empapan.", ejemplo:"Guantes de 1 mm de neopreno.", ejercicio:"¿Dónde guardarlos?", suggestedAnswer:"Dentro de bolsa estanca." },
+        { id:44, name:"Manta térmica de emergencia", category:"Seguridad", teoria:"Llevar siempre una manta de emergencia (plateada) en la mochila en caso de hipotermia.", ejemplo:"Manta de rescate.", ejercicio:"¿Cómo usarla envuelto?", suggestedAnswer:"Plateado hacia dentro." },
+        { id:45, name:"Cafés con chimenea de gas", category:"Refugios", teoria:"Algunos cafés tradicionales tienen chimeneas de gas que emiten calor seco.", ejemplo:"The Attendant (Fitzrovia).", ejercicio:"¿Cuáles son famosos?", suggestedAnswer:"Ye Olde Cheshire Cheese (leña)." },
+        { id:46, name:"Casco con visera desmontable", category:"Seguridad", teoria:"Los cascos con visera transparente protegen la cara del agua, ideal en bicicleta.", ejemplo:"Casco Met Mips con visera.", ejercicio:"¿Evita empañamiento?", suggestedAnswer:"Usar tratamiento anti-empañante." },
+        { id:47, name:"Rutas de bajo tráfico (Low Traffic Neighbourhoods)", category:"Ciclismo", teoria:"Los LTN tienen calles cerradas al tráfico de paso, menos salpicaduras de coches.", ejemplo:"LTN en Walthamstow.", ejercicio:"¿Cómo identificarlas?", suggestedAnswer:"Mapas de TfL." },
+        { id:48, name:"Uso de la aplicación Santander Cycles", category:"Bicicleta", teoria:"Las bicis públicas (Boris Bikes) tienen guardabarros y neumáticos anchos; si tu bici no está preparada, alquila una.", ejemplo:"Dock en Hyde Park.", ejercicio:"¿Costo por día?", suggestedAnswer:"£2 por acceso y 30 min gratis." },
+        { id:49, name:"Crema para pies antifúngica", category:"Higiene", teoria:"La humedad constante favorece hongos; aplicar polvo de talco o crema preventiva antes de calcetines.", ejemplo:"Crema Canesten o talco.", ejercicio:"¿Qué hacer al llegar a casa?", suggestedAnswer:"Lavar pies y secar bien entre dedos." },
+        { id:50, name:"Refugio en los grandes almacenes (John Lewis, Selfridges)", category:"Refugios", teoria:"Los grandes almacenes tienen zonas de descanso, asientos y baños limpios.", ejemplo:"John Lewis en Oxford Street (planta -1).", ejercicio:"¿Horario de apertura?", suggestedAnswer:"10:00-20:00." },
+        { id:51, name:"Cubrebota de neopreno", category:"Calzado", teoria:"Cubrebotas de neopreno impermeable protegen calzado profesional sin quitarte los zapatos.", ejemplo:"Overshoes de la marca Vaude.", ejercicio:"¿Cómo evitar que resbale?", suggestedAnswer:"Velcro en la suela." },
+        { id:52, name:"Secar la ropa interior con secador de manos", category:"Higiene", teoria:"En un baño de centro comercial, usar el secador para calentar y secar ropa interior húmeda.", ejemplo:"Secador de manos en Westfield.", ejercicio:"¿Precaución?", suggestedAnswer:"No usar en fibras delicadas." },
+        { id:53, name:"Aplicación 'Citymapper' con ruta 'lluvia'", category:"Navegación", teoria:"Citymapper ofrece rutas con menos exposición a la intemperie (por galerías o transporte).", ejemplo:"Seleccionar modo 'Rain safe'.", ejercicio:"¿Qué otra app similar?", suggestedAnswer:"Google Maps con capa de tráfico no es específica." },
+        { id:54, name:"Mochila de reparto (tipo Deliveroo) impermeable", category:"Equipo", teoria:"Las mochilas térmicas de reparto son muy impermeables; puedes reutilizar una.", ejemplo:"Mochila de mensajero de vinilo.", ejercicio:"¿Dónde comprar?", suggestedAnswer:"Amazon o tiendas de reparto." },
+        { id:55, name:"Pantalones de caza impermeables", category:"Ropa", teoria:"Los pantalones de caza son resistentes y baratos; se colocan sobre la ropa.", ejemplo:"Pantalones de PVC verde oliva.", ejercicio:"¿Dónde adquirirlos?", suggestedAnswer:"Decathlon o tiendas de campo." },
+        { id:56, name:"Refugio en la estación de St. Pancras (zona de espera)", category:"Refugios", teoria:"La estación de St. Pancras tiene grandes espacios acristalados y bancos secos, además de tiendas.", ejemplo:"Área frente al Eurostar.", ejercicio:"¿Hay enchufes?", suggestedAnswer:"Algunos bancos tienen USB." },
+        { id:57, name:"Cubreteléfono estanco", category:"Electrónica", teoria:"Una funda IP68 para el móvil permite usarlo bajo la lluvia para navegar.", ejemplo:"Cubierta JOTO.", ejercicio:"¿Qué hacer si se moja el puerto de carga?", suggestedAnswer:"Secar con arroz." },
+        { id:58, name:"Camiseta interior de rejilla (malla)", category:"Ropa", teoria:"La camiseta de malla de poliéster crea una cámara de aire caliente junto a la piel.", ejemplo:"Camiseta Brynje.", ejercicio:"¿Dónde comprar en Londres?", suggestedAnswer:"Tiendas de deportes de invierno." },
+        { id:59, name:"Evitar el ciclismo por calles con adoquines", category:"Seguridad", teoria:"Los adoquines mojados son resbaladizos y generan salpicaduras.", ejemplo:"Calle de los museos de South Kensington.", ejercicio:"¿Alternativa?", suggestedAnswer:"Ciclovía paralela." },
+        { id:60, name:"Pasta de dientes para desempañar gafas", category:"Visión", teoria:"Aplicar pasta de dientes frotada y luego lavar evita empañamiento temporal en gafas.", ejemplo:"Pasta blanca.", ejercicio:"¿Producto comercial?", suggestedAnswer:"Spray anti-empañante para buceo." },
+        { id:61, name:"Ciclovías del río Támesis (Thames Path)", category:"Rutas", teoria:"Partes del Thames Path son pavimentadas y están libres de coches, pero con cuidado de zonas inundables.", ejemplo:"Tramo entre Putney y Hammersmith.", ejercicio:"¿Verificar nivel del agua?", suggestedAnswer:"Aplicación 'River Level'." },
+        { id:62, name:"Cubremanillar para frenos", category:"Bicicleta", teoria:"Protectores de manillar (bar mitts) acoplados al manillar mantienen las manos secas y calientes.", ejemplo:"Bar Mitts de neopreno.", ejercicio:"¿Ventaja frente a guantes?", suggestedAnswer:"No se mojan con facilidad." },
+        { id:63, name:"Refugio en las catedrales (St. Paul's, Westminster)", category:"Refugios", teoria:"Las catedrales abren casi siempre y son espacios amplios y secos.", ejemplo:"Cripta de St. Paul's.", ejercicio:"¿Son gratuitas?", suggestedAnswer:"Entrada general paga, pero algunas capillas laterales son libres." },
+        { id:64, name:"Cera para cadena de bicicleta", category:"Mantenimiento", teoria:"La cera lubricante de cadena repele el agua, evita óxido y reduce fricción bajo la lluvia.", ejemplo:"Lubricante de cera Squirt.", ejercicio:"¿Cada cuánto reaplicar?", suggestedAnswer:"Cada 200 km en clima húmedo." },
+        { id:65, name:"Linterna de mano (no frontal) para ver baches", category:"Seguridad peatón", teoria:"Llevar una linterna de mano apuntando al suelo ayuda a evitar charcos profundos.", ejemplo:"Linterna LED pequeña.", ejercicio:"¿Angulo ideal?", suggestedAnswer:"30° hacia adelante." },
+        { id:66, name:"Alquiler de bicicleta eléctrica (e-bike) con protección", category:"Ciclismo", teoria:"Las e-bikes (Lime, HumanForest) tienen neumáticos más gruesos, luces integradas y a veces guardabarros.", ejemplo:"HumanForest bikes en Londres.", ejercicio:"¿Costo?", suggestedAnswer:"£1 de desbloqueo + tiempo." },
+        { id:67, name:"Refugio en la estación de Liverpool Street (área de comida)", category:"Refugios", teoria:"La planta baja de Liverpool Street tiene muchas mesas y calefacción.", ejemplo:"Mercado de comida.", ejercicio:"¿Horario?", suggestedAnswer:"Hasta las 22:00." },
+        { id:68, name:"Cinta de velcro para sujetar bajos de pantalón", category:"Ropa", teoria:"Las tiras de velcro evitan que el bajo del pantalón roce la cadena y se moje.", ejemplo:"Pantalón clip.", ejercicio:"¿Alternativa?", suggestedAnswer:"Gomas elásticas." },
+        { id:69, name:"Secador de manos en baños de McDonald's", category:"Higiene", teoria:"Los McDonald's de Londres tienen baños limpios y secadores de manos potentes.", ejemplo:"McDonald's en Leicester Square.", ejercicio:"¿Condición?", suggestedAnswer:"Suelen requerir código en ticket." },
+        { id:70, name:"Manta de lana en la oficina", category:"Calor", teoria:"Tener una manta pequeña de lana en el trabajo para secarse y abrigarse al llegar mojado.", ejemplo:"Manta de viaje.", ejercicio:"¿Cómo secar la manta?", suggestedAnswer:"Colgar en un radiador." },
+        { id:71, name:"Cubierta de sillín con cierre rápido", category:"Bicicleta", teoria:"Una cubierta de neopreno que se guarda en un pequeño estuche mantiene el sillín seco.", ejemplo:"Saddle Shield.", ejercicio:"¿Dónde comprar?", suggestedAnswer:"Tiendas de ciclismo." },
+        { id:72, name:"Evitar las ratas que salen con lluvia (no refugiarse en sótanos)", category:"Seguridad", teoria:"Con lluvia intensa, las ratas buscan refugio en alcantarillas; evitar pasajes subterráneos descuidados.", ejemplo:"Túneles cerca del Támesis.", ejercicio:"¿Qué hacer si ves una rata?", suggestedAnswer:"Alejarse despacio." },
+        { id:73, name:"Forro polar de 300 g/m²", category:"Aislamiento", teoria:"Una segunda capa de polar grueso retiene calor incluso mojado.", ejemplo:"Forro polar Decathlon.", ejercicio:"¿Cómo elegir talla?", suggestedAnswer:"Que permita chaqueta encima." },
+        { id:74, name:"Refugio en museos gratuitos", category:"Refugios", teoria:"Museos como el British Museum, V&A o Natural History Museum tienen entrada gratuita y grandes espacios secos.", ejemplo:"British Museum: Great Court.", ejercicio:"¿Horario?", suggestedAnswer:"10:00-17:00." },
+        { id:75, name:"Espuma de baño para limpieza rápida", category:"Higiene", teoria:"Las toallitas húmedas de espuma (sin aclarado) permiten limpiar barro de cara y manos.", ejemplo:"Toallitas de viaje.", ejercicio:"¿Alternativa?", suggestedAnswer:"Agua y jabón en baños." },
+        { id:76, name:"Pulsera identificativa con contacto de emergencia", category:"Seguridad", teoria:"En caso de accidente bajo lluvia torrencial, tener identificación médica.", ejemplo:"Pulsera RoadID.", ejercicio:"¿Qué datos incluir?", suggestedAnswer:"Nombre, alergias, contacto." },
+        { id:77, name:"Uso de la 'Greenway' (ruta verde)", category:"Rutas", teoria:"La Greenway es un carril bici alejado del tráfico, más seguro y con buen drenaje.", ejemplo:"Greenway desde Stratford hasta Beckton.", ejercicio:"¿Superficie?", suggestedAnswer:"Asfalto." },
+        { id:78, name:"Cubrezapatillas de silicona reutilizables", category:"Calzado", teoria:"Fundas de silicona gruesas que se ajustan al zapato; se pueden lavar y secar rápido.", ejemplo:"Shoe covers de decatlón.", ejercicio:"¿Cómo limpiarlas?", suggestedAnswer:"Agua y jabón." },
+        { id:79, name:"Refugio en los pasajes subterráneos del metro (túneles peatonales)", category:"Refugios", teoria:"Algunas estaciones tienen pasillos peatonales largos que conectan salidas y son cálidos.", ejemplo:"Pasaje entre Bank y Monument.", ejercicio:"¿Son seguros de noche?", suggestedAnswer:"Generalmente sí." },
+        { id:80, name:"Mochila con panel solar para cargar dispositivos", category:"Tecnología", teoria:"Una mochila con panel solar permite mantener el móvil cargado para usar navegación en días nublados.", ejemplo:"Mochila Voltaic.", ejercicio:"¿Funciona sin sol directo?", suggestedAnswer:"Poco, pero ayuda." },
+        { id:81, name:"Ciclovía CS7 (suroeste) bien drenada", category:"Rutas", teoria:"La Cycle Superhighway 7 desde Clapham hasta la City tiene buen asfalto y drenaje.", ejemplo:"CS7 en Southwark Bridge Road.", ejercicio:"¿Peligro en zonas de curvas?", suggestedAnswer:"Suelo mojado resbaladizo." },
+        { id:82, name:"Crema para manos con manteca de karité", category:"Piel", teoria:"La manteca de karité forma una película grasa que protege del viento y la lluvia.", ejemplo:"Crema de karité puro.", ejercicio:"¿Dónde comprar?", suggestedAnswer:"Superdrug, Body Shop." },
+        { id:83, name:"Refugio en los jardines cubiertos (Sky Garden)", category:"Refugios", teoria:"El Sky Garden (20 Fenchurch Street) es un espacio interior con plantas y calor; entrada gratuita con reserva.", ejemplo:"Sky Garden.", ejercicio:"¿Reserva obligatoria?", suggestedAnswer:"Sí, online." },
+        { id:84, name:"Cubremanillar con visera integrada", category:"Equipo", teoria:"Algunas bicicletas plegables tienen manillar con pantalla de plástico que desvía el agua.", ejemplo:"Brompton con adaptador.", ejercicio:"¿Dónde conseguirlo?", suggestedAnswer:"Tiendas especializadas." },
+        { id:85, name:"Camiseta de compresión de poliamida", category:"Ropa", teoria:"La ropa de compresión evita la sensación de frío húmedo sobre la piel.", ejemplo:"Camiseta de running.", ejercicio:"¿Ventaja?", suggestedAnswer:"Secado rápido." },
+        { id:86, name:"Aplicación 'Flood Warning' de la Environment Agency", category:"Navegación", teoria:"La agencia medioambiental ofrece alertas de inundaciones en tiempo real para Londres.", ejemplo:"App 'Flood'.", ejercicio:"¿Qué nivel de alerta buscar?", suggestedAnswer:"Severe Flood Warning." },
+        { id:87, name:"Calcetín de compresión para mejorar circulación", category:"Extremidades", teoria:"Los calcetines de compresión ayudan a mantener los pies calientes al mejorar el flujo sanguíneo.", ejemplo:"Calcetín médico.", ejercicio:"¿Uso en ciclismo?", suggestedAnswer:"Sí, evitan pies fríos." },
+        { id:88, name:"Refugio en los centros comerciales (Westfield)", category:"Refugios", teoria:"Westfield Stratford y Shepherd's Bush tienen grandes áreas comunes, asientos y baños.", ejemplo:"Zona de restauración.", ejercicio:"¿Horario?", suggestedAnswer:"10:00-22:00." },
+        { id:89, name:"Cinta de poliéster para arreglar guardabarros", category:"Reparación", teoria:"Si un guardabarros se rompe, la cinta de poliéster fuerte puede sujetarlo temporalmente.", ejemplo:"Cinta de montañismo.", ejercicio:"¿Alternativa?", suggestedAnswer:"Bridas de plástico." },
+        { id:90, name:"Mochila con sistema de drenaje", category:"Equipo", teoria:"Mochilas con agujeros en la base permiten que el agua escurra si se moja.", ejemplo:"Mochila de agua (Hydrapak).", ejercicio:"¿Ventaja?", suggestedAnswer:"No acumula agua." },
+        { id:91, name:"Casco de construcción para peatones (obra)", category:"Seguridad", teoria:"En zonas de obra, usar casco de obra ajeno, no recomendado; mejor llevar tu casco de bici.", ejemplo:"No aplica.", ejercicio:"¿Consejo real?", suggestedAnswer:"No usar." },
+        { id:92, name:"Poncho de bicicleta impermeable de hombre/mujer", category:"Ropa", teoria:"Poncho de PVC que cubre torso y brazos, dejando pasar la bici.", ejemplo:"Poncho Vaude.", ejercicio:"¿Dónde comprar?", suggestedAnswer:"Tiendas de outdoor." },
+        { id:93, name:"Refugio en la estación de Paddington (zona de espera)", category:"Refugios", teoria:"La estación de Paddington tiene una gran sala con bancos y calefacción.", ejemplo:"Salón de espera.", ejercicio:"¿Abierto 24h?", suggestedAnswer:"No, cierra de noche." },
+        { id:94, name:"Cremalleras Aquaseal para mochila", category:"Mantenimiento", teoria:"Las cremalleras Aquaseal tienen un revestimiento de goma que evita la entrada de agua.", ejemplo:"Mochila Ortlieb.", ejercicio:"¿Cómo limpiar la cremallera?", suggestedAnswer:"Cepillo suave." },
+        { id:95, name:"Uso de los pasos de peatones elevados", category:"Seguridad", teoria:"Los pasos elevados evitan pisar charcos profundos en los cruces.", ejemplo:"En Marylebone Road.", ejercicio:"¿Por qué?", suggestedAnswer:"Drenan mejor." },
+        { id:96, name:"Crema de zinc para pañal como barrera", category:"Piel", teoria:"La crema de zinc (para dermatitis del pañal) crea una capa impermeable en la piel, ideal para cara y manos.", ejemplo:"Sudocrem.", ejercicio:"¿Dónde comprar?", suggestedAnswer:"Farmacias Boots." },
+        { id:97, name:"Ciclovía ciclo3 (este-oeste) con menor pendiente", category:"Rutas", teoria:"La Ciclovía East-West es más llana y tiene menos acumulación de agua.", ejemplo:"Desde Barking hasta Wood Lane.", ejercicio:"¿Superficie?", suggestedAnswer:"Asfalto nuevo." },
+        { id:98, name:"Cámara de aire de repuesto para bici", category:"Reparación", teoria:"Llevar una cámara de aire de repuesto y parches permite reparar pinchazos causados por restos arrastrados por la lluvia.", ejemplo:"Cámara Schwalbe.", ejercicio:"¿Herramientas necesarias?", suggestedAnswer:"Palancas y bomba." },
+        { id:99, name:"Manta isotérmica en la chaqueta", category:"Aislamiento", teoria:"Colocar una manta de rescate dentro de la chaqueta (en la espalda) aumenta el aislamiento.", ejemplo:"Manta de emergencia doblada.", ejercicio:"¿Cómo evitar que se mueva?", suggestedAnswer:"Cinta adhesiva en los bordes." },
+        { id:100, name:"Actitud positiva y plan B", category:"Psicología", teoria:"Tener siempre un plan de respaldo (metro, bus, café) para no desesperar con la lluvia torrencial londinense.", ejemplo:"Memorizar 3 cafés cerca de tu ruta.", ejercicio:"¿Qué hacer si te empapas por completo?", suggestedAnswer:"Entrar a un local, cambiarte ropa interior seca (llevas repuesto) y tomar una bebida caliente." }
+    ];
+
+    const container = document.getElementById('cardsContainer');
+    tecnicas.forEach(t => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card card-flash h-100">
+                <div class="card-header bg-transparent border-0 pt-3">
+                    <div class="d-flex justify-content-between">
+                        <div><h5 class="fw-bold">${t.name}</h5><span class="badge bg-secondary">${t.category}</span></div>
+                        <button class="btn btn-sound btn-sm" onclick="speakText('${t.name}. ${t.teoria} Ejemplo: ${t.ejemplo}')"><i class="fas fa-volume-up"></i> Leer</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-2 rounded mb-2"><strong>Teoría:</strong> ${t.teoria}</div>
+                    <div class="bg-warning bg-opacity-10 p-2 rounded mb-3"><strong>Ejemplo:</strong> “${t.ejemplo}”</div>
+                    <div class="exercise-area">
+                        <label class="fw-semibold">✍️ ${t.ejercicio}</label>
+                        <textarea class="form-control mt-2" id="answer-${t.id}" rows="2" placeholder="Escribe tu respuesta..."></textarea>
+                        <button class="btn btn-outline-success btn-sm mt-2" onclick="showSuggestion(${t.id}, '${t.suggestedAnswer.replace(/'/g, "\\'")}')">Ver sugerencia</button>
+                        <div id="feedback-${t.id}" class="small mt-2" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    let currentUtterance = null, availableVoices = [];
+    function toggleVoiceControls() { let c = document.getElementById('voiceControls'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; if (!availableVoices.length) loadVoices(); }
+    function loadVoices() { availableVoices = window.speechSynthesis.getVoices(); let sel = document.getElementById('voiceSelect'); let es = availableVoices.filter(v=>v.lang.startsWith('es')); let list = es.length ? es : availableVoices; sel.innerHTML = '<option value="">Voz por defecto</option>' + list.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join(''); }
+    if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
+    function setVoice() { if(!currentUtterance) return; let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); }
+    function setRate() { if(currentUtterance) currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); }
+    function speakText(t) { if(!window.speechSynthesis) return; if(currentUtterance) window.speechSynthesis.cancel(); currentUtterance = new SpeechSynthesisUtterance(t); currentUtterance.lang = 'es-ES'; currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); window.speechSynthesis.speak(currentUtterance); }
+    function stopSpeech() { if(window.speechSynthesis) window.speechSynthesis.cancel(); currentUtterance=null; }
+    function readPageContent() { let txt = ''; document.querySelectorAll('main h1, main h2, main h3, main p, main li, .card-text, .alert').forEach(el=>{ if(el.innerText) txt+=el.innerText+'. '; }); if(txt) speakText(txt.substring(0,3000)); else speakText('No hay contenido'); }
+    function showSuggestion(id, suggested) {
+        const userAnswer = document.getElementById(`answer-${id}`).value;
+        const fb = document.getElementById(`feedback-${id}`);
+        fb.innerHTML = `<strong>Tu respuesta:</strong> "${userAnswer || '(vacío)'}"<br><strong>Sugerencia:</strong> ${suggested}`;
+        fb.style.display = 'block';
+    }
+</script>
+</body>
+</html>

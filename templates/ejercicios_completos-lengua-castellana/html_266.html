@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ars Grammatica | Cuaderno de Técnicas · Sintaxis del Castellano</title>
+    <!-- Google Fonts: exquisitez tipográfica -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* --- PALACIO TIPOGRÁFICO: noche, espresso, pergamino + oro envejecido --- */
+        :root {
+            --fondo-noche: #0f0e10;
+            --espresso: #2a2420;
+            --pergamino: #e8e2d4;
+            --pergamino-oscuro: #c9c0ae;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #dbb95e;
+            --texto-claro: #f2ede4;
+            --texto-cuerpo: #2c2824;
+            --grano: rgba(25, 20, 15, 0.08);
+            --borde-dorado: #b88b2f;
+        }
+
+        body {
+            background: var(--fondo-noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-cuerpo);
+            line-height: 1.55;
+        }
+
+        /* textura de grano sutil */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="2" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.35;
+            z-index: 9999;
+        }
+
+        /* LAYOUT LMS */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* SIDEBAR DESPLEGABLE (lujo) */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 320px;
+            height: 100vh;
+            background: #1e1a17;
+            backdrop-filter: blur(2px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1050;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1rem;
+            overflow-y: auto;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--pergamino);
+            box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.6rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-header span {
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--oro-antiguo);
+            font-size: 1.8rem;
+            cursor: pointer;
+            font-family: monospace;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.75rem;
+            background: #2c2622;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 4px;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--oro-pálido);
+        }
+
+        .tech-index-list {
+            list-style: none;
+        }
+
+        .tech-index-list li {
+            margin-bottom: 0.7rem;
+            font-size: 1rem;
+            border-left: 2px solid transparent;
+            transition: 0.2s;
+            padding-left: 0.7rem;
+        }
+
+        .tech-index-list li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-weight: 400;
+        }
+
+        .tech-index-list li:hover {
+            border-left-color: var(--oro-antiguo);
+        }
+
+        /* MAIN CONTENIDO */
+        .main-content {
+            flex: 1;
+            margin-left: 0;
+            transition: margin-left 0.3s;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 25% 40%, rgba(200,180,140,0.08) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+            min-height: 100vh;
+        }
+
+        /* Barra dorada de progreso */
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #3a322b;
+            z-index: 1020;
+        }
+
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2cf7a, var(--oro-antiguo));
+            transition: width 0.3s ease;
+        }
+
+        /* cabecera refinada */
+        .hero-header {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--borde-dorado);
+            margin-bottom: 2rem;
+            background: rgba(245, 240, 228, 0.5);
+        }
+
+        .hero-header h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.4rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: var(--espresso);
+        }
+
+        .hero-header h1 small {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: #7a6a53;
+            margin-left: 1rem;
+        }
+
+        .ornament {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 6px;
+            margin: 0.5rem 0;
+        }
+
+        /* botón hamburguesa */
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 22px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.8rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1060;
+            border-radius: 12px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        /* Vista técnica principal */
+        .tech-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .tech-main {
+            flex: 3;
+            min-width: 260px;
+        }
+
+        .tech-side {
+            flex: 1;
+            min-width: 220px;
+            background: #f2ede2;
+            padding: 1.2rem;
+            border-left: 2px solid var(--oro-antiguo);
+            font-size: 0.95rem;
+            height: fit-content;
+        }
+
+        /* capitular ornamental */
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.5rem;
+            padding-top: 0.2rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .tech-title {
+            font-size: 2.1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+        }
+
+        .numero-fondo {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.12);
+            position: absolute;
+            right: 20px;
+            top: -20px;
+            pointer-events: none;
+            font-family: 'EB Garamond', serif;
+            user-select: none;
+        }
+
+        .card-teoria, .card-ejemplo, .card-ejercicio {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .card-teoria h3, .card-ejemplo h3, .card-ejercicio h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.6rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+
+        textarea {
+            width: 100%;
+            background: #fffbf5;
+            border: 1px solid #cfc5b2;
+            padding: 1rem;
+            font-family: 'EB Garamond', serif;
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+        }
+
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            transition: 0.2s;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+        }
+
+        .btn-complete {
+            background: var(--oro-antiguo);
+            border: none;
+            color: #1e1a17;
+            font-weight: bold;
+        }
+
+        .progress-unit {
+            background: #ddd0bc;
+            border-radius: 20px;
+            height: 6px;
+            width: 100%;
+            margin: 1rem 0;
+        }
+
+        /* estadísticas unidad */
+        .stat-box {
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 800px) {
+            .tech-container {
+                flex-direction: column;
+            }
+            .hero-header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggle">≡</button>
+
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice</span>
+        <button class="close-sidebar" id="closeSidebar">✕</button>
+    </div>
+    <input type="text" id="buscarTecnica" class="search-box" placeholder="🔍 Buscar técnica por nombre, palabra...">
+    <ul class="tech-index-list" id="indiceLista"></ul>
+    <div style="margin-top: 2rem; text-align: center; font-size: 0.8rem;">⁂ § ⚜</div>
+</div>
+
+<div class="main-content">
+    <div class="gold-progress"><div class="gold-fill" id="goldFill"></div></div>
+    <div class="hero-header">
+        <div class="ornament">⁂ § ⚜</div>
+        <h1>Ars Grammatica <small>morfosintaxis · semántica · pragmática del castellano</small></h1>
+        <p style="font-style: italic; margin-top: 0.5rem;">Cuaderno de técnicas avanzadas — 100 ejercicios para el dominio de la escritura ensayística</p>
+    </div>
+
+    <div id="rootTech" class="tech-container"></div>
+</div>
+
+<script>
+    // ---------- GENERACIÓN DE 100 TÉCNICAS ENFOQUE SINTÁCTICO, SEMÁNTICO, PRAGMÁTICO ----------
+    const categoriasMeta = [
+        "Morfosintaxis fundamental (01-15)", "Estructura de la cláusula (16-30)", "Semántica oracional (31-45)", 
+        "Pragmática discursiva (46-60)", "Figuras sintácticas (61-75)", "Cohesión y progresión textual (76-85)", 
+        "Estilística y ensayo (86-100)"
+    ];
+    
+    function generarTecnicas() {
+        let tecnicas = [];
+        for (let i=1; i<=100; i++) {
+            let nombreBase = "";
+            let teoria = "";
+            let ejemplo = "";
+            let ejercicio = "";
+            if (i<=15) {
+                nombreBase = `${i}. Concordancia nominal y verbal profunda`;
+                teoria = "La concordancia no solo afecta número y persona, sino también matices semánticos: concordancia ad sensum. En castellano culto, el sujeto colectivo puede concordar en plural cuando implica individuos.";
+                ejemplo = "Ejemplo: 'La mayoría de los críticos consideran (concordancia ad sensum) que la obra es genial.' Frente a 'La mayoría considera (formal) lo contrario'.";
+                ejercicio = "Analiza la concordancia en 'El grupo de estudiantes presentaron su proyecto'. ¿Es correcta? Justifica.";
+            } 
+            else if (i<=30) {
+                nombreBase = `${i}. Transitividad y regimen preposicional`;
+                teoria = "El régimen preposicional es parte de la valencia verbal. Verbos como 'incidir' rigen 'en', no 'sobre'. La sintaxis de casos se manifiesta en preposiciones.";
+                ejemplo = "Ejemplo: 'El ensayo incide en aspectos pragmáticos' (correcto). Evitar 'incide sobre' por interferencia.";
+                ejercicio = "Corrige: 'El autor se basó sobre fuentes antiguas' → Reescribe con régimen adecuado.";
+            }
+            else if (i<=45) {
+                nombreBase = `${i}. Hiponimia y campos léxicos en la escritura`;
+                teoria = "La riqueza semántica se logra con hipónimos precisos. Evitar hiperónimos vagos (cosa, aspecto). Un dominio léxico finamente graduado jerarquiza el discurso.";
+                ejemplo = "Ejemplo: En vez de 'animal', emplear 'mamífero rumiante' para rigor enciclopédico.";
+                ejercicio = "Reemplaza la palabra general por tres hipónimos cada vez más específicos: 'Edificio' → ?";
+            }
+            else if (i<=60) {
+                nombreBase = `${i}. Actos de habla y fuerza ilocutiva`;
+                teoria = "Austin y Searle: el enunciado no solo describe, sino que realiza acciones (prometer, advertir). La escritura académica privilegia asertivos y directivos matizados.";
+                ejemplo = "Ejemplo: 'Te sugiero revisar la bibliografía' (acto directivo cortés) vs 'Debes revisar' (mayor fuerza)";
+                ejercicio = "Transforma la orden 'Entregue el ensayo mañana' en tres variantes con distinta fuerza ilocutiva.";
+            }
+            else if (i<=75) {
+                nombreBase = `${i}. Hipérbaton y reordenamiento enfático`;
+                teoria = "El hipérbaton consiste en alterar el orden canónico (SVO) para realzar un constituyente. Recurso de alta retórica ensayística.";
+                ejemplo = "Ejemplo: 'Del tiempo y sus mudanzas tratará este capítulo' en lugar de 'Este capítulo tratará del tiempo'.";
+                ejercicio = "Reordena la frase 'El autor analiza la metáfora en el segundo capítulo' con hipérbaton que destaque 'metáfora'.";
+            }
+            else if (i<=85) {
+                nombreBase = `${i}. Deixis y anclaje enunciativo`;
+                teoria = "Los deícticos (yo, aquí, ahora) fijan la subjetividad en el texto. La adecuada gestión de la deixis evita ambigüedades y refuerza la voz autoral.";
+                ejemplo = "Ejemplo: 'En el presente ensayo defenderemos esta tesis' (deixis temporal discursiva).";
+                ejercicio = "Escribe dos enunciados: uno con deixis espacial anafórica y otro con deixis social (tuteo/usted).";
+            }
+            else {
+                nombreBase = `${i}. El período retórico y la cláusula de ciceroniana`;
+                teoria = "El período largo con miembros balanceados (prótasis, apódosis) otorga solemnidad. En la prosa contemporánea se busca claridad sin perder cadencia.";
+                ejemplo = "Ejemplo de Baltasar Gracián: 'Lo bueno, si breve, dos veces bueno' – equilibrio y elipsis.";
+                ejercicio = "Construye un período bimembre con antítesis sobre la relación entre forma y contenido.";
+            }
+            tecnicas.push({
+                id: i,
+                nombre: nombreBase,
+                teoria: teoria + " Para el dominio de la redacción Saber Pro y ensayo avanzado.",
+                ejemplo: ejemplo,
+                ejercicio: ejercicio,
+                completada: false,
+                respuesta: ""
+            });
+        }
+        return tecnicas;
+    }
+
+    let tecnicas = generarTecnicas();
+    let currentIndex = 0;
+    
+    // carga desde localStorage
+    function loadProgress() {
+        const saved = localStorage.getItem("saber_grammar_lux");
+        if (saved) {
+            const data = JSON.parse(saved);
+            for (let i=0; i<tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuesta = data[i].respuesta || "";
+                }
+            }
+        }
+        renderizarIndice();
+        actualizarBarraProgreso();
+    }
+    
+    function saveProgress() {
+        let toSave = tecnicas.map(t => ({ completada: t.completada, respuesta: t.respuesta }));
+        localStorage.setItem("saber_grammar_lux", JSON.stringify(toSave));
+        actualizarBarraProgreso();
+        renderizarIndice();
+    }
+    
+    function actualizarBarraProgreso() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = (completadas / 100) * 100;
+        document.getElementById("goldFill").style.width = porcentaje + "%";
+    }
+    
+    function renderizarIndice() {
+        const busqueda = document.getElementById("buscarTecnica")?.value.toLowerCase() || "";
+        const listaUl = document.getElementById("indiceLista");
+        if (!listaUl) return;
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda));
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.href = "#";
+            a.textContent = `${tech.nombre.substring(0, 50)}${tech.nombre.length>50?"…":""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentIndex = tech.id-1;
+                renderizarTecnica();
+                if (window.innerWidth <= 800) document.getElementById("sidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+    
+    function renderizarTecnica() {
+        const t = tecnicas[currentIndex];
+        const container = document.getElementById("rootTech");
+        if (!container) return;
+        const numFondo = `<div class="numero-fondo">${t.id}</div>`;
+        const capitularLetra = t.nombre.charAt(0).toUpperCase();
+        container.innerHTML = `
+            <div class="tech-main">
+                ${numFondo}
+                <div class="tech-title"><span class="capitular">${capitularLetra}</span>${t.nombre.substring(1)}</div>
+                <div class="card-teoria"><h3>📜 Teoría sintáctico-semántica</h3><p>${t.teoria}</p></div>
+                <div class="card-ejemplo"><h3>❧ Ejemplo de lujo</h3><p>${t.ejemplo}</p></div>
+                <div class="card-ejercicio"><h3>✍️ Ejercicio pragmático</h3><p>${t.ejercicio}</p>
+                <textarea id="respuestaTextarea" rows="4" placeholder="Escribe aquí tu análisis o solución...">${t.respuesta}</textarea>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="anteriorBtn">← anterior</button>
+                    <button class="btn-nav btn-complete" id="completarBtn">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="siguienteBtn">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-side">
+                <div class="stat-box"><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(s=>s.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:20px;"></div></div>
+                <p>${tecnicas.filter(s=>s.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color: #cfc5b2;">
+                <p><strong>📖 Metadatos</strong><br>Técnica ${t.id} · Enfoque: ${t.id<=15?"Morfosintaxis":t.id<=30?"Sintaxis clausal":t.id<=45?"Semántica":t.id<=60?"Pragmática":t.id<=75?"Figuras retóricas":t.id<=85?"Cohesión":"Estilística"}</p>
+                <p><strong>⏤ Recomendación</strong><br>Practica cada técnica y guarda tu respuesta. La repetición consciente genera estilo.</p>
+                <div class="ornament" style="font-size:1rem;">§ ⁂</div>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextarea");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentIndex].respuesta = e.target.value;
+                saveProgress();
+            });
+        }
+        document.getElementById("anteriorBtn")?.addEventListener("click", () => {
+            if (currentIndex > 0) { currentIndex--; renderizarTecnica(); window.scrollTo(0,0); }
+        });
+        document.getElementById("siguienteBtn")?.addEventListener("click", () => {
+            if (currentIndex < 99) { currentIndex++; renderizarTecnica(); window.scrollTo(0,0); }
+        });
+        document.getElementById("completarBtn")?.addEventListener("click", () => {
+            tecnicas[currentIndex].completada = !tecnicas[currentIndex].completada;
+            saveProgress();
+            renderizarTecnica();
+            renderizarIndice();
+        });
+    }
+    
+    // eventos sidebar
+    const menuToggle = document.getElementById("menuToggle");
+    const sidebar = document.getElementById("sidebar");
+    const closeSide = document.getElementById("closeSidebar");
+    menuToggle?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeSide?.addEventListener("click", () => sidebar.classList.remove("open"));
+    document.getElementById("buscarTecnica")?.addEventListener("input", () => renderizarIndice());
+    
+    function inicializar() {
+        loadProgress();
+        renderizarTecnica();
+        actualizarBarraProgreso();
+    }
+    inicializar();
+</script>
+</body>
+</html>

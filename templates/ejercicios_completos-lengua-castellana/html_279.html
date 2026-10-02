@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno Contrastivo · 100 técnicas bilingües</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --indigo: #2b2d8f;
+      --indigo-light: #7a7fd9;
+      --indigo-dark: #1a1a5e;
+      --galaxy-bg: #f5f7ff;
+      --card-bg: #ffffff;
+      --margin-red: #e74c3c;
+      --line-blue: #4a90d9;
+    }
+    body { background-color: var(--galaxy-bg); font-family: 'Segoe UI', Roboto, system-ui, sans-serif; padding-top: 70px; }
+    .navbar-custom {
+      background: linear-gradient(135deg, #d0d4ff, #a5adf0);
+      border-bottom: 3px solid var(--indigo);
+    }
+    .navbar-custom .navbar-brand { font-weight: 700; color: var(--indigo-dark); }
+    .navbar-custom .nav-link { color: var(--indigo-dark); font-weight: 500; cursor: pointer; }
+    .navbar-custom .nav-link.active {
+      background-color: var(--indigo);
+      color: #fff !important;
+      border-radius: 20px;
+      padding: 0.4rem 1.2rem;
+    }
+    .btn-indigo { background-color: var(--indigo); border-color: var(--indigo); color: #fff; }
+    .btn-indigo:hover { background-color: var(--indigo-dark); border-color: var(--indigo-dark); color: #fff; }
+    .btn-outline-indigo { border-color: var(--indigo); color: var(--indigo); }
+    .btn-outline-indigo:hover { background-color: var(--indigo); color: #fff; }
+    .card-cuaderno {
+      background: white;
+      border-left: 6px solid var(--indigo);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(43,45,143,0.08);
+      transition: transform 0.15s, box-shadow 0.2s;
+      height: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+    }
+    .card-cuaderno:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(43,45,143,0.15); }
+    .badge-bloque { background-color: var(--indigo); color: #fff; font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 30px; }
+    .firma-cursiva { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--indigo-dark); }
+    .fuente-caveat { font-family: 'Caveat', cursive; font-size: 1.3rem; }
+    .fuente-greatvibes { font-family: 'Great Vibes', cursive; font-size: 1.6rem; }
+    .progreso-bar { height: 8px; border-radius: 10px; background-color: #d9ddf5; }
+    .progreso-bar .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--indigo-light), var(--indigo)); transition: width 0.4s; }
+    .filtro-bloque { background-color: #d6dcf5; border-radius: 30px; padding: 0.25rem 0.5rem; }
+    .filtro-bloque .btn-outline-secondary { border-color: var(--indigo); color: var(--indigo); font-size: 0.75rem; padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; }
+    .filtro-bloque .btn-outline-secondary.active { background-color: var(--indigo); color: #fff; }
+    .filtro-bloque .btn-outline-secondary:hover { background-color: var(--indigo-light); color: var(--indigo-dark); }
+    .fuente-selector { background-color: #d6dcf5; border-radius: 30px; padding: 0.2rem 0.8rem; }
+    .fuente-selector select { border: none; background: transparent; color: var(--indigo-dark); font-weight: 500; outline: none; }
+    .modo-practica .card-cuaderno { cursor: pointer; }
+    .modo-practica .card-cuaderno .definicion,
+    .modo-practica .card-cuaderno .ejemplo {
+      filter: blur(4px);
+      user-select: none;
+      transition: filter 0.3s;
+    }
+    .modo-practica .card-cuaderno.revelado .definicion,
+    .modo-practica .card-cuaderno.revelado .ejemplo {
+      filter: blur(0);
+      user-select: auto;
+    }
+    .cuaderno {
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      position: relative;
+      padding: 2rem 2rem 2rem 3.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #ddd;
+    }
+    .cuaderno::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      bottom: 20px;
+      width: 4px;
+      background-color: var(--margin-red);
+      border-radius: 2px;
+    }
+    .cuaderno::after {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 30px;
+      bottom: 30px;
+      width: 16px;
+      background: repeating-linear-gradient(to bottom, #aaa 0px, #aaa 6px, transparent 6px, transparent 18px);
+      border-radius: 8px;
+      opacity: 0.4;
+    }
+    .cuaderno .lineas {
+      background: repeating-linear-gradient(transparent, transparent 28px, var(--line-blue) 28px, var(--line-blue) 29px);
+      background-size: 100% 29px;
+      padding-bottom: 10px;
+    }
+    .manuscrito {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      border: none;
+      border-bottom: 2px dashed var(--indigo-light);
+      background: transparent;
+      width: 100%;
+      outline: none;
+      padding: 0.2rem 0.4rem;
+      color: var(--indigo-dark);
+    }
+    .manuscrito:focus { border-bottom: 2px solid var(--indigo); }
+    .firma-input {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      border: none;
+      border-bottom: 2px solid var(--margin-red);
+      background: transparent;
+      width: 100%;
+      outline: none;
+      padding: 0.2rem 0.4rem;
+      color: #2c3e50;
+    }
+    .firma-input:focus { border-bottom: 2px solid #c0392b; }
+    .cuaderno-entry {
+      background: white;
+      border-left: 4px solid var(--indigo);
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .cuaderno-entry .fecha { font-size: 0.75rem; color: #888; }
+    .cuaderno-entry .firma { font-family: 'Great Vibes', cursive; font-size: 1.4rem; color: #2c3e50; }
+    .cuaderno-entry .respuesta { font-family: 'Caveat', cursive; font-size: 1.2rem; }
+    .flashcard {
+      background: white;
+      border: 3px solid var(--indigo);
+      border-radius: 16px;
+      padding: 2rem;
+      min-height: 300px;
+      box-shadow: 0 8px 24px rgba(43,45,143,0.15);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .flashcard .card-front, .flashcard .card-back { transition: opacity 0.3s; }
+    .flashcard .card-back { display: none; }
+    .flashcard.revelada .card-front { display: none; }
+    .flashcard.revelada .card-back { display: block; }
+    @media (max-width: 576px) {
+      .cuaderno { padding: 1.5rem 1rem 1.5rem 2.5rem; }
+      .cuaderno::before { left: 12px; }
+      .card-cuaderno .card-title { font-size: 0.95rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-journal-bookmark-fill me-2" style="color:var(--indigo-dark);"></i>Cuaderno Contrastivo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" data-modo="explorar" href="#"><i class="bi bi-grid-3x3-gap-fill me-1"></i>Explorar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="practicar" href="#"><i class="bi bi-pencil-fill me-1"></i>Practicar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="flashcards" href="#"><i class="bi bi-stack me-1"></i>Flashcards</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="progreso" href="#"><i class="bi bi-bar-chart-fill me-1"></i>Progreso</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="cuaderno" href="#"><i class="bi bi-journal-text me-1"></i>Mi cuaderno</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <div class="fuente-selector d-none d-md-inline-block">
+          <i class="bi bi-fonts" style="color:var(--indigo-dark);"></i>
+          <select id="fuenteCursiva" style="background:transparent;border:none;outline:none;color:var(--indigo-dark);font-weight:500;">
+            <option value="caveat">Caveat</option>
+            <option value="greatvibes">Great Vibes</option>
+          </select>
+        </div>
+        <span id="voiceStatus" class="d-none d-md-inline"><i class="bi bi-volume-up-fill me-1"></i>Lector</span>
+        <button id="btnVoiceToggle" class="btn btn-outline-indigo btn-sm"><i class="bi bi-mic"></i></button>
+        <span class="badge bg-indigo rounded-pill" id="contadorAprendidas">0/100</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12 d-flex flex-wrap align-items-center gap-2 filtro-bloque p-2">
+      <span class="fw-bold me-2" style="color:var(--indigo-dark);"><i class="bi bi-tags"></i> Bloques:</span>
+      <button class="btn btn-outline-secondary active" data-bloque="todos">Todos</button>
+      <button class="btn btn-outline-secondary" data-bloque="I">I</button>
+      <button class="btn btn-outline-secondary" data-bloque="II">II</button>
+      <button class="btn btn-outline-secondary" data-bloque="III">III</button>
+      <button class="btn btn-outline-secondary" data-bloque="IV">IV</button>
+      <button class="btn btn-outline-secondary" data-bloque="V">V</button>
+      <button class="btn btn-outline-secondary" data-bloque="VI">VI</button>
+      <button class="btn btn-outline-secondary" data-bloque="VII">VII</button>
+      <button class="btn btn-outline-secondary" data-bloque="VIII">VIII</button>
+      <button class="btn btn-outline-secondary" data-bloque="IX">IX</button>
+      <button class="btn btn-outline-secondary" data-bloque="X">X</button>
+      <span class="ms-2 text-muted small" id="resultCount">100 técnicas</span>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-3 pb-5">
+  <div id="gridTecnicas" class="row g-3"></div>
+
+  <!-- Flashcard Container -->
+  <div id="flashcardContainer" class="row justify-content-center" style="display:none;">
+    <div class="col-lg-8 col-md-10">
+      <div class="flashcard" id="flashcard">
+        <div class="card-front text-center">
+          <span class="badge-bloque mb-2" id="flashBloque">I</span>
+          <h2 class="card-title" id="flashNombre" style="font-family:var(--bs-body-font-family);">Nombre</h2>
+          <p class="text-muted mt-3"><i class="bi bi-info-circle"></i> Haz clic en la tarjeta o en "Voltear"</p>
+        </div>
+        <div class="card-back">
+          <span class="badge-bloque mb-2" id="flashBloqueBack">I</span>
+          <h2 class="card-title" id="flashNombreBack" style="font-family:var(--bs-body-font-family);">Nombre</h2>
+          <p class="definicion" id="flashDefinicion">Definición</p>
+          <p class="ejemplo-cursiva" id="flashEjemplo" style="font-family:'Caveat',cursive;font-size:1.2rem;">Ejemplo bilingüe</p>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center mt-4">
+        <div>
+          <button id="flashPrev" class="btn btn-outline-indigo"><i class="bi bi-chevron-left"></i> Anterior</button>
+          <button id="flashNext" class="btn btn-outline-indigo">Siguiente <i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div>
+          <button id="flashVoltear" class="btn btn-indigo"><i class="bi bi-arrow-repeat"></i> Voltear</button>
+          <button id="flashFirmar" class="btn btn-outline-warning"><i class="bi bi-pen"></i> Firmar</button>
+          <button id="flashVoice" class="btn btn-outline-indigo"><i class="bi bi-volume-up"></i></button>
+        </div>
+      </div>
+      <div class="text-center mt-2"><span id="flashContador" class="text-muted">1 / 100</span></div>
+    </div>
+  </div>
+
+  <!-- Mi cuaderno -->
+  <div id="miCuadernoContainer" style="display:none;">
+    <div class="cuaderno">
+      <div class="lineas">
+        <h4 class="mb-3" style="color:var(--indigo-dark);"><i class="bi bi-journal-text me-2"></i>Mis apuntes</h4>
+        <div id="miCuadernoLista"></div>
+        <button id="borrarTodoCuaderno" class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-trash3"></i> Borrar todas las entradas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Practicar -->
+  <div class="modal fade" id="modalPractica" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background:white;border-radius:16px;">
+        <div class="modal-header" style="border-bottom:2px solid var(--indigo-light);">
+          <h5 class="modal-title" style="color:var(--indigo-dark);"><i class="bi bi-pencil-fill me-2"></i>Escribe la técnica</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="cuaderno" style="margin:0;padding:1.5rem 1.5rem 1.5rem 2.5rem;">
+            <div class="lineas">
+              <p><strong>Definición:</strong> <span id="modalDefinicion"></span></p>
+              <p><strong>Ejemplo bilingüe:</strong> <span id="modalEjemplo" style="font-family:'Caveat',cursive;font-size:1.2rem;"></span></p>
+              <div class="mt-3">
+                <label class="form-label fw-bold">Escribe el nombre de la técnica:</label>
+                <input type="text" id="inputRespuesta" class="manuscrito" placeholder="Escribe aquí..." autofocus>
+              </div>
+              <div class="mt-3">
+                <label class="form-label fw-bold">Firma (tu rúbrica):</label>
+                <input type="text" id="inputFirma" class="firma-input" placeholder="Tu firma...">
+              </div>
+              <div class="mt-3 d-flex gap-2">
+                <button id="btnGuardarCuaderno" class="btn btn-indigo"><i class="bi bi-save"></i> Guardar en el cuaderno</button>
+                <button id="btnVoiceModal" class="btn btn-outline-indigo"><i class="bi bi-volume-up"></i> Escuchar</button>
+              </div>
+              <div id="modalFeedback" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ----------------------------------------------------------------
+    // 1. DATOS: 100 técnicas en 10 bloques
+    // ----------------------------------------------------------------
+    const TECNICAS = [];
+
+    const bloqueI = [
+      { nombre: 'Sujeto + Verbo + Objeto (SVO) vs. SOV', definicion: 'Orden canónico en español e inglés (SVO) contrastado con lenguas SOV.', ejemplo: 'Esp: "Juan come manzanas" / Eng: "John eats apples" / SOV: "Juan manzanas come"' },
+      { nombre: 'Adjetivo antes vs. después del sustantivo', definicion: 'En inglés el adjetivo precede; en español puede ir antes o después.', ejemplo: 'Eng: "a red car" / Esp: "un coche rojo" o "un rojo coche"' },
+      { nombre: 'Adverbio de frecuencia (posición)', definicion: 'En inglés van antes del verbo principal; en español suelen ir después.', ejemplo: 'Eng: "She always arrives early" / Esp: "Ella llega siempre temprano"' },
+      { nombre: 'Posición de pronombres objeto', definicion: 'En español van antes del verbo; en inglés después.', ejemplo: 'Esp: "Lo veo" / Eng: "I see him"' },
+      { nombre: 'Inversión en preguntas', definicion: 'En inglés se invierte sujeto-verbo auxiliar; en español solo entonación.', ejemplo: 'Eng: "Are you coming?" / Esp: "¿Vienes?"' },
+      { nombre: 'Orden en oraciones negativas', definicion: 'El "no" español precede al verbo; en inglés "not" sigue al auxiliar.', ejemplo: 'Esp: "No quiero" / Eng: "I do not want"' },
+      { nombre: 'Posición de partículas modales', definicion: 'En inglés (can, must) preceden al verbo; en español el verbo modal rige infinitivo.', ejemplo: 'Eng: "You must go" / Esp: "Debes ir"' },
+      { nombre: 'Orden de cuantificadores', definicion: 'Todos / all, cada / each, algunos / some.', ejemplo: 'Esp: "Todos los estudiantes" / Eng: "All the students"' },
+      { nombre: 'Orden de posesivos', definicion: 'En español puede ir antes o después; en inglés siempre antes.', ejemplo: 'Esp: "mi casa" / Eng: "my house"' },
+      { nombre: 'Orden de demostrativos', definicion: 'En español van antes del sustantivo; en inglés igual.', ejemplo: 'Esp: "este libro" / Eng: "this book"' }
+    ];
+    bloqueI.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 'I', ...t }));
+
+    const bloqueII = [
+      { nombre: 'Presente simple vs. continuo', definicion: 'El presente simple expresa hábitos; el continuo, acciones en curso.', ejemplo: 'Esp: "Trabajo todos los días" / Eng: "I work every day" vs. "Estoy trabajando" / "I am working"' },
+      { nombre: 'Pretérito perfecto vs. pasado simple', definicion: 'El perfecto conecta con el presente; el pasado simple es anterior.', ejemplo: 'Esp: "He comido" / Eng: "I have eaten" vs. "Comí" / "I ate"' },
+      { nombre: 'Futuro con "will" vs. "going to"', definicion: '"Will" para decisiones; "going to" para planes.', ejemplo: 'Esp: "Mañana llamaré" / Eng: "I will call" vs. "Voy a viajar" / "I am going to travel"' },
+      { nombre: 'Condicional simple y compuesto', definicion: 'Expresan hipótesis y consecuencias.', ejemplo: 'Esp: "Si tuviera dinero, viajaría" / Eng: "If I had money, I would travel"' },
+      { nombre: 'Subjuntivo en español vs. indicativo en inglés', definicion: 'El subjuntivo español no tiene equivalente exacto.', ejemplo: 'Esp: "Espero que vengas" / Eng: "I hope you come"' },
+      { nombre: 'Voz pasiva: ser + participio vs. to be + past participle', definicion: 'Estructura similar pero con diferencias en "por" / "by".', ejemplo: 'Esp: "La carta fue escrita por Juan" / Eng: "The letter was written by Juan"' },
+      { nombre: 'Gerundio vs. infinitivo tras verbos', definicion: 'Algunos verbos rigen gerundio o infinitivo de forma distinta.', ejemplo: 'Esp: "Evito fumar" / Eng: "I avoid smoking" vs. "Quiero fumar" / "I want to smoke"' },
+      { nombre: 'Verbos reflexivos vs. no reflexivos', definicion: 'En español los reflexivos llevan pronombre; en inglés no siempre.', ejemplo: 'Esp: "Me levanto" / Eng: "I get up"' },
+      { nombre: 'Uso de "ser" y "estar"', definicion: 'Dos verbos para "to be" según cualidad o estado.', ejemplo: 'Esp: "Eres alto" / Eng: "You are tall" vs. "Estás cansado" / "You are tired"' },
+      { nombre: 'Perífrasis verbales (estar + gerundio, ir a + infinitivo)', definicion: 'Estructuras verbales compuestas con matices aspectuales.', ejemplo: 'Esp: "Estoy estudiando" / Eng: "I am studying"' }
+    ];
+    bloqueII.forEach((t, i) => TECNICAS.push({ id: 10+i+1, bloque: 'II', ...t }));
+
+    const bloqueIII = [
+      { nombre: 'Concordancia de género y número', definicion: 'En español hay concordancia; en inglés solo número.', ejemplo: 'Esp: "casa blanca" / Eng: "white house"' },
+      { nombre: 'Concordancia sujeto-verbo en número', definicion: 'El verbo concuerda en número con el sujeto.', ejemplo: 'Esp: "El niño come" / Eng: "The child eats"' },
+      { nombre: 'Concordancia con sujetos colectivos', definicion: 'En español singular; en inglés puede ser singular o plural.', ejemplo: 'Esp: "La gente dice" / Eng: "People say"' },
+      { nombre: 'Concordancia en oraciones con "se"', definicion: 'El verbo concuerda con el sujeto real aunque "se" lo oculte.', ejemplo: 'Esp: "Se venden casas" / Eng: "Houses are sold"' },
+      { nombre: 'Concordancia en tiempos compuestos', definicion: 'El participio pasado no varía en español; en inglés es invariable.', ejemplo: 'Esp: "He escrito" / Eng: "I have written"' },
+      { nombre: 'Concordancia de los determinantes', definicion: 'Artículos y demostrativos concuerdan en género y número.', ejemplo: 'Esp: "la casa, el coche" / Eng: "the house, the car"' },
+      { nombre: 'Concordancia en oraciones condicionales', definicion: 'El verbo de la prótasis y apódosis deben concordar.', ejemplo: 'Esp: "Si llueve, no salgo" / Eng: "If it rains, I don\'t go out"' },
+      { nombre: 'Concordancia con pronombres relativos', definicion: 'El verbo concuerda con el antecedente del relativo.', ejemplo: 'Esp: "Los libros que me gustan" / Eng: "The books that I like"' },
+      { nombre: 'Concordancia en expresiones impersonales', definicion: 'El verbo siempre en tercera persona del singular.', ejemplo: 'Esp: "Hay mucha gente" / Eng: "There are many people"' },
+      { nombre: 'Concordancia en la voz pasiva', definicion: 'El participio concuerda con el sujeto paciente.', ejemplo: 'Esp: "Las cartas fueron enviadas" / Eng: "The letters were sent"' }
+    ];
+    bloqueIII.forEach((t, i) => TECNICAS.push({ id: 20+i+1, bloque: 'III', ...t }));
+
+    const bloqueIV = [
+      { nombre: 'Artículo definido (el, la, los, las) vs. "the"', definicion: 'Uso del artículo definido: similar pero con diferencias.', ejemplo: 'Esp: "La vida es bella" / Eng: "Life is beautiful"' },
+      { nombre: 'Artículo indefinido (un, una) vs. "a/an"', definicion: 'Uso del artículo indefinido.', ejemplo: 'Esp: "Tengo un coche" / Eng: "I have a car"' },
+      { nombre: 'Omisión del artículo con sustantivos abstractos', definicion: 'En español se omite a menudo; en inglés a veces no.', ejemplo: 'Esp: "Tengo fe" / Eng: "I have faith"' },
+      { nombre: 'Artículo con posesivos', definicion: 'En español no se usa artículo con posesivo; en inglés sí.', ejemplo: 'Esp: "mi casa" / Eng: "my house"' },
+      { nombre: 'Artículo con nombres de idiomas', definicion: 'En español se usa artículo; en inglés no.', ejemplo: 'Esp: "El español es fácil" / Eng: "Spanish is easy"' },
+      { nombre: 'Artículo con nombres de países', definicion: 'En español algunos países llevan artículo; en inglés no.', ejemplo: 'Esp: "El Perú" / Eng: "Peru"' },
+      { nombre: 'Artículo con partes del cuerpo', definicion: 'En español se usa artículo; en inglés posesivo.', ejemplo: 'Esp: "Me duele la cabeza" / Eng: "My head hurts"' },
+      { nombre: 'Artículo con fechas y horas', definicion: 'Uso del artículo en expresiones temporales.', ejemplo: 'Esp: "Llegaré a las cinco" / Eng: "I will arrive at five o\'clock"' },
+      { nombre: 'Artículo neutro "lo"', definicion: 'El "lo" español no tiene equivalente en inglés.', ejemplo: 'Esp: "Lo importante es..." / Eng: "The important thing is..."' },
+      { nombre: 'Omisión del artículo en inglés con plurales genéricos', definicion: 'En inglés se omite; en español se usa.', ejemplo: 'Esp: "Los perros son fieles" / Eng: "Dogs are loyal"' }
+    ];
+    bloqueIV.forEach((t, i) => TECNICAS.push({ id: 30+i+1, bloque: 'IV', ...t }));
+
+    const bloqueV = [
+      { nombre: 'Preposición "a" (dirección) vs. "to"', definicion: 'Indica movimiento hacia un lugar.', ejemplo: 'Esp: "Voy a Madrid" / Eng: "I go to Madrid"' },
+      { nombre: 'Preposición "de" (posesión) vs. "of"', definicion: 'Indica posesión o pertenencia.', ejemplo: 'Esp: "La casa de Juan" / Eng: "John\'s house"' },
+      { nombre: 'Preposición "en" (lugar) vs. "in/on/at"', definicion: 'Una sola preposición para varios casos.', ejemplo: 'Esp: "en la mesa" / Eng: "on the table" / "en Madrid" / "in Madrid"' },
+      { nombre: 'Preposición "por" y "para" vs. "for"', definicion: 'Dos preposiciones que se traducen a "for".', ejemplo: 'Esp: "Gracias por" / Eng: "Thanks for" / "Para ti" / "For you"' },
+      { nombre: 'Régimen verbal: verbos que rigen preposición', definicion: 'En español muchos verbos llevan preposición; en inglés no siempre.', ejemplo: 'Esp: "Soñar con" / Eng: "Dream of"' },
+      { nombre: 'Verbos de movimiento + "a" vs. "to"', definicion: 'Similar al español, pero con diferencias.', ejemplo: 'Esp: "Llegar a" / Eng: "Arrive at/in"' },
+      { nombre: 'Preposición "hasta" vs. "until" / "as far as"', definicion: 'Indica límite espacial o temporal.', ejemplo: 'Esp: "Camina hasta la esquina" / Eng: "Walk to the corner"' },
+      { nombre: 'Preposición "desde" vs. "from"', definicion: 'Indica origen temporal o espacial.', ejemplo: 'Esp: "Desde aquí" / Eng: "From here"' },
+      { nombre: 'Preposición "sin" vs. "without"', definicion: 'Indica ausencia.', ejemplo: 'Esp: "Sin ti" / Eng: "Without you"' },
+      { nombre: 'Preposición "entre" vs. "between/among"', definicion: 'Dos opciones en inglés según el número.', ejemplo: 'Esp: "entre dos" / Eng: "between two" / "entre varios" / "among several"' }
+    ];
+    bloqueV.forEach((t, i) => TECNICAS.push({ id: 40+i+1, bloque: 'V', ...t }));
+
+    const bloqueVI = [
+      { nombre: 'Actual / Actually vs. Actualmente', definicion: '"Actually" = en realidad; "actualmente" = currently.', ejemplo: 'Esp: "Actualmente trabajo" / Eng: "Actually, I work" (mal) → "Currently I work"' },
+      { nombre: 'Asistir / Attend vs. Assist', definicion: '"Attend" = ir a; "assist" = ayudar.', ejemplo: 'Esp: "Asisto a clase" / Eng: "I attend class"' },
+      { nombre: 'Éxito / Success vs. Exit', definicion: '"Success" = triunfo; "exit" = salida.', ejemplo: 'Esp: "Tuve éxito" / Eng: "I had success"' },
+      { nombre: 'Realizar / Realize vs. Carry out', definicion: '"Realize" = darse cuenta; "realizar" = llevar a cabo.', ejemplo: 'Esp: "Realicé el proyecto" / Eng: "I carried out the project"' },
+      { nombre: 'Sensible / Sensitive vs. Sensible', definicion: '"Sensible" = sensato; "sensitive" = sensible.', ejemplo: 'Esp: "Es sensible" / Eng: "He is sensitive"' },
+      { nombre: 'Calco: "Hacer sentido" vs. "Make sense"', definicion: '"Make sense" no se traduce literalmente.', ejemplo: 'Esp: "Tiene sentido" / Eng: "It makes sense"' },
+      { nombre: 'Calco: "Aplicar para" vs. "Apply to/for"', definicion: '"Apply to" (a algo) / "Apply for" (solicitar).', ejemplo: 'Esp: "Aplicar a una universidad" / Eng: "Apply to a university"' },
+      { nombre: 'Calco: "Depender de" vs. "Depend on"', definicion: 'El verbo "depend" rige "on".', ejemplo: 'Esp: "Depende de ti" / Eng: "It depends on you"' },
+      { nombre: 'Calco: "Interesado en" vs. "Interested in"', definicion: 'En español e inglés se usa la misma preposición.', ejemplo: 'Esp: "Estoy interesado en" / Eng: "I am interested in"' },
+      { nombre: 'Calco: "Pensar de" vs. "Think of/about"', definicion: 'Según el sentido, se usa "of" o "about".', ejemplo: 'Esp: "Pienso en ti" / Eng: "I think of you" (recuerdo) o "about you" (reflexión)' }
+    ];
+    bloqueVI.forEach((t, i) => TECNICAS.push({ id: 50+i+1, bloque: 'VI', ...t }));
+
+    const bloqueVII = [
+      { nombre: 'Símil (comparación explícita)', definicion: 'Comparación con "como" / "like" o "as".', ejemplo: 'Esp: "Brilla como el sol" / Eng: "Shines like the sun"' },
+      { nombre: 'Metáfora (identificación)', definicion: 'Identificación de un término con otro.', ejemplo: 'Esp: "Sus ojos son estrellas" / Eng: "Her eyes are stars"' },
+      { nombre: 'Personificación', definicion: 'Dar rasgos humanos a objetos o animales.', ejemplo: 'Esp: "El viento susurra" / Eng: "The wind whispers"' },
+      { nombre: 'Hipérbole (exageración)', definicion: 'Exageración para enfatizar.', ejemplo: 'Esp: "Te he esperado un siglo" / Eng: "I\'ve waited a century"' },
+      { nombre: 'Sinestesia (mezcla de sentidos)', definicion: 'Mezcla de percepciones sensoriales.', ejemplo: 'Esp: "Color sordo" / Eng: "Deaf color"' },
+      { nombre: 'Analogía (comparación extensa)', definicion: 'Comparación de dos realidades con múltiples puntos en común.', ejemplo: 'Esp: "La vida es como un viaje..." / Eng: "Life is like a journey..."' },
+      { nombre: 'Epíteto (adjetivo calificativo)', definicion: 'Adjetivo que resalta una cualidad inherente.', ejemplo: 'Esp: "Blanca nieve" / Eng: "White snow"' },
+      { nombre: 'Metonimia (relación de contigüidad)', definicion: 'Sustitución de una palabra por otra con relación.', ejemplo: 'Esp: "El gobierno decidió" / Eng: "The government decided"' },
+      { nombre: 'Sinécdoque (la parte por el todo)', definicion: 'Designar el todo por la parte o viceversa.', ejemplo: 'Esp: "Cinco bocas que alimentar" / Eng: "Five mouths to feed"' },
+      { nombre: 'Ironía (decir lo contrario)', definicion: 'Expresión de lo contrario de lo que se piensa.', ejemplo: 'Esp: "Qué día tan hermoso" (lloviendo) / Eng: "What a beautiful day" (ironic)' }
+    ];
+    bloqueVII.forEach((t, i) => TECNICAS.push({ id: 60+i+1, bloque: 'VII', ...t }));
+
+    const bloqueVIII = [
+      { nombre: 'Anáfora (repetición al inicio)', definicion: 'Repetición de una palabra al inicio de frases sucesivas.', ejemplo: 'Esp: "Temprano, temprano..." / Eng: "Early, early..."' },
+      { nombre: 'Epífora (repetición al final)', definicion: 'Repetición al final de frases o versos.', ejemplo: 'Esp: "Todo es sueño, todo es sueño" / Eng: "All is dream, all is dream"' },
+      { nombre: 'Paralelismo (estructura repetida)', definicion: 'Repetición de estructuras sintácticas similares.', ejemplo: 'Esp: "Ni el mar, ni el viento..." / Eng: "Neither the sea, nor the wind..."' },
+      { nombre: 'Quiasmo (orden cruzado)', definicion: 'Disposición cruzada de elementos paralelos.', ejemplo: 'Esp: "Cuando quiero reír, lloro" / Eng: "When I want to laugh, I cry"' },
+      { nombre: 'Asíndeton (omisión de conjunciones)', definicion: 'Omisión de conjunciones para dar rapidez.', ejemplo: 'Esp: "Vine, vi, vencí" / Eng: "I came, I saw, I conquered"' },
+      { nombre: 'Polisíndeton (repetición de conjunciones)', definicion: 'Uso repetido de conjunciones para dar énfasis.', ejemplo: 'Esp: "Y el sol, y la luna, y las estrellas" / Eng: "And the sun, and the moon, and the stars"' },
+      { nombre: 'Antítesis (contraposición de ideas)', definicion: 'Contraste de ideas opuestas.', ejemplo: 'Esp: "Eres todo para mí, pero nada para ti" / Eng: "You are everything to me, but nothing to you"' },
+      { nombre: 'Oxímoron (unión de contradictorios)', definicion: 'Unión de dos conceptos opuestos.', ejemplo: 'Esp: "Silencio atronador" / Eng: "Deafening silence"' },
+      { nombre: 'Paradoja (verdad aparentemente contradictoria)', definicion: 'Afirmación que encierra una verdad profunda.', ejemplo: 'Esp: "Solo sé que no sé nada" / Eng: "I only know that I know nothing"' },
+      { nombre: 'Calambur (juego de palabras)', definicion: 'Reagrupación de sílabas para crear doble sentido.', ejemplo: 'Esp: "A caballo regalado no le mires el diente" / Eng: "Don\'t look a gift horse in the mouth"' }
+    ];
+    bloqueVIII.forEach((t, i) => TECNICAS.push({ id: 70+i+1, bloque: 'VIII', ...t }));
+
+    const bloqueIX = [
+      { nombre: 'Equivalencia de refranes', definicion: 'Traducción de dichos populares manteniendo el sentido.', ejemplo: 'Esp: "Más vale tarde que nunca" / Eng: "Better late than never"' },
+      { nombre: 'Equivalencia de frases hechas', definicion: 'Expresiones idiomáticas que no se traducen literalmente.', ejemplo: 'Esp: "Estar en las nubes" / Eng: "To have one\'s head in the clouds"' },
+      { nombre: 'Traducción de juegos de palabras', definicion: 'Mantener el doble sentido en la traducción es difícil.', ejemplo: 'Esp: "No es lo mismo..." / Eng: no siempre tiene equivalente.' },
+      { nombre: 'Uso de metáforas culturales', definicion: 'Metáforas que requieren adaptación cultural.', ejemplo: 'Esp: "Ser un pez en el agua" / Eng: "To be like a fish in water"' },
+      { nombre: 'Traducción de la ironía', definicion: 'La ironía debe transmitirse con el mismo tono.', ejemplo: 'Esp: "¡Menuda suerte!" / Eng: "What luck!" (sarcástico)' },
+      { nombre: 'Adaptación de la hipérbole', definicion: 'La exageración puede variar en intensidad.', ejemplo: 'Esp: "Me muero de hambre" / Eng: "I\'m starving"' },
+      { nombre: 'Equivalencia de preguntas retóricas', definicion: 'Preguntas que no esperan respuesta.', ejemplo: 'Esp: "¿Quién no ha soñado?" / Eng: "Who hasn\'t dreamed?"' },
+      { nombre: 'Traducción de exclamaciones', definicion: 'Expresiones enfáticas con matices culturales.', ejemplo: 'Esp: "¡Qué bonito!" / Eng: "How beautiful!"' },
+      { nombre: 'Adaptación del hipérbaton', definicion: 'El orden alterado debe tener sentido en inglés.', ejemplo: 'Esp: "De la montaña bajó" / Eng: "From the mountain came down"' },
+      { nombre: 'Equivalencia de la personificación', definicion: 'Atribuir rasgos humanos a objetos es común.', ejemplo: 'Esp: "La ciudad nunca duerme" / Eng: "The city never sleeps"' }
+    ];
+    bloqueIX.forEach((t, i) => TECNICAS.push({ id: 80+i+1, bloque: 'IX', ...t }));
+
+    const bloqueX = [
+      { nombre: 'Condicionales reales vs. irreales', definicion: 'Diferencias en el uso de tiempos para condiciones reales e irreales.', ejemplo: 'Esp: "Si tengo tiempo, iré" (real) / Eng: "If I have time, I\'ll go" / "Si tuviera tiempo, iría" (irreal) / "If I had time, I would go"' },
+      { nombre: 'Voz pasiva con "se" vs. pasiva refleja', definicion: 'El "se" impersonal y la pasiva refleja.', ejemplo: 'Esp: "Se dice que..." / Eng: "It is said that..."' },
+      { nombre: 'Question tags (¿verdad? / ¿no?)', definicion: 'Coletillas interrogativas; en español "¿verdad?", "¿no?".', ejemplo: 'Esp: "Vienes, ¿verdad?" / Eng: "You\'re coming, aren\'t you?"' },
+      { nombre: 'Infinitivo como sujeto', definicion: 'En español el infinitivo puede ser sujeto; en inglés gerundio o "to + infinitivo".', ejemplo: 'Esp: "Fumar es malo" / Eng: "Smoking is bad" o "To smoke is bad"' },
+      { nombre: 'Construcciones impersonales (hay, hace, etc.)', definicion: 'Verbos impersonales en español; en inglés "there is", "it is".', ejemplo: 'Esp: "Hay mucha gente" / Eng: "There are many people" / "Hace frío" / "It is cold"' },
+      { nombre: 'Uso del gerundio en español vs. inglés', definicion: 'El gerundio expresa acción en desarrollo.', ejemplo: 'Esp: "Está lloviendo" / Eng: "It is raining"' },
+      { nombre: 'Perífrasis de obligación (deber, tener que, haber de)', definicion: 'Expresar obligación.', ejemplo: 'Esp: "Debes estudiar" / Eng: "You must study" / "You have to study"' },
+      { nombre: 'Oraciones subordinadas de relativo', definicion: 'Uso de pronombres relativos (que, quien, cuyo) vs. "who, which, whose".', ejemplo: 'Esp: "El libro que leí" / Eng: "The book that I read"' },
+      { nombre: 'Oraciones de tiempo: cuando, mientras, etc.', definicion: 'Conjunciones temporales y uso de tiempos.', ejemplo: 'Esp: "Cuando llegue, te llamo" / Eng: "When I arrive, I\'ll call you"' },
+      { nombre: 'Oraciones de finalidad (para que, a fin de que)', definicion: 'Expresar propósito.', ejemplo: 'Esp: "Estudio para que me den el título" / Eng: "I study so that they give me the degree"' }
+    ];
+    bloqueX.forEach((t, i) => TECNICAS.push({ id: 90+i+1, bloque: 'X', ...t }));
+
+    // ----------------------------------------------------------------
+    // 2. ESTADO Y ALMACENAMIENTO
+    // ----------------------------------------------------------------
+    const STORAGE_KEY = 'cuadernoContrastivo100_tecnicas';
+    const CUADERNO_KEY = 'cuadernoContrastivo_entradas';
+    let progreso = {};
+    let modoActual = 'explorar';
+    let bloqueFiltro = 'todos';
+    let voiceEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let utterance = null;
+    let fuenteActual = 'caveat';
+    let flashIndex = 0;
+    let flashList = [];
+    let entradasCuaderno = [];
+
+    function cargarProgreso() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) progreso = JSON.parse(data);
+        else progreso = {};
+      } catch (e) { progreso = {}; }
+    }
+
+    function guardarProgreso() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progreso));
+      actualizarContador();
+    }
+
+    function cargarCuaderno() {
+      try {
+        const data = localStorage.getItem(CUADERNO_KEY);
+        if (data) entradasCuaderno = JSON.parse(data);
+        else entradasCuaderno = [];
+      } catch (e) { entradasCuaderno = []; }
+    }
+
+    function guardarCuaderno() {
+      localStorage.setItem(CUADERNO_KEY, JSON.stringify(entradasCuaderno));
+    }
+
+    function toggleAprendida(id) {
+      if (progreso[id]) delete progreso[id];
+      else progreso[id] = true;
+      guardarProgreso();
+      renderizar();
+      if (modoActual === 'flashcards') mostrarFlashcard(flashIndex);
+    }
+
+    function actualizarContador() {
+      const total = TECNICAS.length;
+      const aprendidas = Object.keys(progreso).filter(k => progreso[k]).length;
+      document.getElementById('contadorAprendidas').textContent = `${aprendidas}/${total}`;
+    }
+
+    function getTecnicasFiltradas() {
+      let lista = TECNICAS;
+      if (bloqueFiltro !== 'todos') lista = lista.filter(t => t.bloque === bloqueFiltro);
+      return lista;
+    }
+
+    function leerTexto(texto) {
+      if (!voiceEnabled) return;
+      if (speechSynth.speaking) speechSynth.cancel();
+      utterance = new SpeechSynthesisUtterance(texto);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      speechSynth.speak(utterance);
+    }
+
+    function getClaseFuente() {
+      return fuenteActual === 'greatvibes' ? 'fuente-greatvibes' : 'fuente-caveat';
+    }
+
+    // ----------------------------------------------------------------
+    // 3. FLASHCARDS
+    // ----------------------------------------------------------------
+    function mostrarFlashcard(index) {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) {
+        document.getElementById('flashcardContainer').style.display = 'none';
+        return;
+      }
+      flashList = lista;
+      if (index >= lista.length) index = 0;
+      if (index < 0) index = lista.length - 1;
+      flashIndex = index;
+
+      const t = lista[index];
+      const aprendida = progreso[t.id] || false;
+
+      document.getElementById('flashBloque').textContent = t.bloque;
+      document.getElementById('flashNombre').textContent = t.nombre;
+      document.getElementById('flashBloqueBack').textContent = t.bloque;
+      document.getElementById('flashNombreBack').textContent = t.nombre;
+      document.getElementById('flashDefinicion').textContent = t.definicion;
+      document.getElementById('flashEjemplo').textContent = t.ejemplo;
+
+      document.getElementById('flashContador').textContent = `${index+1} / ${lista.length}`;
+
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.remove('revelada');
+      document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear';
+
+      const firmarBtn = document.getElementById('flashFirmar');
+      if (aprendida) {
+        firmarBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Firmada';
+        firmarBtn.className = 'btn btn-success';
+      } else {
+        firmarBtn.innerHTML = '<i class="bi bi-pen"></i> Firmar';
+        firmarBtn.className = 'btn btn-outline-warning';
+      }
+      actualizarContador();
+    }
+
+    function flashVoltear() {
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.toggle('revelada');
+      const btn = document.getElementById('flashVoltear');
+      btn.innerHTML = flashcard.classList.contains('revelada') ? '<i class="bi bi-arrow-repeat"></i> Ocultar' : '<i class="bi bi-arrow-repeat"></i> Voltear';
+    }
+
+    function flashNext() { mostrarFlashcard(flashIndex + 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashPrev() { mostrarFlashcard(flashIndex - 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashFirmar() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      toggleAprendida(lista[flashIndex].id);
+      mostrarFlashcard(flashIndex);
+    }
+    function flashVoice() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      const t = lista[flashIndex];
+      leerTexto(`${t.nombre}: ${t.definicion}. Ejemplo: ${t.ejemplo}`);
+    }
+
+    // ----------------------------------------------------------------
+    // 4. MI CUADERNO
+    // ----------------------------------------------------------------
+    function renderizarCuaderno() {
+      const container = document.getElementById('miCuadernoLista');
+      if (entradasCuaderno.length === 0) {
+        container.innerHTML = '<p class="text-muted">Aún no has guardado ninguna entrada en tu cuaderno.</p>';
+        return;
+      }
+      const html = entradasCuaderno.slice().reverse().map((entry, idx) => {
+        const realIndex = entradasCuaderno.length - 1 - idx;
+        return `
+          <div class="cuaderno-entry">
+            <div class="d-flex justify-content-between">
+              <strong>${entry.nombreTecnica}</strong>
+              <span class="fecha">${entry.fecha}</span>
+            </div>
+            <div><span class="text-muted">Tu respuesta:</span> <span class="respuesta">${entry.respuestaUsuario || '(vacío)'}</span></div>
+            <div><span class="text-muted">Firma:</span> <span class="firma">${entry.firma || '(sin firma)'}</span></div>
+            <button class="btn btn-outline-danger btn-sm mt-1" data-borrar="${realIndex}"><i class="bi bi-x-circle"></i> Borrar</button>
+          </div>
+        `;
+      }).join('');
+      container.innerHTML = html;
+      container.querySelectorAll('[data-borrar]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const idx = parseInt(this.dataset.borrar);
+          entradasCuaderno.splice(idx, 1);
+          guardarCuaderno();
+          renderizarCuaderno();
+        });
+      });
+    }
+
+    function guardarEntradaCuaderno(tecnicaId, respuesta, firma) {
+      const tec = TECNICAS.find(t => t.id === tecnicaId);
+      if (!tec) return;
+      const fecha = new Date().toLocaleString();
+      entradasCuaderno.push({
+        tecnicaId: tecnicaId,
+        nombreTecnica: tec.nombre,
+        respuestaUsuario: respuesta.trim(),
+        firma: firma.trim() || '(sin firma)',
+        fecha: fecha
+      });
+      guardarCuaderno();
+      renderizarCuaderno();
+    }
+
+    // ----------------------------------------------------------------
+    // 5. RENDER PRINCIPAL
+    // ----------------------------------------------------------------
+    function renderizar() {
+      const grid = document.getElementById('gridTecnicas');
+      const flashContainer = document.getElementById('flashcardContainer');
+      const miCuadernoContainer = document.getElementById('miCuadernoContainer');
+      const lista = getTecnicasFiltradas();
+      document.getElementById('resultCount').textContent = `${lista.length} técnicas`;
+
+      grid.style.display = 'none';
+      flashContainer.style.display = 'none';
+      miCuadernoContainer.style.display = 'none';
+
+      if (modoActual === 'flashcards') {
+        flashContainer.style.display = 'block';
+        if (lista.length > 0) mostrarFlashcard(0);
+        else flashContainer.innerHTML = `<div class="alert alert-warning">No hay técnicas en este bloque.</div>`;
+        return;
+      }
+
+      if (modoActual === 'cuaderno') {
+        miCuadernoContainer.style.display = 'block';
+        renderizarCuaderno();
+        return;
+      }
+
+      grid.style.display = 'flex';
+      const claseFuente = getClaseFuente();
+
+      if (modoActual === 'explorar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card-cuaderno">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓ Aprendida' : 'Pendiente'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="definicion small">${t.definicion}</p>
+                <p class="ejemplo-cursiva small ${claseFuente}"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <button class="btn btn-outline-indigo btn-sm btn-voice" data-id="${t.id}" title="Escuchar"><i class="bi bi-volume-up"></i></button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-indigo'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i> Firmar' : '<i class="bi bi-pen"></i> Firmar'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'practicar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card-cuaderno" data-practica-id="${t.id}">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓' : '?'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="definicion small" style="filter:blur(4px);user-select:none;">${t.definicion}</p>
+                <p class="ejemplo-cursiva small ${claseFuente}" style="filter:blur(4px);user-select:none;"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between mt-2">
+                  <button class="btn btn-outline-indigo btn-sm btn-revelar-practica" data-id="${t.id}"><i class="bi bi-eye"></i> Revelar</button>
+                  <button class="btn btn-sm btn-outline-info btn-practicar-detalle" data-id="${t.id}"><i class="bi bi-pencil"></i> Practicar</button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-indigo'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i>' : '<i class="bi bi-pen"></i>'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'progreso') {
+        const aprendidas = TECNICAS.filter(t => progreso[t.id]);
+        const pendientes = TECNICAS.filter(t => !progreso[t.id]);
+        const pct = Math.round((aprendidas.length / TECNICAS.length) * 100);
+        grid.innerHTML = `
+          <div class="col-12">
+            <div class="cuaderno">
+              <div class="lineas">
+                <h5><i class="bi bi-bar-chart-fill me-2" style="color:var(--indigo);"></i>Tu progreso</h5>
+                <div class="progreso-bar mt-2"><div class="progress-fill" style="width:${pct}%;"></div></div>
+                <p class="mt-2"><strong>${aprendidas.length}</strong> de ${TECNICAS.length} técnicas aprendidas (${pct}%)</p>
+                <p class="mt-1"><i class="bi bi-journal-text"></i> Entradas en tu cuaderno: <strong>${entradasCuaderno.length}</strong></p>
+                <div class="row mt-3">
+                  <div class="col-md-6">
+                    <h6 class="text-success"><i class="bi bi-check-circle"></i> Aprendidas</h6>
+                    ${aprendidas.length ? aprendidas.map(t => `<span class="badge bg-success me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">Aún no has firmado ninguna.</p>'}
+                  </div>
+                  <div class="col-md-6">
+                    <h6 class="text-secondary"><i class="bi bi-hourglass-split"></i> Pendientes</h6>
+                    ${pendientes.length ? pendientes.map(t => `<span class="badge bg-secondary me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">¡Todo aprendido!</p>'}
+                  </div>
+                </div>
+                <div class="firma-cursiva mt-3 text-end ${claseFuente}">— Tu cuaderno contrastivo</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      asignarEventos();
+      actualizarContador();
+    }
+
+    // ----------------------------------------------------------------
+    // 6. ASIGNACIÓN DE EVENTOS
+    // ----------------------------------------------------------------
+    function asignarEventos() {
+      document.querySelectorAll('.btn-firmar').forEach(btn => {
+        btn.removeEventListener('click', handleFirmar);
+        btn.addEventListener('click', handleFirmar);
+      });
+
+      document.querySelectorAll('.btn-voice').forEach(btn => {
+        btn.removeEventListener('click', handleVoice);
+        btn.addEventListener('click', handleVoice);
+      });
+
+      document.querySelectorAll('.btn-revelar-practica').forEach(btn => {
+        btn.removeEventListener('click', handleRevelarPractica);
+        btn.addEventListener('click', handleRevelarPractica);
+      });
+
+      document.querySelectorAll('.btn-practicar-detalle').forEach(btn => {
+        btn.removeEventListener('click', handlePracticarDetalle);
+        btn.addEventListener('click', handlePracticarDetalle);
+      });
+
+      document.querySelectorAll('.card-cuaderno[data-practica-id]').forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+        card.addEventListener('click', handleCardClick);
+      });
+    }
+
+    function handleFirmar(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      toggleAprendida(id);
+    }
+
+    function handleVoice(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+    }
+
+    function handleRevelarPractica(e) {
+      e.stopPropagation();
+      const card = this.closest('.card-cuaderno');
+      if (card) {
+        card.classList.toggle('revelado');
+        this.textContent = card.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+      }
+    }
+
+    function handlePracticarDetalle(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (!tec) return;
+      const modal = new bootstrap.Modal(document.getElementById('modalPractica'));
+      document.getElementById('modalDefinicion').textContent = tec.definicion;
+      document.getElementById('modalEjemplo').textContent = tec.ejemplo;
+      document.getElementById('inputRespuesta').value = '';
+      document.getElementById('inputFirma').value = '';
+      document.getElementById('modalFeedback').innerHTML = '';
+      document.getElementById('btnGuardarCuaderno').dataset.id = tec.id;
+      document.getElementById('btnVoiceModal').dataset.id = tec.id;
+      modal.show();
+    }
+
+    function handleCardClick(e) {
+      if (e.target.closest('button')) return;
+      this.classList.toggle('revelado');
+      const btn = this.querySelector('.btn-revelar-practica');
+      if (btn) btn.textContent = this.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+    }
+
+    // ----------------------------------------------------------------
+    // 7. NAVEGACIÓN, FILTROS, FUENTES Y VOZ
+    // ----------------------------------------------------------------
+    function setModo(modo) {
+      modoActual = modo;
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => el.classList.remove('active'));
+      const activeLink = document.querySelector(`.navbar-custom .nav-link[data-modo="${modo}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      renderizar();
+    }
+
+    function setBloque(bloque) {
+      bloqueFiltro = bloque;
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => el.classList.remove('active'));
+      const activeBtn = document.querySelector(`.filtro-bloque .btn[data-bloque="${bloque}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderizar();
+    }
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      const status = document.getElementById('voiceStatus');
+      const btn = document.getElementById('btnVoiceToggle');
+      if (voiceEnabled) {
+        status.classList.remove('d-none');
+        btn.classList.add('btn-indigo');
+        btn.classList.remove('btn-outline-indigo');
+      } else {
+        status.classList.add('d-none');
+        btn.classList.remove('btn-indigo');
+        btn.classList.add('btn-outline-indigo');
+        if (speechSynth.speaking) speechSynth.cancel();
+      }
+    }
+
+    function cambiarFuente(valor) {
+      fuenteActual = valor;
+      renderizar();
+    }
+
+    // ----------------------------------------------------------------
+    // 8. INICIALIZACIÓN
+    // ----------------------------------------------------------------
+    function init() {
+      cargarProgreso();
+      cargarCuaderno();
+
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          setModo(this.dataset.modo);
+        });
+      });
+
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => {
+        el.addEventListener('click', function() {
+          setBloque(this.dataset.bloque);
+        });
+      });
+
+      document.getElementById('btnVoiceToggle').addEventListener('click', toggleVoice);
+
+      document.getElementById('fuenteCursiva').addEventListener('change', function(e) {
+        cambiarFuente(this.value);
+      });
+
+      // Flashcard eventos
+      document.getElementById('flashVoltear').addEventListener('click', flashVoltear);
+      document.getElementById('flashNext').addEventListener('click', flashNext);
+      document.getElementById('flashPrev').addEventListener('click', flashPrev);
+      document.getElementById('flashFirmar').addEventListener('click', flashFirmar);
+      document.getElementById('flashVoice').addEventListener('click', flashVoice);
+      document.getElementById('flashcard').addEventListener('click', function(e) {
+        if (e.target.closest('button')) return;
+        flashVoltear();
+      });
+
+      // Modal: Guardar entrada
+      document.getElementById('btnGuardarCuaderno').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const respuesta = document.getElementById('inputRespuesta').value;
+        const firma = document.getElementById('inputFirma').value;
+        if (!respuesta.trim()) {
+          document.getElementById('modalFeedback').innerHTML = '<div class="alert alert-warning">Escribe la técnica antes de guardar.</div>';
+          return;
+        }
+        guardarEntradaCuaderno(id, respuesta, firma);
+        document.getElementById('modalFeedback').innerHTML = '<div class="alert alert-success">¡Guardado en tu cuaderno!</div>';
+        if (!progreso[id]) {
+          toggleAprendida(id);
+        }
+        setTimeout(() => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalPractica'));
+          if (modal) modal.hide();
+        }, 1200);
+      });
+
+      document.getElementById('btnVoiceModal').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const tec = TECNICAS.find(t => t.id === id);
+        if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+      });
+
+      document.getElementById('borrarTodoCuaderno').addEventListener('click', function() {
+        if (confirm('¿Borrar todas las entradas de tu cuaderno?')) {
+          entradasCuaderno = [];
+          guardarCuaderno();
+          renderizarCuaderno();
+        }
+      });
+
+      setModo('explorar');
+      setBloque('todos');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>

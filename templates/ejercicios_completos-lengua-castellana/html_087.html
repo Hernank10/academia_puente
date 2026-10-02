@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>100 técnicas de ortografía avanzada para universitarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #f8f5f0; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .hero { background: linear-gradient(135deg, #1e2a3a 0%, #0f1a24 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; border-radius: 0 0 1rem 1rem; }
+        .card-flash { border: none; border-radius: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-flash:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .btn-sound { background: #2c3e50; color: white; border-radius: 40px; padding: 0.25rem 0.9rem; font-size: 0.75rem; }
+        .btn-sound:hover { background: #d4af37; color: #1e2a3a; }
+        .footer { background: #1e2a3a; color: #cddde9; margin-top: 3rem; padding: 1.5rem 0; text-align: center; }
+        .float-voice-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2c3e50; color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s; }
+        .float-voice-btn:hover { background: #d4af37; color: #1e2a3a; transform: scale(1.1); }
+        .voice-controls { position: fixed; bottom: 100px; right: 30px; background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold"><i class="fas fa-spell-check me-3"></i>Ortografía avanzada para universitarios</h1>
+        <p class="lead">100 técnicas de acentuación, uso de letras, mayúsculas, abreviaturas, siglas, puntuación y vicios ortográficos.</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-accent"></i> Acentuación</span>
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-font"></i> Uso de letras</span>
+            <span class="badge bg-light text-dark"><i class="fas fa-code"></i> Siglas y abreviaturas</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="alert alert-info rounded-pill text-center mb-4">
+        <i class="fas fa-microphone-alt"></i> Activa el lector de voz (botón flotante) para escuchar cada técnica. <strong>100 reglas con ejemplos y ejercicios</strong>
+    </div>
+    <div class="row g-4" id="cardsContainer"></div>
+</div>
+
+<footer class="footer">
+    <div class="container"><small><i class="fas fa-pencil-alt"></i> 100 técnicas de ortografía avanzada · basado en normas RAE y usos académicos</small></div>
+</footer>
+
+<button class="float-voice-btn" id="floatVoiceBtn" onclick="toggleVoiceControls()"><i class="fas fa-head-side-vr fa-2x"></i></button>
+<div class="voice-controls" id="voiceControls">
+    <div class="d-flex flex-column gap-2">
+        <button class="btn btn-sm btn-primary" onclick="readPageContent()"><i class="fas fa-play"></i> Leer página</button>
+        <button class="btn btn-sm btn-secondary" onclick="stopSpeech()"><i class="fas fa-stop"></i> Detener</button>
+        <select id="voiceSelect" class="form-select form-select-sm" onchange="setVoice()"></select>
+        <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="0.9" onchange="setRate()">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const tecnicas = [
+        { id:1, name:"Acentuación de palabras agudas", category:"Acentuación", teoria:"Las palabras agudas llevan tilde cuando terminan en vocal, 'n' o 's'.", ejemplo:"Canción, compás, estrés, tabú.", ejercicio:"¿Lleva tilde 'corazón'?", suggestedAnswer:"Sí, porque termina en 'n'." },
+        { id:2, name:"Acentuación de palabras graves (llanas)", category:"Acentuación", teoria:"Llevan tilde cuando NO terminan en vocal, 'n' o 's'.", ejemplo:"Árbol, lápiz, fácil, césped.", ejercicio:"¿Lleva tilde 'examen'?", suggestedAnswer:"No, porque termina en 'n' (es grave, pero termina en n, por tanto no se tilda)." },
+        { id:3, name:"Acentuación de palabras esdrújulas", category:"Acentuación", teoria:"Todas las palabras esdrújulas llevan tilde.", ejemplo:"Médico, esdrújula, pájaro, clásico.", ejercicio:"Acentúa 'lapicero'.", suggestedAnswer:"Lapicero (es grave, no se tilda; 'lápiz' sí se tilda)." },
+        { id:4, name:"Acentuación de palabras sobresdrújulas", category:"Acentuación", teoria:"Todas las palabras sobresdrújulas (acento en sílaba anterior a la antepenúltima) llevan tilde.", ejemplo:"Dímelo, gráficaselo, fácilmente.", ejercicio:"Acentúa 'diganoslo'.", suggestedAnswer:"Díganoslo." },
+        { id:5, name:"Tilde diacrítica en monosílabos", category:"Acentuación", teoria:"Algunos monosílabos llevan tilde para distinguirlos de otros con la misma forma pero diferente función.", ejemplo:"él/el, té/te, sí/si, mí/mi, más/mas, sé/se, dé/de.", ejercicio:"Diferencia 'mi' y 'mí'.", suggestedAnswer:"Mi (posesivo: mi casa), mí (pronombre: para mí)." },
+        { id:6, name:"Tilde diacrítica en demostrativos (hoy sin tilde)", category:"Acentuación", teoria:"Según la RAE (2010), los demostrativos (este, ese, aquel) nunca llevan tilde.", ejemplo:"Este es mi libro. (pronombre, sin tilde).", ejercicio:"¿Lleva tilde 'ése' en la norma actual?", suggestedAnswer:"No, según la última ortografía de la RAE, no se tilda." },
+        { id:7, name:"Tilde en 'solo'", category:"Acentuación", teoria:"El adverbio 'solo' (solamente) ya no lleva tilde según la RAE, salvo ambigüedad.", ejemplo:"Solo quiero descansar. (sin tilde)", ejercicio:"¿Debe llevar tilde 'solo' en 'Trabajo solo los lunes'?", suggestedAnswer:"No, porque no hay ambigüedad." },
+        { id:8, name:"Acentuación de interrogativos y exclamativos", category:"Acentuación", teoria:"Los interrogativos y exclamativos (qué, quién, cómo, cuándo, dónde, cuál, cuánto) llevan tilde en oraciones interrogativas o exclamativas.", ejemplo:"¿Qué hora es? No sé qué hora es.", ejercicio:"Diferencia 'como' y 'cómo'.", suggestedAnswer:"Como (conjunción: como quieras), cómo (interrogativo: ¿cómo estás?)." },
+        { id:9, name:"Acentuación de hiatos con vocal cerrada tónica", category:"Acentuación", teoria:"Si un hiato está formado por vocal cerrada tónica (í, ú) y vocal abierta (a, e, o), la cerrada siempre lleva tilde.", ejemplo:"Día, caída, raíz, oído, reúne.", ejercicio:"Acentúa 'oído'.", suggestedAnswer:"oído." },
+        { id:10, name:"Diptongos y tildación", category:"Acentuación", teoria:"Los diptongos siguen las reglas generales: la tilde se coloca sobre la vocal abierta si corresponde.", ejemplo:"Canción (aguda), diálogo (esdrújula).", ejercicio:"Acentúa 'estudiáis'.", suggestedAnswer:"estudiáis (aguda terminada en 's', tilde en 'a')." },
+        { id:11, name:"Triptongos y tildación", category:"Acentuación", teoria:"En un triptongo, la tilde, si corresponde, se coloca en la vocal abierta.", ejemplo:"Averiguáis, estudiáis.", ejercicio:"Acentúa 'despreciéis'.", suggestedAnswer:"despreciéis (aguda, tilde en 'e')." },
+        { id:12, name:"Palabras compuestas (primer elemento sin tilde)", category:"Acentuación", teoria:"En palabras compuestas, el primer elemento pierde la tilde (excepto si se unen con guion).", ejemplo:"Río + platense = rioplatense (sin tilde).", ejercicio:"¿Cómo se escribe 'físico-químico'?", suggestedAnswer:"Con tilde en 'í' y 'í' porque se unen con guion." },
+        { id:13, name:"Adverbios en '-mente'", category:"Acentuación", teoria:"Los adverbios en -mente conservan la tilde del adjetivo base si la tenía.", ejemplo:"Fácilmente (de fácil), rápidamente (de rápida, sin tilde).", ejercicio:"¿Lleva tilde 'lentamente'?", suggestedAnswer:"No, porque 'lenta' no lleva tilde." },
+        { id:14, name:"Uso de 'b' en palabras con 'bu', 'bur', 'bus'", category:"Uso de letras", teoria:"Se escribe 'b' en palabras que comienzan con 'bu', 'bur', 'bus', y en terminaciones -aba, -abas del pretérito imperfecto.", ejemplo:"Bueno, burla, busca; cantaba, mirábamos.", ejercicio:"Completa: 'Le ___ regalado' (había/abía).", suggestedAnswer:"había (con b)." },
+        { id:15, name:"Uso de 'b' después de 'm'", category:"Uso de letras", teoria:"Después de 'm' siempre se escribe 'b', no 'v'.", ejemplo:"También, bombilla, ambiguo.", ejercicio:"Completa: 'Pro___blema' (b o v).", suggestedAnswer:"Problema (b)." },
+        { id:16, name:"Uso de 'v' en palabras con 'dier-' y 'nie-'", category:"Uso de letras", teoria:"Se escriben con 'v' los verbos que empiezan por 'dier-' y 'nie-'.", ejemplo:"Diversión, divertir, nieve.", ejercicio:"Completa: '___vierta' (di- o di- con b/v).", suggestedAnswer:"Diversión (v)." },
+        { id:17, name:"Uso de 'c' en verbos terminados en -cer, -cir", category:"Uso de letras", teoria:"Los verbos terminados en -cer, -cir se escriben con 'c' (excepto ser, coser, toser, asir).", ejemplo:"Conocer, lucir, producir.", ejercicio:"Completa: 'Condu___ir' (c o s).", suggestedAnswer:"Conducir (c)." },
+        { id:18, name:"Uso de 's' en adjetivos terminados en -aso, -eso, -iso, -oso, -uso", category:"Uso de letras", teoria:"Los adjetivos terminados en -aso, -eso, -iso, -oso, -uso se escriben con 's'.", ejemplo:"Escaso, tieso, preciso, tedioso, difuso.", ejercicio:"Completa: 'permiso' o 'permizo'.", suggestedAnswer:"permiso (s)." },
+        { id:19, name:"Uso de 'll' y 'y' (yeísmo general)", category:"Uso de letras", teoria:"Se escribe 'y' después de los prefijos ad-, dis-, sub-; 'll' en palabras como llave.", ejemplo:"Adyacente, disyuntiva, subyugar; llave.", ejercicio:"Completa: '___ace' (llave o yave).", suggestedAnswer:"Llave (con ll)." },
+        { id:20, name:"Uso de 'x' en palabras con prefijo ex-", category:"Uso de letras", teoria:"El prefijo 'ex-' (que significa 'fuera') se escribe con 'x'.", ejemplo:"Exalumno, exmarido, exsecretario.", ejercicio:"¿'Extra' lleva 'x' o 's'?", suggestedAnswer:"Extra (con x)." },
+        { id:21, name:"Uso de 'g' en palabras con sonido gutural suave ante e, i", category:"Uso de letras", teoria:"El sonido /x/ se escribe con 'g' cuando procede de palabras que tienen 'g' en otras formas.", ejemplo:"Coger (cojo), elegir (elijo).", ejercicio:"Completa: 'Enc___r' (g o j).", suggestedAnswer:"Encoger." },
+        { id:22, name:"Uso de 'h' en formas verbales de haber y hacer", category:"Uso de letras", teoria:"Se escriben con 'h' los verbos haber, hacer, hablar, habitar, hallar y sus derivados.", ejemplo:"He, has, ha, hemos, han; hago, hace.", ejercicio:"Completa: '___ay una fiesta' (hay o ay).", suggestedAnswer:"Hay (del verbo haber)." },
+        { id:23, name:"Palabras con 'h' intercalada (origen latino/griego)", category:"Uso de letras", teoria:"Muchas palabras llevan 'h' intercalada por su origen etimológico.", ejemplo:"Adherir, cohesión, inhibir, vehículo.", ejercicio:"Completa: 'ad___erir' (h o sin h).", suggestedAnswer:"Adherir (con h)." },
+        { id:24, name:"Uso de 'c' y 'z' en plurales", category:"Uso de letras", teoria:"Los sustantivos terminados en 'z' cambian la 'z' por 'c' en el plural.", ejemplo:"Lápiz → lápices, pez → peces.", ejercicio:"Escribe el plural de 'voz'.", suggestedAnswer:"Voces." },
+        { id:25, name:"Uso de 'c' y 'qu' ante e, i", category:"Uso de letras", teoria:"El sonido /k/ ante e, i se escribe 'qu'.", ejemplo:"Queso, quitar, químico.", ejercicio:"Completa: '___eremos' (c o qu).", suggestedAnswer:"Queremos (qu)." },
+        { id:26, name:"Uso de 'g' y 'gu' ante e, i", category:"Uso de letras", teoria:"Para el sonido /g/ ante e, i se escribe 'gu'.", ejemplo:"Guitarra, guisar, guerrero.", ejercicio:"Completa: '___itarra' (g o gu).", suggestedAnswer:"Guitarra (gu)." },
+        { id:27, name:"Uso de 'r' y 'rr'", category:"Uso de letras", teoria:"Se escribe 'rr' entre vocales para vibrante múltiple; 'r' para simple o al inicio.", ejemplo:"Carro, caro, ratón.", ejercicio:"Completa: 'ca___o' (r o rr).", suggestedAnswer:"Carro (rr) o caro (r)." },
+        { id:28, name:"Uso de 'm' antes de 'p' y 'b'", category:"Uso de letras", teoria:"Antes de 'p' y 'b' siempre se escribe 'm'.", ejemplo:"Cambio, tiempo, también, ambiguo.", ejercicio:"Completa: 'co___bio' (n o m).", suggestedAnswer:"cambio (m)." },
+        { id:29, name:"Uso de 'n' antes de 'v', 'f', 'g'", category:"Uso de letras", teoria:"Antes de 'v' se escribe 'n' (envío); antes de 'f' (enfermo); antes de 'g' (ángel).", ejemplo:"Convenio, confiar, ingrato.", ejercicio:"Completa: 'i___vidioso' (n o m).", suggestedAnswer:"Invidioso (n)." },
+        { id:30, name:"Mayúscula en nombres propios y apellidos", category:"Mayúsculas", teoria:"Los nombres propios de personas, lugares, marcas, instituciones se escriben con mayúscula.", ejemplo:"Juan, México, Google.", ejercicio:"Corrige: 'el río amazonas'.", suggestedAnswer:"El río Amazonas." },
+        { id:31, name:"Mayúscula en fechas históricas y festividades", category:"Mayúsculas", teoria:"Los nombres de festividades, fechas históricas, periodos se escriben con mayúscula.", ejemplo:"Navidad, Revolución Francesa.", ejercicio:"Corrige: 'el renacimiento'.", suggestedAnswer:"El Renacimiento." },
+        { id:32, name:"Mayúscula en títulos de obras", category:"Mayúsculas", teoria:"Los títulos de libros, películas se escriben con mayúscula inicial en la primera palabra y en nombres propios.", ejemplo:"Cien años de soledad.", ejercicio:"Corrige: 'LA CASA DE BERNARDA ALBA'.", suggestedAnswer:"La casa de Bernarda Alba." },
+        { id:33, name:"Mayúscula después de punto", category:"Mayúsculas", teoria:"Después de un punto se escribe mayúscula.", ejemplo:"Llegó tarde. No avisó.", ejercicio:"Corrige: 'está lloviendo. nos mojaremos'.", suggestedAnswer:"Está lloviendo. Nos mojaremos." },
+        { id:34, name:"Mayúscula en nombres de divinidades", category:"Mayúsculas", teoria:"Los nombres de deidades se escriben con mayúscula.", ejemplo:"Dios, Alá, Jehová.", ejercicio:"Corrige: 'la virgen de guadalupe'.", suggestedAnswer:"la Virgen de Guadalupe." },
+        { id:35, name:"Abreviaturas (punto final)", category:"Abreviaturas", teoria:"Las abreviaturas se escriben con punto final.", ejemplo:"pág., Dr., Ud., EE. UU.", ejercicio:"Escribe la abreviatura de 'señor'.", suggestedAnswer:"Sr." },
+        { id:36, name:"Siglas y acrónimos (sin puntos)", category:"Siglas", teoria:"Las siglas se escriben sin puntos (ONU, OEA). Los acrónimos se leen como palabras.", ejemplo:"ONU, UNESCO, sida.", ejercicio:"Escribe correctamente 'OVNI' o 'ovni'.", suggestedAnswer:"Ambas son correctas." },
+        { id:37, name:"Coma en enumeraciones", category:"Puntuación", teoria:"Se usa coma para separar elementos de una enumeración, excepto antes de 'y'.", ejemplo:"Compré leche, pan, huevos y queso.", ejercicio:"Corrige: 'Necesito papel tijeras pegamento y cartulina'.", suggestedAnswer:"Necesito papel, tijeras, pegamento y cartulina." },
+        { id:38, name:"Coma vocativa", category:"Puntuación", teoria:"La coma separa el vocativo del resto de la oración.", ejemplo:"Juan, ven aquí.", ejercicio:"Corrige: 'Señor López puede pasar'.", suggestedAnswer:"Señor López, puede pasar." },
+        { id:39, name:"Coma entre sujeto y verbo (no debe usarse)", category:"Puntuación", teoria:"No se escribe coma entre el sujeto y el verbo.", ejemplo:"Incorrecto: 'Mi hermano, llegó tarde'.", ejercicio:"Corrige: 'Los estudiantes, aprobaron el examen'.", suggestedAnswer:"Los estudiantes aprobaron el examen." },
+        { id:40, name:"Coma en aposiciones explicativas", category:"Puntuación", teoria:"Las aposiciones explicativas van entre comas.", ejemplo:"Mi amigo, el arquitecto, vendrá.", ejercicio:"Pon comas en 'Mi vecino Juan es simpático'.", suggestedAnswer:"Mi vecino, Juan, es simpático." },
+        { id:41, name:"Punto y coma", category:"Puntuación", teoria:"Se usa punto y coma para separar oraciones relacionadas, especialmente cuando ya tienen comas internas.", ejemplo:"Llegaron los invitados; los niños, emocionados; los adultos, cansados.", ejercicio:"Reemplaza la coma por punto y coma: 'Llegué tarde, sin embargo, no perdí el examen'.", suggestedAnswer:"Llegué tarde; sin embargo, no perdí el examen." },
+        { id:42, name:"Dos puntos", category:"Puntuación", teoria:"Se usan para anunciar una enumeración, cita literal o explicación.", ejemplo:"Necesitas tres cosas: paciencia, esfuerzo y constancia.", ejercicio:"Añade dos puntos en 'La verdad es una el amor no se compra'.", suggestedAnswer:"La verdad es una: el amor no se compra." },
+        { id:43, name:"Puntos suspensivos", category:"Puntuación", teoria:"Indican suspensión del discurso, duda o final abierto.", ejemplo:"No sé si decirle la verdad...", ejercicio:"Corrige: 'No me gusta... .'", suggestedAnswer:"No me gusta..." },
+        { id:44, name:"Interrogación y exclamación (signos de apertura)", category:"Puntuación", teoria:"Los signos de interrogación y exclamación se escriben al inicio y al final.", ejemplo:"¿Cómo estás? ¡Qué bien!", ejercicio:"Corrige: 'Cómo te llamas?'.", suggestedAnswer:"¿Cómo te llamas?" },
+        { id:45, name:"Paréntesis y corchetes", category:"Puntuación", teoria:"Los paréntesis se usan para intercalar aclaraciones; los corchetes para inserciones en citas.", ejemplo:"La RAE (Real Academia Española) se fundó en 1713.", ejercicio:"Escribe una oración con un inciso entre paréntesis.", suggestedAnswer:"El concierto (que duró tres horas) fue magnífico." },
+        { id:46, name:"Comillas", category:"Puntuación", teoria:"Se usan para citas textuales, títulos de artículos o poemas, y para marcar extranjerismos.", ejemplo:"Me dijo: 'Vendré mañana'.", ejercicio:"Pon comillas en 'El artículo El cambio climático es interesante'.", suggestedAnswer:"El artículo 'El cambio climático' es interesante." },
+        { id:47, name:"Raya (guion largo)", category:"Puntuación", teoria:"Se usa en diálogos y para encerrar incisos más enfáticos.", ejemplo:"—¿Vienes? —Sí, ahora mismo.", ejercicio:"Escribe un breve diálogo de dos líneas usando raya.", suggestedAnswer:"—Hola —dijo Juan. —Buenas —respondió Ana." },
+        { id:48, name:"Guion en palabras compuestas", category:"Uso de letras", teoria:"Se usa para unir palabras compuestas (teórico-práctico).", ejemplo:"Relación calidad-precio.", ejercicio:"Escribe el compuesto de 'teórico' y 'práctico'.", suggestedAnswer:"teórico-práctico." },
+        { id:49, name:"Barbarismo (vicio ortográfico)", category:"Vicios del lenguaje", teoria:"Error en la escritura de palabras (falta o exceso de letras).", ejemplo:"'Dentrífico' por 'dentífrico'.", ejercicio:"Corrige: 'Bacalado'.", suggestedAnswer:"Bacalao." },
+        { id:50, name:"Ultracorrección (hipercorrección)", category:"Vicios del lenguaje", teoria:"Corrección exagerada que lleva a formas incorrectas.", ejemplo:"'Cocreta' por 'croqueta'.", ejercicio:"Corrige 'absorver'.", suggestedAnswer:"absorber." },
+        { id:51, name:"Dequeísmo (vicio sintáctico-ortográfico)", category:"Vicios del lenguaje", teoria:"Añadir 'de' antes de 'que' cuando el verbo no lo exige.", ejemplo:"Incorrecto: Pienso de que vendrá.", ejercicio:"Corrige 'Me di cuenta que llegaste tarde'.", suggestedAnswer:"Me di cuenta de que llegaste tarde." },
+        { id:52, name:"Queísmo", category:"Vicios del lenguaje", teoria:"Omitir la preposición necesaria antes de 'que'.", ejemplo:"Incorrecto: Me acuerdo que fue bonito.", ejercicio:"Corrige 'Estoy seguro que ganaremos'.", suggestedAnswer:"Estoy seguro de que ganaremos." },
+        { id:53, name:"Escritura de números romanos", category:"Ortografía de numerales", teoria:"Los números romanos se escriben con mayúsculas y no llevan punto.", ejemplo:"Siglo XXI, Juan Carlos I.", ejercicio:"Escribe en números romanos '2024'.", suggestedAnswer:"MMXXIV." },
+        { id:54, name:"Extranjerismos adaptados", category:"Extranjerismos", teoria:"Los extranjerismos adaptados deben ajustarse a la ortografía española.", ejemplo:"Fútbol (del inglés football).", ejercicio:"Escribe la adaptación de 'basketball'.", suggestedAnswer:"Baloncesto (o 'básquet')." },
+        { id:55, name:"Extranjerismos crudos (en cursiva o comillas)", category:"Extranjerismos", teoria:"Los extranjerismos no adaptados se escriben en cursiva o entre comillas.", ejemplo:"El 'mail' fue enviado.", ejercicio:"¿Cómo se escribe 'software' en un texto formal?", suggestedAnswer:"Software (se considera adaptado)." },
+        { id:56, name:"Prefijos (escritura unida)", category:"Prefijación", teoria:"Los prefijos se escriben pegados a la palabra base, sin guion.", ejemplo:"Anteayer, precaución, exalumno.", ejercicio:"Corrige 'ex-presidente'.", suggestedAnswer:"expresidente." },
+        { id:57, name:"Uso de 'por qué', 'porque', 'porqué', 'por que'", category:"Ortografía de palabras", teoria:"Por qué (interrogativo), porque (causal), porqué (sustantivo), por que (prep + relativo).", ejemplo:"¿Por qué viniste? Porque quería.", ejercicio:"Completa: 'No entiendo el ___ de tu actitud'.", suggestedAnswer:"porqué." },
+        { id:58, name:"Uso de 'sino' y 'si no'", category:"Ortografía de palabras", teoria:"Sino (adversativa), si no (condición + negación).", ejemplo:"No quiero dinero, sino justicia. Si no estudias, suspenderás.", ejercicio:"Completa: 'No vino, ___ llamó'.", suggestedAnswer:"sino." },
+        { id:59, name:"Uso de 'haber' y 'a ver'", category:"Ortografía de palabras", teoria:"Haber (verbo); a ver (expresión de expectativa).", ejemplo:"Debe haber comida. A ver si nos vemos.", ejercicio:"Completa: '___ si puedes ayudarme'.", suggestedAnswer:"A ver." },
+        { id:60, name:"Uso de 'con que', 'conque', 'con qué'", category:"Ortografía de palabras", teoria:"Con que (prep + relativo), conque (consecutivo), con qué (interrogativo).", ejemplo:"El lápiz con que escribo; Llegaste tarde, conque no te quejes; ¿Con qué lo harás?", ejercicio:"Completa: 'Llegaste tarde, ___ no te quejes'.", suggestedAnswer:"conque." },
+        { id:61, name:"Uso de 'también' y 'tampoco' con tilde", category:"Ortografía de palabras", teoria:"Se escriben con tilde.", ejemplo:"Yo también quiero. Él tampoco vino.", ejercicio:"Corrige: 'Yo tambien estoy cansado'.", suggestedAnswer:"Yo también estoy cansado." },
+        { id:62, name:"Uso de 'acerca de' y 'a cerca de'", category:"Ortografía de palabras", teoria:"Acerca de (sobre); a cerca de (distancia).", ejemplo:"Hablamos acerca del examen. Vivimos a cerca de diez kilómetros.", ejercicio:"Completa: 'Lee ___ de la historia'.", suggestedAnswer:"acerca de." },
+        { id:63, name:"Uso de 'encima' y 'en cima'", category:"Ortografía de palabras", teoria:"Encima (sobre); en cima (cumbre).", ejemplo:"Ponlo encima de la mesa. Estamos en la cima.", ejercicio:"Completa: 'Se puso ___ de todo'.", suggestedAnswer:"encima." },
+        { id:64, name:"Uso de 'demás' y 'de más'", category:"Ortografía de palabras", teoria:"Demás (los otros); de más (exceso).", ejemplo:"Los demás se fueron. No trabajes de más.", ejercicio:"Completa: 'No quiero hablar con los ___'.", suggestedAnswer:"demás." },
+        { id:65, name:"Acentuación de los demostrativos (hoy sin tilde)", category:"Acentuación", teoria:"Los demostrativos nunca llevan tilde según normativa actual.", ejemplo:"Este es mi coche. Aquel vino ayer.", ejercicio:"¿Lleva tilde 'ése' en 'Ése es mi amigo'?", suggestedAnswer:"No." },
+        { id:66, name:"Uso de la doble ele (ll) y la ye (y): excepciones", category:"Uso de letras", teoria:"Palabras como 'yeso', 'yema' con 'y'; 'llave', 'llover' con 'll'.", ejemplo:"Yodo, llama.", ejercicio:"Elige: 'ya/lla' para '___ma' (planta con flores).", suggestedAnswer:"Llama." },
+        { id:67, name:"Uso de 'c' y 'z' en verbos terminados en -zar", category:"Uso de letras", teoria:"Los verbos en -zar cambian 'z' por 'c' ante 'e'.", ejemplo:"Cazar → cacé, cacé; comenzar → comencé.", ejercicio:"Escribe la primera persona del pretérito de 'gozar'.", suggestedAnswer:"Gocé." },
+        { id:68, name:"Uso de 'g' y 'j' en verbos terminados en -ger, -gir, -jear", category:"Uso de letras", teoria:"Verbos en -ger, -gir se escriben con 'g', pero 1ª persona del pretérito lleva 'j'.", ejemplo:"Coger (cojo), dirigir (dirijo).", ejercicio:"Escribe la primera persona del presente de 'escoger'.", suggestedAnswer:"Escojo." },
+        { id:69, name:"Mayúscula en cargos y títulos (minúscula)", category:"Mayúsculas", teoria:"Los cargos se escriben con minúscula.", ejemplo:"El presidente del gobierno.", ejercicio:"Corrige: 'El Presidente López'.", suggestedAnswer:"El presidente López." },
+        { id:70, name:"Abreviaturas de tratamiento en mayúscula", category:"Abreviaturas", teoria:"Se escriben con mayúscula inicial y punto.", ejemplo:"Sr., D., Ud.", ejercicio:"Escribe la abreviatura de 'usted'.", suggestedAnswer:"Ud." },
+        { id:71, name:"Siglas que se lexicalizan (minúsculas)", category:"Siglas", teoria:"Las siglas lexicalizadas se escriben en minúsculas.", ejemplo:"sida, ovni, láser.", ejercicio:"Escribe 'ONU' en minúscula si es lexicalizada.", suggestedAnswer:"onu (no se lexicaliza, se prefiere mayúsculas)." },
+        { id:72, name:"Punto en abreviaturas dobles (EE. UU., FF. AA.)", category:"Abreviaturas", teoria:"Llevan punto después de cada bloque.", ejemplo:"EE. UU., FF. AA.", ejercicio:"Escribe la abreviatura de 'Fuerzas Armadas'.", suggestedAnswer:"FF. AA." },
+        { id:73, name:"Abreviaturas sin punto (símbolos de unidades)", category:"Abreviaturas", teoria:"Los símbolos de unidades de medida no llevan punto ni se pluralizan.", ejemplo:"5 kg, 10 cm.", ejercicio:"Corrige '10 kilos' como símbolo.", suggestedAnswer:"10 kg." },
+        { id:74, name:"Uso de la diéresis (ü)", category:"Uso de letras", teoria:"Se coloca sobre la 'u' de 'gue', 'gui' para indicar que se pronuncia.", ejemplo:"Pingüino, antigüedad, bilingüe.", ejercicio:"Escribe la palabra 'agüita'.", suggestedAnswer:"agüita (con diéresis)." },
+        { id:75, name:"Palabras con 'psic-' y 'psiqu-'", category:"Uso de letras", teoria:"Se pueden escribir con 'psi' o 'si', pero la forma etimológica es preferida.", ejemplo:"Psicología o sicología.", ejercicio:"Elige: 'psicología' o 'sicología'.", suggestedAnswer:"Ambas son válidas." },
+        { id:76, name:"Uso de 'c' en palabras con 'ct' (cultismos)", category:"Uso de letras", teoria:"Los cultismos conservan el grupo 'ct'.", ejemplo:"Acción, afecto, defecto.", ejercicio:"Corrige 'accción'.", suggestedAnswer:"Acción." },
+        { id:77, name:"Uso de 'b' en palabras terminadas en -bir, -buir", category:"Uso de letras", teoria:"Verbos terminados en -bir, -buir se escriben con 'b' (excepto hervir, servir, vivir).", ejemplo:"Escribir, recibir, distribuir.", ejercicio:"Completa: 'Suscri___' (b o v).", suggestedAnswer:"SuscriBir (con b)." },
+        { id:78, name:"Uso de 'v' en palabras con 'eva', 'eve', 'evo', 'evi'", category:"Uso de letras", teoria:"Palabras que empiezan por 'eva', 'eve', 'evo', 'evi' se escriben con 'v'.", ejemplo:"Evasión, evento, evolución, evidencia.", ejercicio:"Elige: 'evolución' o 'ebolución'.", suggestedAnswer:"evolución." },
+        { id:79, name:"Acentuación de palabras latinas y extranjeras", category:"Acentuación", teoria:"Los extranjerismos y latinismos conservan su tilde original.", ejemplo:"Currículum, accésit, ítem.", ejercicio:"Acentúa 'curriculum' en el uso académico.", suggestedAnswer:"Currículum." },
+        { id:80, name:"Mayúscula en nombres de grupos musicales", category:"Mayúsculas", teoria:"Se escriben con mayúscula inicial de cada palabra significativa.", ejemplo:"Los Beatles, Soda Stereo.", ejercicio:"Escribe 'los beatles' correctamente.", suggestedAnswer:"Los Beatles." },
+        { id:81, name:"Abreviaturas complejas (por truncamiento)", category:"Abreviaturas", teoria:"Eliminan letras finales y añaden punto.", ejemplo:"pág., cap., ss.", ejercicio:"Escribe la abreviatura de 'número'.", suggestedAnswer:"núm." },
+        { id:82, name:"Uso de la barra (/) en alternativas", category:"Puntuación", teoria:"Indica alternativas (y/o, sí/no).", ejemplo:"Leer y/o escribir.", ejercicio:"Escribe una alternativa con barra.", suggestedAnswer:"Femenino/masculino." },
+        { id:83, name:"Uso de la barra en fechas", category:"Barra", teoria:"Separa día, mes y año.", ejemplo:"31/12/2024.", ejercicio:"Escribe la fecha 15 de mayo de 2025 con barra.", suggestedAnswer:"15/05/2025." },
+        { id:84, name:"Punto final después de comillas o paréntesis", category:"Puntuación", teoria:"El punto se coloca detrás de las comillas o paréntesis.", ejemplo:"Me dijo: 'Vendré'.", ejercicio:"Corrige 'Me dijo 'hasta luego'.'", suggestedAnswer:"Me dijo 'hasta luego'." },
+        { id:85, name:"Coma en oraciones condicionales antepuestas", category:"Puntuación", teoria:"Si la subordinada condicional va al inicio, se escribe coma.", ejemplo:"Si estudias, aprobarás.", ejercicio:"Pon coma en 'Cuando llegues avísame'.", suggestedAnswer:"Cuando llegues, avísame." },
+        { id:86, name:"Mayúscula en siglas (todas mayúsculas)", category:"Siglas", teoria:"Las siglas se escriben normalmente en mayúsculas, sin puntos.", ejemplo:"ONU, OEA, FIFA.", ejercicio:"Escribe la sigla de 'Organización de las Naciones Unidas'.", suggestedAnswer:"ONU." },
+        { id:87, name:"Uso de minúscula en siglas lexicalizadas", category:"Siglas", teoria:"Cuando una sigla se usa como palabra común, se escribe en minúsculas.", ejemplo:"sida, ovni, radar.", ejercicio:"Escribe 'SIDA' como sustantivo común.", suggestedAnswer:"sida." },
+        { id:88, name:"Punto en abreviaturas de meses y días", category:"Abreviaturas", teoria:"Las abreviaturas de meses y días no llevan punto.", ejemplo:"1º ene 2024.", ejercicio:"Corrige '1º de enero' como abreviatura.", suggestedAnswer:"1º ene." },
+        { id:89, name:"Uso de la raya en incisos", category:"Puntuación", teoria:"La raya puede usarse en lugar de paréntesis o coma para incisos destacados.", ejemplo:"El resultado —que nadie esperaba— fue sorprendente.", ejercicio:"Escribe un inciso con raya.", suggestedAnswer:"El presidente —por supuesto— no asistió." },
+        { id:90, name:"Ortografía de los apellidos (mantener grafía original)", category:"Ortografía de nombres", teoria:"Los apellidos conservan su grafía original.", ejemplo:"García, Fernández.", ejercicio:"Escribe correctamente 'Garcia' (apellido).", suggestedAnswer:"García." },
+        { id:91, name:"Corrección de errores comunes: 'solo' y demostrativos sin tilde", category:"Acentuación", teoria:"Recordatorio: 'solo' y demostrativos nunca llevan tilde.", ejemplo:"Solo quiero ayudarte. Este es mi libro.", ejercicio:"Escribe una frase con 'solo' como adverbio sin tilde.", suggestedAnswer:"Solo quiero ayudarte." },
+        { id:92, name:"Uso de 'échale' y 'echale' (imperativo con pronombre)", category:"Ortografía de palabras", teoria:"El imperativo 'echa' + 'le' se escribe 'échale' (con tilde por esdrújula).", ejemplo:"Échale sal.", ejercicio:"Escribe correctamente 'echale ganas'.", suggestedAnswer:"Échale ganas." },
+        { id:93, name:"Uso de 'porqué' como sustantivo", category:"Ortografía de palabras", teoria:"'Porqué' es un sustantivo sinónimo de 'causa' o 'motivo'.", ejemplo:"No entiendo el porqué de tu enojo.", ejercicio:"Completa: 'Explicó el ___ de su decisión'.", suggestedAnswer:"porqué." },
+        { id:94, name:"Acentuación de 'guion', 'truhan', 'fie' (monosílabos)", category:"Acentuación", teoria:"'Guion', 'truhan', 'fie' se consideran monosílabos y no llevan tilde.", ejemplo:"Escribe un guion. Es un truhán (en pronunciación bisilábica, algunos admiten tilde).", ejercicio:"¿Lleva tilde 'guion' según la RAE?", suggestedAnswer:"No (se considera monosílabo)." },
+        { id:95, name:"Uso de 'exmarido' sin guion", category:"Prefijación", teoria:"El prefijo 'ex' se escribe junto a la palabra.", ejemplo:"Expresidente, exalumno.", ejercicio:"Corrige 'ex-marido'.", suggestedAnswer:"exmarido." },
+        { id:96, name:"Uso de 'super' como prefijo (junto)", category:"Prefijación", teoria:"El prefijo 'super' se escribe junto a la base.", ejemplo:"supermercado, superhéroe.", ejercicio:"Corrige 'super héroe'.", suggestedAnswer:"superhéroe." },
+        { id:97, name:"Uso de 'vice' como prefijo (junto)", category:"Prefijación", teoria:"El prefijo 'vice' se escribe junto.", ejemplo:"vicepresidente, vicerrector.", ejercicio:"Corrige 'vice presidente'.", suggestedAnswer:"vicepresidente." },
+        { id:98, name:"Acentuación de palabras con prefijos (no afecta)", category:"Acentuación", teoria:"Los prefijos no alteran la acentuación de la base.", ejemplo:"rehacer (de hacer, sin tilde), preámbulo (con tilde).", ejercicio:"Acentúa 'prehistoria'.", suggestedAnswer:"prehistoria (llana, sin tilde)." },
+        { id:99, name:"Uso de la raya en diálogos (sin espacios)", category:"Puntuación", teoria:"La raya de diálogo se escribe pegada a la primera palabra.", ejemplo:"—¡Hola! —dijo.", ejercicio:"Corrige '— ¡Hola! — dijo'.", suggestedAnswer:"—¡Hola! —dijo." },
+        { id:100, name:"Regla de oro: leer y consultar diccionario", category:"Recomendación final", teoria:"La mejor técnica ortográfica es leer mucho y consultar el diccionario ante la duda.", ejemplo:"Usar la RAE en línea (rae.es).", ejercicio:"¿Qué recurso recomiendas para resolver dudas ortográficas?", suggestedAnswer:"El Diccionario de la Lengua Española (DLE) y la Ortografía de la RAE." }
+    ];
+
+    const container = document.getElementById('cardsContainer');
+    tecnicas.forEach(t => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card card-flash h-100">
+                <div class="card-header bg-transparent border-0 pt-3">
+                    <div class="d-flex justify-content-between">
+                        <div><h5 class="fw-bold">${t.name}</h5><span class="badge bg-secondary">${t.category}</span></div>
+                        <button class="btn btn-sound btn-sm" onclick="speakText('${t.name}. ${t.teoria} Ejemplo: ${t.ejemplo}')"><i class="fas fa-volume-up"></i> Leer</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-2 rounded mb-2"><strong>Teoría:</strong> ${t.teoria}</div>
+                    <div class="bg-warning bg-opacity-10 p-2 rounded mb-3"><strong>Ejemplo:</strong> “${t.ejemplo}”</div>
+                    <div class="exercise-area">
+                        <label class="fw-semibold">✍️ ${t.ejercicio}</label>
+                        <textarea class="form-control mt-2" id="answer-${t.id}" rows="2" placeholder="Escribe tu respuesta..."></textarea>
+                        <button class="btn btn-outline-success btn-sm mt-2" onclick="showSuggestion(${t.id}, '${t.suggestedAnswer.replace(/'/g, "\\'")}')">Ver sugerencia</button>
+                        <div id="feedback-${t.id}" class="small mt-2" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    let currentUtterance = null, availableVoices = [];
+    function toggleVoiceControls() { let c = document.getElementById('voiceControls'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; if (!availableVoices.length) loadVoices(); }
+    function loadVoices() { availableVoices = window.speechSynthesis.getVoices(); let sel = document.getElementById('voiceSelect'); let es = availableVoices.filter(v=>v.lang.startsWith('es')); let list = es.length ? es : availableVoices; sel.innerHTML = '<option value="">Voz por defecto</option>' + list.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join(''); }
+    if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
+    function setVoice() { if(!currentUtterance) return; let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); }
+    function setRate() { if(currentUtterance) currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); }
+    function speakText(t) { if(!window.speechSynthesis) return; if(currentUtterance) window.speechSynthesis.cancel(); currentUtterance = new SpeechSynthesisUtterance(t); currentUtterance.lang = 'es-ES'; currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); window.speechSynthesis.speak(currentUtterance); }
+    function stopSpeech() { if(window.speechSynthesis) window.speechSynthesis.cancel(); currentUtterance=null; }
+    function readPageContent() { let txt = ''; document.querySelectorAll('main h1, main h2, main h3, main p, main li, .card-text, .alert').forEach(el=>{ if(el.innerText) txt+=el.innerText+'. '; }); if(txt) speakText(txt.substring(0,3000)); else speakText('No hay contenido'); }
+    function showSuggestion(id, suggested) {
+        const userAnswer = document.getElementById(`answer-${id}`).value;
+        const fb = document.getElementById(`feedback-${id}`);
+        fb.innerHTML = `<strong>Tu respuesta:</strong> "${userAnswer || '(vacío)'}"<br><strong>Sugerencia:</strong> ${suggested}`;
+        fb.style.display = 'block';
+    }
+</script>
+</body>
+</html>

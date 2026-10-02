@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚔️ Flota Épica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .epiteto-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .epiteto-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">⚔️ FLOTA ÉPICA<small>100 TÉCNICAS · EPOPEYA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="heroe" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Héroe <span class="badge-personaje bg-dorado">Protagonista</span></a>
+        <a class="nav-link" data-section="viaje" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Viaje <span class="badge-personaje bg-azul">Odisea</span></a>
+        <a class="nav-link" data-section="batalla" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Batalla <span class="badge-personaje bg-verde">Guerra</span></a>
+        <a class="nav-link" data-section="mito" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Mito <span class="badge-personaje bg-purpura">Cosmos</span></a>
+        <a class="nav-link" data-section="estilo" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Estilo <span class="badge-personaje bg-rojo">Verso</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">⚔️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Poesía épica universal</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Poesía épica universal</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la épica:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Héroe</strong> – El protagonista épico: arquetipos, virtudes, defectos, evolución.</li>
+                    <li><strong style="color:var(--neon-azul);">Viaje</strong> – La odisea: estructura, obstáculos, transformación, regreso.</li>
+                    <li><strong style="color:var(--neon-verde);">Batalla</strong> – La guerra épica: combates, ejércitos, estrategia, honor.</li>
+                    <li><strong style="color:var(--neon-purpura);">Mito</strong> – El cosmos épico: dioses, monstruos, profecías, destino.</li>
+                    <li><strong style="color:var(--neon-rojo);">Estilo</strong> – La forma épica: verso, epitetos, símiles, catálogos, invocación.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-heroe" class="section-content" style="display:none;"></div>
+        <div id="section-viaje" class="section-content" style="display:none;"></div>
+        <div id="section-batalla" class="section-content" style="display:none;"></div>
+        <div id="section-mito" class="section-content" style="display:none;"></div>
+        <div id="section-estilo" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    heroe: {
+        nombre: "Héroe", color: "dorado", icono: "bi-robot",
+        especialidad: "El protagonista épico: arquetipos, virtudes, defectos, evolución",
+        tecnicas: [
+            { titulo: "El héroe como semidiós", teoria: "El héroe épico suele tener origen divino o semidivino, lo que le otorga una naturaleza excepcional y un destino extraordinario.", epiteto: "Aquiles, el de los pies ligeros", ejemplo: "Homero: 'Canta, oh musa, la cólera del Pelida Aquiles, cólera funesta que causó infinitos males a los aqueos.'", ejercicio: "Crea un héroe con origen divino.", reto: "Escribe un poema épico sobre el origen de un héroe." },
+            { titulo: "El héroe como guerrero", teoria: "El héroe épico es ante todo un guerrero, cuya habilidad en el combate es legendaria y su valor inquebrantable.", epiteto: "Aquiles, el mejor de los aqueos", ejemplo: "Homero: 'Aquiles, el de los pies ligeros, el más fuerte de los aqueos.'", ejercicio: "Describe una hazaña guerrera de un héroe.", reto: "Escribe un catálogo de armas para un héroe épico." },
+            { titulo: "El héroe como líder", teoria: "El héroe épico es también un líder que guía a su pueblo o ejército, aunque su liderazgo a menudo entra en conflicto con su orgullo.", epiteto: "Agamenón, señor de hombres", ejemplo: "Homero: 'Agamenón, rey de hombres, hijo de Atreo.'", ejercicio: "Escribe un discurso de un héroe a sus tropas.", reto: "Representa un consejo de guerra entre líderes épicos." },
+            { titulo: "El héroe trágico", teoria: "El héroe épico tiene un defecto trágico (hybris) que lo lleva a la caída, pero su grandeza reside en su capacidad de enfrentar el destino.", epiteto: "Edipo, el que resolvió el enigma", ejemplo: "Sófocles: 'Edipo, el famoso Edipo, el que resolvió el enigma de la esfinge.'", ejercicio: "Escribe un diálogo entre un héroe y su destino.", reto: "Escribe un poema sobre la caída de un héroe." },
+            { titulo: "El héroe como viajero", teoria: "El héroe épico es un viajero incansable que cruza mares, montañas y mundos en busca de su destino.", epiteto: "Odiseo, el de mil ardis", ejemplo: "Homero: 'Odiseo, el de muchos ardides, el que tanto sufrió.'", ejercicio: "Escribe un fragmento de un viaje épico.", reto: "Escribe una odisea completa en 10 versos." },
+            { titulo: "La aristeia del héroe", teoria: "La aristeia es el momento de máxima gloria del héroe en la batalla, donde muestra su poder divino.", epiteto: "Aquiles en su furia", ejemplo: "Homero: 'Aquiles, como un dios, se lanzó contra los troyanos.'", ejercicio: "Escribe una aristeia de un héroe.", reto: "Escribe un poema sobre la furia de un héroe." },
+            { titulo: "El héroe y su honor", teoria: "El honor (timé) es el motor del héroe épico. Su vida está guiada por la búsqueda de gloria y reconocimiento.", epiteto: "Aquiles, el que busca la gloria", ejemplo: "Homero: 'Aquiles, cuya gloria llegará hasta el fin de los tiempos.'", ejercicio: "Escribe un monólogo sobre el honor.", reto: "Escribe un poema sobre la búsqueda de la gloria." },
+            { titulo: "El héroe y sus compañeros", teoria: "El héroe no viaja solo; está acompañado por guerreros que comparten su destino y su gloria.", epiteto: "Patroclo, el más querido", ejemplo: "Homero: 'Patroclo, el más querido de los compañeros de Aquiles.'", ejercicio: "Escribe un diálogo entre un héroe y su compañero.", reto: "Escribe un catálogo de compañeros de un héroe." },
+            { titulo: "El héroe y su mujer", teoria: "La mujer del héroe representa el hogar, el amor y la espera, a menudo en contraste con la vida de guerra.", epiteto: "Penélope, la fiel esposa", ejemplo: "Homero: 'Penélope, la hija de Icario, la más fiel de las esposas.'", ejercicio: "Escribe una carta de Penélope a Odiseo.", reto: "Escribe un poema sobre la espera." },
+            { titulo: "El héroe y su hijo", teoria: "La relación del héroe con su hijo representa la continuidad del linaje y la transmisión de la gloria.", epiteto: "Telémaco, el hijo de Odiseo", ejemplo: "Homero: 'Telémaco, hijo de Odiseo, que busca a su padre.'", ejercicio: "Escribe un diálogo entre un héroe y su hijo.", reto: "Escribe un poema sobre la herencia del héroe." },
+            { titulo: "El héroe como civilizador", teoria: "Algunos héroes épicos no solo son guerreros, sino también fundadores de ciudades y portadores de civilización.", epiteto: "Eneas, el padre de Roma", ejemplo: "Virgilio: 'Eneas, el piadoso, que fundó la ciudad de Roma.'", ejercicio: "Escribe un relato de la fundación de una ciudad.", reto: "Escribe un poema sobre la fundación de un imperio." },
+            { titulo: "El héroe como salvador", teoria: "El héroe épico a menudo salva a su pueblo de la destrucción, liberándolo de monstruos o tiranos.", epiteto: "Teseo, el matador del Minotauro", ejemplo: "Plutarco: 'Teseo, el que mató al Minotauro y liberó a Atenas.'", ejercicio: "Escribe un relato de una liberación.", reto: "Escribe un poema sobre la liberación de un pueblo." },
+            { titulo: "El héroe y su arma", teoria: "El arma del héroe es una extensión de su ser, a menudo forjada por un dios y con nombre propio.", epiteto: "Aquiles y su lanza", ejemplo: "Homero: 'La lanza de Aquiles, que pesaba tanto como un árbol.'", ejercicio: "Escribe una descripción del arma de un héroe.", reto: "Escribe un poema sobre la forja de un arma divina." },
+            { titulo: "El héroe y su cólera", teoria: "La cólera (menis) es una característica central del héroe épico, que puede llevar a la destrucción o a la gloria.", epiteto: "Aquiles, el colérico", ejemplo: "Homero: 'La cólera de Aquiles, que trajo mil males a los aqueos.'", ejercicio: "Escribe un monólogo de un héroe enfurecido.", reto: "Escribe un poema sobre la cólera." },
+            { titulo: "El héroe y su compasión", teoria: "A pesar de su ferocidad, el héroe épico también puede mostrar compasión y piedad.", epiteto: "Eneas, el piadoso", ejemplo: "Virgilio: 'Eneas, el piadoso, que lleva a su padre Anquises.'", ejercicio: "Escribe una escena de compasión de un héroe.", reto: "Escribe un poema sobre la piedad del héroe." },
+            { titulo: "El héroe y la muerte", teoria: "La conciencia de la muerte es una constante en la vida del héroe; su gloria es la única forma de inmortalidad.", epiteto: "Aquiles, el que eligió la gloria", ejemplo: "Homero: 'Aquiles, el que eligió una vida corta y gloriosa.'", ejercicio: "Escribe un monólogo de un héroe ante la muerte.", reto: "Escribe un poema sobre la elección del héroe." },
+            { titulo: "El héroe y el destino", teoria: "El héroe épico está atado a un destino que no puede evitar, pero que puede enfrentar con dignidad.", epiteto: "Odiseo, el que sufrió el destino", ejemplo: "Homero: 'Odiseo, que tanto sufrió por el destino.'", ejercicio: "Escribe un diálogo entre un héroe y el destino.", reto: "Escribe un poema sobre la aceptación del destino." },
+            { titulo: "El héroe y su regreso", teoria: "El regreso del héroe (nostos) es una de las partes más importantes de la épica, simbolizando la completitud.", epiteto: "Odiseo, el que volvió", ejemplo: "Homero: 'Odiseo, el que volvió a su patria después de largos años.'", ejercicio: "Escribe un relato del regreso de un héroe.", reto: "Escribe un poema sobre el regreso del héroe." },
+            { titulo: "El héroe y la memoria", teoria: "El héroe épico vive en la memoria de los pueblos a través del canto de los poetas.", epiteto: "Aquiles, el cantado", ejemplo: "Homero: 'Aquiles, cuya fama cantan los poetas.'", ejercicio: "Escribe un poema que celebre a un héroe.", reto: "Escribe un poema sobre la inmortalidad del héroe." },
+            { titulo: "El héroe y su legado", teoria: "El legado del héroe épico trasciende su vida, inspirando a generaciones futuras.", epiteto: "Eneas, el fundador", ejemplo: "Virgilio: 'Eneas, que fundó la ciudad de Roma, legado inmortal.'", ejercicio: "Escribe un texto sobre el legado de un héroe.", reto: "Escribe un poema sobre el legado del héroe." }
+        ]
+    },
+    viaje: {
+        nombre: "Viaje", color: "azul", icono: "bi-robot",
+        especialidad: "La odisea: estructura, obstáculos, transformación, regreso",
+        tecnicas: [
+            { titulo: "La invocación a la musa", teoria: "La épica comienza con la invocación a una musa o divinidad para que inspire el canto del poeta.", epiteto: "La musa, fuente de inspiración", ejemplo: "Homero: 'Canta, oh musa, la cólera del Pelida Aquiles.'", ejercicio: "Escribe una invocación a una musa.", reto: "Escribe un poema épico que comience con una invocación." },
+            { titulo: "El viaje como estructura", teoria: "El viaje es la estructura fundamental de la épica: el héroe parte, enfrenta obstáculos, se transforma y regresa.", epiteto: "El viaje del héroe", ejemplo: "Homero: 'Canta, oh musa, al hombre de muchos ardides, que erró mucho después de haber destruido la sagrada ciudad de Troya.'", ejercicio: "Diseña un viaje épico en 5 etapas.", reto: "Escribe un poema sobre cada etapa del viaje." },
+            { titulo: "La isla como obstáculo", teoria: "Las islas son lugares de pruebas y tentaciones para el héroe, donde enfrenta monstruos, diosas o su propia naturaleza.", epiteto: "La isla de Circe", ejemplo: "Homero: 'En la isla de Circe, la hechicera, los compañeros de Odiseo fueron convertidos en cerdos.'", ejercicio: "Escribe una descripción de una isla peligrosa.", reto: "Escribe un poema sobre el encuentro con una diosa." },
+            { titulo: "La tempestad como prueba", teoria: "La tempestad es una prueba enviada por los dioses para poner a prueba la resistencia del héroe.", epiteto: "La tempestad de Poseidón", ejemplo: "Homero: 'Poseidón, el dios que sacude la tierra, envió una tempestad contra Odiseo.'", ejercicio: "Escribe una escena de tempestad.", reto: "Escribe un poema sobre la furia del mar." },
+            { titulo: "La muerte como umbral", teoria: "El viaje épico a menudo incluye un descenso al inframundo, donde el héroe enfrenta la muerte y obtiene sabiduría.", epiteto: "El viaje al Hades", ejemplo: "Homero: 'Odiseo descendió al Hades para consultar al adivino Tiresias.'", ejercicio: "Escribe una escena del inframundo.", reto: "Escribe un poema sobre el descenso al inframundo." },
+            { titulo: "La profecía como guía", teoria: "Las profecías guían el viaje del héroe y le revelan su destino, aunque a menudo son ambiguas.", epiteto: "La profecía de Tiresias", ejemplo: "Homero: 'Tiresias dijo: Regresarás a casa, pero no como esperas.'", ejercicio: "Escribe una profecía para un héroe.", reto: "Escribe un poema sobre el cumplimiento de una profecía." },
+            { titulo: "El viaje como transformación", teoria: "El viaje transforma al héroe: al final de su odisea, no es la misma persona que partió.", epiteto: "Odiseo, el transformado", ejemplo: "Homero: 'Odiseo, el que después de tantas pruebas, ya no era el mismo.'", ejercicio: "Escribe un texto sobre la transformación del héroe.", reto: "Escribe un poema sobre la transformación." },
+            { titulo: "La prueba como catarsis", teoria: "Cada prueba en el viaje es una catarsis que purifica al héroe y lo prepara para el regreso.", epiteto: "La catarsis del héroe", ejemplo: "Homero: 'Odiseo, a través de cada prueba, se purificó y se hizo más sabio.'", ejercicio: "Escribe una prueba y su superación.", reto: "Escribe un poema sobre la catarsis." },
+            { titulo: "El regreso como completitud", teoria: "El regreso a casa simboliza la completitud del héroe, el fin de su viaje y el restablecimiento del orden.", epiteto: "El regreso de Odiseo", ejemplo: "Homero: 'Odiseo, el que después de veinte años, volvió a su hogar.'", ejercicio: "Escribe una escena de regreso.", reto: "Escribe un poema sobre el regreso del héroe." },
+            { titulo: "El reconocimiento como clímax", teoria: "El reconocimiento del héroe por los suyos (o viceversa) es uno de los momentos culminantes de la épica.", epiteto: "El reconocimiento de Odiseo", ejemplo: "Homero: 'Odiseo, reconocido por su nodriza Euriclea por la cicatriz en su pierna.'", ejercicio: "Escribe una escena de reconocimiento.", reto: "Escribe un poema sobre el reconocimiento." },
+            { titulo: "La venganza como justicia", teoria: "La venganza es el acto de justicia del héroe contra quienes lo han ofendido o dañado a los suyos.", epiteto: "La venganza de Odiseo", ejemplo: "Homero: 'Odiseo, que mató a los pretendientes que asediaban su casa.'", ejercicio: "Escribe una escena de venganza.", reto: "Escribe un poema sobre la venganza del héroe." },
+            { titulo: "El viaje como ciclo", teoria: "El viaje épico es un ciclo de partida y regreso, de muerte y renacimiento, de pérdida y hallazgo.", epiteto: "El ciclo del héroe", ejemplo: "Campbell: 'El héroe es aquel que se aventura fuera de lo conocido y regresa transformado.'", ejercicio: "Diseña el ciclo de un héroe.", reto: "Escribe un poema sobre el ciclo del héroe." },
+            { titulo: "El viaje como metáfora de la vida", teoria: "El viaje épico es una metáfora de la vida humana, con sus pruebas, sus pérdidas y sus reencuentros.", epiteto: "La odisea de la vida", ejemplo: "Kavafis: 'Cuando emprendas tu viaje a Ítaca, pide que el camino sea largo.'", ejercicio: "Escribe un texto sobre el viaje como metáfora de la vida.", reto: "Escribe un poema sobre el viaje de la vida." },
+            { titulo: "La prueba del canto", teoria: "El héroe a menudo debe demostrar su identidad a través del canto o la narración de sus hazañas.", epiteto: "Odiseo, el narrador", ejemplo: "Homero: 'Odiseo, que cantó sus aventuras en la corte de los feacios.'", ejercicio: "Escribe un discurso de un héroe contando sus hazañas.", reto: "Escribe un poema sobre la narración de las hazañas." },
+            { titulo: "El viaje como búsqueda de identidad", teoria: "El viaje es también una búsqueda de identidad: el héroe descubre quién es a través de sus aventuras.", epiteto: "Telémaco, el que busca a su padre", ejemplo: "Homero: 'Telémaco, que viajó en busca de su padre para saber quién era él mismo.'", ejercicio: "Escribe un texto sobre la búsqueda de identidad.", reto: "Escribe un poema sobre la búsqueda de la identidad." },
+            { titulo: "La prueba de la hospitalidad", teoria: "La hospitalidad (xenia) es una prueba fundamental en el viaje épico, que revela el carácter de los personajes.", epiteto: "La xenia", ejemplo: "Homero: 'Odiseo, que fue acogido por los feacios, los más hospitalarios de los pueblos.'", ejercicio: "Escribe una escena de hospitalidad.", reto: "Escribe un poema sobre la hospitalidad." },
+            { titulo: "El viaje como aprendizaje", teoria: "El viaje es una escuela: el héroe aprende de cada encuentro y cada obstáculo.", epiteto: "Odiseo, el que aprendió", ejemplo: "Homero: 'Odiseo, que aprendió de cada experiencia, de cada sufrimiento.'", ejercicio: "Escribe un texto sobre lo que el héroe aprende.", reto: "Escribe un poema sobre el aprendizaje del héroe." },
+            { titulo: "El viaje como ofrenda", teoria: "El viaje del héroe es también una ofrenda a los dioses, un tributo a su poder y su voluntad.", epiteto: "Eneas, el que ofrendó", ejemplo: "Virgilio: 'Eneas, que ofrendó su viaje a los dioses para fundar Roma.'", ejercicio: "Escribe una ofrenda del héroe a los dioses.", reto: "Escribe un poema sobre la ofrenda del héroe." },
+            { titulo: "El viaje como memoria", teoria: "El viaje se convierte en memoria cuando el héroe narra su historia, convirtiéndola en leyenda.", epiteto: "Odiseo, el que narra", ejemplo: "Homero: 'Odiseo, que narró sus aventuras en la corte de los feacios.'", ejercicio: "Escribe un texto sobre la memoria del viaje.", reto: "Escribe un poema sobre la memoria y el viaje." },
+            { titulo: "El viaje como eternidad", teoria: "El viaje épico trasciende el tiempo, convirtiéndose en un arquetipo eterno que todos los héroes repiten.", epiteto: "El viaje eterno", ejemplo: "Campbell: 'El héroe es aquel que se aventura fuera de lo conocido y regresa transformado.'", ejercicio: "Escribe un texto sobre el viaje eterno.", reto: "Escribe un poema sobre el viaje como eternidad." }
+        ]
+    },
+    batalla: {
+        nombre: "Batalla", color: "verde", icono: "bi-robot",
+        especialidad: "La guerra épica: combates, ejércitos, estrategia, honor",
+        tecnicas: [
+            { titulo: "El catálogo de los guerreros", teoria: "El catálogo enumera los ejércitos, sus líderes y sus orígenes, dando grandeza y solemnidad a la batalla.", epiteto: "El catálogo de las naves", ejemplo: "Homero: 'Los beocios, que habitaban en los campos de Haliarto...'", ejercicio: "Escribe un catálogo de guerreros.", reto: "Escribe un poema sobre el catálogo de un ejército." },
+            { titulo: "El aristeia del guerrero", teoria: "La aristeia es el momento de máxima gloria de un guerrero en la batalla, donde mata enemigos y muestra su valor.", epiteto: "La aristeia de Diomedes", ejemplo: "Homero: 'Diomedes, hijo de Tideo, que mató a tantos troyanos que la tierra se tiñó de rojo.'", ejercicio: "Escribe una aristeia de un guerrero.", reto: "Escribe un poema sobre la aristeia." },
+            { titulo: "El combate singular", teoria: "El combate entre dos héroes (monomaquia) es uno de los momentos más intensos de la épica.", epiteto: "El combate de Aquiles y Héctor", ejemplo: "Homero: 'Aquiles y Héctor, los dos héroes más grandes, se enfrentaron en combate singular.'", ejercicio: "Escribe un combate singular.", reto: "Escribe un poema sobre un combate singular." },
+            { titulo: "La muerte del guerrero", teoria: "La muerte en la batalla es el destino del guerrero épico, que busca la gloria incluso en la muerte.", epiteto: "La muerte de Héctor", ejemplo: "Homero: 'Héctor, el domador de caballos, cayó muerto en el campo de batalla.'", ejercicio: "Escribe una escena de muerte de un guerrero.", reto: "Escribe un poema sobre la muerte del guerrero." },
+            { titulo: "La ciudad asediada", teoria: "El asedio de una ciudad es una de las imágenes centrales de la épica, simbolizando el conflicto entre civilizaciones.", epiteto: "Troya, la ciudad asediada", ejemplo: "Homero: 'Troya, la ciudad asediada, que resistió durante diez años.'", ejercicio: "Escribe una escena de asedio.", reto: "Escribe un poema sobre la ciudad asediada." },
+            { titulo: "La estratagema de guerra", teoria: "La estratagema, como el caballo de Troya, es un giro en la guerra que muestra la astucia del héroe.", epiteto: "El caballo de Troya", ejemplo: "Virgilio: 'El caballo de madera, que los aqueos usaron para entrar en Troya.'", ejercicio: "Escribe una estratagema de guerra.", reto: "Escribe un poema sobre la estratagema." },
+            { titulo: "El duelo de los campeones", teoria: "El duelo entre los campeones de dos ejércitos decide a menudo el resultado de la batalla.", epiteto: "El duelo de Paris y Menelao", ejemplo: "Homero: 'Paris y Menelao, los dos campeones, se enfrentaron en duelo por Helena.'", ejercicio: "Escribe un duelo de campeones.", reto: "Escribe un poema sobre el duelo." },
+            { titulo: "El llanto de los vencidos", teoria: "El llanto de los vencidos es una de las imágenes más conmovedoras de la épica, que humaniza a los enemigos.", epiteto: "El llanto de las troyanas", ejemplo: 'Virgilio: "Las mujeres troyanas, con sus cabellos sueltos, lloraban la caída de su ciudad."', ejercicio: "Escribe una escena de llanto de los vencidos.", reto: "Escribe un poema sobre el lamento de los vencidos." },
+            { titulo: "La estrategia militar", teoria: "La épica describe estrategias militares que reflejan la sabiduría y la experiencia de los líderes.", epiteto: "La estrategia de Odiseo", ejemplo: "Homero: 'Odiseo, que usó la estrategia del caballo de madera para tomar Troya.'", ejercicio: "Escribe una estrategia militar.", reto: "Escribe un poema sobre la estrategia." },
+            { titulo: "El campo de batalla", teoria: "El campo de batalla es un espacio sagrado donde se decide el destino de los pueblos.", epiteto: "El campo de batalla de Troya", ejemplo: "Homero: 'El campo de batalla de Troya, donde los héroes luchaban por la gloria.'", ejercicio: "Describe un campo de batalla.", reto: "Escribe un poema sobre el campo de batalla." },
+            { titulo: "La armadura del guerrero", teoria: "La armadura es una extensión del guerrero, a menudo forjada por un dios, que le da poder y protección.", epiteto: "La armadura de Aquiles", ejemplo: "Homero: 'La armadura de Aquiles, forjada por Hefesto, que brillaba como el sol.'", ejercicio: "Describe la armadura de un guerrero.", reto: "Escribe un poema sobre la armadura." },
+            { titulo: "El escudo del héroe", teoria: "El escudo es una obra de arte que refleja el mundo y el destino del héroe.", epiteto: "El escudo de Aquiles", ejemplo: "Homero: 'El escudo de Aquiles, en el que Hefesto grabó el universo entero.'", ejercicio: "Describe el escudo de un héroe.", reto: "Escribe un poema sobre el escudo." },
+            { titulo: "La despedida antes de la batalla", teoria: "La despedida de los guerreros antes de la batalla es un momento de gran emoción y patetismo.", epiteto: "La despedida de Héctor y Andrómaca", ejemplo: "Homero: 'Héctor, que se despidió de su esposa Andrómaca antes de ir a la batalla.'", ejercicio: "Escribe una escena de despedida.", reto: "Escribe un poema sobre la despedida." },
+            { titulo: "La intervención divina en la batalla", teoria: "Los dioses participan en la batalla, inclinando la balanza a favor de uno u otro bando.", epiteto: "Apolo y Atenea en la guerra", ejemplo: "Homero: 'Apolo y Atenea, que lucharon en el campo de batalla junto a los héroes.'", ejercicio: "Escribe una escena de intervención divina.", reto: "Escribe un poema sobre la intervención divina." },
+            { titulo: "El grito de guerra", teoria: "El grito de guerra es el sonido que anuncia la batalla y aterroriza al enemigo.", epiteto: "El grito de Aquiles", ejemplo: "Homero: 'Aquiles, que lanzó un grito tan terrible que los troyanos huyeron aterrorizados.'", ejercicio: "Escribe un grito de guerra.", reto: "Escribe un poema sobre el grito de guerra." },
+            { titulo: "El funeral del guerrero", teoria: "El funeral del guerrero es el último acto de honor, que celebra su vida y sus hazañas.", epiteto: "El funeral de Héctor", ejemplo: "Homero: 'El funeral de Héctor, el héroe troyano, con sus lamentos y sus ofrendas.'", ejercicio: "Escribe una escena de funeral.", reto: "Escribe un poema sobre el funeral del guerrero." },
+            { titulo: "La tregua y el luto", teoria: "La tregua para recoger a los muertos y el luto por los caídos son momentos de humanidad en la guerra.", epiteto: "La tregua de Héctor y Aquiles", ejemplo: "Homero: 'Aquiles, que concedió una tregua a Príamo para que recogiera el cuerpo de su hijo Héctor.'", ejercicio: "Escribe una escena de tregua.", reto: "Escribe un poema sobre el luto." },
+            { titulo: "La gloria del guerrero", teoria: "La gloria (kleos) es la recompensa del guerrero épico, que sobrevive a su muerte a través del canto.", epiteto: "Aquiles, el glorioso", ejemplo: "Homero: 'Aquiles, cuya gloria cantan los poetas.'", ejercicio: "Escribe un texto sobre la gloria del guerrero.", reto: "Escribe un poema sobre la gloria." },
+            { titulo: "La venganza del guerrero", teoria: "La venganza es el motor de muchas batallas épicas, que impulsa al héroe a vengar a los suyos.", epiteto: "La venganza de Aquiles", ejemplo: "Homero: 'Aquiles, que vengó la muerte de Patroclo matando a Héctor.'", ejercicio: "Escribe una escena de venganza.", reto: "Escribe un poema sobre la venganza." },
+            { titulo: "El honor del guerrero", teoria: "El honor es el valor supremo del guerrero, por el que está dispuesto a dar su vida.", epiteto: "Aquiles, el honorable", ejemplo: "Homero: 'Aquiles, que prefirió una vida corta y honorable a una larga y sin gloria.'", ejercicio: "Escribe un texto sobre el honor del guerrero.", reto: "Escribe un poema sobre el honor." }
+        ]
+    },
+    mito: {
+        nombre: "Mito", color: "purpura", icono: "bi-robot",
+        especialidad: "El cosmos épico: dioses, monstruos, profecías, destino",
+        tecnicas: [
+            { titulo: "El panteón divino", teoria: "Los dioses son personajes activos en la épica, que intervienen en la vida de los héroes y determinan su destino.", epiteto: "Zeus, el padre de los dioses", ejemplo: "Homero: 'Zeus, el que gobierna el Olimpo, el padre de los dioses y los hombres.'", ejercicio: "Describe el panteón de una épica.", reto: "Escribe un poema sobre el panteón divino." },
+            { titulo: "El destino como fuerza", teoria: "El destino (moira) es una fuerza ineludible que guía la vida de los héroes y los dioses.", epiteto: "El destino de Aquiles", ejemplo: "Homero: 'Aquiles, cuyo destino era morir joven y glorioso.'", ejercicio: "Escribe un texto sobre el destino.", reto: "Escribe un poema sobre el destino." },
+            { titulo: "La profecía como anuncio", teoria: "Las profecías anuncian el destino de los héroes y crean tensión narrativa en la épica.", epiteto: "La profecía de Calcas", ejemplo: "Homero: 'Calcas, el adivino, que profetizó la caída de Troya.'", ejercicio: "Escribe una profecía.", reto: "Escribe un poema sobre la profecía." },
+            { titulo: "El monstruo como prueba", teoria: "El monstruo es una prueba para el héroe, que debe vencerlo para continuar su viaje.", epiteto: "El Minotauro", ejemplo: "Homero: 'El Minotauro, el monstruo que devoraba a los jóvenes atenienses.'", ejercicio: "Describe un monstruo.", reto: "Escribe un poema sobre el monstruo." },
+            { titulo: "El origen del mundo", teoria: "La épica a menudo incluye relatos del origen del mundo y de los dioses, dando un marco cósmico a la historia.", epiteto: "El Caos primordial", ejemplo: "Hesíodo: 'El Caos fue lo primero que existió, y luego Gea, la Tierra.'", ejercicio: "Escribe un relato del origen del mundo.", reto: "Escribe un poema sobre el origen del mundo." },
+            { titulo: "La intervención divina", teoria: "Los dioses intervienen directamente en la vida de los héroes, ayudándolos o perjudicándolos.", epiteto: "Atenea, la protectora de Odiseo", ejemplo: "Homero: 'Atenea, que guió a Odiseo en su viaje de regreso.'", ejercicio: "Escribe una escena de intervención divina.", reto: "Escribe un poema sobre la intervención divina." },
+            { titulo: "El viaje al inframundo", teoria: "El descenso al inframundo es una de las pruebas más importantes del héroe épico.", epiteto: "El Hades", ejemplo: "Homero: 'Odiseo, que descendió al Hades para consultar el alma de Tiresias.'", ejercicio: "Escribe una escena del inframundo.", reto: "Escribe un poema sobre el inframundo." },
+            { titulo: "El mito del héroe", teoria: "El héroe épico es un mito en sí mismo, un arquetipo que encarna los valores de su cultura.", epiteto: "Aquiles, el héroe inmortal", ejemplo: "Homero: 'Aquiles, cuyo mito ha perdurado a lo largo de los siglos.'", ejercicio: "Escribe un texto sobre el mito del héroe.", reto: "Escribe un poema sobre el mito del héroe." },
+            { titulo: "El poder de los dioses", teoria: "Los dioses tienen un poder absoluto sobre los hombres, y su voluntad es inescrutable.", epiteto: "Zeus, el todopoderoso", ejemplo: "Homero: 'Zeus, que gobierna el destino de los hombres y los dioses.'", ejercicio: "Escribe un texto sobre el poder de los dioses.", reto: "Escribe un poema sobre el poder divino." },
+            { titulo: "La rebelión contra los dioses", teoria: "Algunos héroes se rebelan contra los dioses, desafiando su autoridad y su destino.", epiteto: "Prometeo, el rebelde", ejemplo: "Esquilo: 'Prometeo, que robó el fuego a los dioses para dárselo a los hombres.'", ejercicio: "Escribe una escena de rebelión contra los dioses.", reto: "Escribe un poema sobre la rebelión." },
+            { titulo: "El mito del diluvio", teoria: "El mito del diluvio es un arquetipo universal que aparece en muchas épicas como castigo divino.", epiteto: "El diluvio de Deucalión", ejemplo: "Ovidio: 'Deucalión y Pirra, los únicos sobrevivientes del diluvio.'", ejercicio: "Escribe un relato del diluvio.", reto: "Escribe un poema sobre el diluvio." },
+            { titulo: "El mito del fin del mundo", teoria: "El mito del fin del mundo (Ragnarök, Apocalipsis) aparece en algunas épicas como destino final.", epiteto: "El Ragnarök", ejemplo: "Edda: 'El Ragnarök, el fin del mundo de los dioses.'", ejercicio: "Escribe un relato del fin del mundo.", reto: "Escribe un poema sobre el fin del mundo." },
+            { titulo: "El viaje de los héroes", teoria: "El viaje de los héroes es un mito que recorre todas las culturas, una historia universal.", epiteto: "El viaje del héroe", ejemplo: "Campbell: 'El héroe es aquel que se aventura fuera de lo conocido.'", ejercicio: "Escribe un texto sobre el viaje del héroe.", reto: "Escribe un poema sobre el viaje del héroe." },
+            { titulo: "El mito del origen", teoria: "El mito del origen explica cómo surgieron los pueblos, las ciudades y las tradiciones.", epiteto: "El origen de Roma", ejemplo: "Virgilio: 'Eneas, que fundó la ciudad de Roma, el origen de un imperio.'", ejercicio: "Escribe un relato del origen de un pueblo.", reto: "Escribe un poema sobre el origen." },
+            { titulo: "El mito de la caída", teoria: "El mito de la caída explica cómo los héroes o pueblos cayeron en desgracia.", epiteto: "La caída de Troya", ejemplo: "Homero: 'La caída de Troya, la ciudad que fue destruida por los aqueos.'", ejercicio: "Escribe un relato de una caída.", reto: "Escribe un poema sobre la caída." },
+            { titulo: "El mito de la creación", teoria: "El mito de la creación explica cómo surgió el mundo y los primeros seres.", epiteto: "El Caos y Gea", ejemplo: "Hesíodo: 'El Caos, Gea, el Tártaro y Eros, los primeros seres.'", ejercicio: "Escribe un relato de la creación.", reto: "Escribe un poema sobre la creación." },
+            { titulo: "El mito de la muerte", teoria: "El mito de la muerte explica el origen de la muerte y el destino de los mortales.", epiteto: "La muerte de Balder", ejemplo: "Edda: 'Balder, el dios de la luz, que fue asesinado por Loki.'", ejercicio: "Escribe un relato de la muerte de un dios.", reto: "Escribe un poema sobre la muerte." },
+            { titulo: "El mito del héroe solar", teoria: "El héroe solar es un arquetipo que representa el sol, que muere y renace cada día.", epiteto: "El héroe solar", ejemplo: "Mitología: 'El héroe solar, que muere y renace cada día como el sol.'", ejercicio: "Escribe un texto sobre el héroe solar.", reto: "Escribe un poema sobre el héroe solar." },
+            { titulo: "El mito del héroe lunar", teoria: "El héroe lunar es un arquetipo que representa la luna, el ciclo y el cambio.", epiteto: "El héroe lunar", ejemplo: "Mitología: 'El héroe lunar, que representa el cambio y el ciclo.'", ejercicio: "Escribe un texto sobre el héroe lunar.", reto: "Escribe un poema sobre el héroe lunar." },
+            { titulo: "El mito como memoria de la humanidad", teoria: "El mito es la memoria de la humanidad, que guarda los sueños, los miedos y las esperanzas de los pueblos.", epiteto: "El mito de la humanidad", ejemplo: "Campbell: 'El mito es la memoria de la humanidad.'", ejercicio: "Escribe un texto sobre el mito como memoria.", reto: "Escribe un poema sobre el mito." }
+        ]
+    },
+    estilo: {
+        nombre: "Estilo", color: "rojo", icono: "bi-robot",
+        especialidad: "La forma épica: verso, epitetos, símiles, catálogos, invocación",
+        tecnicas: [
+            { titulo: "El verso épico (hexámetro dactílico)", teoria: "El hexámetro dactílico es el verso característico de la épica griega y latina, que marca el ritmo y la cadencia del poema.", epiteto: "El hexámetro", ejemplo: "Homero: 'Canta, oh musa, la cólera del Pelida Aquiles.'", ejercicio: "Escribe un verso en hexámetro dactílico.", reto: "Escribe un poema en hexámetro." },
+            { titulo: "El epiteto formulario", teoria: "El epiteto es una fórmula adjetiva que acompaña al nombre del héroe o dios, facilitando la composición oral.", epiteto: "Aquiles, el de los pies ligeros", ejemplo: "Homero: 'Aquiles, el de los pies ligeros, el más fuerte de los aqueos.'", ejercicio: "Crea epitetos para tres héroes.", reto: "Escribe un poema usando epitetos." },
+            { titulo: "El símil épico", teoria: "El símil épico es una comparación extensa que enriquece la narración y la dota de grandeza.", epiteto: "Como el león", ejemplo: "Homero: 'Como el león cuando ataca a un rebaño, así Aquiles se lanzó contra los troyanos.'", ejercicio: "Escribe un símil épico.", reto: "Escribe un poema con símiles épicos." },
+            { titulo: "El catálogo", teoria: "El catálogo es una lista de nombres, naves o guerreros que da solemnidad a la épica.", epiteto: "El catálogo de las naves", ejemplo: "Homero: 'Los beocios, que habitaban en los campos de Haliarto...'", ejercicio: "Escribe un catálogo de guerreros.", reto: "Escribe un poema con un catálogo." },
+            { titulo: "La invocación a la musa", teoria: "La invocación es el inicio de la épica, en el que el poeta pide inspiración a la divinidad.", epiteto: "La musa", ejemplo: "Homero: 'Canta, oh musa, la cólera del Pelida Aquiles.'", ejercicio: "Escribe una invocación.", reto: "Escribe un poema que comience con una invocación." },
+            { titulo: "El discurso directo", teoria: "El discurso directo da voz a los héroes y dioses, haciéndolos más cercanos y dramáticos.", epiteto: "El discurso de Aquiles", ejemplo: "Homero: 'Aquiles dijo: "No volveré a luchar hasta que Héctor muera."'", ejercicio: "Escribe un discurso de un héroe.", reto: "Escribe un poema con discursos directos." },
+            { titulo: "La repetición formularia", teoria: "La repetición de fórmulas fijas facilita la composición oral y da cohesión al poema.", epiteto: "El aurora de rosáceos dedos", ejemplo: "Homero: 'La aurora de rosáceos dedos, la hija del amanecer.'", ejercicio: "Escribe una fórmula repetitiva.", reto: "Escribe un poema con repeticiones." },
+            { titulo: "La descripción detallada", teoria: "La descripción detallada de armas, armaduras y escenarios enriquece la épica.", epiteto: "El escudo de Aquiles", ejemplo: "Homero: 'El escudo de Aquiles, en el que Hefesto grabó el universo.'", ejercicio: "Describe un objeto épico.", reto: "Escribe un poema sobre un objeto épico." },
+            { titulo: "La digresión", teoria: "La digresión es un desvío de la narración principal que enriquece el poema con historias secundarias.", epiteto: "La digresión de Néstor", ejemplo: "Homero: 'Néstor, que contó la historia de su juventud.'", ejercicio: "Escribe una digresión.", reto: "Escribe un poema con una digresión." },
+            { titulo: "La aliteración", teoria: "La aliteración es la repetición de sonidos consonánticos que da musicalidad al verso.", epiteto: "El susurro del mar", ejemplo: "Virgilio: 'Sic vos non vobis' (Así vosotros, no para vosotros).'", ejercicio: "Escribe un verso con aliteración.", reto: "Escribe un poema con aliteración." },
+            { titulo: "La metáfora épica", teoria: "La metáfora es una figura que identifica términos para crear imágenes poderosas.", epiteto: "Aquiles, el león", ejemplo: "Homero: 'Aquiles, el león, se lanzó sobre los troyanos.'", ejercicio: "Escribe una metáfora épica.", reto: "Escribe un poema con metáforas." },
+            { titulo: "La hipérbole épica", teoria: "La hipérbole exagera para dar grandeza a las hazañas y los personajes.", epiteto: "Aquiles, el imparable", ejemplo: "Homero: 'Aquiles, que mató a tantos troyanos que el río Escamandro se tiñó de rojo.'", ejercicio: "Escribe una hipérbole épica.", reto: "Escribe un poema con hipérboles." },
+            { titulo: "La enumeración épica", teoria: "La enumeración de nombres, lugares o acciones crea un efecto de grandeza y acumulación.", epiteto: "La enumeración de los guerreros", ejemplo: "Homero: 'Los beocios, los locros, los cretenses...'", ejercicio: "Escribe una enumeración épica.", reto: "Escribe un poema con enumeraciones." },
+            { titulo: "La antítesis épica", teoria: "La antítesis contrapone ideas para crear tensión y dramatismo.", epiteto: "La vida y la muerte", ejemplo: "Homero: 'Aquiles, que eligió la gloria sobre la vida.'", ejercicio: "Escribe una antítesis épica.", reto: "Escribe un poema con antítesis." },
+            { titulo: "La interrogación retórica", teoria: "La interrogación retórica es una pregunta que no espera respuesta, sino que enfatiza una idea.", epiteto: "¿Qué dirá el mar?", ejemplo: "Homero: '¿Qué dirá el mar cuando vuelva a casa?'", ejercicio: "Escribe una interrogación retórica.", reto: "Escribe un poema con interrogaciones." },
+            { titulo: "La invocación al héroe", teoria: "La invocación al héroe es un llamado directo que hace el poeta al protagonista.", epiteto: "Odiseo, el de muchos ardides", ejemplo: "Homero: 'Odiseo, el de muchos ardides, el que tanto sufrió.'", ejercicio: "Escribe una invocación al héroe.", reto: "Escribe un poema que invoque al héroe." },
+            { titulo: "El final épico", teoria: "El final de la épica suele ser una reflexión sobre la gloria, el destino y el legado del héroe.", epiteto: "El final de la Eneida", ejemplo: 'Virgilio: "Aquí termina la historia de Eneas, el padre de Roma."', ejercicio: "Escribe un final épico.", reto: "Escribe un poema con un final épico." },
+            { titulo: "La rima y el ritmo", teoria: "La rima y el ritmo son elementos esenciales en la épica para facilitar la memorización y la recitación.", epiteto: "El ritmo épico", ejemplo: "Homero: 'Canta, oh musa, la cólera del Pelida Aquiles.'", ejercicio: "Escribe un verso con rima.", reto: "Escribe un poema con rima." },
+            { titulo: "La variedad métrica", teoria: "La variedad métrica enriquece la épica, alternando diferentes ritmos y estructuras.", epiteto: "El hexámetro y el pentámetro", ejemplo: "Ovidio: 'Arma virumque cano, Troiae qui primus ab oris.'", ejercicio: "Escribe un verso con una métrica diferente.", reto: "Escribe un poema con métrica variada." },
+            { titulo: "El legado del estilo épico", teoria: "El estilo épico ha influido en toda la literatura occidental, desde la Edad Media hasta la actualidad.", epiteto: "El legado de Homero", ejemplo: 'Virgilio: "Todo el que escribe épica, sigue los pasos de Homero."', ejercicio: "Escribe un texto sobre el legado del estilo épico.", reto: "Escribe un poema que honre el legado épico." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['heroe','viaje','batalla','mito','estilo'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="epiteto-clave">
+                        <span>${t.epiteto}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_epica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

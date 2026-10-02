@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MorphoPlay — 30 Juegos de Morfología</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0d0d12;
+    --paper: #f5f0e8;
+    --accent: #e84040;
+    --gold: #c9a84c;
+    --sky: #3a7bd5;
+    --mint: #2ec4b6;
+    --lavender: #7c5cbf;
+    --cream: #fdf8ee;
+    --shadow: rgba(13,13,18,0.15);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--ink);
+    color: var(--paper);
+    font-family: 'Lora', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  /* NOISE TEXTURE */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 9999; opacity: 0.4;
+  }
+
+  /* HEADER */
+  header {
+    text-align: center;
+    padding: 3rem 1rem 2rem;
+    position: relative;
+  }
+  .logo-badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    padding: 0.3rem 0.8rem;
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+  h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, var(--paper) 0%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    margin-top: 0.8rem;
+    color: rgba(245,240,232,0.55);
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  .lang-flags {
+    margin-top: 1rem;
+    font-size: 1.8rem;
+    letter-spacing: 0.3rem;
+  }
+
+  /* SCORE BAR */
+  .score-bar {
+    display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;
+    padding: 1rem;
+    background: rgba(245,240,232,0.05);
+    border-top: 1px solid rgba(245,240,232,0.1);
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+    margin-bottom: 2rem;
+  }
+  .score-pill {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-family: 'Unbounded', sans-serif; font-size: 0.8rem;
+  }
+  .score-pill span.num {
+    background: var(--gold);
+    color: var(--ink);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-weight: 700;
+  }
+
+  /* GAME GRID */
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 2rem 4rem;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  /* GAME CARD */
+  .game-card {
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.12);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+    position: relative;
+  }
+  .game-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.4); }
+  .game-card.completed { border-color: var(--mint); }
+  .game-card.completed::after {
+    content: '✓ COMPLETADO';
+    position: absolute; top: 0.5rem; right: 0.5rem;
+    background: var(--mint); color: var(--ink);
+    font-family: 'Unbounded', sans-serif; font-size: 0.55rem;
+    padding: 0.2rem 0.5rem; border-radius: 3px; font-weight: 700;
+  }
+
+  .card-header {
+    padding: 1.2rem 1.4rem 0.8rem;
+    display: flex; align-items: flex-start; gap: 0.8rem;
+  }
+  .game-num {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    color: var(--gold);
+    opacity: 0.7;
+    min-width: 2rem;
+    padding-top: 0.2rem;
+  }
+  .card-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    line-height: 1.3;
+    flex: 1;
+  }
+  .card-meta {
+    padding: 0 1.4rem 0.6rem 3.5rem;
+    font-size: 0.78rem;
+    color: rgba(245,240,232,0.5);
+    font-style: italic;
+  }
+  .card-lang {
+    display: flex; gap: 0.4rem;
+    padding: 0 1.4rem 1rem 3.5rem;
+  }
+  .lang-tag {
+    font-family: 'Unbounded', sans-serif; font-size: 0.6rem;
+    padding: 0.15rem 0.5rem; border-radius: 3px;
+    font-weight: 700;
+  }
+  .lang-es { background: rgba(232,64,64,0.25); color: #f08080; }
+  .lang-en { background: rgba(58,123,213,0.25); color: #80b0f0; }
+  .lang-both { background: rgba(201,168,76,0.2); color: var(--gold); }
+
+  .card-play-btn {
+    display: block;
+    width: calc(100% - 2.8rem);
+    margin: 0 1.4rem 1.2rem;
+    background: rgba(245,240,232,0.08);
+    border: 1px solid rgba(245,240,232,0.2);
+    color: var(--paper);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.7rem;
+    padding: 0.6rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-align: center;
+  }
+  .card-play-btn:hover { background: rgba(245,240,232,0.15); }
+
+  /* MODAL */
+  .modal-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(13,13,18,0.92);
+    z-index: 1000;
+    align-items: center; justify-content: center;
+    padding: 1rem;
+  }
+  .modal-overlay.active { display: flex; }
+  .modal {
+    background: #181820;
+    border: 1px solid rgba(245,240,232,0.15);
+    border-radius: 16px;
+    width: 100%; max-width: 620px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: slideUp 0.25s ease;
+  }
+  @keyframes slideUp {
+    from { transform: translateY(30px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-close {
+    position: absolute; top: 1rem; right: 1rem;
+    background: rgba(245,240,232,0.1);
+    border: none; color: var(--paper);
+    width: 2rem; height: 2rem; border-radius: 50%;
+    font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-header {
+    padding: 2rem 2rem 1rem;
+    border-bottom: 1px solid rgba(245,240,232,0.1);
+  }
+  .modal-header h2 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    margin-bottom: 0.4rem;
+  }
+  .modal-body { padding: 1.5rem 2rem; }
+
+  /* GAME UI COMPONENTS */
+  .question-text {
+    font-size: 1.15rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    color: var(--paper);
+  }
+  .highlight { color: var(--gold); font-weight: 600; }
+
+  /* Options buttons */
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.7rem;
+    margin-bottom: 1.2rem;
+  }
+  .opt-btn {
+    background: rgba(245,240,232,0.06);
+    border: 1px solid rgba(245,240,232,0.15);
+    color: var(--paper);
+    font-family: 'Lora', serif;
+    font-size: 0.9rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+  }
+  .opt-btn:hover:not(:disabled) { background: rgba(245,240,232,0.12); border-color: var(--gold); }
+  .opt-btn.correct { background: rgba(46,196,182,0.2); border-color: var(--mint); color: var(--mint); }
+  .opt-btn.wrong { background: rgba(232,64,64,0.15); border-color: var(--accent); color: #f08080; }
+  .opt-btn:disabled { cursor: default; }
+
+  /* Text input */
+  .text-input {
+    width: 100%;
+    background: rgba(245,240,232,0.06);
+    border: 1px solid rgba(245,240,232,0.2);
+    color: var(--paper);
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    outline: none;
+  }
+  .text-input:focus { border-color: var(--gold); }
+  .text-input.correct { border-color: var(--mint); background: rgba(46,196,182,0.1); }
+  .text-input.wrong { border-color: var(--accent); background: rgba(232,64,64,0.1); }
+
+  /* Submit / Next buttons */
+  .action-btn {
+    background: var(--accent);
+    border: none;
+    color: white;
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.8rem;
+    padding: 0.75rem 1.8rem;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-right: 0.5rem;
+    transition: opacity 0.15s;
+  }
+  .action-btn:hover { opacity: 0.85; }
+  .action-btn.secondary {
+    background: rgba(245,240,232,0.1);
+    color: var(--paper);
+  }
+  .action-btn.gold { background: var(--gold); color: var(--ink); }
+
+  /* Feedback */
+  .feedback {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    margin: 0.8rem 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: none;
+  }
+  .feedback.show { display: block; }
+  .feedback.good { background: rgba(46,196,182,0.15); border: 1px solid var(--mint); color: var(--mint); }
+  .feedback.bad { background: rgba(232,64,64,0.12); border: 1px solid var(--accent); color: #f08080; }
+
+  /* Drag & drop */
+  .drag-pool {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(245,240,232,0.04);
+    border: 1px dashed rgba(245,240,232,0.2);
+    border-radius: 8px;
+    min-height: 60px;
+    margin-bottom: 1rem;
+  }
+  .drag-item {
+    background: rgba(201,168,76,0.2);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    cursor: grab;
+    font-family: 'Lora', serif;
+    font-size: 0.9rem;
+    user-select: none;
+    transition: transform 0.1s;
+  }
+  .drag-item:active { cursor: grabbing; transform: scale(1.05); }
+  .drop-zone {
+    padding: 0.6rem 1rem;
+    background: rgba(245,240,232,0.04);
+    border: 1px dashed rgba(245,240,232,0.25);
+    border-radius: 6px;
+    min-height: 40px;
+    min-width: 80px;
+    display: inline-flex;
+    align-items: center;
+    margin: 0 0.3rem;
+    font-style: italic;
+    color: rgba(245,240,232,0.3);
+    font-size: 0.85rem;
+    vertical-align: middle;
+  }
+  .drop-zone.filled {
+    background: rgba(201,168,76,0.12);
+    border-color: var(--gold);
+    color: var(--gold);
+    font-style: normal;
+  }
+  .drop-zone.highlight-drop { border-color: var(--sky); background: rgba(58,123,213,0.1); }
+
+  /* Word builder */
+  .word-builder { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; align-items: center; }
+  .morph-piece {
+    padding: 0.5rem 0.7rem;
+    border-radius: 5px;
+    font-family: 'Lora', serif;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+    user-select: none;
+  }
+  .morph-piece:hover { transform: scale(1.08); }
+  .morph-prefix { background: rgba(124,92,191,0.3); border: 1px solid var(--lavender); color: #c4b0f0; }
+  .morph-root { background: rgba(232,64,64,0.2); border: 1px solid var(--accent); color: #f08080; }
+  .morph-suffix { background: rgba(58,123,213,0.25); border: 1px solid var(--sky); color: #80b0f0; }
+  .morph-ending { background: rgba(46,196,182,0.2); border: 1px solid var(--mint); color: var(--mint); }
+
+  /* Progress dots */
+  .progress-dots { display: flex; gap: 0.4rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: rgba(245,240,232,0.15);
+    transition: background 0.2s;
+  }
+  .dot.done { background: var(--mint); }
+  .dot.current { background: var(--gold); }
+
+  /* Scoreboard in modal */
+  .mini-score {
+    display: flex; gap: 1rem;
+    font-family: 'Unbounded', sans-serif; font-size: 0.75rem;
+    margin-bottom: 1rem;
+    color: rgba(245,240,232,0.5);
+  }
+  .mini-score b { color: var(--gold); }
+
+  /* Textarea for writing */
+  .write-area {
+    width: 100%;
+    background: rgba(245,240,232,0.04);
+    border: 1px solid rgba(245,240,232,0.15);
+    color: var(--paper);
+    font-family: 'Lora', serif;
+    font-size: 1rem;
+    padding: 1rem;
+    border-radius: 8px;
+    min-height: 120px;
+    resize: vertical;
+    outline: none;
+    line-height: 1.6;
+  }
+  .write-area:focus { border-color: var(--gold); }
+
+  /* Category filter */
+  .filter-bar {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    padding: 0 2rem 1.5rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .filter-btn {
+    background: rgba(245,240,232,0.07);
+    border: 1px solid rgba(245,240,232,0.15);
+    color: rgba(245,240,232,0.6);
+    font-family: 'Unbounded', sans-serif;
+    font-size: 0.65rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--gold);
+    color: var(--ink);
+    border-color: var(--gold);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(245,240,232,0.2); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-badge">🎓 Morfología Interactiva</div>
+  <h1>MorphoPlay</h1>
+  <p class="subtitle">30 juegos para dominar la morfología del Español e Inglés</p>
+  <div class="lang-flags">🇪🇸 🇬🇧</div>
+</header>
+
+<div class="score-bar">
+  <div class="score-pill">🏆 Puntos totales: <span class="num" id="totalScore">0</span></div>
+  <div class="score-pill">✅ Completados: <span class="num" id="completedCount">0</span>/30</div>
+  <div class="score-pill">🔥 Racha: <span class="num" id="streak">0</span></div>
+</div>
+
+<div class="filter-bar" id="filterBar">
+  <button class="filter-btn active" onclick="filterGames('all')">Todos (30)</button>
+  <button class="filter-btn" onclick="filterGames('ES')">🇪🇸 Solo Español</button>
+  <button class="filter-btn" onclick="filterGames('EN')">🇬🇧 Solo Inglés</button>
+  <button class="filter-btn" onclick="filterGames('BOTH')">🌐 Bilingüe</button>
+  <button class="filter-btn" onclick="filterGames('prefijos')">Prefijos</button>
+  <button class="filter-btn" onclick="filterGames('sufijos')">Sufijos</button>
+  <button class="filter-btn" onclick="filterGames('escritura')">✍️ Escritura</button>
+</div>
+
+<div class="game-grid" id="gameGrid"></div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-header">
+      <div class="game-num" id="modalNum"></div>
+      <h2 id="modalTitle"></h2>
+      <p id="modalDesc" style="color:rgba(245,240,232,0.5);font-style:italic;font-size:0.85rem;margin-top:0.3rem;"></p>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+// ===================== GLOBAL STATE =====================
+let totalScore = 0, completedGames = new Set(), streak = 0;
+
+const games = [
+  // ===== JUEGOS ESPAÑOL =====
+  {
+    id: 1, lang: 'ES', tags: ['prefijos'],
+    title: 'Prefijos del Español',
+    desc: 'Identifica el prefijo correcto para formar la palabra',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '¿Qué prefijo forma una palabra que significa "volver a hacer"?', opts: ['re-', 'des-', 'in-', 'sub-'], ans: 0, exp: 'RE- indica repetición: re-hacer, re-escribir, re-leer.' },
+        { q: 'La palabra <b>deshonesto</b> usa el prefijo <b>des-</b> que significa:', opts: ['repetición', 'negación/contrario', 'dentro de', 'antes de'], ans: 1, exp: 'DES- indica negación o privación: des-honesto, des-igual, des-hacer.' },
+        { q: '¿Cuál prefijo indica "bajo" o "debajo de"?', opts: ['super-', 'sub-', 'ante-', 'extra-'], ans: 1, exp: 'SUB- viene del latín y significa "bajo": sub-marino, sub-suelo, sub-director.' },
+        { q: 'El prefijo <b>pre-</b> en "prehistoria" significa:', opts: ['después de', 'dentro de', 'antes de', 'sin'], ans: 2, exp: 'PRE- indica anterioridad temporal: pre-historia, pre-natal, pre-escolar.' },
+        { q: '"Plurilingüe" contiene el prefijo <b>pluri-</b> que significa:', opts: ['uno', 'dos', 'varios', 'ninguno'], ans: 2, exp: 'PLURI- indica pluralidad o multiplicidad: pluri-cultural, pluri-nacional.' }
+      ]
+    })
+  },
+  {
+    id: 2, lang: 'ES', tags: ['sufijos'],
+    title: 'Sufijos Nominales ES',
+    desc: 'Aprende sufijos que forman sustantivos en español',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '¿Qué sufijo transforma un verbo en sustantivo indicando acción? ("cantar" → "canto")', opts: ['-ción', '-ero', '-aje', '-ura'], ans: 0, exp: '-CIÓN es uno de los sufijos más productivos: can-ción, nota-ción, celebra-ción.' },
+        { q: 'El sufijo <b>-ero</b> en "panadero" indica:', opts: ['lugar', 'cualidad', 'oficio o profesión', 'acción'], ans: 2, exp: '-ERO/-ERA forma nombres de oficios: pan-adero, jard-inero, zapater-o.' },
+        { q: '¿Qué sufijo forma palabras que indican "lugar donde se hace algo"? (pan → panadería)', opts: ['-ía', '-ada', '-ismo', '-ista'], ans: 0, exp: '-ÍA indica lugar, oficio o conjunto: panad-ería, carnicer-ía, librería.' },
+        { q: 'La palabra "grandeza" se forma con el sufijo <b>-eza</b> que expresa:', opts: ['acción', 'cualidad abstracta', 'oficio', 'disminución'], ans: 1, exp: '-EZA forma sustantivos de cualidad: grand-eza, bell-eza, trist-eza, dure-za.' },
+        { q: '"Florero" contiene el sufijo <b>-ero</b>. ¿Qué significa aquí?', opts: ['persona que vende flores', 'recipiente para flores', 'lugar de flores', 'todas son correctas'], ans: 3, exp: '-ERO es polisémico: puede indicar profesión, objeto o lugar según el contexto.' }
+      ]
+    })
+  },
+  {
+    id: 3, lang: 'ES', tags: ['escritura'],
+    title: 'Escribe con Morfemas',
+    desc: 'Forma palabras uniendo morfemas y escríbelas en oraciones',
+    play: () => writingGame({
+      instructions: '✍️ <b>Juego de escritura:</b> Combina los morfemas dados para formar palabras y úsalas en una oración.',
+      prompts: [
+        { pieces: ['des-', 'orden', '-ar'], hint: 'Verbo que significa "quitar el orden"', answer: 'desordenar', use: 'El viento empezó a <b>desordenar</b> los papeles.' },
+        { pieces: ['re-', 'escrib', '-ir'], hint: 'Verbo que significa "escribir de nuevo"', answer: 'reescribir', use: 'Tuvo que <b>reescribir</b> el informe.' },
+        { pieces: ['in-', 'feliz'], hint: 'Adjetivo opuesto a feliz', answer: 'infeliz', use: 'Se sentía <b>infeliz</b> con su decisión.' },
+        { pieces: ['pan', '-adero'], hint: 'Persona que hace o vende pan', answer: 'panadero', use: 'El <b>panadero</b> llegó muy temprano.' }
+      ]
+    })
+  },
+  {
+    id: 4, lang: 'ES', tags: ['sufijos'],
+    title: 'Diminutivos y Aumentativos',
+    desc: 'Identifica el valor de los sufijos apreciativos',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '¿Qué expresa el sufijo <b>-ito/-ita</b> en "gatito"?', opts: ['tamaño grande', 'tamaño pequeño o afecto', 'desprecio', 'profesión'], ans: 1, exp: '-ITO/-ITA es el diminutivo más común en español: gat-ito, cas-ita, libr-ito.' },
+        { q: '"Perrazo" usa el sufijo <b>-azo</b> que indica:', opts: ['diminutivo', 'aumentativo', 'despectivo', 'profesión'], ans: 1, exp: '-AZO/-AZA es aumentativo: perr-azo, cas-aza, libr-azo (también golpe dado con algo).' },
+        { q: '¿Cuál es el sufijo despectivo en "pueblucho"?', opts: ['-ucho', '-illo', '-ote', '-ón'], ans: 0, exp: '-UCHO/-UCHA tiene valor peyorativo: puebl-ucho, cas-ucha, med-iucho.' },
+        { q: 'El sufijo <b>-ón</b> en "sillón" indica principalmente:', opts: ['diminutivo', 'aumento de tamaño', 'desprecio', 'oficio'], ans: 1, exp: '-ÓN/-ONA puede ser aumentativo: sill-ón (silla grande), botón, balcón.' },
+        { q: '"Callejuela" usa el sufijo <b>-uela</b> que expresa:', opts: ['aumentativo', 'despectivo o pequeño', 'afecto', 'oficio'], ans: 1, exp: '-UELO/-UELA es diminutivo con matiz a veces despectivo: callej-uela, much-uelo.' }
+      ]
+    })
+  },
+  {
+    id: 5, lang: 'ES', tags: ['prefijos'],
+    title: 'Familias de Palabras',
+    desc: 'Agrupa palabras de la misma familia morfológica',
+    play: () => familyGroupGame({
+      families: [
+        { root: 'LIBRO', words: ['librero', 'librería', 'libreto', 'libreta', 'librería'], unrelated: ['libo', 'libra', 'libélula'] },
+        { root: 'AGUA', words: ['aguado', 'aguacate', 'acuático', 'aguarrás', 'aguamanil'], unrelated: ['agujero', 'aguja', 'aguante'] },
+        { root: 'FLOR', words: ['florista', 'florecer', 'florería', 'florero', 'floral'], unrelated: ['flora', 'folklore', 'fluoruro'] }
+      ]
+    })
+  },
+  {
+    id: 6, lang: 'ES', tags: ['escritura'],
+    title: 'Transforma la Categoría Gramatical',
+    desc: 'Cambia sustantivos a verbos y viceversa con sufijos',
+    play: () => writingGame({
+      instructions: '✍️ <b>Transforma</b> las palabras usando sufijos correctos y escribe una oración con la nueva palabra.',
+      prompts: [
+        { pieces: ['canción', '→ verbo'], hint: 'Elimina -ción y añade -ar', answer: 'cantar', use: 'Quiero <b>cantar</b> esa canción.' },
+        { pieces: ['belleza', '→ adjetivo'], hint: 'Busca el adjetivo base de belleza', answer: 'bello/bella', use: 'Qué día tan <b>bello</b>.' },
+        { pieces: ['correr', '→ sustantivo de acción'], hint: 'Usa el sufijo -ido o la forma -er', answer: 'corrida / carrera', use: 'La <b>carrera</b> fue emocionante.' },
+        { pieces: ['dulce', '→ sustantivo'], hint: 'Añade -ura o -or', answer: 'dulzura / dulzor', use: 'Admiro la <b>dulzura</b> de tu voz.' }
+      ]
+    })
+  },
+  {
+    id: 7, lang: 'ES', tags: ['sufijos'],
+    title: 'Sufijos Verbales -ar/-er/-ir',
+    desc: 'Clasifica verbos por su conjugación',
+    play: () => sortingGame({
+      title: 'Arrastra cada verbo a su conjugación',
+      categories: ['-AR', '-ER', '-IR'],
+      items: [
+        { text: 'cantar', cat: '-AR' }, { text: 'comer', cat: '-ER' }, { text: 'vivir', cat: '-IR' },
+        { text: 'bailar', cat: '-AR' }, { text: 'temer', cat: '-ER' }, { text: 'subir', cat: '-IR' },
+        { text: 'hablar', cat: '-AR' }, { text: 'beber', cat: '-ER' }, { text: 'escribir', cat: '-IR' },
+      ]
+    })
+  },
+  {
+    id: 8, lang: 'ES', tags: ['prefijos'],
+    title: 'Prefijos Griegos y Latinos',
+    desc: 'Relaciona el prefijo con su significado etimológico',
+    play: () => matchingGame({
+      pairs: [
+        ['bio-', 'vida'], ['geo-', 'tierra'], ['foto-', 'luz'],
+        ['tele-', 'lejos'], ['micro-', 'pequeño'], ['macro-', 'grande'],
+        ['mono-', 'uno'], ['poli-', 'muchos'], ['auto-', 'uno mismo']
+      ]
+    })
+  },
+  {
+    id: 9, lang: 'ES', tags: ['escritura'],
+    title: 'Crea tu Propio Texto',
+    desc: 'Escribe un párrafo usando palabras con los morfemas dados',
+    play: () => freeWritingGame({
+      challenge: 'Escribe un párrafo corto (4-6 oraciones) usando AL MENOS 5 de estas palabras derivadas:',
+      words: ['infeliz', 'releer', 'desordenar', 'panadería', 'hermosura', 'florista', 'subterráneo', 'prehistórico', 'bilingüe', 'microbioma'],
+      topic: 'Un día especial en el mercado del pueblo'
+    })
+  },
+  {
+    id: 10, lang: 'ES', tags: ['sufijos'],
+    title: 'Morfología del Adjetivo',
+    desc: 'Sufijos que forman adjetivos en español',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '¿Qué sufijo forma adjetivos que expresan "posibilidad de ser hecho"? (leer → ___)', opts: ['-ble', '-oso', '-al', '-ivo'], ans: 0, exp: '-BLE: le-ible, comestible, adorable. Indica posibilidad o capacidad.' },
+        { q: '"Peligroso" contiene el sufijo <b>-oso</b> que significa:', opts: ['sin peligro', 'lleno de peligro', 'que causa peligro', 'b y c son correctas'], ans: 3, exp: '-OSO/-OSA indica abundancia o característica: pelIgr-oso, cari-oso, vali-oso.' },
+        { q: '¿Cuál sufijo indica relación en "nacional"?', opts: ['-al', '-ivo', '-ante', '-ble'], ans: 0, exp: '-AL/-AR indica relación o pertenencia: nacion-al, natur-al, tribut-al.' },
+        { q: '"Creativo" usa el sufijo <b>-ivo</b> que expresa:', opts: ['ausencia', 'tendencia o relación activa', 'pequeñez', 'colectivo'], ans: 1, exp: '-IVO/-IVA indica tendencia o relación: creat-ivo, agres-ivo, posit-ivo.' },
+        { q: '¿Qué significa el sufijo <b>-ante/-iente</b> en "brillante, sonriente"?', opts: ['pasado', 'que realiza la acción', 'privación', 'aumentativo'], ans: 1, exp: '-ANTE/-IENTE son participios activos: brilla-nte, sonr-iente, interes-ante.' }
+      ]
+    })
+  },
+
+  // ===== JUEGOS INGLÉS =====
+  {
+    id: 11, lang: 'EN', tags: ['prefijos'],
+    title: 'English Prefixes',
+    desc: 'Master the most common English prefixes',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: 'The prefix <b>un-</b> in "unhappy" means:', opts: ['again', 'not/opposite', 'before', 'after'], ans: 1, exp: 'UN- is one of the most common negating prefixes: un-happy, un-do, un-known.' },
+        { q: 'What does the prefix <b>re-</b> mean in "rewrite"?', opts: ['badly', 'again', 'not', 'half'], ans: 1, exp: 'RE- means again or back: re-write, re-do, re-turn, re-build.' },
+        { q: 'The prefix <b>mis-</b> in "misunderstand" indicates:', opts: ['incorrectly/wrongly', 'too much', 'half', 'before'], ans: 0, exp: 'MIS- means wrongly or badly: mis-understand, mis-spell, mis-lead.' },
+        { q: '"Prehistoric" — the prefix <b>pre-</b> means:', opts: ['after', 'before', 'against', 'with'], ans: 1, exp: 'PRE- means before in time or order: pre-historic, pre-view, pre-school.' },
+        { q: 'What prefix creates the opposite of "possible"?', opts: ['un-', 'dis-', 'im-', 'non-'], ans: 2, exp: 'IM- is used before roots starting with m, b, p: im-possible, im-polite, im-moral.' }
+      ]
+    })
+  },
+  {
+    id: 12, lang: 'EN', tags: ['sufijos'],
+    title: 'English Suffixes -tion/-sion',
+    desc: 'Form nouns from verbs using these key suffixes',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: 'Verb <b>educate</b> → noun: ___', opts: ['educatism', 'education', 'educatory', 'educating'], ans: 1, exp: 'EDUCATE → EDUCATION: -ate verbs typically take -tion: create→creation, locate→location.' },
+        { q: '<b>Discuss</b> → noun form:', opts: ['discussion', 'discussment', 'discussal', 'discusses'], ans: 0, exp: 'DISCUSS → DISCUSSION: verbs ending in -ss often take -ion: confess→confession.' },
+        { q: 'Which is correct? The <b>permit</b> → noun:', opts: ['permission', 'permittion', 'permitage', 'permitting'], ans: 0, exp: 'PERMIT → PERMISSION: the -t changes to -ss before -ion in several words.' },
+        { q: '<b>Decide</b> → noun form:', opts: ['decidement', 'decision', 'decidance', 'decisional'], ans: 1, exp: 'DECIDE → DECISION: -de often becomes -sion: divide→division, collide→collision.' },
+        { q: '"Celebration" — what verb does it come from?', opts: ['celebrize', 'celebrify', 'celebrate', 'celebrer'], ans: 2, exp: 'CELEBRATE → CELEBRATION: this is the -ate → -ation pattern, very common.' }
+      ]
+    })
+  },
+  {
+    id: 13, lang: 'EN', tags: ['escritura'],
+    title: 'Write with English Morphemes',
+    desc: 'Build words and use them in context',
+    play: () => writingGame({
+      instructions: '✍️ <b>Writing game:</b> Combine the morphemes to form a word and write a sentence using it.',
+      prompts: [
+        { pieces: ['un-', 'break', '-able'], hint: 'Adjective meaning "cannot be broken"', answer: 'unbreakable', use: 'The box was made of <b>unbreakable</b> glass.' },
+        { pieces: ['re-', 'organ', '-ize'], hint: 'Verb meaning "to organize again"', answer: 'reorganize', use: 'We need to <b>reorganize</b> the schedule.' },
+        { pieces: ['dis-', 'agree', '-ment'], hint: 'Noun meaning "lack of agreement"', answer: 'disagreement', use: 'There was a <b>disagreement</b> about the plan.' },
+        { pieces: ['over-', 'work', '-ed'], hint: 'Adjective meaning "worked too much"', answer: 'overworked', use: 'She felt completely <b>overworked</b> by Friday.' }
+      ]
+    })
+  },
+  {
+    id: 14, lang: 'EN', tags: ['sufijos'],
+    title: 'Adjective Suffixes EN',
+    desc: '-ful, -less, -ous, -ive, -al — what do they mean?',
+    play: () => sortingGame({
+      title: 'Sort by suffix category',
+      categories: ['-ful', '-less', '-ous', '-ive', '-al'],
+      items: [
+        { text: 'powerful', cat: '-ful' }, { text: 'homeless', cat: '-less' }, { text: 'dangerous', cat: '-ous' },
+        { text: 'creative', cat: '-ive' }, { text: 'natural', cat: '-al' },
+        { text: 'hopeful', cat: '-ful' }, { text: 'careless', cat: '-less' }, { text: 'famous', cat: '-ous' },
+        { text: 'active', cat: '-ive' }
+      ]
+    })
+  },
+  {
+    id: 15, lang: 'EN', tags: ['prefijos'],
+    title: 'Prefix Meanings Match',
+    desc: 'Match each prefix to its etymological meaning',
+    play: () => matchingGame({
+      pairs: [
+        ['anti-', 'against'], ['inter-', 'between'], ['trans-', 'across'],
+        ['sub-', 'under'], ['super-', 'above/over'], ['co-', 'together'],
+        ['semi-', 'half'], ['multi-', 'many'], ['ex-', 'former/out']
+      ]
+    })
+  },
+  {
+    id: 16, lang: 'EN', tags: ['sufijos'],
+    title: 'Noun Suffixes: -er, -or, -ist',
+    desc: 'Who does the action? Match the agent nouns',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: 'Person who teaches: ___ (teach)', opts: ['teachist', 'teacher', 'teachor', 'teaching'], ans: 1, exp: 'TEACH+ER → TEACHER. -ER is the most common agent suffix for native English verbs.' },
+        { q: '"Art" → person who practices art:', opts: ['arter', 'artor', 'artist', 'artful'], ans: 2, exp: 'ART+IST → ARTIST. -IST often used with nouns for professional or ideological roles.' },
+        { q: 'Person who acts (in films): ___', opts: ['acter', 'actist', 'actor', 'active'], ans: 2, exp: 'ACT+OR → ACTOR. -OR (from Latin) is common: director, senator, professor.' },
+        { q: '"Science" → person who studies science:', opts: ['sciencer', 'scientor', 'scientific', 'scientist'], ans: 3, exp: 'SCIENT+IST → SCIENTIST. Note the slight spelling change from science→scient-.' },
+        { q: 'Which suffix forms the word for "a person who drives"?', opts: ['driv-er', 'driv-or', 'driv-ist', 'driv-eur'], ans: 0, exp: 'DRIVE+R → DRIVER. Native English verbs take -ER: swim→swimmer, run→runner.' }
+      ]
+    })
+  },
+  {
+    id: 17, lang: 'EN', tags: ['escritura'],
+    title: 'Free Writing: Derived Words',
+    desc: 'Write a paragraph using 5+ morphologically derived words',
+    play: () => freeWritingGame({
+      challenge: 'Write a short paragraph (4–6 sentences) using AT LEAST 5 of these derived words:',
+      words: ['impossible', 'reorganize', 'overworked', 'disagreement', 'unbreakable', 'creativity', 'scientist', 'subterranean', 'international', 'prehistorical'],
+      topic: 'An extraordinary discovery in a remote laboratory'
+    })
+  },
+  {
+    id: 18, lang: 'EN', tags: ['sufijos'],
+    title: 'Verb-to-Noun Conversion',
+    desc: 'Change verbs into nouns using the right suffix',
+    play: () => writingGame({
+      instructions: '✍️ <b>Transform</b> each verb into a noun using -ment, -ance/-ence, -tion, or -al and write a sentence.',
+      prompts: [
+        { pieces: ['develop', '→ noun'], hint: 'Use -ment', answer: 'development', use: 'The <b>development</b> of the app took six months.' },
+        { pieces: ['perform', '→ noun'], hint: 'Use -ance', answer: 'performance', use: 'Her <b>performance</b> was outstanding.' },
+        { pieces: ['approve', '→ noun'], hint: 'Use -al', answer: 'approval', use: 'The manager gave her <b>approval</b>.' },
+        { pieces: ['exist', '→ noun'], hint: 'Use -ence', answer: 'existence', use: 'The <b>existence</b> of dinosaurs is proven.' }
+      ]
+    })
+  },
+  {
+    id: 19, lang: 'EN', tags: ['prefijos'],
+    title: 'Compound Words',
+    desc: 'Identify morpheme boundaries in English compounds',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '"Sunshine" is a compound of:', opts: ['sun + shine', 'suns + hine', 's + unshine', 'suns + hin + e'], ans: 0, exp: 'SUN + SHINE: both are free morphemes that combine to create a new meaning.' },
+        { q: 'Which is a compound noun?', opts: ['beautiful', 'raincoat', 'running', 'quickly'], ans: 1, exp: 'RAINCOAT = RAIN + COAT. Compounds join two or more free morphemes.' },
+        { q: '"Butterfly" is a compound. What are its parts?', opts: ['butt + erfly', 'butter + fly', 'but + terfly', 'butte + rfly'], ans: 1, exp: 'BUTTER + FLY: though the literal meaning is opaque, morphologically it splits here.' },
+        { q: 'How many morphemes in "bookshelf"?', opts: ['1', '2', '3', '4'], ans: 1, exp: 'BOOK + SHELF = 2 free morphemes forming a compound noun.' },
+        { q: '"Unforgettable" contains how many morphemes?', opts: ['2', '3', '4', '5'], ans: 2, exp: 'UN- + FORGET + -TABLE = prefix + root + suffix = 3 morphemes (or 4 if you count -able as -able).' }
+      ]
+    })
+  },
+  {
+    id: 20, lang: 'EN', tags: ['sufijos'],
+    title: 'Adverb Formation with -ly',
+    desc: 'Create adverbs and understand spelling rules',
+    play: () => writingGame({
+      instructions: '✍️ <b>Convert</b> each adjective to an adverb using <b>-ly</b>. Watch for spelling changes!',
+      prompts: [
+        { pieces: ['happy', '→ adverb'], hint: 'Drop -y, add -ily', answer: 'happily', use: 'She smiled <b>happily</b> at the news.' },
+        { pieces: ['basic', '→ adverb'], hint: 'Add -ally', answer: 'basically', use: '<b>Basically</b>, we need to start over.' },
+        { pieces: ['true', '→ adverb'], hint: 'Drop the -e', answer: 'truly', use: 'I am <b>truly</b> grateful.' },
+        { pieces: ['gentle', '→ adverb'], hint: 'Drop -le, add -ly', answer: 'gently', use: 'She spoke <b>gently</b> to the child.' }
+      ]
+    })
+  },
+
+  // ===== JUEGOS BILINGÜE =====
+  {
+    id: 21, lang: 'BOTH', tags: ['prefijos'],
+    title: 'Cognados: Prefijos ES ↔ EN',
+    desc: 'Los mismos prefijos grecolatinos en ambos idiomas',
+    play: () => matchingGame({
+      pairs: [
+        ['sub-marino (ES)', 'sub-marine (EN)'], ['bio-logía (ES)', 'bio-logy (EN)'],
+        ['micro-scopio (ES)', 'micro-scope (EN)'], ['pre-historia (ES)', 'pre-history (EN)'],
+        ['anti-virus (ES)', 'anti-virus (EN)'], ['tele-visión (ES)', 'tele-vision (EN)'],
+        ['inter-nacional (ES)', 'inter-national (EN)'], ['auto-móvil (ES)', 'auto-mobile (EN)'],
+        ['geo-grafía (ES)', 'geo-graphy (EN)']
+      ]
+    })
+  },
+  {
+    id: 22, lang: 'BOTH', tags: ['sufijos'],
+    title: 'Sufijos Paralelos ES ↔ EN',
+    desc: 'Relaciona sufijos equivalentes en ambos idiomas',
+    play: () => matchingGame({
+      pairs: [
+        ['-ción (ES)', '-tion (EN)'], ['-oso (ES)', '-ous (EN)'],
+        ['-ista (ES)', '-ist (EN)'], ['-ble (ES)', '-ble (EN)'],
+        ['-mente (ES)', '-ly (EN)'], ['-ario (ES)', '-ary (EN)'],
+        ['-ismo (ES)', '-ism (EN)'], ['-ificar (ES)', '-ify (EN)'],
+        ['-dad (ES)', '-ty/-ity (EN)']
+      ]
+    })
+  },
+  {
+    id: 23, lang: 'BOTH', tags: ['prefijos'],
+    title: 'Falsos Amigos Morfológicos',
+    desc: 'Morfemas que parecen iguales pero difieren',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '"Embarrassed" (EN) vs "embarazada" (ES) — ¿qué relación tienen?', opts: ['Son sinónimos perfectos', 'Son falsos amigos: significan cosas distintas', 'Tienen el mismo morfema -raz-', 'Son antónimos'], ans: 1, exp: 'FALSO AMIGO: embarrassed=avergonzado; embarazada=pregnant. ¡Cuidado!' },
+        { q: 'El sufijo -ario(ES)/-ary(EN): "secretario/secretary" — ¿son cognados verdaderos?', opts: ['Sí, mismo origen y significado', 'No, son falsos amigos', 'Solo en algunos casos', 'Nunca tienen el mismo significado'], ans: 0, exp: 'Sí: SECRET-ARY/SECRETARI-O comparten raíz latina secretarius, significado similar.' },
+        { q: '"Sensible" en inglés significa:', opts: ['sensible/con sentido (como en ES)', 'sensible/susceptible', 'razonable/prudente', 'sensorial'], ans: 2, exp: 'FALSO AMIGO: EN sensible = razonable; ES sensible = que se emociona fácilmente.' },
+        { q: '¿Tienen el mismo morfema "-port-" "portar(ES)" y "transport(EN)"?', opts: ['Sí, ambas del latín portare (llevar)', 'No, son morfemas distintos', 'Solo transport', 'Solo portar'], ans: 0, exp: 'Sí: ambas del latín PORTARE (llevar): im-port, ex-port, trans-port, re-port.' }
+      ]
+    })
+  },
+  {
+    id: 24, lang: 'BOTH', tags: ['escritura'],
+    title: 'Bilingüe: Traduce Morfemas',
+    desc: 'Escribe el equivalente morfológico en el otro idioma',
+    play: () => writingGame({
+      instructions: '✍️ <b>Bilingüe:</b> Escribe la palabra equivalente en el otro idioma manteniendo la misma estructura morfológica.',
+      prompts: [
+        { pieces: ['beautiful (EN)', '→ ES'], hint: 'Sufijo -ful (EN) ≈ -oso/-oso (ES)', answer: 'hermoso/bello', use: 'EN: a beautiful day = ES: un día <b>hermoso</b>.' },
+        { pieces: ['infeliz (ES)', '→ EN'], hint: 'Prefijo in- es igual en ambos', answer: 'unhappy / miserable', use: 'ES: estaba infeliz = EN: she was <b>unhappy</b>.' },
+        { pieces: ['reescribir (ES)', '→ EN'], hint: 'Mismo prefijo re- en ambos', answer: 'rewrite', use: 'ES: reescribir = EN: to <b>rewrite</b>.' },
+        { pieces: ['librería (ES)', '→ EN'], hint: '¡Ojo con el falso amigo!', answer: 'bookstore (no library)', use: 'Librería ≠ library. Librería = <b>bookstore</b>.' }
+      ]
+    })
+  },
+  {
+    id: 25, lang: 'BOTH', tags: ['escritura'],
+    title: 'Diálogo Bilingüe',
+    desc: 'Escribe un diálogo usando palabras derivadas en ambos idiomas',
+    play: () => freeWritingGame({
+      challenge: 'Escribe un diálogo corto en ESPAÑOL E INGLÉS alternados (tipo Spanglish académico) usando estas palabras derivadas (al menos 4 de cada idioma):',
+      words: ['infeliz · unhappy', 'reescribir · rewrite', 'panadería · bakery', 'hermosura · beauty', 'internacional · international', 'científico · scientist'],
+      topic: 'Dos amigos hablan sobre su trabajo (puedes mezclar idiomas entre personajes)'
+    })
+  },
+  {
+    id: 26, lang: 'BOTH', tags: ['prefijos', 'sufijos'],
+    title: 'Raíces Grecolatinas Comunes',
+    desc: 'Identifica la raíz compartida entre palabras ES e EN',
+    play: () => multipleChoiceGame({
+      questions: [
+        { q: '¿Qué raíz comparten "audiovisual(ES)" y "auditorium(EN)"?', opts: ['vis-', 'audi- (oír)', '-ual', 'aud-it-'], ans: 1, exp: 'AUDI- del latín audire (oír): aud-itory, aud-ience, audit-orium, audi-ción.' },
+        { q: '"Acuático(ES)" y "aquatic(EN)" comparten la raíz:', opts: ['ac-', 'aqu- (agua)', '-tico', 'at-'], ans: 1, exp: 'AQU-/AGUA del latín aqua: acuario, acuático, aquifer, aquarium.' },
+        { q: '¿Qué une "cronología(ES)" y "chronology(EN)"?', opts: ['La raíz -log- (estudio)', 'La raíz chron-/cron- (tiempo)', 'El sufijo -ía/-y', 'Las tres cosas'], ans: 3, exp: 'Correcto: CHRON-(tiempo) + LOG-(estudio) + -ÍA/-Y: ¡tres morfemas compartidos!' },
+        { q: '"Fotografía(ES)" y "photography(EN)" — ¿qué significa el morfema "-graph-"?', opts: ['luz', 'imagen/escritura', 'cámara', 'color'], ans: 1, exp: '-GRAPH- del griego graphein (escribir/trazar): photography, biography, autograph.' },
+        { q: '¿Cuántos morfemas tiene "biotecnología" / "biotechnology"?', opts: ['2', '3', '4', '5'], ans: 2, exp: 'BIO-(vida) + TECNO-/TECH- (técnica/arte) + -LOG-(estudio) + -ÍA/-Y = 4 morfemas.' }
+      ]
+    })
+  },
+  {
+    id: 27, lang: 'BOTH', tags: ['sufijos'],
+    title: 'Conversión de Categoría',
+    desc: 'N→V→Adj→Adv en español e inglés',
+    play: () => writingGame({
+      instructions: '✍️ <b>Cadena morfológica:</b> Completa la cadena de derivación en AMBOS idiomas.',
+      prompts: [
+        { pieces: ['ES: belleza → bello → ??? (adv)', 'EN: beauty → beautiful → ???'], hint: 'Añade -mente (ES) o -ly (EN)', answer: 'bellamente / beautifully', use: 'Cantaba <b>bellamente</b> / She sang <b>beautifully</b>.' },
+        { pieces: ['ES: creación → crear → creativo → ???', 'EN: creation → create → creative → ???'], hint: 'ES: -amente / EN: -ly', answer: 'creativamente / creatively', use: 'Piensa <b>creativamente</b> / Think <b>creatively</b>.' },
+        { pieces: ['ES: velocidad → veloz → ???', 'EN: speed → speedy/quick → ???'], hint: 'Adverbio de velocidad', answer: 'velozmente / quickly', use: 'Corrió <b>velozmente</b> / He ran <b>quickly</b>.' }
+      ]
+    })
+  },
+  {
+    id: 28, lang: 'BOTH', tags: ['escritura'],
+    title: 'Análisis Morfológico',
+    desc: 'Descompón palabras complejas en sus morfemas',
+    play: () => analysisGame({
+      words: [
+        { word: 'internacionalización', lang: 'ES', parts: ['inter-', 'nacion-', '-al', '-iza-', '-ción'], meanings: ['entre', 'nación(raíz)', 'relación', 'hacer/convertir', 'acción'] },
+        { word: 'internationalization', lang: 'EN', parts: ['inter-', 'nation-', '-al', '-ize', '-ation'], meanings: ['between', 'nation(root)', 'relating to', 'make/become', 'action/process'] },
+        { word: 'desinflammation', lang: 'AMBOS', note: '¿Es una palabra real? Analiza sus morfemas y decide.' }
+      ]
+    })
+  },
+  {
+    id: 29, lang: 'BOTH', tags: ['prefijos', 'escritura'],
+    title: 'Neologismos: Crea Palabras',
+    desc: 'Inventa palabras nuevas usando morfemas reales',
+    play: () => freeWritingGame({
+      challenge: '🧪 <b>Laboratorio de palabras:</b> Inventa 3 neologismos usando morfemas reales (pueden ser en español, inglés o ambos). Para cada uno: escríbelo, analiza sus morfemas y úsalo en una oración.',
+      words: ['bio-', '-ista', 'micro-', '-ología', 'super-', '-ble', 'tele-', '-mento', 'foto-', '-ción', 'over-', '-ness', 'anti-', '-ize', 'cyber-'],
+      topic: 'Por ejemplo: "ciberbiologista" = cibernético + biólogo + -ista → alguien que estudia vida digital'
+    })
+  },
+  {
+    id: 30, lang: 'BOTH', tags: ['prefijos', 'sufijos', 'escritura'],
+    title: 'Gran Reto Final: Morfología Total',
+    desc: 'El desafío definitivo que combina todo lo aprendido',
+    play: () => freeWritingGame({
+      challenge: '🏆 <b>RETO MAESTRO:</b> Escribe un texto creativo (8-10 oraciones) en español o inglés (o ambos) que incluya OBLIGATORIAMENTE: 3 palabras con prefijos, 3 con sufijos, 2 diminutivos/aumentativos (ES) o compound words (EN), y 2 palabras con raíces grecolatinas identificables.',
+      words: ['Usa todos los morfemas aprendidos: re-, des-, in-, un-, mis-, -ción/-tion, -oso/-ous, -ito/-ita, -ble, -mente/-ly, bio-, geo-, micro-, tele-...'],
+      topic: '✨ Tema libre: Una aventura, un recuerdo, una ciudad imaginaria, el futuro de la tecnología...'
+    })
+  },
+];
+
+// ===================== RENDER CARDS =====================
+function renderCards(filter = 'all') {
+  const grid = document.getElementById('gameGrid');
+  grid.innerHTML = '';
+  const filtered = games.filter(g => {
+    if (filter === 'all') return true;
+    if (filter === 'ES' || filter === 'EN' || filter === 'BOTH') return g.lang === filter;
+    return g.tags.includes(filter);
+  });
+  filtered.forEach(g => {
+    const card = document.createElement('div');
+    card.className = 'game-card' + (completedGames.has(g.id) ? ' completed' : '');
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="game-num">#${String(g.id).padStart(2,'0')}</div>
+        <div class="card-title">${g.title}</div>
+      </div>
+      <div class="card-meta">${g.desc}</div>
+      <div class="card-lang">
+        ${g.lang === 'ES' ? '<span class="lang-tag lang-es">🇪🇸 Español</span>' : ''}
+        ${g.lang === 'EN' ? '<span class="lang-tag lang-en">🇬🇧 English</span>' : ''}
+        ${g.lang === 'BOTH' ? '<span class="lang-tag lang-both">🌐 Bilingüe</span>' : ''}
+        ${g.tags.map(t => `<span class="lang-tag" style="background:rgba(245,240,232,0.07);color:rgba(245,240,232,0.45)">${t}</span>`).join('')}
+      </div>
+      <button class="card-play-btn" onclick="openGame(${g.id})">▶ Jugar ahora</button>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function filterGames(f) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderCards(f);
+}
+
+// ===================== MODAL =====================
+function openGame(id) {
+  const g = games.find(x => x.id === id);
+  document.getElementById('modalNum').textContent = `JUEGO #${String(id).padStart(2,'0')}`;
+  document.getElementById('modalTitle').textContent = g.title;
+  document.getElementById('modalDesc').textContent = g.desc;
+  document.getElementById('modalBody').innerHTML = '';
+  document.getElementById('modalOverlay').classList.add('active');
+  g.play();
+}
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  renderCards();
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+}
+
+// ===================== SCORE =====================
+function addScore(pts) {
+  totalScore += pts;
+  streak++;
+  document.getElementById('totalScore').textContent = totalScore;
+  document.getElementById('streak').textContent = streak;
+}
+function markCompleted(id) {
+  if (!completedGames.has(id)) {
+    completedGames.add(id);
+    document.getElementById('completedCount').textContent = completedGames.size;
+  }
+}
+
+// ===================== GAME ENGINES =====================
+
+// --- Multiple Choice ---
+function multipleChoiceGame({ questions }) {
+  let current = 0, correct = 0;
+  const body = document.getElementById('modalBody');
+  function render() {
+    if (current >= questions.length) {
+      body.innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:3rem;margin-bottom:1rem">${correct >= questions.length * 0.8 ? '🏆' : correct >= questions.length * 0.5 ? '👍' : '💪'}</div>
+          <h3 style="font-family:Unbounded,sans-serif;font-size:1.2rem;margin-bottom:0.5rem">${correct}/${questions.length} correctas</h3>
+          <p style="color:rgba(245,240,232,0.5);margin-bottom:1.5rem">+${correct * 10} puntos ganados</p>
+          <button class="action-btn gold" onclick="closeModal()">✓ Finalizar</button>
+        </div>`;
+      addScore(correct * 10);
+      markCompleted(games.find(g => g.title === document.getElementById('modalTitle').textContent).id);
+      return;
+    }
+    const q = questions[current];
+    const dots = questions.map((_, i) => `<div class="dot ${i < current ? 'done' : i === current ? 'current' : ''}"></div>`).join('');
+    body.innerHTML = `
+      <div class="progress-dots">${dots}</div>
+      <div class="mini-score">Pregunta <b>${current + 1}/${questions.length}</b> · Correctas: <b>${correct}</b></div>
+      <div class="question-text">${q.q}</div>
+      <div class="options-grid" id="opts"></div>
+      <div class="feedback" id="fb"></div>
+      <div id="nextBtnContainer" style="margin-top:0.5rem"></div>`;
+    const optsDiv = document.getElementById('opts');
+    q.opts.forEach((o, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = o;
+      btn.onclick = () => {
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = true);
+        const fb = document.getElementById('fb');
+        fb.classList.add('show');
+        if (i === q.ans) {
+          btn.classList.add('correct');
+          fb.className = 'feedback show good';
+          fb.textContent = '✓ ¡Correcto! ' + q.exp;
+          correct++;
+        } else {
+          btn.classList.add('wrong');
+          document.querySelectorAll('.opt-btn')[q.ans].classList.add('correct');
+          fb.className = 'feedback show bad';
+          fb.textContent = '✗ Incorrecto. ' + q.exp;
+        }
+        document.getElementById('nextBtnContainer').innerHTML =
+          `<button class="action-btn" onclick="nextQ()">Siguiente →</button>`;
+      };
+      optsDiv.appendChild(btn);
+    });
+    window.nextQ = () => { current++; render(); };
+  }
+  render();
+}
+
+// --- Writing Game ---
+function writingGame({ instructions, prompts }) {
+  let current = 0, score = 0;
+  const body = document.getElementById('modalBody');
+  function render() {
+    if (current >= prompts.length) {
+      body.innerHTML = `
+        <div style="text-align:center;padding:2rem 0">
+          <div style="font-size:3rem;margin-bottom:1rem">✍️</div>
+          <h3 style="font-family:Unbounded,sans-serif;font-size:1.1rem;margin-bottom:0.5rem">¡Ejercicio completado!</h3>
+          <p style="color:rgba(245,240,232,0.5);margin-bottom:1.5rem">+${score} puntos</p>
+          <button class="action-btn gold" onclick="closeModal()">✓ Finalizar</button>
+        </div>`;
+      addScore(score);
+      markCompleted(games.find(g => g.title === document.getElementById('modalTitle').textContent).id);
+      return;
+    }
+    const p = prompts[current];
+    const dots = prompts.map((_,i) => `<div class="dot ${i<current?'done':i===current?'current':''}"></div>`).join('');
+    body.innerHTML = `
+      <div class="progress-dots">${dots}</div>
+      <div style="margin-bottom:1rem;font-size:0.85rem;color:rgba(245,240,232,0.5)">${instructions}</div>
+      <div class="word-builder">${p.pieces.map((pc,i) => {
+        const cls = i===0?'morph-prefix': i===p.pieces.length-1?'morph-suffix':'morph-root';
+        return `<span class="morph-piece ${cls}">${pc}</span>`;
+      }).join('<span style="color:rgba(245,240,232,0.3);padding:0 0.2rem">+</span>')}</div>
+      <p style="color:rgba(245,240,232,0.5);font-style:italic;font-size:0.85rem;margin-bottom:0.8rem">💡 Pista: ${p.hint}</p>
+      <input type="text" class="text-input" id="wordInput" placeholder="Escribe la palabra formada..." />
+      <textarea class="write-area" id="sentInput" placeholder="Escribe una oración usando esta palabra..." style="min-height:80px;margin-bottom:0.8rem"></textarea>
+      <div class="feedback" id="fb"></div>
+      <button class="action-btn" onclick="checkWriting()">Comprobar ✓</button>
+    `;
+    window.checkWriting = () => {
+      const word = document.getElementById('wordInput').value.trim().toLowerCase();
+      const sent = document.getElementById('sentInput').value.trim();
+      const fb = document.getElementById('fb');
+      fb.classList.add('show');
+      const answers = p.answer.toLowerCase().split('/').map(a => a.trim());
+      if (answers.some(a => word.includes(a.split('/')[0].trim()))) {
+        fb.className = 'feedback show good';
+        fb.innerHTML = `✓ ¡Bien! Respuesta: <b>${p.answer}</b><br>Ejemplo: ${p.use}${sent ? '<br>Tu oración: <em>' + sent + '</em>' : ''}`;
+        score += 15;
+      } else {
+        fb.className = 'feedback show bad';
+        fb.innerHTML = `✗ La respuesta era: <b>${p.answer}</b><br>Ejemplo: ${p.use}`;
+        score += sent.length > 10 ? 5 : 0;
+      }
+      setTimeout(() => { current++; render(); }, 2500);
+    };
+  }
+  render();
+}
+
+// --- Free Writing ---
+function freeWritingGame({ challenge, words, topic }) {
+  const id = games.find(g => g.title === document.getElementById('modalTitle').textContent).id;
+  const body = document.getElementById('modalBody');
+  body.innerHTML = `
+    <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:8px;padding:1rem;margin-bottom:1rem">
+      <p style="font-size:0.9rem;line-height:1.6">${challenge}</p>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem">
+      ${words.map(w => `<span style="background:rgba(245,240,232,0.07);border:1px solid rgba(245,240,232,0.15);padding:0.3rem 0.7rem;border-radius:4px;font-size:0.8rem;font-style:italic">${w}</span>`).join('')}
+    </div>
+    <p style="color:var(--gold);font-size:0.85rem;margin-bottom:0.8rem">📝 <b>Tema sugerido:</b> ${topic}</p>
+    <textarea class="write-area" id="freeText" placeholder="Escribe aquí tu texto creativo..." style="min-height:160px;margin-bottom:1rem"></textarea>
+    <div style="display:flex;gap:0.5rem;flex-wrap:wrap">
+      <button class="action-btn gold" onclick="submitFree(${id})">✓ Guardar y completar</button>
+      <button class="action-btn secondary" onclick="closeModal()">Guardar para después</button>
+    </div>
+    <div class="feedback" id="freeFb"></div>
+  `;
+  window.submitFree = (gid) => {
+    const text = document.getElementById('freeText').value.trim();
+    const fb = document.getElementById('freeFb');
+    fb.classList.add('show');
+    if (text.length < 50) {
+      fb.className = 'feedback show bad';
+      fb.textContent = '✗ Escribe al menos un párrafo completo para guardar.';
+      return;
+    }
+    fb.className = 'feedback show good';
+    fb.innerHTML = '✓ ¡Excelente trabajo creativo! +25 puntos de escritura 🖊️';
+    addScore(25);
+    markCompleted(gid);
+    setTimeout(closeModal, 1800);
+  };
+}
+
+// --- Matching Game ---
+function matchingGame({ pairs }) {
+  const id = games.find(g => g.title === document.getElementById('modalTitle').textContent).id;
+  let selected = null, matched = 0;
+  const shuffled = [...pairs].sort(() => Math.random() - 0.5);
+  const leftItems = shuffled.map(p => p[0]);
+  const rightItems = [...pairs.map(p => p[1])].sort(() => Math.random() - 0.5);
+  const body = document.getElementById('modalBody');
+  function render() {
+    body.innerHTML = `
+      <p style="color:rgba(245,240,232,0.5);font-size:0.85rem;margin-bottom:1rem">Haz clic en un elemento de cada columna para relacionarlos.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.5rem" id="matchGrid">
+        <div>${leftItems.map((item, i) => `<button class="opt-btn" id="L${i}" onclick="selectItem('L',${i})" style="width:100%;margin-bottom:0.4rem;font-size:0.82rem">${item}</button>`).join('')}</div>
+        <div>${rightItems.map((item, i) => `<button class="opt-btn" id="R${i}" onclick="selectItem('R',${i})" style="width:100%;margin-bottom:0.4rem;font-size:0.82rem">${item}</button>`).join('')}</div>
+      </div>
+      <p id="matchScore" style="margin-top:1rem;color:var(--gold);font-family:Unbounded,sans-serif;font-size:0.8rem">Emparejados: 0/${pairs.length}</p>
+    `;
+    window.selectItem = (side, idx) => {
+      const elId = side + idx;
+      if (selected === null) {
+        selected = { side, idx, elId };
+        document.getElementById(elId).style.borderColor = 'var(--gold)';
+        document.getElementById(elId).style.background = 'rgba(201,168,76,0.15)';
+      } else {
+        if (selected.side === side) {
+          document.getElementById(selected.elId).style.borderColor = '';
+          document.getElementById(selected.elId).style.background = '';
+          selected = { side, idx, elId };
+          document.getElementById(elId).style.borderColor = 'var(--gold)';
+          document.getElementById(elId).style.background = 'rgba(201,168,76,0.15)';
+          return;
+        }
+        const leftIdx = selected.side === 'L' ? selected.idx : idx;
+        const rightIdx = selected.side === 'R' ? selected.idx : idx;
+        const leftVal = leftItems[leftIdx];
+        const rightVal = rightItems[rightIdx];
+        const isMatch = pairs.some(p => p[0] === leftVal && p[1] === rightVal);
+        const lEl = document.getElementById('L' + leftIdx);
+        const rEl = document.getElementById('R' + rightIdx);
+        if (isMatch) {
+          lEl.classList.add('correct'); rEl.classList.add('correct');
+          lEl.disabled = rEl.disabled = true;
+          matched++;
+          document.getElementById('matchScore').textContent = `Emparejados: ${matched}/${pairs.length}`;
+          if (matched === pairs.length) {
+            addScore(matched * 8);
+            markCompleted(id);
+            document.getElementById('matchScore').innerHTML = `🎉 ¡Todos emparejados! +${matched*8} pts <button class="action-btn gold" onclick="closeModal()" style="margin-left:1rem">✓ Finalizar</button>`;
+          }
+        } else {
+          lEl.classList.add('wrong'); rEl.classList.add('wrong');
+          setTimeout(() => {
+            [lEl, rEl].forEach(el => { el.classList.remove('wrong'); el.style.borderColor=''; el.style.background=''; });
+          }, 800);
+        }
+        selected = null;
+      }
+    };
+  }
+  render();
+}
+
+// --- Sorting Game ---
+function sortingGame({ title, categories, items }) {
+  const id = games.find(g => g.title === document.getElementById('modalTitle').textContent).id;
+  let sorted = {};
+  categories.forEach(c => sorted[c] = []);
+  let remaining = [...items].sort(() => Math.random() - 0.5);
+  let currentItem = null;
+  const body = document.getElementById('modalBody');
+  function render() {
+    if (remaining.length === 0) {
+      const total = Object.values(sorted).flat().length;
+      body.innerHTML = `
+        <div style="text-align:center;padding:1.5rem 0">
+          <div style="font-size:3rem;margin-bottom:1rem">🎯</div>
+          <h3 style="font-family:Unbounded,sans-serif">¡Clasificación completa!</h3>
+          <p style="color:rgba(245,240,232,0.5);margin:0.5rem 0 1.5rem">+${total*8} puntos</p>
+          <button class="action-btn gold" onclick="closeModal()">✓ Finalizar</button>
+        </div>`;
+      addScore(total * 8);
+      markCompleted(id);
+      return;
+    }
+    currentItem = remaining[0];
+    body.innerHTML = `
+      <p style="color:rgba(245,240,232,0.5);font-size:0.85rem;margin-bottom:1rem">${title}</p>
+      <div style="text-align:center;margin-bottom:1.5rem">
+        <div style="background:rgba(201,168,76,0.15);border:1px solid var(--gold);border-radius:8px;padding:1rem 2rem;display:inline-block">
+          <span style="font-size:1.3rem;font-family:Lora,serif;color:var(--gold)">${currentItem.text}</span>
+        </div>
+        <p style="margin-top:0.5rem;color:rgba(245,240,232,0.4);font-size:0.8rem">¿En qué categoría va?</p>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:0.5rem">
+        ${categories.map(c => `
+          <button class="action-btn secondary" onclick="sortItem('${c}')" style="padding:1rem;font-size:0.75rem">${c}</button>
+        `).join('')}
+      </div>
+      <div id="sortFb" class="feedback"></div>
+      <p style="margin-top:1rem;color:rgba(245,240,232,0.3);font-size:0.75rem">Restantes: ${remaining.length}</p>
+    `;
+    window.sortItem = (cat) => {
+      const fb = document.getElementById('sortFb');
+      fb.classList.add('show');
+      if (cat === currentItem.cat) {
+        fb.className = 'feedback show good';
+        fb.textContent = `✓ ¡Correcto! "${currentItem.text}" va en ${cat}`;
+        sorted[cat].push(currentItem);
+        remaining.shift();
+        setTimeout(render, 1000);
+      } else {
+        fb.className = 'feedback show bad';
+        fb.textContent = `✗ Incorrecto. "${currentItem.text}" pertenece a ${currentItem.cat}`;
+        remaining.push(remaining.shift()); // move to end
+        setTimeout(render, 1200);
+      }
+    };
+  }
+  render();
+}
+
+// --- Family Group Game ---
+function familyGroupGame({ families }) {
+  const id = games.find(g => g.title === document.getElementById('modalTitle').textContent).id;
+  let current = 0, score = 0;
+  const body = document.getElementById('modalBody');
+  function render() {
+    if (current >= families.length) {
+      body.innerHTML = `<div style="text-align:center;padding:2rem 0"><div style="font-size:3rem">👨‍👩‍👧‍👦</div><h3 style="font-family:Unbounded,sans-serif;margin:0.8rem 0">¡Familias completadas!</h3><p style="color:rgba(245,240,232,0.5);margin-bottom:1.5rem">+${score} pts</p><button class="action-btn gold" onclick="closeModal()">✓ Finalizar</button></div>`;
+      addScore(score);
+      markCompleted(id);
+      return;
+    }
+    const f = families[current];
+    const allWords = [...f.words.slice(0,4), ...f.unrelated.slice(0,3)].sort(() => Math.random() - 0.5);
+    let selected = new Set();
+    body.innerHTML = `
+      <p style="color:rgba(245,240,232,0.5);font-size:0.85rem;margin-bottom:0.5rem">Selecciona las palabras de la familia de <b style="color:var(--gold)">${f.root}</b></p>
+      <div class="options-grid" id="famGrid">${allWords.map((w,i)=>`<button class="opt-btn" id="fw${i}" onclick="toggleWord('fw${i}','${w}','${f.root}')">${w}</button>`).join('')}</div>
+      <button class="action-btn" onclick="checkFamily()" style="margin-top:0.5rem">Comprobar</button>
+      <div class="feedback" id="famFb"></div>
+    `;
+    window.toggleWord = (elId, word, root) => {
+      const el = document.getElementById(elId);
+      if (selected.has(word)) { selected.delete(word); el.style.borderColor=''; el.style.background=''; }
+      else { selected.add(word); el.style.borderColor='var(--gold)'; el.style.background='rgba(201,168,76,0.1)'; }
+    };
+    window.checkFamily = () => {
+      const correct = f.words.filter(w => allWords.includes(w));
+      let hits = 0;
+      allWords.forEach((w, i) => {
+        const el = document.getElementById('fw' + i);
+        if (correct.includes(w)) {
+          el.classList.add('correct'); el.disabled = true;
+          if (selected.has(w)) hits++;
+        } else if (selected.has(w)) {
+          el.classList.add('wrong'); el.disabled = true;
+        }
+      });
+      const fb = document.getElementById('famFb');
+      fb.classList.add('show');
+      score += hits * 5;
+      if (hits === correct.length) {
+        fb.className = 'feedback show good';
+        fb.textContent = `✓ ¡Perfecto! Todas las palabras de la familia ${f.root}`;
+      } else {
+        fb.className = 'feedback show bad';
+        fb.textContent = `${hits}/${correct.length} correctas. Mira las marcadas en verde.`;
+      }
+      setTimeout(() => { current++; render(); }, 2000);
+    };
+  }
+  render();
+}
+
+// --- Analysis Game ---
+function analysisGame({ words }) {
+  const id = games.find(g => g.title === document.getElementById('modalTitle').textContent).id;
+  let current = 0;
+  const body = document.getElementById('modalBody');
+  function render() {
+    if (current >= words.length) {
+      addScore(30);
+      markCompleted(id);
+      body.innerHTML = `<div style="text-align:center;padding:2rem 0"><div style="font-size:3rem">🔬</div><h3 style="font-family:Unbounded,sans-serif;margin:0.8rem 0">¡Análisis completado!</h3><button class="action-btn gold" onclick="closeModal()">✓ Finalizar</button></div>`;
+      return;
+    }
+    const w = words[current];
+    if (w.note) {
+      body.innerHTML = `
+        <div style="background:rgba(124,92,191,0.1);border:1px solid var(--lavender);border-radius:8px;padding:1.5rem;margin-bottom:1rem">
+          <h3 style="color:var(--lavender);font-family:Unbounded,sans-serif;font-size:0.9rem;margin-bottom:0.8rem">🧪 DESAFÍO CRÍTICO</h3>
+          <p style="font-size:1.1rem;color:var(--paper);margin-bottom:0.8rem"><b>${w.word}</b> (${w.lang})</p>
+          <p style="color:rgba(245,240,232,0.6);font-size:0.9rem">${w.note}</p>
+        </div>
+        <textarea class="write-area" placeholder="Analiza los morfemas, di si es real o inventada y por qué..." style="min-height:100px;margin-bottom:1rem"></textarea>
+        <button class="action-btn gold" onclick="nextAnalysis()">Siguiente →</button>`;
+    } else {
+      body.innerHTML = `
+        <p style="color:rgba(245,240,232,0.4);font-size:0.75rem;margin-bottom:0.5rem">PALABRA ${current+1}/${words.length}</p>
+        <div style="font-size:1.3rem;color:var(--gold);font-family:Unbounded,sans-serif;margin-bottom:0.5rem">${w.word}</div>
+        <p style="color:rgba(245,240,232,0.5);font-size:0.8rem;margin-bottom:1rem">${w.lang === 'AMBOS' ? '🌐' : w.lang === 'ES' ? '🇪🇸' : '🇬🇧'} ${w.lang}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1rem">
+          ${w.parts.map((p,i) => {
+            const cls = i===0?'morph-prefix': i===w.parts.length-1?'morph-ending': i===1?'morph-root':'morph-suffix';
+            return `<div style="text-align:center"><span class="morph-piece ${cls}">${p}</span><br><span style="font-size:0.65rem;color:rgba(245,240,232,0.4);font-style:italic">${w.meanings[i]}</span></div>`;
+          }).join('<span style="padding:0 0.3rem;color:rgba(245,240,232,0.2)">+</span>')}
+        </div>
+        <button class="action-btn gold" onclick="nextAnalysis()">Siguiente →</button>`;
+    }
+    window.nextAnalysis = () => { current++; render(); };
+  }
+  render();
+}
+
+// ===================== INIT =====================
+renderCards();
+</script>
+</body>
+</html>

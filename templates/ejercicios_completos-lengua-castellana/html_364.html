@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas de gramática generativa</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas de gramática generativa · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'Merge', 'pro-drop', 'huella', 'caso')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de la gramática generativa transformacional aplicadas al estudio del español.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas cubren desde los fundamentos de la competencia lingüística hasta el Programa Minimalista, pasando por la teoría de la X-barra, el caso, el ligamiento y el movimiento sintáctico. Se han seleccionado ejemplos del español y referencias a Chomsky, Radford, Bosque, Demonte y otros.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia gramatical</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Fundamentos de la gramática generativa",
+                tecnicas: [
+                    {nombre:"Competencia lingüística", desc:"Sistema de conocimiento que posee el hablante-oyente ideal de su lengua.", ej:"Un niño de 5 años domina las reglas sintácticas aunque no sepa enunciarlas."},
+                    {nombre:"Actuación lingüística", desc:"Uso concreto del sistema en situaciones comunicativas reales.", ej:"Los errores de habla (lapsus, pausas) son problemas de actuación, no de competencia."},
+                    {nombre:"Gramaticalidad", desc:"Propiedad de las oraciones que se ajustan a las reglas de la competencia.", ej:"'El niño duerme' es gramatical; '*Niño el duerme' es agramatical."},
+                    {nombre:"Aceptabilidad", desc:"Grado en que una oración es considerada adecuada por los hablantes.", ej:"Oraciones muy largas pueden ser gramaticales pero poco aceptables."},
+                    {nombre:"Creatividad lingüística", desc:"Capacidad de generar y comprender un número infinito de oraciones nuevas.", ej:"Nunca antes habías leído esta oración, pero la entiendes sin problema."},
+                    {nombre:"Gramática universal (GU)", desc:"Principios innatos comunes a todas las lenguas humanas.", ej:"Todas las lenguas tienen estructura jerárquica: sujeto y predicado."},
+                    {nombre:"Argumento de la pobreza del estímulo", desc:"Los niños adquieren la lengua con un input limitado, lo que prueba la GU.", ej:"Un niño aprende que 'Él dijo que vendría' es correcta sin que nadie le explique la subordinación."},
+                    {nombre:"Estructura profunda (origen)", desc:"Representación abstracta que recoge las relaciones sintácticas básicas.", ej:"En 'El ratón fue perseguido por el gato', la estructura profunda invierte el orden."},
+                    {nombre:"Estructura superficial (derivada)", desc:"Representación resultante tras aplicar transformaciones a la estructura profunda.", ej:"'¿Qué compró Juan?' deriva de la estructura profunda 'Juan compró qué'."},
+                    {nombre:"Transformación", desc:"Operación sintáctica que modifica la estructura profunda para obtener la superficial.", ej:"La transformación de movimiento-wh convierte 'Juan compró qué' en '¿Qué compró Juan?'."}
+                ]
+            },
+            {
+                nombre: "B. Estructura de la oración (teoría de la X-barra)",
+                tecnicas: [
+                    {nombre:"Reglas de reescritura", desc:"Generan la estructura sintagmática básica de la oración.", ej:"O → SN SV."},
+                    {nombre:"Sintagma nominal (SN)", desc:"Proyección máxima de un núcleo nominal.", ej:"'El libro rojo de Borges' es un SN."},
+                    {nombre:"Sintagma verbal (SV)", desc:"Proyección máxima del núcleo verbal.", ej:"'Lee poemas de Neruda' es un SV."},
+                    {nombre:"Sintagma adjetival (SAdj)", desc:"Proyección del adjetivo: 'muy orgulloso de su hijo'.", ej:"'Muy orgulloso de su hijo' es un SAdj."},
+                    {nombre:"Sintagma preposicional (SP)", desc:"Proyección de la preposición: 'en la casa azul'.", ej:"'En la casa azul' es un SP."},
+                    {nombre:"Esquema X-barra", desc:"Estructura jerárquica con tres niveles: núcleo (X), proyección intermedia (X'), proyección máxima (SX).", ej:"[SN [Espec el] [N' [N libro] [SP de Borges]]]."},
+                    {nombre:"Especificador", desc:"Posición estructural a la izquierda del núcleo.", ej:"En 'el libro', 'el' ocupa la posición de especificador del SN."},
+                    {nombre:"Complemento", desc:"Posición hermana del núcleo que completa su significado.", ej:"En 'libro de Borges', 'de Borges' es el complemento del nombre."},
+                    {nombre:"Adjunto", desc:"Modificador opcional que no está exigido por el núcleo.", ej:"En 'lee siempre en la biblioteca', 'siempre' y 'en la biblioteca' son adjuntos."},
+                    {nombre:"Recursividad", desc:"Propiedad de introducir una estructura dentro de otra del mismo tipo.", ej:"'El libro del amigo del vecino de la hermana de Juan' es un SN recursivo."}
+                ]
+            },
+            {
+                nombre: "C. Teoría temática (papeles θ)",
+                tecnicas: [
+                    {nombre:"Papel temático (rol θ)", desc:"Función semántica que desempeña un argumento en el predicado que lo selecciona.", ej:"En 'Juan rompió el vaso', Juan es agente y el vaso es tema/paciente."},
+                    {nombre:"Agente", desc:"Entidad que realiza la acción de forma voluntaria.", ej:"El niño (agente) pateó la pelota."},
+                    {nombre:"Tema / Paciente", desc:"Entidad que sufre o recibe la acción.", ej:"La pelota (tema) fue pateada por el niño."},
+                    {nombre:"Experimentante", desc:"Entidad que experimenta un estado psicológico o sensorial.", ej:"A María (experimentante) le gusta el cine."},
+                    {nombre:"Beneficiario / Meta", desc:"Entidad que se beneficia de la acción o hacia la que se dirige.", ej:"Le di el libro a Pedro (beneficiario/meta)."},
+                    {nombre:"Causa / Instrumento", desc:"Entidad que causa el evento sin ser un agente voluntario.", ej:"El viento (causa) abrió la puerta."},
+                    {nombre:"Criterio temático (criterio-θ)", desc:"Cada argumento recibe un único papel θ, y cada papel θ se asigna a un único argumento.", ej:"En '*Juan puso el libro', falta el argumento locativo (transgresión del criterio-θ)."},
+                    {nombre:"Asignador de papel θ", desc:"Categoría que asigna un papel temático a un argumento.", ej:"El verbo asigna papeles temáticos a sus argumentos (sujeto, objeto)."},
+                    {nombre:"Posición temática", desc:"Posición estructural a la que se asigna un papel θ.", ej:"La posición de especificador del SV recibe el papel de agente."},
+                    {nombre:"Movimiento-A", desc:"Movimiento a una posición argumental (donde se recibe papel θ).", ej:"En la pasiva 'El vaso fue roto', el objeto asciende a la posición de sujeto (movimiento-A)."}
+                ]
+            },
+            {
+                nombre: "D. Teoría del caso",
+                tecnicas: [
+                    {nombre:"Caso abstracto", desc:"Marca gramatical que permite que un sintagma nominal sea visible para la interpretación semántica.", ej:"Todo SN fonéticamente realizado debe recibir caso."},
+                    {nombre:"Filtro de caso", desc:"Principio que prohíbe los SN sin caso: *SN[-caso] es agramatical.", ej:"'*Es imposible Juan venir' (Juan no recibe caso; correcta: 'Es imposible que Juan venga')."},
+                    {nombre:"Caso nominativo", desc:"Asignado por el núcleo flexivo (FLEX) al sujeto de la oración.", ej:"'Ella estudia gramática' (ella = nominativo)."},
+                    {nombre:"Caso acusativo", desc:"Asignado por el verbo a su objeto directo.", ej:"'Veo a María' (María = acusativo con preposición 'a')."},
+                    {nombre:"Caso oblicuo", desc:"Asignado por preposiciones a sus complementos.", ej:"'Confío en ti' (ti = oblicuo)."},
+                    {nombre:"Asignación de caso estructural", desc:"El caso se asigna en función de la posición sintáctica.", ej:"El sujeto recibe nominativo de FLEX; el objeto, acusativo del verbo."},
+                    {nombre:"Asignación de caso inherente", desc:"El caso está vinculado a un papel temático específico.", ej:"Algunos verbos asignan dativo a su objeto indirecto: 'dar algo a alguien'."},
+                    {nombre:"Verbos inacusativos", desc:"Verbos cuyo único argumento se genera como objeto y asciende a sujeto para recibir caso.", ej:"'Llegó Juan' (Juan se genera como objeto de 'llegar' y asciende a sujeto)."},
+                    {nombre:"Marcado excepcional de caso", desc:"Un verbo asigna caso acusativo a un sujeto subordinado en ciertas estructuras.", ej:"'Creo a Juan inteligente' (Juan recibe acusativo de 'creo')."},
+                    {nombre:"Caso en las cláusulas de infinitivo", desc:"El sujeto del infinitivo no puede recibir nominativo y debe aparecer en otra forma.", ej:"'Quiero que vengas' (subjuntivo) vs. '*Quiero tú venir' (infinitivo sin caso)."}
+                ]
+            },
+            {
+                nombre: "E. Teoría del ligamiento",
+                tecnicas: [
+                    {nombre:"Anáfora", desc:"Elemento que requiere un antecedente local (reflexivos y recíprocos).", ej:"'Juan se lava' (se = anáfora, antecedente: Juan)."},
+                    {nombre:"Pronominal", desc:"Elemento que puede o no tener antecedente, y si lo tiene, no es local.", ej:"'Juan dijo que Pedro lo vio' (lo puede referirse a Juan o a otra persona)."},
+                    {nombre:"Expresión referencial", desc:"SN que designa una entidad por sí mismo y no requiere antecedente.", ej:"'María' en 'María llegó' es una expresión referencial."},
+                    {nombre:"Principio A (anáforas)", desc:"Las anáforas deben estar ligadas en su dominio local.", ej:"'*Juan cree que María se lavó' es agramatical si 'se' se refiere a Juan (dominio local: la subordinada)."},
+                    {nombre:"Principio B (pronominales)", desc:"Los pronominales deben estar libres en su dominio local.", ej:"'Juan dijo que Pedro lo saludó' (lo no puede ser Pedro, pero sí puede ser Juan)."},
+                    {nombre:"Principio C (referenciales)", desc:"Las expresiones referenciales deben estar libres en cualquier dominio.", ej:"'*Él dijo que Juan vendría' (si él = Juan, viola el Principio C)."},
+                    {nombre:"Dominio local", desc:"Ámbito estructural en el que se evalúa el ligamiento (generalmente la oración o el SV).", ej:"En 'María quiere que ella venga', 'ella' está libre en el dominio de la subordinada (Principio B)."},
+                    {nombre:"C-comando", desc:"Relación estructural básica para el ligamiento: un nudo A c-comanda a B si B es hermano de A o hijo de un hermano de A.", ej:"En 'El libro de Juan', 'Juan' no c-comanda 'libro'."},
+                    {nombre:"Ligamiento", desc:"Un elemento α liga a β si α c-comanda a β y ambos son coindizados.", ej:"En 'Juan(i) se(i) lava', Juan liga a 'se'."},
+                    {nombre:"Problemas del ligamiento en español", desc:"Comportamiento especial de 'sí' y 'su' en contextos de larga distancia.", ej:"'Juan le pidió a Pedro que hablara de sí mismo' (¿sí mismo = Juan o Pedro?)."}
+                ]
+            },
+            {
+                nombre: "F. Movimiento sintáctico",
+                tecnicas: [
+                    {nombre:"Movimiento-wh", desc:"Desplazamiento de un sintagma interrogativo a la posición de especificador de SCOMP.", ej:"'¿Qué compró Juan?' deriva de 'Juan compró qué'."},
+                    {nombre:"Movimiento de núcleo", desc:"Ascenso de un núcleo a otro núcleo superior (por ejemplo, V a FLEX).", ej:"En '¿Leyó Juan el libro?', el verbo asciende de V a FLEX."},
+                    {nombre:"Ascenso de sujeto", desc:"Movimiento del sujeto desde su posición temática (espec-SV) a la posición de especificador de SFLEX.", ej:"Todos los sujetos visibles ascienden para recibir caso nominativo."},
+                    {nombre:"Movimiento de tópico / foco", desc:"Anteposición de un constituyente para marcarlo como tema o foco informativo.", ej:"'A María la vi ayer' (topicalización de objeto directo)."},
+                    {nombre:"Huella sintáctica", desc:"Marca abstracta que deja un constituyente en su posición original tras el movimiento.", ej:"En '¿Qué compró Juan?', el objeto directo deja una huella: 'Juan compró h'."},
+                    {nombre:"Principio de subyacencia", desc:"Restringe la distancia del movimiento: no se puede mover un constituyente a través de ciertas barreras.", ej:"'*¿Qué libro conoces al autor que escribió h?' (viola subyacencia)."},
+                    {nombre:"Islas sintácticas", desc:"Estructuras de las que no se puede extraer un constituyente.", ej:"La isla interrogativa: '*¿Qué no sabes quién compró h?'."},
+                    {nombre:"Movimiento-A-barra", desc:"Movimiento a una posición no argumental (especificador de SCOMP, foco).", ej:"El movimiento-wh es un movimiento-A-barra."},
+                    {nombre:"Movimiento cíclico sucesivo", desc:"El movimiento a larga distancia se realiza por pasos intermedios.", ej:"En '¿Qué crees que dijo Juan que compró?', el wh se mueve cíclicamente por los SCOMP intermedios."},
+                    {nombre:"Reconstrucción", desc:"Fenómeno por el cual un elemento movido se interpreta semánticamente en su posición de huella.", ej:"En 'A qué amigo suyo crees que todo el mundo admira', 'suyo' puede interpretarse en la posición de huella."}
+                ]
+            },
+            {
+                nombre: "G. Principios y parámetros",
+                tecnicas: [
+                    {nombre:"Pro-drop (parámetro del sujeto nulo)", desc:"Lenguas que permiten omitir el sujeto pronominal (español, italiano) frente a las que no (inglés, francés).", ej:"'Como manzanas' (sujeto omitido en español)."},
+                    {nombre:"Parámetro de la dirección del núcleo", desc:"Lenguas de núcleo inicial (español, VO) frente a núcleo final (japonés, OV).", ej:"En español: 'comer manzanas' (V+O); en japonés: 'ringo o taberu' (O+V)."},
+                    {nombre:"Parámetro del movimiento-wh", desc:"Lenguas que mueven los wh a SCOMP (inglés) frente a las que los dejan in situ (chino).", ej:"¿Qué compró? (español, movimiento-wh)."},
+                    {nombre:"Principio de proyección", desc:"Las propiedades temáticas de los núcleos léxicos deben estar representadas en la sintaxis.", ej:"Un verbo transitivo siempre proyecta un objeto directo."},
+                    {nombre:"Principio de proyección extendido", desc:"Toda oración debe tener sujeto estructural, aunque no reciba papel temático.", ej:"En 'Llueve', hay un sujeto expletivo vacío (pro) que satisface el PPE."},
+                    {nombre:"Teoría del caso abstracto", desc:"Todo SN realizado fonéticamente debe recibir caso (filtro de caso).", ej:"*'Es imposible Juan venir' es agramatical porque Juan no recibe caso."},
+                    {nombre:"Categorías vacías", desc:"Elementos sintácticos no pronunciados: pro (sujeto nulo), PRO (infinitivo), huella (movimiento).", ej:"En 'Quiero PRO comer', PRO es el sujeto del infinitivo."},
+                    {nombre:"Control", desc:"Relación entre un antecedente y un elemento PRO en cláusulas de infinitivo.", ej:"En 'Juan quiere PRO cantar', Juan controla a PRO (control de sujeto)."},
+                    {nombre:"Ascenso vs. control", desc:"En el ascenso, el sujeto superficial se origina en la subordinada; en el control, hay dos argumentos distintos.", ej:"'Juan parece cantar' (ascenso: Juan se origina en la subordinada)."},
+                    {nombre:"Predicación", desc:"Relación semántica entre un predicado y su sujeto.", ej:"En 'El libro parece interesante', 'interesante' se predica de 'el libro'."}
+                ]
+            },
+            {
+                nombre: "H. Programa Minimalista",
+                tecnicas: [
+                    {nombre:"Merge (ensamble)", desc:"Operación que combina dos objetos sintácticos para formar uno nuevo.", ej:"Merge combina 'come' y 'manzanas' para formar 'come manzanas'."},
+                    {nombre:"Agree (concordancia)", desc:"Relación a distancia entre un núcleo y un sintagma para valorar rasgos no interpretables.", ej:"El núcleo flexivo (FLEX) concuerda con el sujeto en número y persona."},
+                    {nombre:"Move (movimiento)", desc:"Combinación de Merge y Agree que desplaza un constituyente a una posición superior.", ej:"Move desplaza el sujeto a la posición de especificador de SFLEX."},
+                    {nombre:"Rasgos interpretables / no interpretables", desc:"Los rasgos interpretables tienen contenido semántico; los no interpretables deben ser eliminados.", ej:"El número en el verbo es no interpretable (debe concordar con el sujeto)."},
+                    {nombre:"Economía lingüística", desc:"Principio que prefiere las derivaciones más cortas y simples.", ej:"Se evitan movimientos innecesarios si no hay rasgos que activar."},
+                    {nombre:"Fases", desc:"Unidades sintácticas que se envían a la interfaz semántica y fonológica.", ej:"El SV y el SCOMP son fases (Chomsky 2001)."},
+                    {nombre:"Condición de impenetrabilidad de fase", desc:"Solo el núcleo y el borde de una fase son accesibles para operaciones externas.", ej:"No se puede extraer directamente un constituyente del interior de un SV sin pasar por su borde."},
+                    {nombre:"Derivación por fases", desc:"La sintaxis construye la estructura por fragmentos (fases) que se interpretan incrementalmente.", ej:"Primero se ensambla el SV, luego el SFLEX, finalmente el SCOMP."},
+                    {nombre:"Bare phrase structure", desc:"Estructura sintagmática sin etiquetas categoriales (simplificación radical de X-barra).", ej:"En lugar de 'SN', se usa el propio núcleo como etiqueta: 'libro'."},
+                    {nombre:"Interfaz sintaxis-semántica (FL)", desc:"La sintaxis genera representaciones que son leídas por el sistema conceptual-intencional (semántica) y el articulatorio-perceptual (fonología).", ej:"Una oración ambigua puede tener una única estructura sintáctica con varias interpretaciones."}
+                ]
+            },
+            {
+                nombre: "I. Aplicaciones de la gramática generativa al español",
+                tecnicas: [
+                    {nombre:"Sujeto nulo en español (pro-drop)", desc:"El español permite omitir el sujeto porque la flexión verbal es rica.", ej:"'Hablamos' (sujeto omitido 'nosotros')."},
+                    {nombre:"Verbos de ascenso en español", desc:"Parecer, resultar, etc., permiten el ascenso del sujeto subordinado.", ej:"'Los niños parecen dormir' (ascenso de 'los niños')."},
+                    {nombre:"Clíticos y movimiento", desc:"Los pronombres átonos (me, te, se, lo, etc.) se adjuntan al verbo y pueden ascender.", ej:"'Lo vi' / 'Quiero verlo' (subida de clítico)."},
+                    {nombre:"Subordinación sustantiva con indicativo / subjuntivo", desc:"La selección del modo depende del predicado matriz y del SCOMP.", ej:"'Creo que viene' (indicativo) / 'Dudo que venga' (subjuntivo)."},
+                    {nombre:"Construcciones pasivas con 'se'", desc:"'Se venden pisos' = pasiva refleja con concordancia.", ej:"'Se vendió el piso' (concordancia singular)."},
+                    {nombre:"La preposición 'a' en objetos directos animados", desc:"Marcado diferencial de objeto: 'a' con objetos animados y específicos.", ej:"'Vi a María' (OD animado) / 'Vi la mesa' (OD inanimado)."},
+                    {nombre:"Construcciones de doblado de clíticos", desc:"Reduplicación pronominal en objetos directos e indirectos.", ej:"'Le di el libro a Juan' (doblado de OI)."},
+                    {nombre:"Interrogativas parciales y movimiento-wh", desc:"Los interrogativos se mueven a la posición de especificador de SCOMP.", ej:"'¿Qué libro leíste?' (movimiento de 'qué libro')."},
+                    {nombre:"Relativas y reconstrucción", desc:"En relativas con preposición, el relativo asciende dejando huella.", ej:"'El libro del que hablas' (movimiento de 'el que')."},
+                    {nombre:"Construcciones de foco y topicalización", desc:"Anteposición de constituyentes con valor informativo.", ej:"'Con Juan hablé ayer' (topicalización de SP)."}
+                ]
+            },
+            {
+                nombre: "J. Críticas, debates y evolución de la teoría",
+                tecnicas: [
+                    {nombre:"Semántica generativa", desc:"Corriente de los años 70 que defendía que la estructura profunda es semántica.", ej:"Lakoff y McCawley postularon que 'matar' deriva de 'causar morir'."},
+                    {nombre:"Teoría de la relevancia (Sperber & Wilson)", desc:"Alternativa pragmática que rechaza la autonomía de la sintaxis.", ej:"La interpretación de 'Está lloviendo' depende del contexto, no solo de la forma lógica."},
+                    {nombre:"Cognitivismo (Langacker, Lakoff)", desc:"La gramática es un sistema de construcciones simbólicas basadas en el uso.", ej:"En gramática cognitiva, 'El libro está en la mesa' se analiza como construcción locativa."},
+                    {nombre:"Gramática de construcciones (Goldberg)", desc:"Las construcciones (pares forma-significado) son las unidades básicas.", ej:"La construcción ditransitiva: 'Juan le dio un libro a María'."},
+                    {nombre:"Crítica de la pobreza del estímulo", desc:"Algunos lingüistas (Sampson) niegan que el input sea tan pobre como afirma Chomsky.", ej:"Estudios muestran que los padres corrigen más de lo que Chomsky asumió."},
+                    {nombre:"Biolingüística y evolución del lenguaje", desc:"Chomsky y otros investigan el origen biológico de la facultad del lenguaje.", ej:"La operación Merge como posible mutación genética clave."},
+                    {nombre:"Problemas del movimiento en el minimalismo", desc:"El concepto de 'movimiento' ha sido reemplazado por copia y reensamble.", ej:"En la copia, el elemento movido deja una copia idéntica en su posición original."},
+                    {nombre:"Interfaces y legibilidad", desc:"Las representaciones sintácticas deben ser legibles por los sistemas de actuación (FL).", ej:"Una derivación que produzca una estructura ilegible por la fonología es descartada."},
+                    {nombre:"Variación paramétrica y microparámetros", desc:"Las diferencias entre lenguas cercanas se explican por pequeñas variaciones en los parámetros.", ej:"La diferencia entre español e italiano en la posición de los clíticos."},
+                    {nombre:"El futuro del generativismo", desc:"Integración con la neurociencia, la psicolingüística y el aprendizaje automático.", ej:"Modelos computacionales que simulan la adquisición sintáctica con principios minimalistas."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoGramGen')) {
+                const p = JSON.parse(localStorage.getItem('progresoGramGen'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoGramGen', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos conceptos generativistas es <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

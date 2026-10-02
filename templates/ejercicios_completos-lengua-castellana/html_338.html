@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Flota Sintáctica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🏛️ FLOTA SINTÁCTICA<small>100 TÉCNICAS · SINTAXIS</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="oracion" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Oración <span class="badge-personaje bg-dorado">Constituyentes</span></a>
+        <a class="nav-link" data-section="sujeto" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Sujeto <span class="badge-personaje bg-azul">Sujeto</span></a>
+        <a class="nav-link" data-section="predicado" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Predicado <span class="badge-personaje bg-verde">Predicado</span></a>
+        <a class="nav-link" data-section="compuesta" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Compuesta <span class="badge-personaje bg-purpura">O. compuesta</span></a>
+        <a class="nav-link" data-section="analisis" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Análisis <span class="badge-personaje bg-rojo">Análisis</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🏛️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Sintaxis castellana</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Sintaxis castellana</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la sintaxis:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Oración</strong> – La oración y sus constituyentes básicos.</li>
+                    <li><strong style="color:var(--neon-azul);">Sujeto</strong> – El sujeto y sus tipos.</li>
+                    <li><strong style="color:var(--neon-verde);">Predicado</strong> – El predicado y sus complementos.</li>
+                    <li><strong style="color:var(--neon-purpura);">Compuesta</strong> – Oraciones compuestas: yuxtapuestas, coordinadas, subordinadas.</li>
+                    <li><strong style="color:var(--neon-rojo);">Análisis</strong> – Análisis sintáctico y funciones.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-oracion" class="section-content" style="display:none;"></div>
+        <div id="section-sujeto" class="section-content" style="display:none;"></div>
+        <div id="section-predicado" class="section-content" style="display:none;"></div>
+        <div id="section-compuesta" class="section-content" style="display:none;"></div>
+        <div id="section-analisis" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    oracion: {
+        nombre: "Oración", color: "dorado", icono: "bi-robot",
+        especialidad: "La oración y sus constituyentes básicos",
+        tecnicas: [
+            { titulo: "La oración gramatical", teoria: "La oración es una unidad gramatical con sentido completo, formada por un sujeto y un predicado. Tiene al menos un verbo en forma personal.", ejemplo: "'El niño juega en el parque'. Sujeto: 'El niño'; Predicado: 'juega en el parque'.", ejercicio: "Identifica el sujeto y el predicado en 5 oraciones.", reto: "Escribe 5 oraciones simples y analiza su estructura." },
+            { titulo: "El sintagma nominal (SN)", teoria: "El sintagma nominal tiene como núcleo un sustantivo o pronombre. Puede estar acompañado de determinantes y adjetivos.", ejemplo: "'La casa grande' (SN: 'La casa grande', núcleo: 'casa').", ejercicio: "Identifica el SN en 5 oraciones.", reto: "Escribe 5 SN con diferentes determinantes y adjetivos." },
+            { titulo: "El sintagma verbal (SV)", teoria: "El sintagma verbal tiene como núcleo un verbo. Puede estar acompañado de complementos (CD, CI, CC, etc.).", ejemplo: "'Corre rápido' (SV: 'Corre rápido', núcleo: 'Corre').", ejercicio: "Identifica el SV en 5 oraciones.", reto: "Escribe 5 SV con diferentes complementos." },
+            { titulo: "El sintagma adjetival (SAdj)", teoria: "El sintagma adjetival tiene como núcleo un adjetivo. Puede estar acompañado de adverbios de cantidad.", ejemplo: "'Muy alto' (SAdj: 'Muy alto', núcleo: 'alto').", ejercicio: "Identifica el SAdj en 5 oraciones.", reto: "Escribe 5 SAdj con diferentes adverbios." },
+            { titulo: "El sintagma adverbial (SAdv)", teoria: "El sintagma adverbial tiene como núcleo un adverbio. Puede estar acompañado de otros adverbios.", ejemplo: "'Muy cerca' (SAdv: 'Muy cerca', núcleo: 'cerca').", ejercicio: "Identifica el SAdv en 5 oraciones.", reto: "Escribe 5 SAdv con diferentes adverbios." },
+            { titulo: "El sintagma preposicional (SPrep)", teoria: "El sintagma preposicional está formado por una preposición + un sintagma nominal. Funciona como complemento.", ejemplo: "'en el parque' (SPrep: 'en el parque', preposición: 'en', SN: 'el parque').", ejercicio: "Identifica el SPrep en 5 oraciones.", reto: "Escribe 5 SPrep con diferentes preposiciones." },
+            { titulo: "El núcleo del sintagma", teoria: "El núcleo es la palabra más importante del sintagma, la que determina su categoría y funciones.", ejemplo: "SN: núcleo = sustantivo; SV: núcleo = verbo; SAdj: núcleo = adjetivo; SAdv: núcleo = adverbio.", ejercicio: "Identifica el núcleo de 5 sintagmas.", reto: "Escribe 5 sintagmas y subraya sus núcleos." },
+            { titulo: "Los modificadores del núcleo", teoria: "Los modificadores son palabras o grupos de palabras que acompañan al núcleo y lo precisan (determinantes, adjetivos, adverbios, complementos).", ejemplo: "'El perro grande' (modificador: 'grande'); 'Corre rápidamente' (modificador: 'rápidamente').", ejercicio: "Identifica los modificadores en 5 sintagmas.", reto: "Escribe 5 sintagmas con diferentes modificadores." },
+            { titulo: "La concordancia en el sintagma", teoria: "La concordancia es la relación de género y número entre el núcleo y sus modificadores dentro del sintagma nominal.", ejemplo: "'Los perros grandes' (artículo + sustantivo + adjetivo en plural).", ejercicio: "Corrige 3 sintagmas con errores de concordancia.", reto: "Escribe 5 sintagmas con concordancia correcta." },
+            { titulo: "La estructura de la oración simple", teoria: "La oración simple tiene un solo verbo en forma personal y expresa una única acción o estado.", ejemplo: "'El niño juega'.", ejercicio: "Escribe 5 oraciones simples.", reto: "Analiza la estructura de 5 oraciones simples." },
+            { titulo: "La oración unimembre", teoria: "La oración unimembre no tiene sujeto ni predicado diferenciados. Suele ser una frase nominal o un verbo impersonal.", ejemplo: "'¡Buenos días!', 'Llueve'.", ejercicio: "Escribe 5 oraciones unimembres.", reto: "Identifica las unimembres en un texto." },
+            { titulo: "La oración bimembre", teoria: "La oración bimembre tiene sujeto y predicado claramente diferenciados.", ejemplo: "'El sol brilla'.", ejercicio: "Escribe 5 oraciones bimembres.", reto: "Analiza la estructura bimembre en 5 oraciones." },
+            { titulo: "La oración impersonal", teoria: "La oración impersonal no tiene sujeto. Puede ser de fenómenos meteorológicos, verbos haber, ser, hacer, o con 'se' impersonal.", ejemplo: "'Llueve', 'Hay libros', 'Es tarde', 'Se vive bien'.", ejercicio: "Escribe 5 oraciones impersonales.", reto: "Identifica las impersonales en un texto." },
+            { titulo: "La oración reflexiva", teoria: "La oración reflexiva tiene un pronombre que indica que la acción recae sobre el sujeto (me, te, se, nos, os).", ejemplo: "'El niño se lava' (la acción recae sobre el niño).", ejercicio: "Escribe 5 oraciones reflexivas.", reto: "Analiza las reflexivas en un texto." },
+            { titulo: "La oración recíproca", teoria: "La oración recíproca tiene un pronombre que indica que la acción se realiza mutuamente entre los sujetos.", ejemplo: "'Los amigos se abrazan' (mutuamente).", ejercicio: "Escribe 5 oraciones recíprocas.", reto: "Analiza las recíprocas en un texto." },
+            { titulo: "La oración pasiva", teoria: "La oración pasiva tiene el sujeto paciente (recibe la acción) y se forma con el verbo 'ser' + participio.", ejemplo: "'La carta fue escrita por Juan' (pasiva).", ejercicio: "Convierte 5 oraciones activas a pasivas.", reto: "Analiza las pasivas en un texto." },
+            { titulo: "La oración pasiva refleja", teoria: "La oración pasiva refleja se forma con 'se' + verbo en tercera persona. Es muy común en español.", ejemplo: "'Se venden casas' (pasiva refleja).", ejercicio: "Escribe 5 oraciones pasivas reflejas.", reto: "Analiza las pasivas reflejas en un texto." },
+            { titulo: "La oración enunciativa", teoria: "La oración enunciativa expresa un hecho de forma objetiva, ya sea afirmativa o negativa.", ejemplo: "'El sol brilla' (afirmativa), 'No llueve' (negativa).", ejercicio: "Escribe 5 oraciones enunciativas.", reto: "Analiza las enunciativas en un texto." },
+            { titulo: "La oración interrogativa", teoria: "La oración interrogativa expresa una pregunta. Puede ser directa (con signos) o indirecta (sin signos).", ejemplo: "'¿Cómo estás?' (directa), 'Me preguntó cómo estaba' (indirecta).", ejercicio: "Escribe 5 oraciones interrogativas.", reto: "Analiza las interrogativas en un texto." },
+            { titulo: "La oración exclamativa", teoria: "La oración exclamativa expresa una emoción intensa (alegría, sorpresa, enfado). Lleva signos de exclamación.", ejemplo: "'¡Qué bonito!', '¡No puedo creerlo!'", ejercicio: "Escribe 5 oraciones exclamativas.", reto: "Analiza las exclamativas en un texto." }
+        ]
+    },
+    sujeto: {
+        nombre: "Sujeto", color: "azul", icono: "bi-robot",
+        especialidad: "El sujeto y sus tipos",
+        tecnicas: [
+            { titulo: "El sujeto de la oración", teoria: "El sujeto es la persona, animal o cosa que realiza la acción del verbo o de quien se dice algo. Es el núcleo del sintagma nominal.", ejemplo: "'El perro ladra' (sujeto: 'El perro').", ejercicio: "Identifica el sujeto en 10 oraciones.", reto: "Escribe 5 oraciones con diferentes tipos de sujeto." },
+            { titulo: "Sujeto explícito o léxico", teoria: "El sujeto explícito aparece expresamente en la oración y concuerda con el verbo en persona y número.", ejemplo: "'El niño come' (sujeto explícito: 'El niño').", ejercicio: "Escribe 5 oraciones con sujeto explícito.", reto: "Analiza los sujetos explícitos en un texto." },
+            { titulo: "Sujeto tácito u omitido (elíptico)", teoria: "El sujeto tácito no aparece expresamente en la oración, pero se deduce de la desinencia del verbo.", ejemplo: "'Comemos' (sujeto tácito: 'nosotros').", ejercicio: "Escribe 5 oraciones con sujeto tácito.", reto: "Convierte oraciones con sujeto explícito a tácito." },
+            { titulo: "Sujeto gramatical", teoria: "El sujeto gramatical es el que concuerda con el verbo en persona y número, aunque el sujeto lógico sea diferente.", ejemplo: "'A Juan le gusta el fútbol' (sujeto gramatical: 'el fútbol').", ejercicio: "Identifica el sujeto gramatical en 5 oraciones.", reto: "Analiza los sujetos gramaticales en un texto." },
+            { titulo: "Sujeto paciente", teoria: "El sujeto paciente recibe la acción del verbo. Aparece en oraciones pasivas.", ejemplo: "'La carta fue escrita por Juan' (sujeto paciente: 'La carta').", ejercicio: "Identifica el sujeto paciente en 5 oraciones pasivas.", reto: "Convierte oraciones activas a pasivas con sujeto paciente." },
+            { titulo: "Sujeto agente", teoria: "El sujeto agente realiza la acción del verbo. Aparece en oraciones activas.", ejemplo: "'Juan escribe la carta' (sujeto agente: 'Juan').", ejercicio: "Identifica el sujeto agente en 5 oraciones activas.", reto: "Convierte oraciones pasivas a activas con sujeto agente." },
+            { titulo: "Sujeto compuesto", teoria: "El sujeto compuesto tiene dos o más núcleos (sustantivos o pronombres) unidos por una conjunción.", exemplo: "'Juan y María juegan' (sujeto compuesto: 'Juan y María').", ejercicio: "Escribe 5 oraciones con sujeto compuesto.", reto: "Analiza los sujetos compuestos en un texto." },
+            { titulo: "Sujeto simple", teoria: "El sujeto simple tiene un solo núcleo (un sustantivo o pronombre).", exemplo: "'El perro corre' (sujeto simple: 'El perro').", ejercicio: "Escribe 5 oraciones con sujeto simple.", reto: "Analiza los sujetos simples en un texto." },
+            { titulo: "Sujeto elíptico en primera persona", teoria: "El sujeto elíptico en primera persona se deduce del verbo en primera persona.", exemplo: "'Canto' (sujeto: 'yo').", ejercicio: "Escribe 5 oraciones con sujeto elíptico en primera persona.", reto: "Convierte oraciones con sujeto explícito a elíptico." },
+            { titulo: "Sujeto elíptico en segunda persona", teoria: "El sujeto elíptico en segunda persona se deduce del verbo en segunda persona.", exemplo: "'Cantas' (sujeto: 'tú').", ejercicio: "Escribe 5 oraciones con sujeto elíptico en segunda persona.", reto: "Convierte oraciones con sujeto explícito a elíptico." },
+            { titulo: "Sujeto elíptico en tercera persona", teoria: "El sujeto elíptico en tercera persona se deduce del verbo en tercera persona.", exemplo: "'Canta' (sujeto: 'él' o 'ella').", ejercicio: "Escribe 5 oraciones con sujeto elíptico en tercera persona.", reto: "Convierte oraciones con sujeto explícito a elíptico." },
+            { titulo: "Sujeto en oraciones interrogativas", teoria: "En oraciones interrogativas, el sujeto puede aparecer al final o estar omitido, pero se deduce del contexto.", exemplo: "'¿Viene Juan?' (sujeto: 'Juan'); '¿Viene?' (sujeto tácito).", ejercicio: "Escribe 5 preguntas con diferentes posiciones del sujeto.", reto: "Analiza los sujetos en preguntas." },
+            { titulo: "Sujeto en oraciones exclamativas", teoria: "En oraciones exclamativas, el sujeto suele aparecer al principio o al final, y a menudo se omite.", exemplo: "'¡Qué bonito es el paisaje!' (sujeto: 'el paisaje'); '¡Qué bonito!' (sujeto tácito).", ejercicio: "Escribe 5 exclamaciones con diferentes posiciones del sujeto.", reto: "Analiza los sujetos en exclamaciones." },
+            { titulo: "El sujeto en las oraciones impersonales", teoria: "Las oraciones impersonales no tienen sujeto (gramatical ni léxico).", exemplo: "'Llueve', 'Hay gente', 'Se vive bien'.", ejercicio: "Escribe 5 oraciones impersonales.", reto: "Identifica las impersonales en un texto." },
+            { titulo: "El sujeto en las oraciones pasivas reflejas", teoria: "En las pasivas reflejas, el sujeto es paciente y concuerda con el verbo en número.", exemplo: "'Se venden casas' (sujeto paciente: 'casas').", ejercicio: "Identifica el sujeto en 5 pasivas reflejas.", reto: "Convierte oraciones activas a pasivas reflejas." },
+            { titulo: "El sujeto en las oraciones reflexivas", teoria: "En las reflexivas, el sujeto realiza y recibe la acción al mismo tiempo.", exemplo: "'El niño se lava' (sujeto: 'El niño').", ejercicio: "Identifica el sujeto en 5 reflexivas.", reto: "Analiza las reflexivas en un texto." },
+            { titulo: "El sujeto en las oraciones recíprocas", teoria: "En las recíprocas, el sujeto es plural y la acción se realiza mutuamente.", exemplo: "'Los amigos se abrazan' (sujeto: 'Los amigos').", ejercicio: "Identifica el sujeto en 5 recíprocas.", reto: "Analiza las recíprocas en un texto." },
+            { titulo: "La concordancia del sujeto con el verbo", teoria: "El verbo debe concordar en persona y número con el sujeto. Es una regla fundamental.", exemplo: "'Los niños juegan' (sujeto plural, verbo plural).", ejercicio: "Corrige 5 oraciones con errores de concordancia.", reto: "Escribe 5 oraciones con concordancia correcta." },
+            { titulo: "El sujeto pospuesto o invertido", teoria: "El sujeto pospuesto aparece después del verbo. Es común en preguntas y en ciertos estilos literarios.", exemplo: "'Juegan los niños' (sujeto pospuesto: 'los niños').", ejercicio: "Escribe 5 oraciones con sujeto pospuesto.", reto: "Analiza los sujetos pospuestos en un texto." },
+            { titulo: "El sujeto en oraciones con verbos de opinión", teoria: "En oraciones con verbos de opinión (creer, pensar, opinar), el sujeto suele ser la persona que opina.", exemplo: "'Creo que Juan vendrá' (sujeto: 'yo' tácito).", ejercicio: "Escribe 5 oraciones con verbos de opinión.", reto: "Analiza los sujetos en oraciones de opinión." }
+        ]
+    },
+    predicado: {
+        nombre: "Predicado", color: "verde", icono: "bi-robot",
+        especialidad: "El predicado y sus complementos",
+        tecnicas: [
+            { titulo: "El predicado de la oración", teoria: "El predicado es la parte de la oración que expresa lo que se dice del sujeto. Tiene como núcleo un verbo.", ejemplo: "'El perro ladra fuerte' (predicado: 'ladra fuerte').", ejercicio: "Identifica el predicado en 10 oraciones.", reto: "Escribe 5 oraciones con diferentes tipos de predicado." },
+            { titulo: "El predicado verbal (PV)", teoria: "El predicado verbal tiene un verbo predicativo (acción) y puede tener complementos (CD, CI, CC, CAg).", ejemplo: "'Juan come pan' (PV: 'come pan').", ejercicio: "Escribe 5 oraciones con predicado verbal.", reto: "Analiza los PV en un texto." },
+            { titulo: "El predicado nominal (PN)", teoria: "El predicado nominal tiene un verbo copulativo (ser, estar, parecer) y un atributo.", ejemplo: "'La casa es grande' (PN: 'es grande', atributo: 'grande').", ejercicio: "Escribe 5 oraciones con predicado nominal.", reto: "Analiza los PN en un texto." },
+            { titulo: "El verbo copulativo (ser, estar, parecer)", teoria: "Los verbos copulativos enlazan el sujeto con un atributo. No expresan acción, sino estado o cualidad.", exemplo: "'Juan es alto', 'La casa está limpia', 'Ella parece cansada'.", ejercicio: "Escribe 5 oraciones con verbos copulativos.", reto: "Analiza los verbos copulativos en un texto." },
+            { titulo: "El atributo", teoria: "El atributo es el complemento que aparece con verbos copulativos e indica una cualidad o estado del sujeto.", exemplo: "'La casa es grande' (atributo: 'grande').", ejercicio: "Identifica el atributo en 5 oraciones con verbos copulativos.", reto: "Escribe 5 oraciones con diferentes tipos de atributo." },
+            { titulo: "El complemento directo (CD)", teoria: "El CD es la persona o cosa que recibe directamente la acción del verbo. Responde a '¿qué?' o '¿a quién?'.", ejemplo: "'Veo la película' (CD: 'la película').", ejercicio: "Identifica el CD en 10 oraciones.", reto: "Escribe 5 oraciones con CD." },
+            { titulo: "El complemento indirecto (CI)", teoria: "El CI indica la persona o cosa que recibe el beneficio o daño de la acción. Responde a '¿a quién?' o '¿para quién?'.", ejemplo: "'Doy un libro a Juan' (CI: 'a Juan').", ejercicio: "Identifica el CI en 10 oraciones.", reto: "Escribe 5 oraciones con CI." },
+            { titulo: "El complemento circunstancial (CC)", teoria: "El CC expresa las circunstancias de la acción (lugar, tiempo, modo, causa, etc.).", ejemplo: "'Camino por el parque' (CC de lugar).", ejercicio: "Identifica los CC en 10 oraciones.", reto: "Escribe 5 oraciones con diferentes tipos de CC." },
+            { titulo: "El complemento agente (CAg)", teoria: "El CAg aparece en oraciones pasivas e indica quién realiza la acción. Va precedido por la preposición 'por'.", ejemplo: "'La carta fue escrita por Juan' (CAg: 'por Juan').", ejercicio: "Identifica el CAg en 5 oraciones pasivas.", reto: "Convierte oraciones activas a pasivas con CAg." },
+            { titulo: "El complemento de régimen (CRég)", teoria: "El CRég es un complemento preposicional exigido por el verbo. Sin él, la oración queda incompleta.", ejemplo: "'Hablar de política' (CRég: 'de política').", ejercicio: "Identifica el CRég en 5 oraciones.", reto: "Escribe 5 oraciones con CRég." },
+            { titulo: "El complemento predicativo (CPred)", teoria: "El CPred es un adjetivo o sintagma nominal que modifica al mismo tiempo al verbo y al sujeto o al CD.", ejemplo: "'Juan llegó cansado' (CPred: 'cansado', modifica a 'Juan').", ejercicio: "Identifica el CPred en 5 oraciones.", reto: "Escribe 5 oraciones con CPred." },
+            { titulo: "El predicado simple", teoria: "El predicado simple tiene un solo verbo (o perífrasis verbal) como núcleo.", exemplo: "'El niño juega' (PV simple).", ejercicio: "Escribe 5 oraciones con predicado simple.", reto: "Analiza los predicados simples en un texto." },
+            { titulo: "El predicado compuesto", teoria: "El predicado compuesto tiene dos o más verbos que comparten el mismo sujeto.", exemplo: "'El niño canta y baila' (PV compuesto).", ejercicio: "Escribe 5 oraciones con predicado compuesto.", reto: "Analiza los predicados compuestos en un texto." },
+            { titulo: "Las perífrasis verbales", teoria: "Las perífrasis verbales son combinaciones de dos o más verbos que funcionan como un solo núcleo del predicado.", exemplo: "'Voy a comer' (perífrasis de futuro), 'Está corriendo' (perífrasis de gerundio).", ejercicio: "Escribe 5 oraciones con perífrasis verbales.", reto: "Analiza las perífrasis verbales en un texto." },
+            { titulo: "La voz activa en el predicado", teoria: "En la voz activa, el sujeto realiza la acción del verbo. Es la voz más común.", exemplo: "'El perro persigue al gato'.", ejercicio: "Escribe 5 oraciones en voz activa.", reto: "Analiza la voz activa en un texto." },
+            { titulo: "La voz pasiva en el predicado", teoria: "En la voz pasiva, el sujeto recibe la acción del verbo. Se forma con 'ser' + participio.", exemplo: "'El gato es perseguido por el perro'.", ejercicio: "Convierte 5 oraciones activas a pasivas.", reto: "Analiza la voz pasiva en un texto." },
+            { titulo: "La voz pasiva refleja", teoria: "La voz pasiva refleja se forma con 'se' + verbo en tercera persona. Es muy común en español.", exemplo: "'Se venden casas'.", ejercicio: "Escribe 5 oraciones con pasiva refleja.", reto: "Analiza las pasivas reflejas en un texto." },
+            { titulo: "El predicativo subjetivo", teoria: "El predicativo subjetivo es un adjetivo o sintagma nominal que modifica al sujeto y al verbo al mismo tiempo.", exemplo: "'Juan llegó cansado' (predicativo subjetivo: 'cansado').", ejercicio: "Identifica el predicativo subjetivo en 5 oraciones.", reto: "Escribe 5 oraciones con predicativo subjetivo." },
+            { titulo: "El predicativo objetivo", teoria: "El predicativo objetivo es un adjetivo o sintagma nominal que modifica al CD y al verbo al mismo tiempo.", exemplo: "'Encontré la casa vacía' (predicativo objetivo: 'vacía').", ejercicio: "Identifica el predicativo objetivo en 5 oraciones.", reto: "Escribe 5 oraciones con predicativo objetivo." },
+            { titulo: "La concordancia en el predicado", teoria: "El verbo debe concordar en persona y número con el sujeto, y el atributo o predicativo con el sujeto o CD.", exemplo: "'Las casas son grandes' (verbo y atributo en plural).", ejercicio: "Corrige 5 oraciones con errores de concordancia.", reto: "Escribe 5 oraciones con concordancia correcta." }
+        ]
+    },
+    compuesta: {
+        nombre: "Compuesta", color: "purpura", icono: "bi-robot",
+        especialidad: "Oraciones compuestas: yuxtapuestas, coordinadas, subordinadas",
+        tecnicas: [
+            { titulo: "La oración compuesta", teoria: "La oración compuesta tiene dos o más verbos en forma personal, y consta de varias proposiciones o cláusulas.", exemplo: "'Llegué, vi y vencí' (3 proposiciones).", ejercicio: "Escribe 5 oraciones compuestas.", reto: "Analiza 5 oraciones compuestas." },
+            { titulo: "Oración yuxtapuesta", teoria: "Las proposiciones yuxtapuestas se unen sin conectores, solo con signos de puntuación (coma, punto y coma, dos puntos).", ejemplo: "'Llegué, vi, vencí' (coma).", ejercicio: "Escribe 3 oraciones yuxtapuestas.", reto: "Analiza las yuxtapuestas en un texto." },
+            { titulo: "Oración coordinada copulativa", teoria: "Las proposiciones coordinadas copulativas se unen con 'y' (o 'e') para sumar ideas.", ejemplo: "'Estudia y trabaja'.", ejercicio: "Escribe 5 oraciones coordinadas copulativas.", reto: "Analiza las copulativas en un texto." },
+            { titulo: "Oración coordinada disyuntiva", teoria: "Las proposiciones coordinadas disyuntivas se unen con 'o' (o 'u') para ofrecer opciones.", ejemplo: "'¿Vienes o te quedas?'", ejercicio: "Escribe 5 oraciones coordinadas disyuntivas.", reto: "Analiza las disyuntivas en un texto." },
+            { titulo: "Oración coordinada adversativa", teoria: "Las proposiciones coordinadas adversativas se unen con 'pero', 'sino', 'aunque' para mostrar contraste.", ejemplo: "'Estudia, pero no aprueba'.", ejercicio: "Escribe 5 oraciones coordinadas adversativas.", reto: "Analiza las adversativas en un texto." },
+            { titulo: "Oración coordinada explicativa", teoria: "Las proposiciones coordinadas explicativas se unen con 'es decir', 'o sea' para aclarar o explicar.", ejemplo: "'Vino tarde, es decir, llegó después de las ocho'.", ejercicio: "Escribe 3 oraciones coordinadas explicativas.", reto: "Analiza las explicativas en un texto." },
+            { titulo: "Oración coordinada distributiva", teoria: "Las proposiciones coordinadas distributivas se unen con 'bien... bien', 'ya... ya', 'ora... ora' para distribuir.", ejemplo: "'Bien estudia, bien trabaja'.", ejercicio: "Escribe 3 oraciones coordinadas distributivas.", reto: "Analiza las distributivas en un texto." },
+            { titulo: "Oración subordinada sustantiva", teoria: "La subordinada sustantiva funciona como un sustantivo (sujeto, CD, etc.). Va introducida por 'que', 'si', etc.", ejemplo: "'Sé que vendrás' (CD).", ejercicio: "Escribe 5 subordinadas sustantivas.", reto: "Analiza las sustantivas en un texto." },
+            { titulo: "Subordinada sustantiva de sujeto", teoria: "La subordinada sustantiva de sujeto funciona como el sujeto de la oración principal.", ejemplo: "'Que vengas es importante' (sujeto).", ejercicio: "Escribe 3 subordinadas sustantivas de sujeto.", reto: "Analiza las sustantivas de sujeto en un texto." },
+            { titulo: "Subordinada sustantiva de CD", teoria: "La subordinada sustantiva de CD funciona como el complemento directo del verbo principal.", ejemplo: "'Quiero que vengas' (CD).", ejercicio: "Escribe 3 subordinadas sustantivas de CD.", reto: "Analiza las sustantivas de CD en un texto." },
+            { titulo: "Subordinada sustantiva de CI", teoria: "La subordinada sustantiva de CI funciona como el complemento indirecto del verbo principal.", ejemplo: "'Dio el premio a quien llegó primero' (CI).", ejercicio: "Escribe 3 subordinadas sustantivas de CI.", reto: "Analiza las sustantivas de CI en un texto." },
+            { titulo: "Subordinada sustantiva de C Régimen", teoria: "La subordinada sustantiva de CRég funciona como complemento de régimen del verbo principal.", ejemplo: "'Insisto en que vengas' (CRég).", ejercicio: "Escribe 3 subordinadas sustantivas de CRég.", reto: "Analiza las sustantivas de CRég en un texto." },
+            { titulo: "Oración subordinada adjetiva (de relativo)", teoria: "La subordinada adjetiva funciona como un adjetivo, modificando a un sustantivo (antecedente). Va introducida por 'que', 'quien', 'cuyo', etc.", ejemplo: "'El libro que leí es interesante' (modifica a 'libro').", ejercicio: "Escribe 5 subordinadas adjetivas.", reto: "Analiza las adjetivas en un texto." },
+            { titulo: "Subordinada adjetiva especificativa", teoria: "La adjetiva especificativa selecciona o restringe el significado del antecedente. No va entre comas.", ejemplo: "'Los libros que son azules están en esa estantería' (solo los azules).", ejercicio: "Escribe 3 adjetivas especificativas.", reto: "Analiza las especificativas en un texto." },
+            { titulo: "Subordinada adjetiva explicativa", teoria: "La adjetiva explicativa añade información extra sobre el antecedente. Va entre comas.", ejemplo: "'Los libros, que son azules, están en esa estantería' (todos son azules).", ejercicio: "Escribe 3 adjetivas explicativas.", reto: "Analiza las explicativas en un texto." },
+            { titulo: "Oración subordinada adverbial", teoria: "La subordinada adverbial funciona como un adverbio, expresando circunstancias (tiempo, lugar, modo, causa, etc.).", ejemplo: "'Cuando llegues, avísame' (tiempo).", ejercicio: "Escribe 5 subordinadas adverbiales.", reto: "Analiza las adverbiales en un texto." },
+            { titulo: "Subordinada adverbial de tiempo", teoria: "La subordinada adverbial de tiempo expresa una circunstancia temporal. Va introducida por 'cuando', 'mientras', 'después de que', etc.", ejemplo: "'Cuando llegues, avísame'.", ejercicio: "Escribe 3 subordinadas de tiempo.", reto: "Analiza las de tiempo en un texto." },
+            { titulo: "Subordinada adverbial de causa", teoria: "La subordinada adverbial de causa expresa la causa de la acción principal. Va introducida por 'porque', 'ya que', 'puesto que', etc.", ejemplo: "'No fui porque estaba enfermo'.", ejercicio: "Escribe 3 subordinadas de causa.", reto: "Analiza las de causa en un texto." },
+            { titulo: "Subordinada adverbial de condición", teoria: "La subordinada adverbial de condición expresa una condición para que se cumpla la acción principal. Va introducida por 'si', 'con tal de que', etc.", ejemplo: "'Si llueve, no salimos'.", ejercicio: "Escribe 3 subordinadas de condición.", reto: "Analiza las de condición en un texto." },
+            { titulo: "Subordinada adverbial de concesión", teoria: "La subordinada adverbial de concesión expresa una objeción o dificultad que no impide la acción principal. Va introducida por 'aunque', 'a pesar de que', etc.", ejemplo: "'Aunque llueva, salimos'.", ejercicio: "Escribe 3 subordinadas de concesión.", reto: "Analiza las de concesión en un texto." }
+        ]
+    },
+    analisis: {
+        nombre: "Análisis", color: "rojo", icono: "bi-robot",
+        especialidad: "Análisis sintáctico y funciones",
+        tecnicas: [
+            { titulo: "Análisis sintáctico de oraciones simples", teoria: "El análisis sintáctico consiste en identificar las funciones de cada elemento en la oración (sujeto, predicado, complementos).", ejemplo: "Analizar 'El perro come comida en la cocina'.", ejercicio: "Analiza sintácticamente 5 oraciones simples.", reto: "Realiza el análisis sintáctico de un párrafo." },
+            { titulo: "Análisis sintáctico de oraciones compuestas", teoria: "El análisis de oraciones compuestas identifica las proposiciones y su relación (yuxtaposición, coordinación, subordinación).", exemplo: "Analizar 'Llegué, vi y vencí'.", ejercicio: "Analiza sintácticamente 5 oraciones compuestas.", reto: "Realiza el análisis sintáctico de un párrafo compuesto." },
+            { titulo: "Identificación del sujeto", teoria: "Para identificar el sujeto, se pregunta '¿quién?' o '¿qué?' al verbo. También se puede cambiar el número del verbo.", ejemplo: "En 'Juan come pan', preguntamos '¿Quién come pan?': 'Juan'.", ejercicio: "Identifica el sujeto en 10 oraciones.", reto: "Explica cómo se identifica el sujeto." },
+            { titulo: "Identificación del predicado", teoria: "El predicado es todo lo que no es sujeto. Tiene como núcleo el verbo.", ejemplo: "En 'Juan come pan', el predicado es 'come pan'.", ejercicio: "Identifica el predicado en 10 oraciones.", reto: "Explica cómo se identifica el predicado." },
+            { titulo: "Identificación del CD", teoria: "El CD se identifica preguntando '¿qué?' o '¿a quién?' al verbo. También se puede sustituir por 'lo', 'la', 'los', 'las'.", ejemplo: "En 'Veo la película', preguntamos '¿Qué veo?': 'la película'. Sustitución: 'La veo'.", ejercicio: "Identifica el CD en 10 oraciones.", reto: "Explica cómo se identifica el CD." },
+            { titulo: "Identificación del CI", teoria: "El CI se identifica preguntando '¿a quién?' o '¿para quién?' al verbo. Se sustituye por 'le' o 'les'.", ejemplo: "En 'Doy un libro a Juan', preguntamos '¿A quién doy un libro?': 'a Juan'. Sustitución: 'Le doy un libro'.", ejercicio: "Identifica el CI en 10 oraciones.", reto: "Explica cómo se identifica el CI." },
+            { titulo: "Identificación del CC", teoria: "El CC se identifica preguntando al verbo: ¿dónde?, ¿cuándo?, ¿cómo?, ¿cuánto?, ¿por qué?, ¿para qué?", ejemplo: "En 'Camino por el parque', preguntamos '¿Dónde camino?': 'por el parque' (CC de lugar).", ejercicio: "Identifica los CC en 10 oraciones.", reto: "Explica cómo se identifican los CC." },
+            { titulo: "Identificación del atributo", teoria: "El atributo aparece con verbos copulativos (ser, estar, parecer) y se sustituye por el pronombre 'lo'.", ejemplo: "En 'La casa es grande', el atributo es 'grande'. Sustitución: 'Lo es'.", ejercicio: "Identifica el atributo en 10 oraciones.", reto: "Explica cómo se identifica el atributo." },
+            { titulo: "Identificación del CAg", teoria: "El CAg aparece en oraciones pasivas y va precedido por la preposición 'por'.", ejemplo: "En 'La carta fue escrita por Juan', el CAg es 'por Juan'.", ejercicio: "Identifica el CAg en 10 oraciones pasivas.", reto: "Explica cómo se identifica el CAg." },
+            { titulo: "Identificación del CRég", teoria: "El CRég es un complemento preposicional exigido por el verbo. El verbo necesita esa preposición para tener sentido.", ejemplo: "En 'Hablar de política', el CRég es 'de política'.", ejercicio: "Identifica el CRég en 10 oraciones.", reto: "Explica cómo se identifica el CRég." },
+            { titulo: "Identificación del CPred", teoria: "El CPred es un adjetivo o sintagma nominal que modifica al mismo tiempo al verbo y al sujeto o CD.", exemplo: "En 'Juan llegó cansado', el CPred es 'cansado'.", ejercicio: "Identifica el CPred en 10 oraciones.", reto: "Explica cómo se identifica el CPred." },
+            { titulo: "Diferenciación entre CD y CI", teoria: "El CD responde a '¿qué?' o '¿a quién?' y se sustituye por lo/la/los/las. El CI responde a '¿a quién?' o '¿para quién?' y se sustituye por le/les.", exemplo: "En 'Doy el libro a Juan': CD='el libro', CI='a Juan'.", ejercicio: "Diferencia CD y CI en 10 oraciones.", reto: "Explica las diferencias entre CD y CI." },
+            { titulo: "Diferenciación entre atributo y CD", teoria: "El atributo aparece con verbos copulativos y se sustituye por 'lo'; el CD aparece con verbos predicativos.", exemplo: "En 'La casa es grande': atributo; en 'Veo la casa': CD.", ejercicio: "Diferencia atributo y CD en 10 oraciones.", reto: "Explica las diferencias entre atributo y CD." },
+            { titulo: "Diferenciación entre CC y CPred", teoria: "El CC expresa una circunstancia; el CPred modifica al sujeto o CD y es un adjetivo o sintagma nominal.", exemplo: "En 'Juan llegó cansado': CPred; en 'Juan llegó tarde': CC.", ejercicio: "Diferencia CC y CPred en 10 oraciones.", reto: "Explica las diferencias entre CC y CPred." },
+            { titulo: "Análisis de oraciones pasivas", teoria: "En oraciones pasivas, se identifica el sujeto paciente, el verbo en pasiva, el CAg y los demás complementos.", exemplo: "Analizar 'La carta fue escrita por Juan ayer'.", ejercicio: "Analiza 5 oraciones pasivas.", reto: "Explica cómo se analiza una oración pasiva." },
+            { titulo: "Análisis de oraciones impersonales", teoria: "En oraciones impersonales, no hay sujeto. Se analizan el verbo y sus complementos.", exemplo: "Analizar 'Llueve mucho'.", ejercicio: "Analiza 5 oraciones impersonales.", reto: "Explica cómo se analiza una oración impersonal." },
+            { titulo: "Análisis de oraciones reflexivas", teoria: "En oraciones reflexivas, el pronombre reflexivo (me, te, se, nos, os) forma parte del verbo.", exemplo: "Analizar 'El niño se lava'.", ejercicio: "Analiza 5 oraciones reflexivas.", reto: "Explica cómo se analiza una oración reflexiva." },
+            { titulo: "Análisis de oraciones recíprocas", teoria: "En oraciones recíprocas, el pronombre recíproco (se, nos, os) indica acción mutua.", exemplo: "Analizar 'Los amigos se abrazan'.", ejercicio: "Analiza 5 oraciones recíprocas.", reto: "Explica cómo se analiza una oración recíproca." },
+            { titulo: "Representación gráfica del análisis sintáctico", teoria: "El análisis sintáctico se puede representar mediante diagramas de árbol o esquemas de funciones.", exemplo: "Dibujar el árbol sintáctico de 'El niño come una manzana'.", ejercicio: "Representa gráficamente 5 oraciones.", reto: "Explica cómo se representan los análisis sintácticos." },
+            { titulo: "Pasos para el análisis sintáctico", teoria: "Pasos: 1. Localizar el verbo. 2. Identificar el sujeto. 3. Identificar el predicado. 4. Identificar los complementos. 5. Clasificar la oración.", exemplo: "Aplicar los pasos a una oración.", ejercicio: "Explica los pasos del análisis sintáctico.", reto: "Realiza un análisis sintáctico siguiendo todos los pasos." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['oracion','sujeto','predicado','compuesta','analisis'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_sintactica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

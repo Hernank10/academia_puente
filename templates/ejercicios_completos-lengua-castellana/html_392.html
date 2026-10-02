@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuaderno de los Cinco Elementos — 100 Técnicas del Párrafo</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Caveat:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#f6efe1; --ink-2:#eee1c9; --ink-3:#e6d5b0;
+  --parchment:#2b2620; --parchment-2:#4a4034;
+  --gold:#a9822e; --gold-dim:#8a6a24;
+  --burgundy:#b5432b; --burgundy-dim:#8a3320;
+  --sage:#3f6b56; --sage-dim:#2c4d3d;
+  --azure:#2f5770; --azure-dim:#1f3d50;
+  --ash:#5a5245; --ash-dim:#7a705f;
+}
+*{box-sizing:border-box;}
+html,body{background:var(--ink);}
+body{
+  font-family:'Lora', Georgia, serif; font-weight:400; color:var(--parchment); min-height:100vh;
+  background: var(--ink);
+  position:relative;
+}
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(ellipse at 12% -8%, rgba(63,107,86,0.07), transparent 42%),
+    radial-gradient(ellipse at 92% 6%, rgba(181,67,43,0.06), transparent 38%),
+    radial-gradient(ellipse at 88% 96%, rgba(47,87,112,0.06), transparent 40%),
+    radial-gradient(ellipse at 6% 92%, rgba(169,130,46,0.07), transparent 42%);
+}
+.font-display{font-family:'Cormorant Garamond', serif;}
+.font-cursive{font-family:'Caveat', cursive;}
+
+.shell{ display:grid; grid-template-columns: 260px 1fr; min-height:100vh; }
+@media (max-width: 900px){ .shell{grid-template-columns: 1fr;} .sidebar{position:relative; height:auto;} }
+
+.sidebar{
+  background: linear-gradient(180deg, var(--ink-3), var(--ink-2) 60%, var(--ink));
+  border-right: 1px solid rgba(169,130,46,0.25);
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding: 2rem 1.25rem; z-index:1;
+}
+.brand-mark{
+  width:44px;height:44px;border-radius:50%;
+  background: radial-gradient(circle at 35% 30%, #e3c374, var(--gold) 55%, var(--gold-dim) 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif; font-weight:700; font-size:1.3rem;
+  color:#2b1a08; box-shadow: 0 0 0 3px rgba(169,130,46,0.18), 0 4px 14px rgba(0,0,0,0.2); flex-shrink:0;
+}
+.brand-title{ font-family:'Cormorant Garamond', serif; font-size:1.28rem; font-weight:700; line-height:1.15; color:var(--parchment); }
+.brand-sub{ font-family:'JetBrains Mono', monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--ash); margin-top:2px; }
+.nav-rail{ margin-top:2.4rem; display:flex; flex-direction:column; gap:0.15rem; }
+.nav-rail button{
+  all:unset; cursor:pointer; display:flex; align-items:baseline; gap:0.65rem;
+  padding:0.6rem 0.6rem; border-radius:6px; color:var(--ash); font-family:'Lora', serif; font-size:1.02rem;
+  border-left:2px solid transparent; transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+.nav-rail button .idx{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--gold-dim); width:16px; }
+.nav-rail button:hover{ color:var(--parchment); background:rgba(169,130,46,0.08); }
+.nav-rail button.active{ color:var(--parchment); background:rgba(169,130,46,0.14); border-left-color:var(--gold); }
+.nav-rail button.active .idx{ color:var(--gold); }
+
+.sidebar-progress{ margin-top:2.5rem; padding-top:1.4rem; border-top:1px solid rgba(169,130,46,0.2); }
+.sidebar-progress .label{ font-family:'JetBrains Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ash-dim); }
+.sidebar-progress .num{ font-family:'Cormorant Garamond',serif; font-size:2.1rem; color:var(--gold); line-height:1; margin-top:0.35rem; }
+.seal-track{ height:6px; background:rgba(90,82,69,0.15); border-radius:3px; margin-top:0.7rem; overflow:hidden; }
+.seal-fill{ height:100%; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); border-radius:3px; transition:width .4s ease; }
+.side-stats{ margin-top:1rem; display:flex; gap:0.6rem; flex-wrap:wrap; }
+.side-chip{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--ash); border:1px solid rgba(169,130,46,0.25); border-radius:14px; padding:0.25rem 0.6rem; }
+.side-chip b{ color:var(--gold-dim); }
+
+.main{ padding: 2.6rem 3rem 5rem; max-width:1040px; background:var(--ink); position:relative; z-index:1; }
+@media (max-width: 700px){ .main{ padding: 1.6rem 1.1rem 4rem; } }
+.view{ display:none; }
+.view.active{ display:block; animation: fadeUp .35s ease; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.eyebrow{ font-family:'JetBrains Mono', monospace; font-size:0.7rem; letter-spacing:0.16em; text-transform:uppercase; color:var(--gold); }
+.drop{ float:left; font-family:'Cormorant Garamond', serif; font-weight:700; font-size:4.6rem; line-height:0.78; color:var(--gold); padding-right:0.14em; padding-top:0.06em; }
+h1.page-title{ font-family:'Cormorant Garamond', serif; font-weight:700; font-size:2.9rem; color:var(--parchment); margin: 0.3rem 0 1.1rem; }
+.lede{ color:var(--ash); font-size:1.14rem; line-height:1.65; max-width:680px; }
+.rule{ border:none; border-top:1px solid rgba(169,130,46,0.25); margin:2.2rem 0; }
+
+.pcard{ background: linear-gradient(180deg, rgba(169,130,46,0.07), rgba(169,130,46,0.02)); border:1px solid rgba(169,130,46,0.22); border-radius:10px; padding:1.4rem 1.5rem; }
+.pcard + .pcard{ margin-top:1rem; }
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:1rem; margin-top:1.8rem; }
+.stat{ border:1px solid rgba(169,130,46,0.22); border-radius:10px; padding:1.2rem 1.3rem; background: rgba(169,130,46,0.03); }
+.stat .n{ font-family:'Cormorant Garamond',serif; font-size:2.4rem; color:var(--gold); line-height:1; }
+.stat .t{ font-family:'JetBrains Mono',monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ash); margin-top:0.5rem; }
+
+/* ---------- Cuaderno de práctica ---------- */
+.search-wrap{ position:relative; margin: 1.6rem 0 0.4rem; }
+.search-wrap input{ width:100%; background:var(--ink-2); border:1px solid rgba(169,130,46,0.28); color:var(--parchment); border-radius:8px; padding:0.7rem 1rem 0.7rem 2.4rem; font-family:'Lora',serif; font-size:1.02rem; }
+.search-wrap input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(169,130,46,0.14); }
+.search-wrap input::placeholder{ color:var(--ash-dim); }
+.search-wrap .sicon{ position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:var(--ash-dim); }
+
+.block-head{ display:flex; align-items:center; justify-content:space-between; gap:1rem; cursor:pointer; padding:0.95rem 1.1rem; border:1px solid rgba(169,130,46,0.22); border-radius:8px; background:rgba(169,130,46,0.03); margin-top:0.8rem; }
+.block-head:hover{ border-color:rgba(169,130,46,0.5); }
+.block-head .btitle{ display:flex; align-items:baseline; gap:0.7rem; }
+.block-head .bnum{ font-family:'JetBrains Mono',monospace; color:var(--gold-dim); font-size:0.78rem; }
+.block-head h4{ font-family:'Cormorant Garamond',serif; font-size:1.35rem; margin:0; color:var(--parchment); }
+.block-head .bprog{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--sage); }
+.block-head .chev{ color:var(--ash-dim); transition:transform .2s ease; font-size:0.85rem; }
+.block-head.open .chev{ transform:rotate(90deg); color:var(--gold); }
+.block-body{ display:none; padding:0.6rem 0.2rem 0.4rem; }
+.block-body.open{ display:block; }
+
+.lesson-row{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.65rem 0.9rem; border-radius:6px; cursor:pointer; border:1px solid transparent; }
+.lesson-row:hover{ background:rgba(169,130,46,0.08); border-color:rgba(169,130,46,0.2); }
+.lesson-row .lnum{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--gold-dim); width:2.2rem; flex-shrink:0; }
+.lesson-row .ltitle{ font-family:'Lora',serif; font-size:1.03rem; color:var(--parchment); flex:1; }
+.lesson-row .lbadge{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; padding:0.15rem 0.55rem; border-radius:12px; border:1px solid rgba(169,130,46,0.25); color:var(--ash-dim); }
+.lesson-row .lbadge.correct{ color:var(--sage); border-color:var(--sage-dim); background:rgba(63,107,86,0.08); }
+.lesson-row .lbadge.wrong{ color:var(--burgundy); border-color:var(--burgundy-dim); background:rgba(181,67,43,0.08); }
+.lesson-row .lchev{ color:var(--ash-dim); font-size:0.8rem; }
+
+.lesson-card{ display:none; margin: 0.3rem 0.4rem 1rem; padding:1.4rem 1.5rem; background:linear-gradient(180deg, var(--ink-3), var(--ink-2)); border:1px solid rgba(169,130,46,0.3); border-radius:10px; box-shadow: 0 6px 20px rgba(43,38,32,0.1); }
+.lesson-card.open{ display:block; animation: fadeUp .25s ease; }
+.lc-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:1rem; border-bottom:1px solid rgba(169,130,46,0.2); padding-bottom:0.8rem; margin-bottom:1rem; }
+.lc-head h5{ font-family:'Cormorant Garamond',serif; font-weight:700; font-size:1.55rem; margin:0; color:var(--parchment); }
+.lc-section-label{ font-family:'JetBrains Mono',monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--gold-dim); margin:1.1rem 0 0.4rem; }
+.lc-section-label:first-of-type{ margin-top:0; }
+.lc-theory{ font-family:'Lora',serif; font-size:1.05rem; line-height:1.7; color:var(--parchment-2); }
+.lc-example{ font-family:'Caveat', cursive; font-size:1.7rem; line-height:1.4; color:var(--azure); background:rgba(47,87,112,0.06); border-left:3px solid var(--azure); border-radius:4px; padding:0.7rem 1.1rem; }
+.lc-practica{ font-family:'Lora',serif; font-style:italic; font-size:0.98rem; color:var(--ash); }
+
+/* Quiz */
+.quiz-box{ margin-top:0.5rem; }
+.quiz-stem{ font-family:'Lora',serif; font-size:1.02rem; color:var(--parchment); background:rgba(169,130,46,0.06); border-radius:8px; padding:0.9rem 1.1rem; margin-bottom:0.8rem; }
+.quiz-options{ display:flex; flex-direction:column; gap:0.5rem; }
+.quiz-opt{
+  display:flex; align-items:center; gap:0.7rem; padding:0.65rem 0.9rem; border-radius:8px;
+  border:1px solid rgba(169,130,46,0.25); cursor:pointer; background:rgba(255,255,255,0.15);
+  font-family:'Lora',serif; font-size:0.98rem; color:var(--parchment-2); transition:all .15s ease;
+}
+.quiz-opt:hover{ border-color:var(--gold); }
+.quiz-opt input{ accent-color:var(--gold); width:16px; height:16px; flex-shrink:0; }
+.quiz-opt.selected{ border-color:var(--gold); background:rgba(169,130,46,0.1); }
+.quiz-opt.correct-answer{ border-color:var(--sage); background:rgba(63,107,86,0.12); color:var(--sage-dim); }
+.quiz-opt.wrong-answer{ border-color:var(--burgundy); background:rgba(181,67,43,0.1); color:var(--burgundy-dim); }
+.quiz-check-btn{
+  margin-top:0.9rem; font-family:'JetBrains Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em;
+  background:var(--gold); color:#2b1a08; border:none; border-radius:6px; padding:0.55rem 1.2rem; cursor:pointer; font-weight:600;
+}
+.quiz-check-btn:hover{ background:#e3c374; }
+.quiz-check-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+.quiz-feedback{ margin-top:0.8rem; padding:0.8rem 1rem; border-radius:8px; font-family:'Lora',serif; font-size:0.96rem; display:none; }
+.quiz-feedback.show{ display:block; animation:fadeUp .2s ease; }
+.quiz-feedback.correct{ background:rgba(63,107,86,0.1); border:1px solid var(--sage-dim); color:var(--sage-dim); }
+.quiz-feedback.incorrect{ background:rgba(181,67,43,0.1); border:1px solid var(--burgundy-dim); color:var(--burgundy-dim); }
+.quiz-retry{ margin-left:0.6rem; font-family:'JetBrains Mono',monospace; font-size:0.66rem; text-transform:uppercase; background:transparent; border:1px solid var(--ash-dim); color:var(--ash); border-radius:6px; padding:0.3rem 0.7rem; cursor:pointer; }
+.quiz-retry:hover{ border-color:var(--gold); color:var(--gold); }
+
+/* Cursive writing practice */
+.write-box{ margin-top:0.5rem; }
+.write-textarea{
+  width:100%; min-height:90px; background:rgba(255,255,255,0.25); border:1px dashed rgba(169,130,46,0.4); border-radius:8px;
+  padding:0.8rem 1rem; font-family:'Caveat', cursive; font-size:1.5rem; line-height:1.4; color:var(--parchment);
+  resize:vertical;
+}
+.write-textarea:focus{ outline:none; border-color:var(--gold); border-style:solid; }
+.write-textarea::placeholder{ font-family:'Lora',serif; font-size:0.95rem; font-style:italic; color:var(--ash-dim); }
+.write-save{ margin-top:0.5rem; font-family:'JetBrains Mono',monospace; font-size:0.64rem; text-transform:uppercase; background:transparent; border:1px solid var(--sage-dim); color:var(--sage); border-radius:6px; padding:0.3rem 0.75rem; cursor:pointer; }
+.write-save:hover{ background:rgba(63,107,86,0.1); }
+.write-save.saved{ background:var(--sage-dim); color:#eef2e6; }
+
+.filter-pill{
+  all:unset; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.04em;
+  padding:0.4rem 0.85rem; border-radius:16px; border:1px solid rgba(169,130,46,0.25); color:var(--ash);
+}
+.filter-pill:hover{ color:var(--parchment); border-color:var(--gold); }
+.filter-pill.active{ background:rgba(169,130,46,0.14); border-color:var(--gold); color:var(--parchment); }
+.toolbar{ display:flex; flex-wrap:wrap; gap:0.6rem; margin-top:1.6rem; }
+
+/* Progreso view */
+.progress-hero{ display:flex; align-items:center; gap:2rem; flex-wrap:wrap; margin-top:1.6rem; }
+.progress-ring-wrap{ position:relative; width:150px; height:150px; flex-shrink:0; }
+.progress-ring-wrap svg{ transform:rotate(-90deg); }
+.progress-ring-bg{ fill:none; stroke:rgba(169,130,46,0.15); stroke-width:10; }
+.progress-ring-fill{ fill:none; stroke:var(--gold); stroke-width:10; stroke-linecap:round; transition:stroke-dashoffset .5s ease; }
+.progress-ring-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+.progress-ring-label .pn{ font-family:'Cormorant Garamond',serif; font-size:2.2rem; color:var(--gold); line-height:1; }
+.progress-ring-label .pt{ font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--ash); text-transform:uppercase; }
+.block-progress-list{ margin-top:2rem; display:flex; flex-direction:column; gap:0.7rem; }
+.bp-row{ display:flex; align-items:center; gap:1rem; }
+.bp-row .bp-label{ font-family:'Lora',serif; font-size:0.95rem; color:var(--parchment-2); width:230px; flex-shrink:0; }
+.bp-track{ flex:1; height:8px; background:rgba(169,130,46,0.12); border-radius:4px; overflow:hidden; }
+.bp-fill{ height:100%; background:linear-gradient(90deg,var(--sage-dim),var(--sage)); border-radius:4px; }
+.bp-count{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--ash); width:50px; text-align:right; flex-shrink:0; }
+.reset-btn{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; background:transparent; border:1px solid var(--burgundy-dim); color:var(--burgundy-dim); border-radius:6px; padding:0.4rem 0.9rem; cursor:pointer; }
+.reset-btn:hover{ background:rgba(181,67,43,0.1); }
+
+/* Personajes (reused) */
+.archetype-rail{ display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:1.6rem; }
+.arch-pill{ all:unset; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.74rem; padding:0.55rem 1.1rem; border-radius:20px; border:1px solid rgba(169,130,46,0.28); color:var(--ash); display:flex; align-items:center; gap:0.5rem; transition:all .15s ease; }
+.arch-pill .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold-dim); }
+.arch-pill:hover{ border-color:var(--gold); color:var(--parchment); }
+.arch-pill.active{ background:rgba(169,130,46,0.14); border-color:var(--gold); color:var(--parchment); }
+.example-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-top:1.6rem; }
+.example-card{ border:1px solid rgba(169,130,46,0.22); border-radius:10px; padding:1.1rem 1.2rem; background: rgba(169,130,46,0.03); display:flex; flex-direction:column; gap:0.7rem; }
+.example-card .ex-head{ display:flex; justify-content:space-between; align-items:baseline; }
+.example-card .ex-name{ font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--parchment); }
+.example-card .ex-voice{ font-family:'JetBrains Mono',monospace; font-size:0.6rem; text-transform:uppercase; color:var(--azure); }
+.example-card .ex-prompt{ font-family:'JetBrains Mono',monospace; font-size:0.7rem; color:var(--ash); line-height:1.55; max-height:120px; overflow:auto; background:rgba(43,38,32,0.05); border-radius:6px; padding:0.6rem 0.7rem; }
+.copy-btn{ font-family:'JetBrains Mono',monospace; font-size:0.64rem; text-transform:uppercase; background:transparent; border:1px solid var(--gold-dim); color:var(--gold-dim); border-radius:6px; padding:0.32rem 0.75rem; cursor:pointer; }
+.copy-btn:hover{ background:rgba(169,130,46,0.1); }
+.copy-btn.copied{ background:var(--sage-dim); border-color:var(--sage); color:#eef2e6; }
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:var(--ink-2); }
+::-webkit-scrollbar-thumb{ background:var(--gold-dim); border-radius:5px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-mark">&#9678;</div>
+      <div>
+        <div class="brand-title">Cuaderno de<br>los Cinco Elementos</div>
+        <div class="brand-sub">100 técnicas del párrafo</div>
+      </div>
+    </div>
+
+    <nav class="nav-rail" id="navRail">
+      <button data-view="resumen" class="active"><span class="idx">01</span> Resumen</button>
+      <button data-view="cuaderno"><span class="idx">02</span> Cuaderno de práctica</button>
+      <button data-view="progreso"><span class="idx">03</span> Mi progreso</button>
+      <button data-view="personajes"><span class="idx">04</span> Personajes</button>
+    </nav>
+
+    <div class="sidebar-progress">
+      <div class="label">Puntaje del cuaderno</div>
+      <div class="num" id="sidebarPct">0%</div>
+      <div class="seal-track"><div class="seal-fill" id="sidebarFill" style="width:0%"></div></div>
+      <div class="side-stats">
+        <span class="side-chip"><b id="sideCorrect">0</b>/100 aciertos</span>
+        <span class="side-chip">Racha: <b id="sideStreak">0</b></span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===================== RESUMEN ===================== -->
+    <section class="view active" id="view-resumen">
+      <div class="eyebrow">Cuaderno interactivo</div>
+      <h1 class="page-title"><span class="drop">C</span>ien técnicas, un cuaderno vivo.</h1>
+      <p class="lede">Cada técnica trae su teoría, un ejemplo caligrafiado, y un ejercicio con retroalimentación inmediata. Practica también tu propia escritura en trazo cursivo, y sigue tu puntaje a medida que avanzas.</p>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="n">100</div><div class="t">Técnicas con ejercicio</div></div>
+        <div class="stat"><div class="n">10</div><div class="t">Bloques temáticos</div></div>
+        <div class="stat"><div class="n" id="statAnswered">0</div><div class="t">Ejercicios resueltos</div></div>
+        <div class="stat"><div class="n" id="statScore">0%</div><div class="t">Aciertos</div></div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.5rem;">Cómo funciona cada técnica</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;"><b style="color:var(--parchment);">Teoría</b> — la regla explicada con brevedad. <b style="color:var(--parchment);">Ejemplo</b> — una muestra caligrafiada en trazo cursivo. <b style="color:var(--parchment);">Ejercicio</b> — opción múltiple con retroalimentación inmediata. <b style="color:var(--parchment);">Práctica</b> — un espacio para escribir tu propio ejemplo, mostrado también en cursiva.</p>
+      </div>
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.5rem;">El puntaje</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;">Cada ejercicio correcto suma a tu puntaje total y a tu racha de aciertos consecutivos. Puedes reintentar un ejercicio en cualquier momento — tu mejor resultado por técnica es el que cuenta.</p>
+      </div>
+
+      <div class="mt-4">
+        <button class="quiz-check-btn" onclick="document.querySelector('[data-view=cuaderno]').click()">Empezar a practicar →</button>
+      </div>
+    </section>
+
+    <!-- ===================== CUADERNO DE PRÁCTICA ===================== -->
+    <section class="view" id="view-cuaderno">
+      <div class="eyebrow">Teoría, ejemplo y ejercicio</div>
+      <h1 class="page-title"><span class="drop">C</span>uaderno de práctica.</h1>
+      <p class="lede">Abre una técnica para ver su teoría, su ejemplo caligrafiado, y resolver el ejercicio. Organizadas en diez bloques temáticos.</p>
+
+      <div class="search-wrap">
+        <span class="sicon">⌕</span>
+        <input type="text" id="lessonSearch" placeholder="Buscar por número o tema…">
+      </div>
+
+      <div id="blocksContainer"></div>
+    </section>
+
+    <!-- ===================== PROGRESO ===================== -->
+    <section class="view" id="view-progreso">
+      <div class="eyebrow">Seguimiento de aprendizaje</div>
+      <h1 class="page-title"><span class="drop">M</span>i progreso.</h1>
+      <p class="lede">Tu avance a través de las cien técnicas, bloque por bloque.</p>
+
+      <div class="progress-hero">
+        <div class="progress-ring-wrap">
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <circle class="progress-ring-bg" cx="75" cy="75" r="65"></circle>
+            <circle class="progress-ring-fill" id="ringFill" cx="75" cy="75" r="65" stroke-dasharray="408" stroke-dashoffset="408"></circle>
+          </svg>
+          <div class="progress-ring-label">
+            <div class="pn" id="ringPct">0%</div>
+            <div class="pt">completado</div>
+          </div>
+        </div>
+        <div>
+          <div class="side-stats" style="margin-top:0;">
+            <span class="side-chip"><b id="progAnswered">0</b>/100 respondidas</span>
+            <span class="side-chip"><b id="progCorrect">0</b> correctas</span>
+            <span class="side-chip">Racha actual: <b id="progStreak">0</b></span>
+            <span class="side-chip">Mejor racha: <b id="progBestStreak">0</b></span>
+          </div>
+          <button class="reset-btn mt-3" id="resetProgress">Reiniciar todo el progreso</button>
+        </div>
+      </div>
+
+      <div class="block-progress-list" id="blockProgressList"></div>
+    </section>
+
+    <!-- ===================== PERSONAJES ===================== -->
+    <section class="view" id="view-personajes">
+      <div class="eyebrow">Identidad visual — maestras elementales</div>
+      <h1 class="page-title"><span class="drop">L</span>as cinco maestras.</h1>
+      <p class="lede">Elige un elemento para ver 5 ejemplos de variación listos para generar imagen, si quieres ilustrar tu cuaderno.</p>
+
+      <div class="archetype-rail" id="archetypeRail"></div>
+      <div class="example-grid" id="exampleGrid"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+const NOTEBOOK = [{"num": 1, "title": "Qué es un párrafo", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Un párrafo es un conjunto de oraciones que desarrollan una sola idea, separado visualmente por un punto y aparte o una sangría. No es una unidad arbitraria: cada párrafo debe tener su propio propósito dentro del texto completo, como cada habitación tiene su función dentro de la casa.", "example": null, "practica": "identifica cuántos párrafos tiene un texto breve que hayas leído hoy, y qué idea desarrolla cada uno.", "quiz": {"stem": "Un párrafo es un conjunto de oraciones que desarrollan una sola idea, separado visualmente por un punto y aparte o una sangría.", "options": ["La extensión del párrafo", "Qué es un párrafo", "El párrafo periodístico (la pirámide invertida)", "La cohesión interna"], "correctIndex": 1}}, {"num": 2, "title": "La oración temática", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Suele ubicarse al inicio del párrafo, y presenta la idea central que el resto de las oraciones desarrollará. \"El bambú simboliza la flexibilidad\" — con esa sola frase, ya sabes de qué tratará el párrafo completo.", "example": "El bambú simboliza la flexibilidad", "practica": "escribe una oración temática clara para un párrafo que tengas pendiente.", "quiz": {"stem": "Suele ubicarse al inicio del párrafo, y presenta la idea central que el resto de las oraciones desarrollará.", "options": ["La oración de cierre", "Qué es un párrafo", "El párrafo silogístico", "La oración temática"], "correctIndex": 3}}, {"num": 3, "title": "Las oraciones de apoyo", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Cada una debe sostener, explicar, o ejemplificar la idea presentada en la oración temática. Una oración que no se relaciona con la idea central es un mueble fuera de lugar — rompe la armonía del espacio.", "example": null, "practica": "revisa un párrafo tuyo y confirma que cada oración sostiene la misma idea central.", "quiz": {"stem": "Cada una debe sostener, explicar, o ejemplificar la idea presentada en la oración temática.", "options": ["La sangría y el formato", "Las oraciones de apoyo", "La cohesión interna", "El párrafo de refutación"], "correctIndex": 1}}, {"num": 4, "title": "La oración de cierre", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "No siempre es obligatoria, pero cuando aparece, resume la idea o prepara la transición hacia el siguiente párrafo. Un párrafo que termina de forma abrupta, sin cierre, deja al lector con una sensación de puerta entreabierta.", "example": null, "practica": "agrega una oración de cierre a un párrafo tuyo que termine de forma abrupta.", "quiz": {"stem": "No siempre es obligatoria, pero cuando aparece, resume la idea o prepara la transición hacia el siguiente párrafo.", "options": ["Repaso: fundamentos", "El orden espacial en la descripción", "La oración de cierre", "La extensión del párrafo"], "correctIndex": 2}}, {"num": 5, "title": "La extensión del párrafo", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "No existe una longitud fija ideal, pero un párrafo demasiado corto puede sentirse incompleto, y uno demasiado largo, agotador. Como guía general: si una sola idea necesita más de siete u ocho oraciones, probablemente contiene más de una idea.", "example": null, "practica": "revisa un párrafo largo tuyo y decide si en realidad son dos ideas distintas.", "quiz": {"stem": "No existe una longitud fija ideal, pero un párrafo demasiado corto puede sentirse incompleto, y uno demasiado largo, agotador.", "options": ["La coherencia interna", "La sangría y el formato", "La extensión del párrafo", "El párrafo de tesis inicial"], "correctIndex": 2}}, {"num": 6, "title": "La unidad del párrafo", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Si notas que a mitad de párrafo cambias de tema sin anunciarlo, has roto la unidad — y con ella, el equilibrio del texto. Cada vez que sientas el impulso de introducir una idea nueva, pregúntate si merece su propio párrafo.", "example": null, "practica": "identifica si algún párrafo tuyo mezcla dos ideas que deberían separarse.", "quiz": {"stem": "Si notas que a mitad de párrafo cambias de tema sin anunciarlo, has roto la unidad — y con ella, el equilibrio del texto.", "options": ["La unidad del párrafo", "La extensión del párrafo", "Repaso: fundamentos", "Repaso: apertura y cierre"], "correctIndex": 0}}, {"num": 7, "title": "La coherencia interna", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Un párrafo coherente avanza con lógica: cada oración se apoya en la anterior, sin saltos ni contradicciones. Si una oración parece caída del cielo, sin relación aparente con lo anterior, el flujo se interrumpe.", "example": null, "practica": "revisa un párrafo tuyo buscando una oración que no se conecte con las demás.", "quiz": {"stem": "Un párrafo coherente avanza con lógica: cada oración se apoya en la anterior, sin saltos ni contradicciones.", "options": ["Repaso: fundamentos", "La oración temática", "El párrafo de evidencia", "La coherencia interna"], "correctIndex": 3}}, {"num": 8, "title": "La cohesión interna", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Pronombres, sinónimos, y conectores tejen ese hilo entre una oración y la siguiente. \"El maestro llegó. Él traía un regalo\" — el pronombre \"él\" cose ambas oraciones sin repetir el nombre.", "example": "El maestro llegó. Él traía un regalo", "practica": "revisa un párrafo tuyo y reemplaza una repetición innecesaria por un pronombre o sinónimo.", "quiz": {"stem": "Pronombres, sinónimos, y conectores tejen ese hilo entre una oración y la siguiente. \"El maestro llegó.", "options": ["La cohesión interna", "Qué es un párrafo", "Repaso: fundamentos", "El retrato (prosopografía + etopeya)"], "correctIndex": 0}}, {"num": 9, "title": "La sangría y el formato", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "La sangría o el espacio entre párrafos le dice al ojo del lector: aquí termina una idea, aquí comienza otra. Un texto sin estas señales visuales se siente como una habitación sin paredes — todo mezclado, sin descanso para la vista.", "example": null, "practica": "revisa el formato de un texto tuyo y confirma que cada párrafo se distingue claramente del siguiente.", "quiz": {"stem": "La sangría o el espacio entre párrafos le dice al ojo del lector: aquí termina una idea, aquí comienza otra.", "options": ["La sangría y el formato", "Revisar la coherencia de un párrafo", "Qué es un párrafo", "La oración temática"], "correctIndex": 0}}, {"num": 10, "title": "Repaso: fundamentos", "block": 1, "blockTitle": "Fundamentos del párrafo", "theory": "Repasemos: qué es un párrafo, oración temática, oraciones de apoyo, oración de cierre, extensión, unidad, coherencia, cohesión, formato. Con estos nueve principios ya puedes construir cualquier párrafo con intención, antes de pensar en su tipo específico.", "example": null, "practica": "evalúa un párrafo tuyo contra estos nueve principios, uno por uno.", "quiz": {"stem": "Repasemos: qué es un párrafo, oración temática, oraciones de apoyo, oración de cierre, extensión, unidad, coherencia, cohesión, formato.", "options": ["El párrafo de comparación y contraste", "La unidad del párrafo", "La coherencia interna", "Repaso: fundamentos"], "correctIndex": 3}}, {"num": 11, "title": "El párrafo narrativo: definición", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Cuenta una sucesión de hechos, con personajes, un lugar, y un tiempo que avanza. \"El monje cruzó el jardín justo cuando el sol se ocultaba tras las montañas\" — ahí hay acción, lugar, y tiempo, los tres pilares de la narración.", "example": "El monje cruzó el jardín justo cuando el sol se ocultaba tras las montañas", "practica": "escribe un párrafo narrativo breve sobre algo que te ocurrió hoy.", "quiz": {"stem": "Cuenta una sucesión de hechos, con personajes, un lugar, y un tiempo que avanza.", "options": ["El párrafo narrativo in medias res", "El párrafo narrativo: definición", "Repaso: apertura y cierre", "El párrafo de acción"], "correctIndex": 1}}, {"num": 12, "title": "El párrafo narrativo cronológico", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "El párrafo cronológico avanza en la misma secuencia en que ocurrieron los hechos, sin saltos hacia atrás. Es el más fácil de seguir para el lector, porque imita el orden natural de la experiencia.", "example": null, "practica": "narra tu mañana de hoy en estricto orden cronológico.", "quiz": {"stem": "El párrafo cronológico avanza en la misma secuencia en que ocurrieron los hechos, sin saltos hacia atrás.", "options": ["El párrafo narrativo in medias res", "El párrafo narrativo cronológico", "Repaso: el párrafo narrativo", "Las oraciones de apoyo"], "correctIndex": 1}}, {"num": 13, "title": "El párrafo narrativo in medias res", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "\"In medias res\" significa arrancar la narración en el punto de mayor tensión, y explicar el contexto después. \"La puerta se abrió de golpe\" engancha más que \"Aquella tarde, decidí salir a caminar\".", "example": "In medias res", "practica": "reescribe el inicio de una historia tuya comenzando directamente en la acción.", "quiz": {"stem": "\"In medias res\" significa arrancar la narración en el punto de mayor tensión, y explicar el contexto después.", "options": ["El párrafo de diálogo", "Repaso: el párrafo narrativo", "El párrafo narrativo in medias res", "Las oraciones de apoyo"], "correctIndex": 2}}, {"num": 14, "title": "El párrafo de acción", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Usa oraciones cortas, verbos directos, y evita las descripciones largas que detienen el ritmo. \"Corrió. Saltó el muro. No miró atrás\" — cada oración es un golpe, no una pausa.", "example": "Corrió. Saltó el muro. No miró atrás", "practica": "escribe un párrafo de acción usando solo oraciones cortas.", "quiz": {"stem": "Usa oraciones cortas, verbos directos, y evita las descripciones largas que detienen el ritmo. \"Corrió. Saltó el muro.", "options": ["El párrafo de clímax", "El párrafo persuasivo emocional", "El párrafo de acción", "El párrafo narrativo con flashback"], "correctIndex": 2}}, {"num": 15, "title": "El párrafo de diálogo", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Cada cambio de hablante suele requerir un nuevo párrafo, para que el lector siga con claridad quién dice qué. Un diálogo bien puntuado no necesita explicar demasiado — las propias palabras revelan al personaje.", "example": null, "practica": "escribe un breve intercambio de diálogo entre dos personajes, cada uno en su propio párrafo.", "quiz": {"stem": "Cada cambio de hablante suele requerir un nuevo párrafo, para que el lector siga con claridad quién dice qué.", "options": ["El párrafo narrativo cronológico", "El párrafo de diálogo", "El párrafo narrativo: definición", "El pronombre como enlace"], "correctIndex": 1}}, {"num": 16, "title": "El párrafo de transición temporal", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "\"Tres días después...\", \"Al amanecer...\", \"Mientras tanto, en otro lugar...\" — estas frases mueven al lector en el tiempo sin confusión. Sin esta señal, un salto temporal brusco puede sentirse como un error, no como una decisión.", "example": "Tres días después...", "practica": "escribe una frase de transición temporal para unir dos escenas de una historia tuya.", "quiz": {"stem": "\"Tres días después...\", \"Al amanecer...\", \"Mientras tanto, en otro lugar...\" — estas frases mueven al lector en el tiempo sin confusión.", "options": ["El párrafo de clímax", "El párrafo de transición temporal", "El párrafo de resolución", "Repaso: el párrafo descriptivo"], "correctIndex": 1}}, {"num": 17, "title": "El párrafo de clímax", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Aquí el ritmo suele acelerarse: oraciones más cortas, verbos más intensos, menos adornos. Este no es el momento de agregar descripciones largas — es el momento de la acción concentrada.", "example": null, "practica": "identifica el clímax de una historia tuya y revisa si el párrafo tiene el ritmo adecuado.", "quiz": {"stem": "Aquí el ritmo suele acelerarse: oraciones más cortas, verbos más intensos, menos adornos.", "options": ["El párrafo de resolución", "El párrafo de tesis inicial", "El párrafo narrativo: definición", "El párrafo de clímax"], "correctIndex": 3}}, {"num": 18, "title": "El párrafo de resolución", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Aquí el ritmo se desacelera: oraciones más largas, espacio para la reflexión, un regreso a la calma. Este párrafo no repite el clímax — lo procesa, y deja que el lector respire junto al personaje.", "example": null, "practica": "escribe un párrafo de resolución para el final de una historia breve.", "quiz": {"stem": "Aquí el ritmo se desacelera: oraciones más largas, espacio para la reflexión, un regreso a la calma.", "options": ["El párrafo dialogado", "El párrafo de acción", "El párrafo de resolución", "Repaso: el párrafo narrativo"], "correctIndex": 2}}, {"num": 19, "title": "El párrafo narrativo con flashback", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "El párrafo con flashback debe anunciarse con claridad: un cambio de tiempo verbal, una frase que marque el regreso al pasado. Úsalo solo cuando el pasado ilumine algo del presente — de lo contrario, es una habitación que no lleva a ningún lado.", "example": null, "practica": "escribe un párrafo breve que use un flashback justificado.", "quiz": {"stem": "El párrafo con flashback debe anunciarse con claridad: un cambio de tiempo verbal, una frase que marque el regreso al pasado.", "options": ["El párrafo narrativo con flashback", "La descripción de carácter (etopeya)", "El párrafo narrativo cronológico", "El párrafo de resolución"], "correctIndex": 0}}, {"num": 20, "title": "Repaso: el párrafo narrativo", "block": 2, "blockTitle": "El párrafo narrativo", "theory": "Repasemos: definición, orden cronológico, in medias res, párrafo de acción, diálogo, transición temporal, clímax, resolución, flashback. Narrar bien es guiar al lector por el tiempo con la mano firme, sin perderlo nunca en el camino.", "example": null, "practica": "escribe una historia breve de tres párrafos, usando al menos tres de estas técnicas.", "quiz": {"stem": "Repasemos: definición, orden cronológico, in medias res, párrafo de acción, diálogo, transición temporal, clímax, resolución, flashback.", "options": ["El párrafo de clímax", "El párrafo narrativo con flashback", "El párrafo de proceso (secuencia)", "Repaso: el párrafo narrativo"], "correctIndex": 3}}, {"num": 21, "title": "El párrafo descriptivo: definición", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "No cuenta una acción — muestra cómo es algo: su forma, su color, su textura, su atmósfera. \"El jardín estaba en calma, con piedras grises cubiertas de musgo verde\" — no pasa nada, pero todo se ve.", "example": "El jardín estaba en calma, con piedras grises cubiertas de musgo verde", "practica": "describe en tres frases el lugar donde estás ahora mismo.", "quiz": {"stem": "No cuenta una acción — muestra cómo es algo: su forma, su color, su textura, su atmósfera.", "options": ["El párrafo de diálogo", "El párrafo descriptivo: definición", "La descripción de lugares (topografía)", "La descripción de objetos"], "correctIndex": 1}}, {"num": 22, "title": "La descripción de lugares (topografía)", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Elige un orden claro — de lejos a cerca, de arriba a abajo, de izquierda a derecha — para que el lector no se pierda. Un lugar bien descrito no enumera todo — elige los elementos que construyen su atmósfera particular.", "example": null, "practica": "describe un lugar familiar siguiendo un orden espacial claro.", "quiz": {"stem": "Elige un orden claro — de lejos a cerca, de arriba a abajo, de izquierda a derecha — para que el lector no se pierda.", "options": ["La unidad del párrafo", "La descripción de personas (prosopografía)", "La descripción sensorial", "La descripción de lugares (topografía)"], "correctIndex": 3}}, {"num": 23, "title": "La descripción de personas (prosopografía)", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Elige detalles específicos, no genéricos: no \"tenía ojos bonitos\", sino \"sus ojos eran del color de la corteza mojada\". Los detalles precisos hacen visible a una persona; los adjetivos vagos la vuelven invisible.", "example": "tenía ojos bonitos", "practica": "describe físicamente a alguien real usando solo detalles específicos.", "quiz": {"stem": "Elige detalles específicos, no genéricos: no \"tenía ojos bonitos\", sino \"sus ojos eran del color de la corteza mojada\".", "options": ["La descripción sensorial", "La descripción de personas (prosopografía)", "El párrafo de acción", "La descripción subjetiva vs objetiva"], "correctIndex": 1}}, {"num": 24, "title": "La descripción de carácter (etopeya)", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "No basta con decir \"era generoso\" — muestra la generosidad a través de un hábito, una anécdota, una decisión repetida. El carácter se revela mejor a través de patrones de comportamiento que de adjetivos sueltos.", "example": "era generoso", "practica": "describe el carácter de alguien a través de una costumbre suya.", "quiz": {"stem": "No basta con decir \"era generoso\" — muestra la generosidad a través de un hábito, una anécdota, una decisión repetida.", "options": ["La descripción sensorial", "La descripción de carácter (etopeya)", "El párrafo de evidencia", "El párrafo descriptivo: definición"], "correctIndex": 1}}, {"num": 25, "title": "El retrato (prosopografía + etopeya)", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Combina los rasgos físicos con los rasgos de carácter, de forma que uno ilumine al otro. \"Sus manos, curtidas de tanto trabajo, se movían con la misma paciencia con la que hablaba\" — el cuerpo revela el carácter.", "example": "Sus manos, curtidas de tanto trabajo, se movían con la misma paciencia con la que hablaba", "practica": "escribe un retrato breve de alguien, combinando lo físico y lo interior.", "quiz": {"stem": "Combina los rasgos físicos con los rasgos de carácter, de forma que uno ilumine al otro.", "options": ["El párrafo de instrucciones", "El retrato (prosopografía + etopeya)", "La descripción de carácter (etopeya)", "El orden espacial en la descripción"], "correctIndex": 1}}, {"num": 26, "title": "La descripción de objetos", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Forma, material, color, desgaste, función — cada detalle puede revelar algo más allá del objeto mismo. Una taza vieja puede describir a su dueño mejor que un párrafo entero hablando de él directamente.", "example": null, "practica": "describe un objeto cotidiano de forma que revele algo sobre quien lo posee.", "quiz": {"stem": "Forma, material, color, desgaste, función — cada detalle puede revelar algo más allá del objeto mismo.", "options": ["El párrafo narrativo con flashback", "El retrato (prosopografía + etopeya)", "La descripción de objetos", "La descripción de personas (prosopografía)"], "correctIndex": 2}}, {"num": 27, "title": "La descripción sensorial", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Qué se oye, qué se huele, qué se siente al tacto, incluso qué se saborea — cada sentido agrega una capa distinta de realidad. Un solo detalle sensorial no visual puede volver memorable una descripción entera.", "example": null, "practica": "describe un lugar usando al menos dos sentidos que no sean la vista.", "quiz": {"stem": "Qué se oye, qué se huele, qué se siente al tacto, incluso qué se saborea — cada sentido agrega una capa distinta de realidad.", "options": ["La descripción sensorial", "El párrafo descriptivo: definición", "La descripción subjetiva vs objetiva", "El párrafo de diálogo"], "correctIndex": 0}}, {"num": 28, "title": "El orden espacial en la descripción", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Elige un recorrido lógico: de afuera hacia adentro, de un extremo al otro, de lo general a lo particular. Saltar sin orden entre elementos distantes obliga al lector a reconstruir el espacio en su cabeza, con esfuerzo innecesario.", "example": null, "practica": "revisa una descripción tuya y confirma que sigue un orden espacial claro.", "quiz": {"stem": "Elige un recorrido lógico: de afuera hacia adentro, de un extremo al otro, de lo general a lo particular.", "options": ["La descripción de carácter (etopeya)", "La descripción de personas (prosopografía)", "El orden espacial en la descripción", "El párrafo de transición"], "correctIndex": 2}}, {"num": 29, "title": "La descripción subjetiva vs objetiva", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "La descripción objetiva busca precisión neutral: medidas, colores exactos, datos verificables. La descripción subjetiva filtra lo descrito a través de una emoción o una mirada personal — más poética, menos exacta.", "example": null, "practica": "describe el mismo lugar dos veces, una objetiva y otra subjetiva.", "quiz": {"stem": "La descripción objetiva busca precisión neutral: medidas, colores exactos, datos verificables.", "options": ["La descripción subjetiva vs objetiva", "El orden espacial en la descripción", "La descripción de personas (prosopografía)", "El párrafo gancho"], "correctIndex": 0}}, {"num": 30, "title": "Repaso: el párrafo descriptivo", "block": 3, "blockTitle": "El párrafo descriptivo", "theory": "Repasemos: definición, topografía, prosopografía, etopeya, retrato, descripción de objetos, descripción sensorial, orden espacial, subjetivo vs objetivo. Describir bien no es acumular adjetivos — es elegir los detalles exactos que construyen una imagen completa.", "example": null, "practica": "escribe una descripción completa aplicando al menos tres de estas técnicas.", "quiz": {"stem": "Repasemos: definición, topografía, prosopografía, etopeya, retrato, descripción de objetos, descripción sensorial, orden espacial, subjetivo vs objetivo.", "options": ["El párrafo corto: efecto", "La descripción sensorial", "La descripción subjetiva vs objetiva", "Repaso: el párrafo descriptivo"], "correctIndex": 3}}, {"num": 31, "title": "El párrafo expositivo: definición", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Explica un tema sin opiniones personales, con datos y lógica, buscando que el lector entienda, no que lo convenzan. \"El feng shui es un sistema tradicional chino que busca armonizar los espacios con su entorno\" — informa, sin persuadir.", "example": "El feng shui es un sistema tradicional chino que busca armonizar los espacios con su entorno", "practica": "explica en tres frases un tema que conozcas bien, sin opiniones.", "quiz": {"stem": "Explica un tema sin opiniones personales, con datos y lógica, buscando que el lector entienda, no que lo convenzan.", "options": ["El párrafo de definición", "El párrafo de problema-solución", "El párrafo periodístico (la pirámide invertida)", "El párrafo expositivo: definición"], "correctIndex": 3}}, {"num": 32, "title": "El párrafo de definición", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Presenta el concepto, lo ubica en su categoría general, y luego lo distingue de conceptos similares. \"Un párrafo es una unidad de texto (categoría) que desarrolla una sola idea (lo que lo distingue de una oración suelta)\".", "example": "Un párrafo es una unidad de texto (categoría) que desarrolla una sola idea (lo que lo distingue de una oración suelta)", "practica": "escribe la definición de un término que uses seguido en tu trabajo.", "quiz": {"stem": "Presenta el concepto, lo ubica en su categoría general, y luego lo distingue de conceptos similares.", "options": ["El párrafo de proceso (secuencia)", "El párrafo de definición", "La oración de cierre", "Repaso: el párrafo expositivo"], "correctIndex": 1}}, {"num": 33, "title": "El párrafo de clasificación", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "El párrafo de clasificación agrupa elementos según un criterio claro, y explica brevemente cada grupo. \"Los párrafos pueden clasificarse en narrativos, descriptivos, expositivos y argumentativos, según su función principal\".", "example": "Los párrafos pueden clasificarse en narrativos, descriptivos, expositivos y argumentativos, según su función principal", "practica": "clasifica un conjunto de elementos que conozcas bien, según un criterio claro.", "quiz": {"stem": "Agrupa elementos según un criterio claro, y explica brevemente cada grupo formado.", "options": ["El párrafo de clasificación", "El párrafo de definición", "El párrafo de ejemplificación", "El párrafo poético en prosa"], "correctIndex": 0}}, {"num": 34, "title": "El párrafo de comparación y contraste", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Puedes organizar por bloques (todo sobre A, luego todo sobre B) o por puntos (cada característica comparada directamente). El criterio de comparación debe ser el mismo para ambos elementos, o la comparación pierde su equilibrio.", "example": null, "practica": "compara dos elementos similares usando el mismo criterio para ambos.", "quiz": {"stem": "Puedes organizar por bloques (todo sobre A, luego todo sobre B) o por puntos (cada característica comparada directamente).", "options": ["El párrafo de causa y efecto", "El párrafo de comparación y contraste", "Construir tu propio estilo de párrafo", "El párrafo de definición"], "correctIndex": 1}}, {"num": 35, "title": "El párrafo de causa y efecto", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Puede ir de la causa al efecto (\"Por falta de lluvia, el río se secó\") o del efecto a la causa (\"El río se secó por falta de lluvia\"). Evita confundir correlación con causa real: que dos cosas ocurran juntas no significa que una provoque la otra.", "example": "Por falta de lluvia, el río se secó", "practica": "escribe un párrafo explicando la causa real de algo que observaste.", "quiz": {"stem": "Puede ir de la causa al efecto (\"Por falta de lluvia, el río se secó\") o del efecto a la causa (\"El río se secó por falta de lluvia\").", "options": ["El párrafo de causa y efecto", "El párrafo de comparación y contraste", "Repaso: el párrafo expositivo", "El párrafo narrativo: definición"], "correctIndex": 0}}, {"num": 36, "title": "El párrafo de problema-solución", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Presenta primero el problema con claridad, y luego una o varias soluciones posibles, evaluando sus ventajas. Un problema mal definido lleva a soluciones que no resuelven nada — la claridad inicial es esencial.", "example": null, "practica": "escribe un párrafo que presente un problema real y una solución concreta.", "quiz": {"stem": "Presenta primero el problema con claridad, y luego una o varias soluciones posibles, evaluando sus ventajas.", "options": ["El párrafo de problema-solución", "El párrafo de comparación y contraste", "El párrafo enumerativo", "Repaso: el párrafo argumentativo"], "correctIndex": 0}}, {"num": 37, "title": "El párrafo de proceso (secuencia)", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Usa conectores de secuencia — \"primero\", \"luego\", \"finalmente\" — para que el lector siga el orden sin confusión. Cada paso debe ser una acción concreta, no una idea abstracta difícil de ejecutar.", "example": "primero", "practica": "describe en pasos ordenados cómo se hace algo que sabes hacer bien.", "quiz": {"stem": "Usa conectores de secuencia — \"primero\", \"luego\", \"finalmente\" — para que el lector siga el orden sin confusión.", "options": ["El párrafo expositivo: definición", "El párrafo de proceso (secuencia)", "El párrafo de clasificación", "El párrafo de transición"], "correctIndex": 1}}, {"num": 38, "title": "El párrafo de ejemplificación", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "\"Por ejemplo\", \"como en el caso de\", \"una muestra de esto es\" — estas frases anuncian que viene una ilustración. Un buen ejemplo no reemplaza la explicación — la hace visible y memorable.", "example": "Por ejemplo", "practica": "agrega un ejemplo concreto a una idea abstracta que hayas escrito.", "quiz": {"stem": "\"Por ejemplo\", \"como en el caso de\", \"una muestra de esto es\" — estas frases anuncian que viene una ilustración.", "options": ["El párrafo de ejemplificación", "El párrafo de clasificación", "La descripción subjetiva vs objetiva", "El párrafo de proceso (secuencia)"], "correctIndex": 0}}, {"num": 39, "title": "El párrafo enumerativo", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Puede ser una lista dentro de la prosa, o una lista visual con viñetas, según el contexto y el medio. Mantén el paralelismo gramatical: si el primer elemento empieza con verbo, todos deberían hacerlo igual.", "example": null, "practica": "escribe un párrafo enumerativo sobre varios elementos relacionados.", "quiz": {"stem": "Puede ser una lista dentro de la prosa, o una lista visual con viñetas, según el contexto y el medio.", "options": ["El párrafo de proceso (secuencia)", "El párrafo corto: efecto", "El párrafo de clasificación", "El párrafo enumerativo"], "correctIndex": 3}}, {"num": 40, "title": "Repaso: el párrafo expositivo", "block": 4, "blockTitle": "El párrafo expositivo", "theory": "Repasemos: definición, clasificación, comparación y contraste, causa y efecto, problema-solución, proceso, ejemplificación, enumeración. Exponer bien no es simplificar la realidad — es organizarla de forma que otro pueda entenderla sin esfuerzo innecesario.", "example": null, "practica": "escribe un párrafo expositivo aplicando al menos dos de estas técnicas.", "quiz": {"stem": "Repasemos: definición, clasificación, comparación y contraste, causa y efecto, problema-solución, proceso, ejemplificación, enumeración.", "options": ["Repaso: el párrafo expositivo", "El párrafo de clasificación", "El párrafo circular (encuadrado)", "El párrafo de problema-solución"], "correctIndex": 0}}, {"num": 41, "title": "El párrafo argumentativo: definición", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Presenta una opinión y la sostiene con razones, buscando convencer al lector, no solo informarlo. A diferencia del expositivo, aquí sí hay una posición clara que el texto defiende de principio a fin.", "example": null, "practica": "escribe un párrafo defendiendo una opinión tuya con al menos una razón.", "quiz": {"stem": "Presenta una opinión y la sostiene con razones, buscando convencer al lector, no solo informarlo.", "options": ["El párrafo argumentativo: definición", "El párrafo persuasivo emocional", "El párrafo de tesis", "El párrafo de causa y efecto"], "correctIndex": 0}}, {"num": 42, "title": "El párrafo de tesis", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Debe ser una afirmación clara y defendible, no una obviedad ni algo demasiado amplio para sostener con evidencia. \"Deberíamos limitar el uso de plástico en la ciudad\" es defendible. \"El plástico existe\" no lo es.", "example": "Deberíamos limitar el uso de plástico en la ciudad", "practica": "escribe una tesis clara y defendible sobre un tema que te importe.", "quiz": {"stem": "Debe ser una afirmación clara y defendible, no una obviedad ni algo demasiado amplio para sostener con evidencia.", "options": ["El párrafo de evidencia", "El párrafo de tesis", "Repaso: el párrafo argumentativo", "La descripción sensorial"], "correctIndex": 1}}, {"num": 43, "title": "El párrafo de evidencia", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Datos, ejemplos, testimonios, comparaciones — cada tipo de evidencia sostiene el argumento de forma distinta. La evidencia más específica siempre pesa más que las generalizaciones vagas.", "example": null, "practica": "agrega un dato o ejemplo específico a un argumento tuyo.", "quiz": {"stem": "Datos, ejemplos, testimonios, comparaciones — cada tipo de evidencia sostiene el argumento de forma distinta.", "options": ["Repaso: el párrafo argumentativo", "El pronombre como enlace", "El párrafo argumentativo: definición", "El párrafo de evidencia"], "correctIndex": 3}}, {"num": 44, "title": "El párrafo de refutación", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Presenta primero la objeción más fuerte contra tu tesis, y luego explica por qué no la invalida. Esto demuestra que consideraste otros ángulos antes de concluir — señal de un argumento maduro.", "example": null, "practica": "escribe la objeción más fuerte contra tu opinión, y respóndela en el mismo párrafo.", "quiz": {"stem": "Presenta primero la objeción más fuerte contra tu tesis, y luego explica por qué no la invalida.", "options": ["Repaso: el párrafo argumentativo", "El párrafo de refutación", "Repaso: apertura y cierre", "El párrafo de evidencia"], "correctIndex": 1}}, {"num": 45, "title": "El párrafo concesivo", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "\"Es cierto que... sin embargo...\" — reconoces algo válido del lado contrario, antes de sostener tu posición. Un párrafo concesivo bien construido no debilita tu argumento — muestra que eres justo, y eso da más credibilidad.", "example": "Es cierto que... sin embargo...", "practica": "escribe un párrafo que reconozca un punto válido contrario antes de defender tu postura.", "quiz": {"stem": "\"Es cierto que... sin embargo...\" — reconoces algo válido del lado contrario, antes de sostener tu posición.", "options": ["El párrafo de conclusión argumentativa", "El párrafo de evidencia", "Repaso: párrafos especiales", "El párrafo concesivo"], "correctIndex": 3}}, {"num": 46, "title": "El párrafo de conclusión argumentativa", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Sintetiza la fuerza del argumento, y si corresponde, invita a una acción o reflexión concreta. Evita simplemente repetir la tesis con otras palabras — busca dejar una idea que resuene después de la última línea.", "example": null, "practica": "escribe una conclusión argumentativa que no repita literalmente tu tesis inicial.", "quiz": {"stem": "Sintetiza la fuerza del argumento, y si corresponde, invita a una acción o reflexión concreta.", "options": ["Los conectores temporales", "El párrafo de refutación", "El párrafo de conclusión argumentativa", "El párrafo persuasivo emocional"], "correctIndex": 2}}, {"num": 47, "title": "El párrafo silogístico", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "\"Todo lo que consume energía en exceso daña el equilibrio (mayor). Este proceso consume energía en exceso (menor). Por lo tanto, daña el equilibrio (conclusión)\". Este tipo de párrafo funciona cuando la lógica formal es más convincente que la emoción o la anécdota.", "example": null, "practica": "construye un párrafo con esta estructura de tres pasos lógicos.", "quiz": {"stem": "\"Todo lo que consume energía en exceso daña el equilibrio (mayor). Este proceso consume energía en exceso (menor). Por lo tanto, daña el equilibrio (conclusión)\".", "options": ["El párrafo silogístico", "Ajustar la extensión según el propósito", "El párrafo concesivo", "El párrafo de tesis"], "correctIndex": 0}}, {"num": 48, "title": "El párrafo de analogía argumentativa", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "\"Cambiar de trabajo sin plan es como navegar sin brújula\" — la analogía traduce una idea abstracta en una imagen concreta. Cuida que la analogía sea justa: una comparación forzada puede parecer manipuladora en vez de esclarecedora.", "example": "Cambiar de trabajo sin plan es como navegar sin brújula", "practica": "encuentra una analogía natural para un argumento que estés desarrollando.", "quiz": {"stem": "\"Cambiar de trabajo sin plan es como navegar sin brújula\" — la analogía traduce una idea abstracta en una imagen concreta.", "options": ["El párrafo de analogía argumentativa", "La repetición como enlace", "El párrafo de evidencia", "El párrafo de tesis"], "correctIndex": 0}}, {"num": 49, "title": "El párrafo persuasivo emocional", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Sin abandonar la honestidad, apela a una experiencia humana compartida: el miedo, la esperanza, la pertenencia. Usa esta herramienta con cuidado — la manipulación emocional sin base real rompe la confianza del lector.", "example": null, "practica": "agrega un elemento emocional honesto a un argumento tuyo, sin exagerar.", "quiz": {"stem": "Sin abandonar la honestidad, apela a una experiencia humana compartida: el miedo, la esperanza, la pertenencia.", "options": ["Los conectores temporales", "El párrafo persuasivo emocional", "El párrafo de tesis", "El párrafo de analogía argumentativa"], "correctIndex": 1}}, {"num": 50, "title": "Repaso: el párrafo argumentativo", "block": 5, "blockTitle": "El párrafo argumentativo", "theory": "Repasemos: tesis, evidencia, refutación, concesión, conclusión argumentativa, silogismo, analogía, persuasión emocional. Argumentar bien no es imponer una opinión — es construir, con cuidado, un puente que el lector pueda cruzar por su propia voluntad.", "example": null, "practica": "escribe un párrafo argumentativo completo usando al menos tres de estas técnicas.", "quiz": {"stem": "Repasemos: tesis, evidencia, refutación, concesión, conclusión argumentativa, silogismo, analogía, persuasión emocional.", "options": ["El párrafo de conclusión argumentativa", "Repaso: el párrafo argumentativo", "El párrafo silogístico", "El retrato (prosopografía + etopeya)"], "correctIndex": 1}}, {"num": 51, "title": "El párrafo de introducción: función", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Presenta el tema, capta la atención, y anticipa lo que el texto completo desarrollará. Una introducción débil hace que el lector dude si vale la pena seguir; una fuerte, lo compromete de inmediato.", "example": null, "practica": "revisa la introducción de un texto tuyo y evalúa si cumple estas tres funciones.", "quiz": {"stem": "Presenta el tema, capta la atención, y anticipa lo que el texto completo desarrollará.", "options": ["Los conectores causales", "El párrafo de transición", "El párrafo de tesis inicial", "El párrafo de introducción: función"], "correctIndex": 3}}, {"num": 52, "title": "El párrafo gancho", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Una pregunta directa, un dato sorprendente, una escena vívida — cualquiera capta más atención que una frase genérica. Débil: \"En este texto hablaré del feng shui\". Fuerte: \"Un espacio desordenado puede robarte energía sin que lo notes\".", "example": "En este texto hablaré del feng shui", "practica": "reescribe la primera frase de un texto tuyo para que enganche más.", "quiz": {"stem": "Una pregunta directa, un dato sorprendente, una escena vívida — cualquiera capta más atención que una frase genérica. Débil: \"En este texto hablaré del feng shui\".", "options": ["Cierre: el párrafo como unidad de pensamiento", "El párrafo gancho", "El párrafo de proyección futura", "El párrafo de contextualización"], "correctIndex": 1}}, {"num": 53, "title": "El párrafo de contextualización", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Brinda el trasfondo necesario: qué es el tema, por qué importa, qué se sabe hasta ahora. Sin este párrafo, el lector puede sentirse arrojado a mitad de una conversación que no empezó a escuchar desde el inicio.", "example": null, "practica": "escribe un párrafo que dé contexto suficiente sobre un tema, sin asumir conocimiento previo.", "quiz": {"stem": "Brinda el trasfondo necesario: qué es el tema, por qué importa, qué se sabe hasta ahora.", "options": ["El párrafo argumentativo: definición", "El párrafo de proyección futura", "El párrafo de contextualización", "El párrafo de tesis inicial"], "correctIndex": 2}}, {"num": 54, "title": "El párrafo de tesis inicial", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "En textos argumentativos o expositivos claros, la tesis suele aparecer al final del primer párrafo. Esto no le quita sorpresa al texto — le da al lector un mapa desde el cual seguir el desarrollo.", "example": null, "practica": "revisa si tu tesis aparece claramente en tu primer párrafo.", "quiz": {"stem": "En textos argumentativos o expositivos claros, la tesis suele aparecer al final del primer párrafo.", "options": ["El párrafo de contextualización", "El párrafo de proyección futura", "El párrafo de tesis inicial", "Repaso: el párrafo argumentativo"], "correctIndex": 2}}, {"num": 55, "title": "El párrafo de transición", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Es breve, y su único propósito es preparar al lector para el cambio de tema o de tono que viene después. \"Hasta aquí hemos visto la teoría; ahora, veamos cómo se aplica en la práctica\" — anuncia el giro sin sorpresa incómoda.", "example": "Hasta aquí hemos visto la teoría; ahora, veamos cómo se aplica en la práctica", "practica": "escribe un párrafo breve de transición entre dos secciones de un texto tuyo.", "quiz": {"stem": "Es breve, y su único propósito es preparar al lector para el cambio de tema o de tono que viene después.", "options": ["Repaso: apertura y cierre", "La descripción subjetiva vs objetiva", "El párrafo gancho", "El párrafo de transición"], "correctIndex": 3}}, {"num": 56, "title": "El párrafo de síntesis", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Resume brevemente lo dicho hasta ese punto, sin repetir cada detalle, antes de avanzar hacia lo nuevo. Este párrafo funciona como un descanso que reordena la mente del lector antes de continuar el camino.", "example": null, "practica": "escribe un párrafo de síntesis para un texto largo que tengas en proceso.", "quiz": {"stem": "Resume brevemente lo dicho hasta ese punto, sin repetir cada detalle, antes de avanzar hacia lo nuevo.", "options": ["El párrafo de síntesis", "El párrafo largo: efecto", "El párrafo de cierre circular", "El párrafo de introducción: función"], "correctIndex": 0}}, {"num": 57, "title": "El párrafo de conclusión: función", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Cierra la idea central, y puede sintetizar, proyectar hacia el futuro, o devolver al lector a la pregunta inicial con una respuesta. Una conclusión débil deja al lector con una sensación de puerta a medio cerrar.", "example": null, "practica": "revisa la conclusión de un texto tuyo y evalúa si realmente cierra el círculo.", "quiz": {"stem": "Cierra la idea central, y puede sintetizar, proyectar hacia el futuro, o devolver al lector a la pregunta inicial con una respuesta.", "options": ["Repaso: apertura y cierre", "La cohesión interna", "El párrafo de contextualización", "El párrafo de conclusión: función"], "correctIndex": 3}}, {"num": 58, "title": "El párrafo de cierre circular", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "El cierre circular retoma una imagen, pregunta, o frase del inicio, y la responde o resignifica al final. Este recurso da una sensación de armonía completa: el texto sale y regresa, como una respiración.", "example": null, "practica": "identifica una imagen de tu introducción que podrías retomar en tu conclusión.", "quiz": {"stem": "El cierre circular retoma una imagen, pregunta, o frase del inicio, y la responde o resignifica al final.", "options": ["El párrafo de cierre circular", "El párrafo de comparación y contraste", "El párrafo de proyección futura", "El párrafo de transición"], "correctIndex": 0}}, {"num": 59, "title": "El párrafo de proyección futura", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Sugiere qué podría pasar después, qué pregunta queda abierta, o qué acción debería seguir el lector. Este tipo de cierre deja al texto con energía hacia adelante, en vez de sensación de final absoluto.", "example": null, "practica": "escribe un cierre que proyecte hacia el futuro en vez de solo resumir.", "quiz": {"stem": "Sugiere qué podría pasar después, qué pregunta queda abierta, o qué acción debería seguir el lector.", "options": ["El párrafo de tesis inicial", "Cierre: el párrafo como unidad de pensamiento", "El párrafo de proyección futura", "El párrafo de transición"], "correctIndex": 2}}, {"num": 60, "title": "Repaso: apertura y cierre", "block": 6, "blockTitle": "Párrafos de apertura y cierre", "theory": "Repasemos: introducción, gancho, contextualización, tesis inicial, transición, síntesis, conclusión, cierre circular, proyección futura. Un texto bien equilibrado entra y sale con la misma intención — nada se siente improvisado en sus umbrales.", "example": null, "practica": "revisa la apertura y el cierre de un texto tuyo, aplicando al menos dos de estas técnicas.", "quiz": {"stem": "Repasemos: introducción, gancho, contextualización, tesis inicial, transición, síntesis, conclusión, cierre circular, proyección futura.", "options": ["El párrafo jurídico-administrativo", "El párrafo de contextualización", "Repaso: apertura y cierre", "El párrafo de transición"], "correctIndex": 2}}, {"num": 61, "title": "Los conectores de adición", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"Además\", \"también\", \"asimismo\", \"de igual manera\" — cada uno anuncia que viene más del mismo tipo de información. Sin ellos, dos ideas relacionadas pueden sentirse desconectadas, como habitaciones sin puerta entre sí.", "example": "Además", "practica": "une dos párrafos tuyos con un conector de adición.", "quiz": {"stem": "\"Además\", \"también\", \"asimismo\", \"de igual manera\" — cada uno anuncia que viene más del mismo tipo de información.", "options": ["La descripción de objetos", "El pronombre como enlace", "Los conectores de adición", "Repaso: conexión entre párrafos"], "correctIndex": 2}}, {"num": 62, "title": "Los conectores de contraste", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"Sin embargo\", \"no obstante\", \"por el contrario\", \"aunque\" — anuncian que el camino cambia de dirección. Omitir esta señal ante un contraste real confunde al lector, que esperaba continuidad y recibe una contradicción sin aviso.", "example": "Sin embargo", "practica": "identifica un contraste entre dos párrafos tuyos y agrégale el conector adecuado.", "quiz": {"stem": "\"Sin embargo\", \"no obstante\", \"por el contrario\", \"aunque\" — anuncian que el camino cambia de dirección.", "options": ["El párrafo de ejemplificación", "Los conectores de contraste", "Los conectores de ejemplificación", "Los conectores temporales"], "correctIndex": 1}}, {"num": 63, "title": "Los conectores causales", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"Porque\", \"ya que\", \"debido a\", \"por lo tanto\" — cada uno muestra una dirección distinta entre causa y efecto. Usar el conector equivocado puede invertir accidentalmente la relación lógica que intentabas mostrar.", "example": "Porque", "practica": "revisa un párrafo tuyo y confirma que el conector causal usado apunta en la dirección correcta.", "quiz": {"stem": "\"Porque\", \"ya que\", \"debido a\", \"por lo tanto\" — cada uno muestra una dirección distinta entre causa y efecto.", "options": ["El pronombre como enlace", "Los conectores causales", "El párrafo de analogía argumentativa", "Los conectores de ejemplificación"], "correctIndex": 1}}, {"num": 64, "title": "Los conectores temporales", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"Primero\", \"después\", \"mientras tanto\", \"finalmente\" — ordenan los sucesos con claridad, sin ambigüedad. En textos narrativos o de proceso, estos conectores son el mapa que evita que el lector se desoriente.", "example": "Primero", "practica": "ordena un párrafo tuyo usando al menos dos conectores temporales.", "quiz": {"stem": "\"Primero\", \"después\", \"mientras tanto\", \"finalmente\" — ordenan los sucesos con claridad, sin ambigüedad.", "options": ["Los conectores temporales", "El paralelismo estructural entre párrafos", "Los conectores de contraste", "El párrafo descriptivo: definición"], "correctIndex": 0}}, {"num": 65, "title": "Los conectores de ejemplificación", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"Por ejemplo\", \"como en el caso de\", \"a modo de ilustración\" — preparan al lector para lo específico que sigue. Sin esta señal, el ejemplo puede confundirse con una idea nueva en vez de una ilustración de la anterior.", "example": "Por ejemplo", "practica": "agrega un conector de ejemplificación antes de un ejemplo que hayas usado.", "quiz": {"stem": "\"Por ejemplo\", \"como en el caso de\", \"a modo de ilustración\" — preparan al lector para lo específico que sigue.", "options": ["El paralelismo estructural entre párrafos", "Los conectores de contraste", "Los conectores de ejemplificación", "Cierre: el párrafo como unidad de pensamiento"], "correctIndex": 2}}, {"num": 66, "title": "Los conectores de conclusión", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"En conclusión\", \"en definitiva\", \"por lo tanto\", \"en síntesis\" — preparan al lector para la idea final. Úsalos con moderación: abrir demasiadas veces \"en conclusión\" dentro de un mismo texto le resta fuerza a la señal.", "example": "En conclusión", "practica": "identifica si tu texto usa un conector de conclusión claro al final.", "quiz": {"stem": "\"En conclusión\", \"en definitiva\", \"por lo tanto\", \"en síntesis\" — preparan al lector para la idea final.", "options": ["Los conectores causales", "Los conectores de conclusión", "El pronombre como enlace", "El párrafo de refutación"], "correctIndex": 1}}, {"num": 67, "title": "La repetición como enlace", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "Si el párrafo anterior termina en \"equilibrio\", el siguiente puede comenzar retomando esa misma palabra. Esta repetición no es descuido — es una técnica deliberada para que el lector sienta la continuidad sin esfuerzo.", "example": "equilibrio", "practica": "une dos párrafos tuyos repitiendo intencionalmente una palabra clave.", "quiz": {"stem": "Si el párrafo anterior termina en \"equilibrio\", el siguiente puede comenzar retomando esa misma palabra.", "options": ["La repetición como enlace", "El paralelismo estructural entre párrafos", "Los conectores de conclusión", "El párrafo de una sola oración"], "correctIndex": 0}}, {"num": 68, "title": "El pronombre como enlace", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "\"El monje llegó al templo. Allí, encontró la calma que buscaba\" — \"allí\" conecta sin repetir \"templo\". Cuida que la referencia del pronombre sea clara — si hay ambigüedad sobre a qué se refiere, rompe la armonía en vez de crearla.", "example": "El monje llegó al templo. Allí, encontró la calma que buscaba", "practica": "conecta dos párrafos tuyos usando un pronombre en vez de repetir el sustantivo.", "quiz": {"stem": "\"El monje llegó al templo. Allí, encontró la calma que buscaba\" — \"allí\" conecta sin repetir \"templo\".", "options": ["El pronombre como enlace", "Qué es un párrafo", "Los conectores de conclusión", "La repetición como enlace"], "correctIndex": 0}}, {"num": 69, "title": "El paralelismo estructural entre párrafos", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "Si el primer párrafo de una serie empieza con \"El primer elemento...\", los siguientes pueden seguir el mismo patrón: \"El segundo elemento...\". Este paralelismo no es monotonía — es una arquitectura visible que ayuda al lector a seguir el orden.", "example": "El primer elemento...", "practica": "revisa una serie de párrafos tuyos y aplica un paralelismo estructural entre ellos.", "quiz": {"stem": "Si el primer párrafo de una serie empieza con \"El primer elemento...\", los siguientes pueden seguir el mismo patrón: \"El segundo elemento...\".", "options": ["Repaso: conexión entre párrafos", "El párrafo de clímax", "Los conectores de adición", "El paralelismo estructural entre párrafos"], "correctIndex": 3}}, {"num": 70, "title": "Repaso: conexión entre párrafos", "block": 7, "blockTitle": "Conexión entre párrafos", "theory": "Repasemos: conectores de adición, contraste, causa, tiempo, ejemplificación, conclusión, repetición como enlace, pronombre, paralelismo estructural. Un texto fluido no es una casualidad — es una red invisible de puentes entre cada habitación.", "example": null, "practica": "revisa un texto tuyo y refuerza al menos dos conexiones entre párrafos.", "quiz": {"stem": "Repasemos: conectores de adición, contraste, causa, tiempo, ejemplificación, conclusión, repetición como enlace, pronombre, paralelismo estructural.", "options": ["Los conectores de adición", "Repaso: conexión entre párrafos", "El retrato (prosopografía + etopeya)", "El paralelismo estructural entre párrafos"], "correctIndex": 1}}, {"num": 71, "title": "El párrafo corto: efecto", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Úsalo para dar énfasis, marcar un quiebre emocional, o resumir con fuerza una idea compleja en pocas palabras. Un párrafo de una sola línea, rodeado de párrafos largos, siempre llama la atención por contraste.", "example": null, "practica": "convierte una idea importante de tu texto en un párrafo deliberadamente corto.", "quiz": {"stem": "Úsalo para dar énfasis, marcar un quiebre emocional, o resumir con fuerza una idea compleja en pocas palabras.", "options": ["El orden de ideas: de lo particular a lo general", "El párrafo corto: efecto", "La oración temática", "La progresión temática (tema-rema)"], "correctIndex": 1}}, {"num": 72, "title": "El párrafo largo: efecto", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Úsalo cuando el tema requiere matices, ejemplos múltiples, o una explicación que no admite atajos. El riesgo del párrafo largo es perder al lector — asegúrate de que cada oración siga sosteniendo la misma idea central.", "example": null, "practica": "desarrolla una idea tuya en un párrafo más extenso de lo habitual, sin perder la unidad.", "quiz": {"stem": "Úsalo cuando el tema requiere matices, ejemplos múltiples, o una explicación que no admite atajos.", "options": ["El párrafo largo: efecto", "El párrafo de diálogo", "El párrafo circular (encuadrado)", "El orden de ideas: de lo particular a lo general"], "correctIndex": 0}}, {"num": 73, "title": "El párrafo de una sola oración", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Funciona como una pausa dramática, un golpe de efecto, una idea que necesita espacio propio para resonar. \"Y entonces, todo cambió.\" — su fuerza está precisamente en no compartir espacio con nada más.", "example": "Y entonces, todo cambió.", "practica": "identifica un momento de tu texto donde un párrafo de una sola oración generaría más impacto.", "quiz": {"stem": "Funciona como una pausa dramática, un golpe de efecto, una idea que necesita espacio propio para resonar.", "options": ["El párrafo epistolar (carta)", "El párrafo de una sola oración", "El párrafo circular (encuadrado)", "El orden de ideas: de lo general a lo particular"], "correctIndex": 1}}, {"num": 74, "title": "La variedad de longitud entre párrafos", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Alternar párrafos cortos y largos crea un ritmo visual y de lectura que sostiene la atención. Si todos tus párrafos tienen aproximadamente la misma extensión, el texto entero puede sentirse plano, sin relieve.", "example": null, "practica": "revisa un texto tuyo y ajusta la longitud de al menos un párrafo para crear más contraste.", "quiz": {"stem": "Alternar párrafos cortos y largos crea un ritmo visual y de lectura que sostiene la atención.", "options": ["Repaso: estilo y ritmo", "El párrafo corto: efecto", "El párrafo de evidencia", "La variedad de longitud entre párrafos"], "correctIndex": 3}}, {"num": 75, "title": "El ritmo interno del párrafo", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Alterna oraciones largas y cortas dentro del mismo párrafo, para que la lectura respire de forma natural. Un párrafo de puras oraciones cortas se siente entrecortado; uno de puras oraciones largas, agotador.", "example": null, "practica": "revisa un párrafo tuyo y varía la longitud de al menos dos de sus oraciones.", "quiz": {"stem": "Alterna oraciones largas y cortas dentro del mismo párrafo, para que la lectura respire de forma natural.", "options": ["El párrafo circular (encuadrado)", "El ritmo interno del párrafo", "Repaso: párrafos especiales", "La progresión temática (tema-rema)"], "correctIndex": 1}}, {"num": 76, "title": "La progresión temática (tema-rema)", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "El rema de una oración puede convertirse en el tema de la siguiente, creando una cadena natural de información. \"El bambú crece rápido. Ese crecimiento lo hace un símbolo de resiliencia\" — el rema de la primera es el tema de la segunda.", "example": "El bambú crece rápido. Ese crecimiento lo hace un símbolo de resiliencia", "practica": "revisa un párrafo tuyo y observa si el rema de una oración se convierte en el tema de la siguiente.", "quiz": {"stem": "El rema de una oración puede convertirse en el tema de la siguiente, creando una cadena natural de información. \"El bambú crece rápido.", "options": ["La descripción de personas (prosopografía)", "La progresión temática (tema-rema)", "El párrafo corto: efecto", "El párrafo circular (encuadrado)"], "correctIndex": 1}}, {"num": 77, "title": "El orden de ideas: de lo general a lo particular", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Comienza con la idea general del párrafo, y ve estrechando el foco hacia ejemplos o matices específicos. Este orden imita cómo solemos pensar: primero el panorama completo, después los detalles que lo sostienen.", "example": null, "practica": "reescribe un párrafo tuyo empezando por la idea más general y terminando en el detalle más específico.", "quiz": {"stem": "Comienza con la idea general del párrafo, y ve estrechando el foco hacia ejemplos o matices específicos.", "options": ["El párrafo de acción", "La progresión temática (tema-rema)", "La variedad de longitud entre párrafos", "El orden de ideas: de lo general a lo particular"], "correctIndex": 3}}, {"num": 78, "title": "El orden de ideas: de lo particular a lo general", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Un ejemplo vívido al inicio capta la atención, y luego se expande hacia la idea general que representa. Este orden genera más sorpresa: el lector no sabe hacia dónde va hasta que llega al final.", "example": null, "practica": "reescribe un párrafo tuyo empezando por un detalle específico y terminando en la idea general.", "quiz": {"stem": "Un ejemplo vívido al inicio capta la atención, y luego se expande hacia la idea general que representa.", "options": ["El párrafo largo: efecto", "El párrafo de una sola oración", "Repaso: el párrafo argumentativo", "El orden de ideas: de lo particular a lo general"], "correctIndex": 3}}, {"num": 79, "title": "El párrafo circular (encuadrado)", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Comienza y termina con una idea o imagen similar, de forma que el párrafo se sienta como un espacio cerrado y completo. \"El silencio llenaba el templo... Al final, solo quedaba el silencio\" — el párrafo respira, y vuelve a su origen.", "example": "El silencio llenaba el templo... Al final, solo quedaba el silencio", "practica": "reescribe un párrafo tuyo para que la última oración retome la primera de forma transformada.", "quiz": {"stem": "Comienza y termina con una idea o imagen similar, de forma que el párrafo se sienta como un espacio cerrado y completo. \"El silencio llenaba el templo...", "options": ["Repaso: estilo y ritmo", "La cohesión interna", "El párrafo circular (encuadrado)", "La progresión temática (tema-rema)"], "correctIndex": 2}}, {"num": 80, "title": "Repaso: estilo y ritmo", "block": 8, "blockTitle": "Estilo y ritmo del párrafo", "theory": "Repasemos: párrafo corto, párrafo largo, párrafo de una oración, variedad de longitud, ritmo interno, tema-rema, general a particular, particular a general, párrafo circular. El ritmo no es decoración — es la respiración misma del texto, la que determina si el lector se cansa o se deja llevar.", "example": null, "practica": "revisa un texto tuyo aplicando al menos tres de estas técnicas de ritmo.", "quiz": {"stem": "Repasemos: párrafo corto, párrafo largo, párrafo de una oración, variedad de longitud, ritmo interno, tema-rema, general a particular, particular a general, párrafo circular.", "options": ["El párrafo circular (encuadrado)", "El párrafo de comparación y contraste", "Repaso: estilo y ritmo", "El ritmo interno del párrafo"], "correctIndex": 2}}, {"num": 81, "title": "El párrafo dialogado", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Cada cambio de hablante suele iniciar un nuevo párrafo, marcado con raya o comillas según la convención que sigas. Un buen párrafo dialogado no necesita explicar cada emoción — el ritmo del intercambio ya la transmite.", "example": null, "practica": "escribe un breve diálogo, respetando el cambio de párrafo por cada hablante.", "quiz": {"stem": "Cada cambio de hablante suele iniciar un nuevo párrafo, marcado con raya o comillas según la convención que sigas.", "options": ["El párrafo de instrucciones", "Repaso: párrafos especiales", "El párrafo dialogado", "Repaso: el párrafo narrativo"], "correctIndex": 2}}, {"num": 82, "title": "El párrafo epistolar (carta)", "block": 9, "blockTitle": "Párrafos especiales", "theory": "El tono puede ser cercano o formal, pero siempre debe sentirse dirigido a una persona específica, real o imaginada. Un párrafo epistolar bien logrado hace que el lector sienta que la carta le habla directamente a él.", "example": null, "practica": "escribe el párrafo central de una carta dirigida a alguien concreto.", "quiz": {"stem": "El tono puede ser cercano o formal, pero siempre debe sentirse dirigido a una persona específica, real o imaginada.", "options": ["El párrafo jurídico-administrativo", "El párrafo narrativo in medias res", "El párrafo epistolar (carta)", "El párrafo poético en prosa"], "correctIndex": 2}}, {"num": 83, "title": "El párrafo periodístico (la pirámide invertida)", "block": 9, "blockTitle": "Párrafos especiales", "theory": "El primer párrafo debe responder qué, quién, cuándo, dónde, y por qué — el resto profundiza en orden de importancia decreciente. Esta estructura permite que un lector apurado entienda lo esencial con solo leer el primer párrafo.", "example": null, "practica": "escribe el párrafo inicial de una noticia breve, respondiendo las preguntas clave.", "quiz": {"stem": "El primer párrafo debe responder qué, quién, cuándo, dónde, y por qué — el resto profundiza en orden de importancia decreciente.", "options": ["El párrafo de transición temporal", "El párrafo digital (web y redes)", "El párrafo dialogado", "El párrafo periodístico (la pirámide invertida)"], "correctIndex": 3}}, {"num": 84, "title": "El párrafo académico con citas", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Integra la cita de forma fluida en tu propia oración, sin que se sienta como un cuerpo extraño pegado al texto. \"Según Chen (2019), el equilibrio espacial afecta directamente el bienestar percibido\" — la cita se funde con tu propia voz.", "example": "Según Chen (2019), el equilibrio espacial afecta directamente el bienestar percibido", "practica": "integra una cita de forma fluida dentro de un párrafo tuyo.", "quiz": {"stem": "Integra la cita de forma fluida en tu propia oración, sin que se sienta como un cuerpo extraño pegado al texto.", "options": ["La extensión del párrafo", "Repaso: párrafos especiales", "El párrafo académico con citas", "El párrafo poético en prosa"], "correctIndex": 2}}, {"num": 85, "title": "El párrafo digital (web y redes)", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Ideal entre dos y cuatro oraciones, con la idea principal al inicio, para que el ojo la capture rápido. El lector digital decide en segundos si sigue leyendo — el primer párrafo carga todo ese peso.", "example": null, "practica": "reescribe un párrafo largo tuyo en una versión más corta para lectura digital.", "quiz": {"stem": "Ideal entre dos y cuatro oraciones, con la idea principal al inicio, para que el ojo la capture rápido.", "options": ["El párrafo publicitario", "Los conectores de contraste", "El párrafo digital (web y redes)", "El párrafo poético en prosa"], "correctIndex": 2}}, {"num": 86, "title": "El párrafo poético en prosa", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Repeticiones deliberadas, imágenes sensoriales, oraciones que suenan bien en voz alta — todo eso cabe en un párrafo de prosa poética. Úsalo en momentos donde la emoción importa más que la información pura.", "example": null, "practica": "escribe un párrafo breve cuidando especialmente su sonido al leerlo en voz alta.", "quiz": {"stem": "Repeticiones deliberadas, imágenes sensoriales, oraciones que suenan bien en voz alta — todo eso cabe en un párrafo de prosa poética.", "options": ["El párrafo dialogado", "Reescribir un párrafo cambiando su tipo", "El párrafo poético en prosa", "El párrafo periodístico (la pirámide invertida)"], "correctIndex": 2}}, {"num": 87, "title": "El párrafo de instrucciones", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Usa el imperativo o el infinitivo de forma consistente, y ordena los pasos exactamente en la secuencia que deben ejecutarse. Un párrafo de instrucciones no tiene espacio para la ambigüedad — cada palabra debe apuntar a una acción precisa.", "example": null, "practica": "escribe un párrafo de instrucciones claras para una tarea sencilla.", "quiz": {"stem": "Usa el imperativo o el infinitivo de forma consistente, y ordena los pasos exactamente en la secuencia que deben ejecutarse.", "options": ["El párrafo digital (web y redes)", "La extensión del párrafo", "El párrafo publicitario", "El párrafo de instrucciones"], "correctIndex": 3}}, {"num": 88, "title": "El párrafo publicitario", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Es breve, apela a un beneficio claro, y suele cerrar con una invitación directa a actuar. \"Transforma tu espacio, transforma tu energía. Empieza hoy\" — cada frase empuja hacia la misma dirección.", "example": "Transforma tu espacio, transforma tu energía. Empieza hoy", "practica": "escribe un párrafo publicitario breve para algo que conozcas bien.", "quiz": {"stem": "Es breve, apela a un beneficio claro, y suele cerrar con una invitación directa a actuar. \"Transforma tu espacio, transforma tu energía.", "options": ["El párrafo de contextualización", "El párrafo publicitario", "El párrafo digital (web y redes)", "El párrafo de instrucciones"], "correctIndex": 1}}, {"num": 89, "title": "El párrafo jurídico-administrativo", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Usa términos exactos, evita las metáforas, y estructura las condiciones con absoluta claridad lógica. Un párrafo jurídico mal redactado puede generar interpretaciones distintas — su única meta es la exactitud.", "example": null, "practica": "reescribe un párrafo cotidiano con la precisión que exigiría un documento formal.", "quiz": {"stem": "Usa términos exactos, evita las metáforas, y estructura las condiciones con absoluta claridad lógica.", "options": ["Repaso: párrafos especiales", "La repetición como enlace", "El párrafo epistolar (carta)", "El párrafo jurídico-administrativo"], "correctIndex": 3}}, {"num": 90, "title": "Repaso: párrafos especiales", "block": 9, "blockTitle": "Párrafos especiales", "theory": "Repasemos: diálogo, carta, periodístico, académico con citas, digital, poético en prosa, instrucciones, publicitario, jurídico-administrativo. Cada contexto exige su propia arquitectura de párrafo — dominar varias te permite moverte con soltura entre mundos distintos.", "example": null, "practica": "identifica qué tipo de párrafo especial usarías para un texto que tengas pendiente.", "quiz": {"stem": "Repasemos: diálogo, carta, periodístico, académico con citas, digital, poético en prosa, instrucciones, publicitario, jurídico-administrativo.", "options": ["El párrafo largo: efecto", "El párrafo epistolar (carta)", "Repaso: párrafos especiales", "El párrafo de instrucciones"], "correctIndex": 2}}, {"num": 91, "title": "Identificar el tipo de párrafo al leer", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Cuando leas cualquier texto, identifica qué tipo de párrafo tienes frente a ti: narrativo, descriptivo, expositivo, argumentativo, o alguno especial. Este ejercicio afina tu instinto: cuanto más reconozcas los tipos en otros textos, más fácil los construirás en los tuyos.", "example": null, "practica": "identifica el tipo de cada párrafo en un texto breve que leas hoy.", "quiz": {"stem": "Cuando leas cualquier texto, identifica qué tipo de párrafo tienes frente a ti: narrativo, descriptivo, expositivo, argumentativo, o alguno especial.", "options": ["Revisar la cohesión de un párrafo", "Reescribir un párrafo cambiando su tipo", "El párrafo de diálogo", "Identificar el tipo de párrafo al leer"], "correctIndex": 3}}, {"num": 92, "title": "Combinar tipos de párrafo en un mismo texto", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Un ensayo puede abrir con un párrafo narrativo, seguir con expositivos, y cerrar con uno argumentativo. La clave es que cada tipo aparezca donde mejor sirve al propósito general del texto, no al azar.", "example": null, "practica": "identifica qué combinación de tipos de párrafo necesitaría un texto que tengas en mente.", "quiz": {"stem": "Un ensayo puede abrir con un párrafo narrativo, seguir con expositivos, y cerrar con uno argumentativo.", "options": ["Revisar la unidad de un párrafo", "Combinar tipos de párrafo en un mismo texto", "Revisar la cohesión de un párrafo", "La descripción de lugares (topografía)"], "correctIndex": 1}}, {"num": 93, "title": "Revisar la unidad de un párrafo", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Si encuentras una oración que se desvía, decide si pertenece a otro párrafo, o si debe eliminarse. Este único chequeo, hecho con disciplina, mejora la claridad de cualquier texto de forma inmediata.", "example": null, "practica": "revisa la unidad de los tres primeros párrafos de un texto tuyo.", "quiz": {"stem": "Si encuentras una oración que se desvía, decide si pertenece a otro párrafo, o si debe eliminarse.", "options": ["Ajustar la extensión según el propósito", "El párrafo de definición", "Revisar la unidad de un párrafo", "Revisar la coherencia de un párrafo"], "correctIndex": 2}}, {"num": 94, "title": "Revisar la coherencia de un párrafo", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Lee el párrafo de corrido, prestando atención a cualquier punto donde sientas un tropiezo lógico. Un párrafo coherente se siente como un camino sin baches, aunque el lector no sepa nombrar por qué fluye bien.", "example": null, "practica": "revisa la coherencia de un párrafo tuyo, oración por oración.", "quiz": {"stem": "Lee el párrafo de corrido, prestando atención a cualquier punto donde sientas un tropiezo lógico.", "options": ["Practicar con modelos de referencia", "Cierre: el párrafo como unidad de pensamiento", "Las oraciones de apoyo", "Revisar la coherencia de un párrafo"], "correctIndex": 3}}, {"num": 95, "title": "Revisar la cohesión de un párrafo", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Busca repeticiones innecesarias de la misma palabra, y reemplázalas donde el hilo cohesivo lo permita. La cohesión es el detalle final que hace que un párrafo coherente también se sienta pulido.", "example": null, "practica": "revisa la cohesión de un párrafo tuyo y mejora al menos un enlace.", "quiz": {"stem": "Busca repeticiones innecesarias de la misma palabra, y reemplázalas donde el hilo cohesivo lo permita.", "options": ["Practicar con modelos de referencia", "Revisar la cohesión de un párrafo", "Identificar el tipo de párrafo al leer", "El párrafo de problema-solución"], "correctIndex": 1}}, {"num": 96, "title": "Ajustar la extensión según el propósito", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Un párrafo digital pide brevedad. Un párrafo académico permite mayor extensión. Un párrafo de énfasis puede ser una sola línea. Antes de alargar o acortar un párrafo, pregúntate para quién y para qué lo estás escribiendo.", "example": null, "practica": "ajusta la extensión de un párrafo tuyo según su propósito real.", "quiz": {"stem": "Un párrafo digital pide brevedad. Un párrafo académico permite mayor extensión. Un párrafo de énfasis puede ser una sola línea.", "options": ["El párrafo de definición", "Revisar la unidad de un párrafo", "Reescribir un párrafo cambiando su tipo", "Ajustar la extensión según el propósito"], "correctIndex": 3}}, {"num": 97, "title": "Practicar con modelos de referencia", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Elige un párrafo que admires, identifica su tipo, y analiza su estructura interna: oración temática, apoyo, cierre. Luego, intenta escribir un párrafo propio siguiendo la misma arquitectura, pero con tu propio contenido.", "example": null, "practica": "analiza la estructura de un párrafo que admires, y escribe uno propio con la misma forma.", "quiz": {"stem": "Elige un párrafo que admires, identifica su tipo, y analiza su estructura interna: oración temática, apoyo, cierre.", "options": ["Cierre: el párrafo como unidad de pensamiento", "Practicar con modelos de referencia", "El pronombre como enlace", "Reescribir un párrafo cambiando su tipo"], "correctIndex": 1}}, {"num": 98, "title": "Reescribir un párrafo cambiando su tipo", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Toma una idea y escríbela como párrafo descriptivo, luego como expositivo, luego como argumentativo. Este ejercicio revela cuánto cambia el efecto de una misma idea según la arquitectura que la sostiene.", "example": null, "practica": "reescribe una misma idea en dos tipos de párrafo distintos.", "quiz": {"stem": "Toma una idea y escríbela como párrafo descriptivo, luego como expositivo, luego como argumentativo.", "options": ["Ajustar la extensión según el propósito", "Qué es un párrafo", "Practicar con modelos de referencia", "Reescribir un párrafo cambiando su tipo"], "correctIndex": 3}}, {"num": 99, "title": "Construir tu propio estilo de párrafo", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Después de dominar los tipos y las reglas, llega el momento de notar qué patrones repites de forma natural — ahí vive tu estilo propio. Ningún maestro escribe pensando conscientemente en cada regla; las reglas se disuelven en instinto con la práctica constante.", "example": null, "practica": "identifica un patrón de párrafo que uses de forma natural, sin haberlo planeado.", "quiz": {"stem": "Después de dominar los tipos y las reglas, llega el momento de notar qué patrones repites de forma natural — ahí vive tu estilo propio.", "options": ["La progresión temática (tema-rema)", "Cierre: el párrafo como unidad de pensamiento", "Revisar la unidad de un párrafo", "Construir tu propio estilo de párrafo"], "correctIndex": 3}}, {"num": 100, "title": "Cierre: el párrafo como unidad de pensamiento", "block": 10, "blockTitle": "Dominio del párrafo", "theory": "Empezaste preguntándote qué es un párrafo. Terminas sabiendo narrar, describir, exponer, argumentar, abrir, cerrar, conectar, y dar ritmo a cada uno. Un párrafo no es solo una unidad de texto — es una unidad de pensamiento, un espacio donde una idea encuentra su forma completa antes de dar paso a la siguiente. Domina el párrafo, y dominarás la arquitectura invisible de todo lo que escribas, sin importar cuán largo o corto sea el camino. Esta no es una despedida — es el cierre de un ciclo. El equilibrio que buscaste en cada párrafo ahora es tuyo para siempre.", "example": null, "practica": null, "quiz": {"stem": "Empezaste preguntándote qué es un párrafo. Terminas sabiendo narrar, describir, exponer, argumentar, abrir, cerrar, conectar, y dar ritmo a cada uno.", "options": ["Construir tu propio estilo de párrafo", "Cierre: el párrafo como unidad de pensamiento", "La descripción de personas (prosopografía)", "Revisar la cohesión de un párrafo"], "correctIndex": 1}}];
+
+const BLOCK_TITLES = {};
+NOTEBOOK.forEach(l => { BLOCK_TITLES[l.block] = l.blockTitle; });
+
+/* ================= Navigation ================= */
+const navButtons = document.querySelectorAll('#navRail button');
+const views = document.querySelectorAll('.view');
+navButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    navButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    views.forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+    if(btn.dataset.view === 'progreso') renderProgressView();
+    window.scrollTo({top:0, behavior:'instant'});
+  });
+});
+
+/* ================= Quiz state (persisted) ================= */
+let quizState = {}; // num -> {answered, correct, selected}
+let writeState = {}; // num -> free text practice
+
+async function loadState(){
+  try{
+    const res = await window.storage.get('quiz-state', false);
+    if(res && res.value) quizState = JSON.parse(res.value);
+  }catch(e){ quizState = {}; }
+  try{
+    const res2 = await window.storage.get('write-state', false);
+    if(res2 && res2.value) writeState = JSON.parse(res2.value);
+  }catch(e){ writeState = {}; }
+  NOTEBOOK.forEach(l=>{
+    if(!quizState[l.num]) quizState[l.num] = {answered:false, correct:false, selected:null};
+  });
+}
+async function saveQuizState(){
+  try{ await window.storage.set('quiz-state', JSON.stringify(quizState), false); }catch(e){}
+}
+async function saveWriteState(){
+  try{ await window.storage.set('write-state', JSON.stringify(writeState), false); }catch(e){}
+}
+
+function computeStats(){
+  const nums = Object.keys(quizState);
+  const answered = nums.filter(n => quizState[n].answered).length;
+  const correct = nums.filter(n => quizState[n].correct).length;
+  // current streak: walk backwards through answered-in-order isn't meaningful without order,
+  // so we track streak as a running counter updated on each answer instead (see below).
+  return {answered, correct};
+}
+
+let currentStreak = 0;
+let bestStreak = 0;
+async function loadStreak(){
+  try{
+    const res = await window.storage.get('streak-state', false);
+    if(res && res.value){ const s = JSON.parse(res.value); currentStreak = s.current||0; bestStreak = s.best||0; }
+  }catch(e){}
+}
+async function saveStreak(){
+  try{ await window.storage.set('streak-state', JSON.stringify({current:currentStreak, best:bestStreak}), false); }catch(e){}
+}
+
+function updateAllCounters(){
+  const {answered, correct} = computeStats();
+  const pct = answered ? Math.round((correct/answered)*100) : 0;
+  document.getElementById('sidebarPct').textContent = pct + '%';
+  document.getElementById('sidebarFill').style.width = pct + '%';
+  document.getElementById('sideCorrect').textContent = correct;
+  document.getElementById('sideStreak').textContent = currentStreak;
+  document.getElementById('statAnswered').textContent = answered;
+  document.getElementById('statScore').textContent = pct + '%';
+}
+
+/* ================= Cuaderno rendering ================= */
+const blocksMap = new Map();
+NOTEBOOK.forEach(l=>{
+  if(!blocksMap.has(l.block)) blocksMap.set(l.block, {title:l.blockTitle, lessons:[]});
+  blocksMap.get(l.block).lessons.push(l);
+});
+const container = document.getElementById('blocksContainer');
+
+function blockProgressText(bdata){
+  const done = bdata.lessons.filter(l => quizState[l.num] && quizState[l.num].correct).length;
+  return `${done}/${bdata.lessons.length} correctas`;
+}
+
+function renderBlocks(filterText){
+  const f = (filterText||'').trim().toLowerCase();
+  container.innerHTML = '';
+  [...blocksMap.entries()].sort((a,b)=>a[0]-b[0]).forEach(([bnum, bdata])=>{
+    const filteredLessons = f ? bdata.lessons.filter(l =>
+      String(l.num).includes(f) || l.title.toLowerCase().includes(f)
+    ) : bdata.lessons;
+    if(f && filteredLessons.length === 0) return;
+    const first = bdata.lessons[0].num, last = bdata.lessons[bdata.lessons.length-1].num;
+
+    const head = document.createElement('div');
+    head.className = 'block-head' + (f ? ' open' : '');
+    head.innerHTML = `
+      <div class="btitle">
+        <span class="bnum">BLOQUE ${bnum} · ${first}–${last}</span>
+        <h4>${bdata.title}</h4>
+      </div>
+      <span class="bprog">${blockProgressText(bdata)}</span>
+      <span class="chev">▸</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'block-body' + (f ? ' open' : '');
+
+    filteredLessons.forEach(l=>{
+      const st = quizState[l.num] || {answered:false, correct:false};
+      const row = document.createElement('div');
+      row.className = 'lesson-row';
+      const badgeClass = st.answered ? (st.correct ? 'correct' : 'wrong') : '';
+      const badgeText = st.answered ? (st.correct ? '✓ correcto' : '✕ reintentar') : 'sin resolver';
+      row.innerHTML = `
+        <span class="lnum">${String(l.num).padStart(2,'0')}</span>
+        <span class="ltitle">${l.title}</span>
+        <span class="lbadge ${badgeClass}">${badgeText}</span>
+        <span class="lchev">▸</span>`;
+
+      const card = buildLessonCard(l);
+
+      row.addEventListener('click', ()=>{
+        const isOpen = card.classList.contains('open');
+        card.classList.toggle('open', !isOpen);
+        row.querySelector('.lchev').style.transform = !isOpen ? 'rotate(90deg)' : 'rotate(0)';
+      });
+
+      body.appendChild(row);
+      body.appendChild(card);
+    });
+
+    head.addEventListener('click', ()=>{ head.classList.toggle('open'); body.classList.toggle('open'); });
+    container.appendChild(head);
+    container.appendChild(body);
+  });
+}
+
+function buildLessonCard(l){
+  const card = document.createElement('div');
+  card.className = 'lesson-card';
+
+  const exampleHtml = l.example
+    ? `<div class="lc-section-label">Ejemplo</div><div class="lc-example">"${escapeHtml(l.example)}"</div>`
+    : '';
+
+  card.innerHTML = `
+    <div class="lc-head"><h5>${l.num}. ${l.title}</h5></div>
+    <div class="lc-section-label">Teoría</div>
+    <div class="lc-theory">${escapeHtml(l.theory)}</div>
+    ${exampleHtml}
+    <div class="lc-section-label">Ejercicio</div>
+    <div class="quiz-box" id="quiz-${l.num}"></div>
+    <div class="lc-section-label">Práctica de escritura</div>
+    <div class="write-box">
+      <textarea class="write-textarea" id="write-${l.num}" placeholder="Escribe aquí tu propio ejemplo de '${escapeHtml(l.title)}'... se mostrará en trazo cursivo mientras escribes.">${escapeHtml(writeState[l.num]||'')}</textarea>
+      <br><button class="write-save" data-num="${l.num}">Guardar mi práctica</button>
+    </div>
+  `;
+
+  renderQuiz(card.querySelector(`#quiz-${l.num}`), l);
+
+  const textarea = card.querySelector(`#write-${l.num}`);
+  const saveBtn = card.querySelector('.write-save');
+  saveBtn.addEventListener('click', async ()=>{
+    writeState[l.num] = textarea.value;
+    await saveWriteState();
+    saveBtn.textContent = 'Guardado ✓';
+    saveBtn.classList.add('saved');
+    setTimeout(()=>{ saveBtn.textContent = 'Guardar mi práctica'; saveBtn.classList.remove('saved'); }, 1500);
+  });
+
+  return card;
+}
+
+function escapeHtml(s){
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderQuiz(mount, l){
+  const st = quizState[l.num];
+  const q = l.quiz;
+  mount.innerHTML = `
+    <div class="quiz-stem">${escapeHtml(q.stem)}</div>
+    <div class="quiz-options">
+      ${q.options.map((opt,i)=>`
+        <label class="quiz-opt" data-idx="${i}">
+          <input type="radio" name="quiz-${l.num}" value="${i}" ${st.selected===i?'checked':''}>
+          <span>${escapeHtml(opt)}</span>
+        </label>`).join('')}
+    </div>
+    <button class="quiz-check-btn" data-num="${l.num}">Comprobar respuesta</button>
+    <span class="quiz-retry" data-num="${l.num}" style="display:${st.answered?'inline-block':'none'};">Reintentar</span>
+    <div class="quiz-feedback ${st.answered ? (st.correct?'correct':'incorrect') : ''} ${st.answered?'show':''}" id="feedback-${l.num}">
+      ${st.answered ? (st.correct ? '¡Correcto! Bien identificado.' : `No es esa — la respuesta correcta es "${escapeHtml(q.options[q.correctIndex])}".`) : ''}
+    </div>
+  `;
+
+  if(st.answered){
+    applyAnsweredStyles(mount, l, st.selected);
+  }
+
+  const checkBtn = mount.querySelector('.quiz-check-btn');
+  checkBtn.addEventListener('click', async ()=>{
+    const selectedInput = mount.querySelector(`input[name="quiz-${l.num}"]:checked`);
+    if(!selectedInput){ alert('Elige una opción antes de comprobar.'); return; }
+    const idx = parseInt(selectedInput.value);
+    const isCorrect = idx === q.correctIndex;
+
+    const wasAlreadyAnswered = quizState[l.num].answered;
+    quizState[l.num] = { answered:true, correct:isCorrect, selected:idx };
+    await saveQuizState();
+
+    if(!wasAlreadyAnswered){
+      if(isCorrect){ currentStreak++; if(currentStreak>bestStreak) bestStreak=currentStreak; }
+      else { currentStreak = 0; }
+      await saveStreak();
+    }
+
+    applyAnsweredStyles(mount, l, idx);
+    const fb = mount.querySelector(`#feedback-${l.num}`);
+    fb.className = 'quiz-feedback show ' + (isCorrect ? 'correct' : 'incorrect');
+    fb.textContent = isCorrect ? '¡Correcto! Bien identificado.' : `No es esa — la respuesta correcta es "${q.options[q.correctIndex]}".`;
+    mount.querySelector('.quiz-retry').style.display = 'inline-block';
+
+    updateAllCounters();
+    refreshRowBadges();
+  });
+
+  mount.querySelector('.quiz-retry').addEventListener('click', ()=>{
+    quizState[l.num].answered = false;
+    renderQuiz(mount, l);
+    saveQuizState();
+  });
+
+  mount.querySelectorAll('.quiz-opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      if(quizState[l.num].answered) return;
+      mount.querySelectorAll('.quiz-opt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+    });
+  });
+}
+
+function applyAnsweredStyles(mount, l, selectedIdx){
+  const q = l.quiz;
+  mount.querySelectorAll('.quiz-opt').forEach(opt=>{
+    const idx = parseInt(opt.dataset.idx);
+    opt.querySelector('input').disabled = true;
+    if(idx === q.correctIndex) opt.classList.add('correct-answer');
+    else if(idx === selectedIdx) opt.classList.add('wrong-answer');
+  });
+  const checkBtn = mount.querySelector('.quiz-check-btn');
+  if(checkBtn) checkBtn.disabled = true;
+}
+
+function refreshRowBadges(){
+  // cheap full re-render keeps row badges + block progress in sync
+  const activeSearch = document.getElementById('lessonSearch').value;
+  renderBlocks(activeSearch);
+}
+
+document.getElementById('lessonSearch').addEventListener('input', (e)=> renderBlocks(e.target.value));
+
+/* ================= Progreso view ================= */
+function renderProgressView(){
+  const {answered, correct} = computeStats();
+  const pct = Math.round((answered/100)*100);
+  document.getElementById('progAnswered').textContent = answered;
+  document.getElementById('progCorrect').textContent = correct;
+  document.getElementById('progStreak').textContent = currentStreak;
+  document.getElementById('progBestStreak').textContent = bestStreak;
+  document.getElementById('ringPct').textContent = pct + '%';
+
+  const circumference = 2 * Math.PI * 65;
+  const offset = circumference - (pct/100) * circumference;
+  const ring = document.getElementById('ringFill');
+  ring.setAttribute('stroke-dasharray', circumference.toFixed(1));
+  ring.setAttribute('stroke-dashoffset', offset.toFixed(1));
+
+  const list = document.getElementById('blockProgressList');
+  list.innerHTML = '';
+  [...blocksMap.entries()].sort((a,b)=>a[0]-b[0]).forEach(([bnum, bdata])=>{
+    const done = bdata.lessons.filter(l => quizState[l.num] && quizState[l.num].correct).length;
+    const total = bdata.lessons.length;
+    const rowPct = Math.round((done/total)*100);
+    const row = document.createElement('div');
+    row.className = 'bp-row';
+    row.innerHTML = `
+      <span class="bp-label">${bnum}. ${bdata.title}</span>
+      <div class="bp-track"><div class="bp-fill" style="width:${rowPct}%"></div></div>
+      <span class="bp-count">${done}/${total}</span>`;
+    list.appendChild(row);
+  });
+}
+
+document.getElementById('resetProgress').addEventListener('click', async ()=>{
+  if(!confirm('¿Reiniciar todo tu progreso, puntaje y racha? Esta acción no se puede deshacer.')) return;
+  NOTEBOOK.forEach(l=>{ quizState[l.num] = {answered:false, correct:false, selected:null}; });
+  currentStreak = 0; bestStreak = 0;
+  await saveQuizState();
+  await saveStreak();
+  updateAllCounters();
+  renderBlocks(document.getElementById('lessonSearch').value);
+  renderProgressView();
+});
+
+/* ================= Personajes (reused Five Elements) ================= */
+const ARCHETYPES = {
+  madera: {
+    name:'Maestra Madera', voice:'suave, en crecimiento constante, alentadora',
+    base:'serene woman sensei dressed in flowing jade-green silk robes with subtle leaf patterns, standing in a peaceful bamboo grove with soft morning mist, holding a wooden staff wrapped in vines, gentle green dappled light'
+  },
+  fuego: {
+    name:'Maestro Fuego', voice:'apasionado, vivo, con calidez intensa',
+    base:'charismatic elder dressed in flowing crimson and orange silk robes with flame-like embroidery, standing before a warm lantern-lit courtyard at dusk, holding a glowing paper lantern, warm amber and red firelight'
+  },
+  tierra: {
+    name:'Maestra Tierra', voice:'estable, paciente, profundamente serena',
+    base:'grounded elder woman dressed in warm ochre and terracotta robes with clay-toned sash, sitting in a quiet stone garden surrounded by smooth river rocks, soft earthy golden afternoon light'
+  },
+  metal: {
+    name:'Maestro Metal', voice:'preciso, claro, con resonancia de campana',
+    base:'dignified elder dressed in pale silver-white robes with fine metallic embroidery, standing in a minimalist zen courtyard beside a bronze bell and white gravel patterns, cool crisp silver light'
+  },
+  agua: {
+    name:'Maestra Agua', voice:'fluida, reflexiva, casi en susurro',
+    base:'graceful elder woman dressed in deep indigo-blue flowing robes that ripple like water, standing beside a still koi pond under moonlight, holding a smooth black stone, cool deep blue moonlit reflections'
+  }
+};
+
+let currentArchetypeKey = 'madera';
+
+const VARIATIONS = [
+  { label:'expresión serena', mod:'serene calm expression, soft eyes' },
+  { label:'sonrisa cálida', mod:'warm gentle smile, kind wrinkled eyes' },
+  { label:'mirada concentrada', mod:'focused meditative gaze, still posture' },
+  { label:'perfil contemplativo', mod:'contemplative side profile, eyes closed in meditation' },
+  { label:'porte ceremonial', mod:'dignified ceremonial posture, formal stance' }
+];
+
+function buildPrompt(base, mod){
+  return `${base}, ${mod}, cinematic lighting, realistic 3d render, portrait shot, shallow depth of field, hyperrealistic, 8k, professional character design --ar 9:16 --style raw`;
+}
+
+function renderArchetypeRail(){
+  const rail = document.getElementById('archetypeRail');
+  rail.innerHTML = '';
+  Object.entries(ARCHETYPES).forEach(([key, a])=>{
+    const pill = document.createElement('button');
+    pill.className = 'arch-pill' + (key === currentArchetypeKey ? ' active' : '');
+    pill.innerHTML = `<span class="dot"></span>${a.name}`;
+    pill.addEventListener('click', ()=>{
+      currentArchetypeKey = key;
+      renderArchetypeRail();
+      renderExamples();
+    });
+    rail.appendChild(pill);
+  });
+}
+
+function renderExamples(){
+  const grid = document.getElementById('exampleGrid');
+  grid.innerHTML = '';
+  const arch = ARCHETYPES[currentArchetypeKey];
+  VARIATIONS.forEach((v, i)=>{
+    const prompt = buildPrompt(arch.base, v.mod);
+    const card = document.createElement('div');
+    card.className = 'example-card';
+    card.innerHTML = `
+      <div class="ex-head"><span class="ex-name">${arch.name} ${i+1}</span><span class="ex-voice">${v.label}</span></div>
+      <div class="ex-prompt">${prompt}</div>
+      <button class="copy-btn ex-copy">Copiar</button>`;
+    card.querySelector('.ex-copy').addEventListener('click', async (e)=>{
+      await navigator.clipboard.writeText(prompt);
+      e.target.textContent = 'Copiado ✓'; e.target.classList.add('copied');
+      setTimeout(()=>{ e.target.textContent='Copiar'; e.target.classList.remove('copied'); }, 1400);
+    });
+    grid.appendChild(card);
+  });
+}
+
+/* ================= Init ================= */
+(async function init(){
+  await loadState();
+  await loadStreak();
+  updateAllCounters();
+  renderBlocks('');
+  renderArchetypeRail();
+  renderExamples();
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>100 técnicas de lingüística general y aplicada al español</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #f5f3ef; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .hero { background: linear-gradient(135deg, #1e2a3a 0%, #0f1a24 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; border-radius: 0 0 1rem 1rem; }
+        .card-flash { border: none; border-radius: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-flash:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .btn-sound { background: #2c3e50; color: white; border-radius: 40px; padding: 0.25rem 0.9rem; font-size: 0.75rem; }
+        .btn-sound:hover { background: #d4af37; color: #1e2a3a; }
+        .footer { background: #1e2a3a; color: #cddde9; margin-top: 3rem; padding: 1.5rem 0; text-align: center; }
+        .float-voice-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2c3e50; color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s; }
+        .float-voice-btn:hover { background: #d4af37; color: #1e2a3a; transform: scale(1.1); }
+        .voice-controls { position: fixed; bottom: 100px; right: 30px; background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold"><i class="fas fa-language me-3"></i>Lingüística general y aplicada al español</h1>
+        <p class="lead">100 técnicas: fonética, fonología, morfología, sintaxis, semántica, pragmática, sociolingüística, dialectología, historia de la lengua y análisis del discurso.</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-microphone-alt"></i> Fonética/Fonología</span>
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-sitemap"></i> Morfosintaxis</span>
+            <span class="badge bg-light text-dark"><i class="fas fa-globe-americas"></i> Sociolingüística</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="alert alert-info rounded-pill text-center mb-4">
+        <i class="fas fa-microphone-alt"></i> Activa el lector de voz (botón flotante) para escuchar cada técnica.
+    </div>
+    <div class="row g-4" id="cardsContainer"></div>
+</div>
+
+<footer class="footer">
+    <div class="container"><small><i class="fas fa-language"></i> 100 técnicas de lingüística · basado en la tradición hispánica y los estudios sobre el español</small></div>
+</footer>
+
+<button class="float-voice-btn" id="floatVoiceBtn" onclick="toggleVoiceControls()"><i class="fas fa-head-side-vr fa-2x"></i></button>
+<div class="voice-controls" id="voiceControls">
+    <div class="d-flex flex-column gap-2">
+        <button class="btn btn-sm btn-primary" onclick="readPageContent()"><i class="fas fa-play"></i> Leer página</button>
+        <button class="btn btn-sm btn-secondary" onclick="stopSpeech()"><i class="fas fa-stop"></i> Detener</button>
+        <select id="voiceSelect" class="form-select form-select-sm" onchange="setVoice()"></select>
+        <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="0.9" onchange="setRate()">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const tecnicas = [
+        { "id":1, "name":"Fonema", "category":"Fonología", "teoria":"Unidad abstracta más pequeña que puede diferenciar significados en una lengua.", "ejemplo":"/p/ y /b/ diferencian 'pata' y 'bata'.", "ejercicio":"¿Cuál es el fonema que diferencia 'casa' y 'caza' en el español peninsular?", "suggestedAnswer":"/s/ y /θ/." },
+        { "id":2, "name":"Alófono", "category":"Fonología", "teoria":"Realización concreta de un fonema, que no cambia el significado.", "ejemplo":"En español, /b/ se realiza como [b] tras nasal y como [β] entre vocales.", "ejercicio":"Da un alófono de /d/ en posición intervocálica.", "suggestedAnswer":"[ð] como en 'dedo'." },
+        { "id":3, "name":"Sílaba", "category":"Fonología", "teoria":"Unidad de organización de los sonidos, con un núcleo vocálico.", "ejemplo":"'Trans-por-te' tiene tres sílabas.", "ejercicio":"Divide en sílabas la palabra 'aeropuerto'.", "suggestedAnswer":"a-e-ro-puer-to (5 sílabas)." },
+        { "id":4, "name":"Acento fonológico", "category":"Prosodia", "teoria":"Mayor intensidad sobre una sílaba, que puede diferenciar significados.", "ejemplo":"'término' (sustantivo), 'termino' (verbo, presente), 'terminó' (pretérito).", "ejercicio":"Señala la sílaba tónica en 'características'.", "suggestedAnswer":"ca-rac-te-RÍS-ti-cas (en 'rís')." },
+        { "id":5, "name":"Morfema", "category":"Morfología", "teoria":"Unidad mínima con significado. Puede ser léxico (raíz) o gramatical.", "ejemplo":"En 'niñ-os', 'niñ-' es morfema léxico, '-os' es morfema flexivo de número.", "ejercicio":"Descompón 'releer' en morfemas.", "suggestedAnswer":"re- (prefijo) + le- (raíz) + -er (infinitivo)." },
+        { "id":6, "name":"Lexema", "category":"Morfología", "teoria":"Morfema que aporta el significado léxico (raíz).", "ejemplo":"En 'cantamos', el lexema es 'cant-'.", "ejercicio":"Identifica el lexema en 'floristería'.", "suggestedAnswer":"flor- (aunque también podría ser 'florist-'; la raíz es 'flor')." },
+        { "id":7, "name":"Afijo (prefijo, sufijo, infijo)", "category":"Morfología derivativa", "teoria":"Morfema que se añade a la raíz para formar palabras derivadas.", "ejemplo":"pre- (prefijo), -ción (sufijo), -ec- (infijo en 'piececito').", "ejercicio":"¿Qué sufijo forma adjetivos a partir de verbos (ej. 'hablador')?", "suggestedAnswer":"-dor (también -or, -ivo)." },
+        { "id":8, "name":"Flexión verbal", "category":"Morfología flexiva", "teoria":"Desinencias que indican persona, número, tiempo, modo, aspecto.", "ejemplo":"En 'cantábamos', '-ba-' indica pretérito imperfecto, '-mos' 1ª persona plural.", "ejercicio":"Identifica el morfema de tiempo en 'hablaron'.", "suggestedAnswer":"-aro- (pretérito perfecto simple) o '-ron' (desinencia)." },
+        { "id":9, "name":"Género gramatical", "category":"Morfología flexiva", "teoria":"Propiedad inherente de los sustantivos y concordancia con adjetivos.", "ejemplo":"El niño alto / La niña alta.", "ejercicio":"¿Cuál es el género de 'azúcar'? ¿Es variable?", "suggestedAnswer":"Masculino (el azúcar), aunque en algunos países se usa femenino (la azúcar)." },
+        { "id":10, "name":"Número gramatical", "category":"Morfología flexiva", "teoria":"Singular o plural, marcado en sustantivos, adjetivos y verbos.", "ejemplo":"Casa / casas; alto / altos.", "ejercicio":"¿Cómo se forma el plural de 'crisis'?", "suggestedAnswer":"Invariable: 'las crisis'." },
+        { "id":11, "name":"Sintagma nominal", "category":"Sintaxis", "teoria":"Construcción cuyo núcleo es un sustantivo o pronombre.", "ejemplo":"El perro grande de mi vecino.", "ejercicio":"Señala el núcleo del sintagma 'Los hermosos paisajes naturales'.", "suggestedAnswer":"paisajes." },
+        { "id":12, "name":"Sintagma verbal", "category":"Sintaxis", "teoria":"Construcción cuyo núcleo es un verbo, con posibles complementos.", "ejemplo":"Compré un libro en la librería.", "ejercicio":"Identifica el complemento directo en 'Juan regaló flores a María'.", "suggestedAnswer":"flores." },
+        { "id":13, "name":"Sujeto", "category":"Sintaxis", "teoria":"Elemento que concuerda con el verbo en persona y número.", "ejemplo":"Ellos estudian. (Sujeto explícito) / Estudiamos. (Sujeto tácito: nosotros).", "ejercicio":"¿Cuál es el sujeto de 'Me duele la cabeza'?", "suggestedAnswer":"La cabeza (sujeto paciente)." },
+        { "id":14, "name":"Complemento directo", "category":"Sintaxis", "teoria":"Sintagma nominal o pronombre que recibe la acción del verbo.", "ejemplo":"Veo la televisión.", "ejercicio":"Señala el CD en 'Ayer vi a tu hermana'.", "suggestedAnswer":"a tu hermana (complemento directo de persona)." },
+        { "id":15, "name":"Complemento indirecto", "category":"Sintaxis", "teoria":"Indica al destinatario o beneficiario de la acción.", "ejemplo":"Regalé un libro a mi amigo.", "ejercicio":"Extrae el CI de 'Les compré un regalo a los niños'.", "suggestedAnswer":"a los niños." },
+        { "id":16, "name":"Complemento circunstancial", "category":"Sintaxis", "teoria":"Indica circunstancias de lugar, tiempo, modo, causa, etc.", "ejemplo":"Vivo en Madrid (lugar).", "ejercicio":"Clasifica el complemento en 'Llegamos tarde'.", "suggestedAnswer":"Circunstancial de modo (tarde)." },
+        { "id":17, "name":"Oración compuesta", "category":"Sintaxis", "teoria":"Oración con más de un verbo conjugado, unidas por yuxtaposición, coordinación o subordinación.", "ejemplo":"Llegué, comí y me fui. (coordinada).", "ejercicio":"Clasifica 'Aunque llueva, saldré'.", "suggestedAnswer":"Oración compuesta subordinada adverbial concesiva." },
+        { "id":18, "name":"Subordinación sustantiva", "category":"Sintaxis", "teoria":"Proposición que funciona como sustantivo (sujeto, CD, etc.).", "ejemplo":"Quiero que vengas. (CD).", "ejercicio":"¿Qué función tiene 'que estudies' en 'Es necesario que estudies'?", "suggestedAnswer":"Sujeto (oración subordinada sustantiva)." },
+        { "id":19, "name":"Subordinación adjetiva (de relativo)", "category":"Sintaxis", "teoria":"Proposición introducida por un relativo que modifica a un sustantivo.", "ejemplo":"El libro que leí es interesante.", "ejercicio":"Señala el antecedente en 'La casa donde vivo es vieja'.", "suggestedAnswer":"casa." },
+        { "id":20, "name":"Subordinación adverbial", "category":"Sintaxis", "teoria":"Proposición que expresa circunstancias (tiempo, lugar, modo, causa, condición...).", "ejemplo":"Salgo cuando tú llegas (tiempo).", "ejercicio":"¿Qué tipo de subordinada es 'Estudia para que apruebes'?", "suggestedAnswer":"Final." },
+        { "id":21, "name":"Denotación", "category":"Semántica", "teoria":"Significado objetivo, referencial, de una palabra.", "ejemplo":"La denotación de 'perro' es mamífero doméstico de la familia de los cánidos.", "ejercicio":"¿Cuál es la denotación de 'estrella'?", "suggestedAnswer":"Cuerpo celeste que brilla con luz propia." },
+        { "id":22, "name":"Connotación", "category":"Semántica", "teoria":"Significados subjetivos, culturales o emotivos asociados a una palabra.", "ejemplo":"La connotación de 'paloma' puede ser paz o libertad.", "ejercicio":"¿Qué connota 'rosa' en un poema?", "suggestedAnswer":"Amor, belleza, romanticismo." },
+        { "id":23, "name":"Sinonimia", "category":"Semántica", "teoria":"Relación entre palabras con significado igual o muy parecido.", "ejemplo":"Comenzar / empezar; feliz / contento.", "ejercicio":"Da un sinónimo de 'rápido'.", "suggestedAnswer":"Veloz." },
+        { "id":24, "name":"Antonimia", "category":"Semántica", "teoria":"Relación entre palabras de significado opuesto.", "ejemplo":"Alto / bajo; bueno / malo; comprar / vender.", "ejercicio":"¿Cuál es el antónimo de 'entrada'?", "suggestedAnswer":"Salida." },
+        { "id":25, "name":"Homonimia", "category":"Semántica", "teoria":"Palabras con la misma forma pero diferente significado.", "ejemplo":"Vino (bebida) y vino (verbo venir).", "ejercicio":"¿Hay homonimia entre 'coral' (color) y 'coral' (animal marino)?", "suggestedAnswer":"Sí, son homógrafas (misma escritura, diferente significado)." },
+        { "id":26, "name":"Polisemia", "category":"Semántica", "teoria":"Palabra con varios significados relacionados.", "ejemplo":"Cabo: 1. extremo, 2. militar, 3. accidente geográfico.", "ejercicio":"Da un ejemplo de polisemia con 'planta'.", "suggestedAnswer":"Planta (vegetal), planta (de un edificio), planta (del pie)." },
+        { "id":27, "name":"Acto de habla asertivo", "category":"Pragmática", "teoria":"Acto ilocutivo mediante el cual se representa un estado de cosas.", "ejemplo":"El cielo está nublado.", "ejercicio":"¿Qué acto asertivo realiza 'Te aseguro que es verdad'?", "suggestedAnswer":"Afirmación o aseveración." },
+        { "id":28, "name":"Acto de habla directivo", "category":"Pragmática", "teoria":"Acto ilocutivo que busca que el interlocutor realice algo: orden, ruego, consejo.", "ejemplo":"¡Cierra la puerta! (orden).", "ejercicio":"¿Qué acto de habla es '¿Podrías ayudarme?'?", "suggestedAnswer":"Directivo (petición)." },
+        { "id":29, "name":"Máxima de cantidad (Grice)", "category":"Pragmática", "teoria":"Proporcionar la información necesaria, ni más ni menos.", "ejemplo":"P: ¿Cuántos años tienes? R: 25.", "ejercicio":"¿Qué máxima viola alguien que al preguntarle la hora responde con la historia de su reloj?", "suggestedAnswer":"Máxima de cantidad (da información excesiva)." },
+        { "id":30, "name":"Implicatura conversacional", "category":"Pragmática", "teoria":"Significado implícito que el oyente deduce de lo dicho.", "ejemplo":"A: ¿Vienes a la fiesta? B: Tengo mucho trabajo. (Implicatura: no va).", "ejercicio":"¿Qué se implica en 'El profesor llegó tarde; el tráfico estaba fatal'?", "suggestedAnswer":"Que la causa de la tardanza fue el tráfico." },
+        { "id":31, "name":"Deixis de persona", "category":"Pragmática", "teoria":"Remite al rol de los participantes: yo, tú, él.", "ejemplo":"Yo te lo dije.", "ejercicio":"Señala los deícticos de persona en 'Tú no sabes nada de eso'.", "suggestedAnswer":"Tú (oyente)." },
+        { "id":32, "name":"Deixis de tiempo", "category":"Pragmática", "teoria":"Señala el momento de la enunciación: ahora, antes, después.", "ejemplo":"Ayer llovió. Hoy hace sol.", "ejercicio":"Escribe una oración con el deíctico temporal 'ahora'.", "suggestedAnswer":"Ahora voy a comer." },
+        { "id":33, "name":"Cortesía positiva (Brown & Levinson)", "category":"Pragmática", "teoria":"Respalda la imagen positiva del interlocutor, mostrando solidaridad.", "ejemplo":"Qué bonito te queda ese vestido.", "ejercicio":"Da un ejemplo de cortesía positiva en una petición.", "suggestedAnswer":"Eres un experto en esto, ¿podrías echarme una mano?" },
+        { "id":34, "name":"Variación diatópica (geográfica)", "category":"Sociolingüística", "teoria":"Diferencias lingüísticas asociadas al lugar de origen.", "ejemplo":"En Argentina se usa 'vos' en lugar de 'tú'.", "ejercicio":"¿Qué palabra para 'autobús' se usa en Cuba y en España?", "suggestedAnswer":"En Cuba 'guagua'; en España 'autobús'." },
+        { "id":35, "name":"Seseo", "category":"Fenómenos dialectales", "teoria":"Pronunciación de /θ/ como /s/ (caza = casa). Mayoritario en Hispanoamérica.", "ejemplo":"En México, 'zapato' se dice ['sapato].", "ejercicio":"¿En qué región de España no hay seseo?", "suggestedAnswer":"En la mayor parte de la España peninsular." },
+        { "id":36, "name":"Yeísmo", "category":"Fenómenos dialectales", "teoria":"Fusión de 'll' e 'y' en un solo fonema.", "ejemplo":"Calle y caye se pronuncian igual.", "ejercicio":"¿Dónde se conserva la 'll' lateral?", "suggestedAnswer":"En zonas de los Andes (Perú, Bolivia) y Paraguay." },
+        { "id":37, "name":"Voseo", "category":"Variación diatópica", "teoria":"Uso de 'vos' en lugar de 'tú', con conjugaciones verbales propias.", "ejemplo":"Vos sos mi amigo.", "ejercicio":"En qué países se usa el voseo?", "suggestedAnswer":"Argentina, Uruguay, Costa Rica, Nicaragua, Paraguay, Bolivia, Chile (parcial)." },
+        { "id":38, "name":"Aspiración de /s/ implosiva", "category":"Fenómenos dialectales", "teoria":"La /s/ al final de sílaba se aspira a [h] o se elide.", "ejemplo":"Las casas → [lah 'kasah].", "ejercicio":"¿En qué dialectos es común?", "suggestedAnswer":"Caribeño, andaluz, chileno." },
+        { "id":39, "name":"Lengua y poder en la colonia", "category":"Historia de la lengua", "teoria":"La imposición del español fue instrumento de dominación y evangelización.", "ejemplo":"La prohibición del quechua en la educación durante ciertos períodos.", "ejercicio":"¿Qué papel jugaron las órdenes religiosas en la difusión del español?", "suggestedAnswer":"Estandarizaron y alfabetizaron en español para la catequesis." },
+        { "id":40, "name":"Nahuatlismos en el español mexicano", "category":"Préstamos", "teoria":"El náhuatl ha dejado un vasto léxico en el español de México.", "ejemplo":"Aguacate, tomate, chile, comal.", "ejercicio":"¿Qué palabra náhuatl significa 'lugar de flores'?", "suggestedAnswer":"Xochimilco." },
+        { "id":41, "name":"Quechuismos en el español andino", "category":"Préstamos", "teoria":"El quechua aportó palabras como 'cancha', 'carpa', 'papa', 'cóndor'.", "ejemplo":"Cancha: campo deportivo; carpa: toldo.", "ejercicio":"¿Qué significa 'chacra' en Perú y Argentina?", "suggestedAnswer":"Huerta, granja pequeña." },
+        { "id":42, "name":"Guaranismos en el español paraguayo", "category":"Préstamos", "teoria":"El guaraní influye en la fonética, la morfosintaxis y el léxico.", "ejemplo":"Jopara (mezcla), chamigo (amigo).", "ejercicio":"¿Cómo se dice 'ahí' en guaraní?", "suggestedAnswer":"Upe (no es préstamo; en español paraguayo se usa 'ahí')." },
+        { "id":43, "name":"Galicismos en el español americano", "category":"Préstamos", "teoria":"Influencia del francés en los siglos XVIII y XIX.", "ejemplo":"Bulevar, chalé, menú, hotel.", "ejercicio":"¿Qué galicismo significa 'despacho'?", "suggestedAnswer":"Buró (del francés 'bureau')." },
+        { "id":44, "name":"Anglicismos en el español actual", "category":"Préstamos", "teoria":"Los anglicismos dominan la tecnología, los negocios y la cultura juvenil.", "ejemplo":"Chat, email, internet, marketing.", "ejercicio":"¿Cuál es la adaptación recomendada de 'mouse'?", "suggestedAnswer":"Ratón (en España) o mouse (en América)." },
+        { "id":45, "name":"Gramática de Nebrija (1492)", "category":"Historia de la lengua", "teoria":"Primera gramática de una lengua romance.", "ejemplo":"'Siempre la lengua fue compañera del imperio'.", "ejercicio":"¿Quién escribió la primera gramática del español?", "suggestedAnswer":"Antonio de Nebrija." },
+        { "id":46, "name":"Alfonso X el Sabio y el castellano como lengua culta", "category":"Historia de la lengua", "teoria":"Impulsó el uso del castellano en la administración, la ciencia y la historia.", "ejemplo":"Traducciones de obras árabes y latinas al castellano.", "ejercicio":"¿Qué rey promovió el castellano como lengua de cultura en el siglo XIII?", "suggestedAnswer":"Alfonso X el Sabio." },
+        { "id":47, "name":"Evolución fonética medieval: pérdida de /f/ inicial", "category":"Fonética histórica", "teoria":"La /f/ latina inicial pasó a /h/ aspirada y luego se perdió.", "ejemplo":"FACERE > fazer > hacer.", "ejercicio":"¿Por qué 'fuego' no perdió la /f/ inicial?", "suggestedAnswer":"Porque iba seguida de diptongo /ue/." },
+        { "id":48, "name":"Diptongación de /ɛ/ y /ɔ/ tónicas", "category":"Fonética histórica", "teoria":"Las vocales breves /ɛ/ y /ɔ/ tónicas diptongaron a 'ie' y 'ue'.", "ejemplo":"PĔTRA > piedra, FŎCU > fuego.", "ejercicio":"¿De qué palabra latina viene 'puerta'?", "suggestedAnswer":"De PŎRTA (abierta), con diptongación de /ɔ/." },
+        { "id":49, "name":"Evolución de los grupos -CT- y -ULT-", "category":"Fonética histórica", "teoria":"Los grupos latinos -CT- y -ULT- dieron 'ch' en castellano.", "ejemplo":"FACTUS > hecho, MULTUS > mucho.", "ejercicio":"¿De qué palabra latina viene 'noche'?", "suggestedAnswer":"De NOCTEM (NOC- + -TE)." },
+        { "id":50, "name":"Influencia del euskera en el castellano (sustrato vasco)", "category":"Historia de la lengua", "teoria":"El sustrato vasco afectó en la pérdida de /f/ inicial y algunos rasgos léxicos.", "ejemplo":"Izquierda (del vasco 'ezker'), pizarra.", "ejercicio":"¿Qué palabra vasca significa 'izquierda'?", "suggestedAnswer":"Ezker." },
+        { "id":51, "name":"Invasión árabe y arabismos", "category":"Historia de la lengua", "teoria":"La conquista musulmana dejó unos 4000 arabismos en español.", "ejemplo":"Algodón, aceite, ojalá, alcalde.", "ejercicio":"Escribe tres palabras españolas que empiecen con 'al-' de origen árabe.", "suggestedAnswer":"Almohada, alhaja, alberca." },
+        { "id":52, "name":"Glosas Emilianenses y Silenses", "category":"Historia de la lengua", "teoria":"Anotaciones en latín y romance en el Monasterio de San Millán.", "ejemplo":"'con o ajutorio de nuestro dueño' (con la ayuda de nuestro Señor).", "ejercicio":"¿Dónde se encontraron las Glosas Emilianenses?", "suggestedAnswer":"En el Monasterio de San Millán de la Cogolla, La Rioja." },
+        { "id":53, "name":"Cantar de Mio Cid", "category":"Historia de la lengua", "teoria":"Primer gran poema épico en castellano (hacia 1200).", "ejemplo":"'De los sos ojos tan fuertemente llorando'.", "ejercicio":"¿En qué siglo se escribió el Cantar de Mio Cid?", "suggestedAnswer":"Alrededor del año 1200 (principios del siglo XIII)." },
+        { "id":54, "name":"Real Academia Española (fundación 1713)", "category":"Historia de la lengua", "teoria":"Se fundó para fijar la lengua, limpiarla y darle esplendor.", "ejemplo":"El lema 'Limpia, fija y da esplendor'.", "ejercicio":"¿En qué año se fundó la RAE?", "suggestedAnswer":"1713." },
+        { "id":55, "name":"La Ortografía de 2010", "category":"Historia de la lengua", "teoria":"Última ortografía académica, eliminó la tilde en 'solo' y los demostrativos.", "ejemplo":"Solo adverbial ya no se tilda; 'guion' se escribe sin tilde.", "ejercicio":"¿Qué cambio destacado hubo con la tilde de 'solo'?", "suggestedAnswer":"Se desaconseja la tilde diacrítica en 'solo'." },
+        { "id":56, "name":"Análisis del discurso multimodal", "category":"Análisis del discurso", "teoria":"Estudio de cómo la imagen, el sonido y la palabra se combinan.", "ejemplo":"Un meme combina imagen y texto para crear humor o crítica.", "ejercicio":"Analiza el mensaje de un anuncio publicitario que combine texto e imagen.", "suggestedAnswer":"Un perfume anuncia con imagen de una pareja en la playa y el texto 'Seducción pura'." },
+        { "id":57, "name":"Polifonía (Bajtín)", "category":"Análisis del discurso", "teoria":"Todo texto contiene múltiples voces (citas, discursos indirectos, ironía).", "ejemplo":"Una novela con varios narradores; un artículo que cita a distintas fuentes.", "ejercicio":"¿Cómo se manifiesta la polifonía en un debate político?", "suggestedAnswer":"Voces de los candidatos, del moderador, y de los expertos citados." },
+        { "id":58, "name":"Intertextualidad (Kristeva)", "category":"Análisis del discurso", "teoria":"Relación de un texto con otros textos (citas, alusiones, parodias).", "ejemplo":"Un poema que comienza como el Quijote.", "ejercicio":"Da un ejemplo de intertextualidad en el cine.", "suggestedAnswer":"Una película de superhéroes que hace referencia a otra del mismo universo." },
+        { "id":59, "name":"Estructura conversacional (pares adyacentes)", "category":"Análisis del discurso", "teoria":"Secuencia de dos turnos de habla relacionados (saludo-saludo, pregunta-respuesta).", "ejemplo":"A: Hola. B: Hola. A: ¿Cómo estás? B: Bien.", "ejercicio":"¿Qué par adyacente espera una invitación?", "suggestedAnswer":"Aceptación o rechazo." },
+        { "id":60, "name":"Turno de palabra", "category":"Análisis del discurso", "teoria":"Cada intervención de un hablante. Regulado por mecanismos de selección.", "ejemplo":"En un debate, los turnos se asignan por el moderador.", "ejercicio":"¿Qué ocurre cuando dos hablantes se solapan?", "suggestedAnswer":"Violación del turno; puede generar conflicto o reparación." },
+        { "id":61, "name":"Bilingüismo y diglosia (Ferguson)", "category":"Sociolingüística", "teoria":"En diglosia, una variedad (alta) se usa en contextos formales y otra (baja) en informales.", "ejemplo":"En Paraguay, el español (alto) y el guaraní (bajo).", "ejercicio":"¿Cuándo se usa el guaraní en Paraguay?", "suggestedAnswer":"En ámbitos familiares, afectivos, humorísticos." },
+        { "id":62, "name":"Code-switching (alternancia de código)", "category":"Sociolingüística", "teoria":"Alternar entre dos lenguas en una misma conversación.", "ejemplo":"Spanglish: 'Voy a pick up the kids a la escuela'.", "ejercicio":"¿Qué función cumple el cambio de código?", "suggestedAnswer":"Marcar identidad, expresar solidaridad, citar a alguien." },
+        { "id":63, "name":"Prestigio lingüístico", "category":"Sociolingüística", "teoria":"Valoración social positiva de ciertas variedades o rasgos lingüísticos.", "ejemplo":"El acento de Madrid tiene prestigio en España; el de Bogotá en Colombia.", "ejercicio":"¿Qué variedad tiene prestigio en los medios de comunicación hispanoamericanos?", "suggestedAnswer":"El español neutro (basado en el mexicano o colombiano)." },
+        { "id":64, "name":"Educación intercultural bilingüe (EIB)", "category":"Política lingüística", "teoria":"Modelo que respeta la lengua materna indígena y enseña el español como segunda lengua.", "ejemplo":"En Perú, la EIB incluye quechua, aimara, awajún.", "ejercicio":"¿Qué objetivos tiene la EIB?", "suggestedAnswer":"Preservar lenguas indígenas, favorecer el aprendizaje del español." },
+        { "id":65, "name":"Revitalización lingüística", "category":"Sociolingüística", "teoria":"Esfuerzos para recuperar una lengua en peligro: inmersión, educación bilingüe.", "ejemplo":"Programas de revitalización del mapudungun en Chile y Argentina.", "ejercicio":"¿Qué estrategias son efectivas para revitalizar una lengua?", "suggestedAnswer":"Escuelas de inmersión, alfabetización, producción de medios." },
+        { "id":66, "name":"Morfología del verbo español: tiempos simples", "category":"Morfología", "teoria":"Presente, pretérito imperfecto, pretérito perfecto simple, futuro, condicional.", "ejemplo":"Canto, cantaba, canté, cantaré, cantaría.", "ejercicio":"¿Cuál es la terminación del pretérito perfecto simple para la 1ª conjugación?", "suggestedAnswer":"-é (canté)." },
+        { "id":67, "name":"Morfología del verbo español: tiempos compuestos", "category":"Morfología", "teoria":"Perfectos (he cantado), pluscuamperfectos (había cantado), futuros perfectos (habré cantado).", "ejemplo":"He comido, había vivido, habré salido.", "ejercicio":"¿Qué tiempo es 'había cantado'?", "suggestedAnswer":"Pretérito pluscuamperfecto de indicativo." },
+        { "id":68, "name":"Modo subjuntivo en español", "category":"Morfología", "teoria":"Expresa irrealidad, deseo, duda, posibilidad.", "ejemplo":"Espero que vengas. Ojalá llueva.", "ejercicio":"¿Qué modo se usa en 'Quizás venga'?", "suggestedAnswer":"Subjuntivo (presente)." },
+        { "id":69, "name":"Formas no personales del verbo", "category":"Morfología", "teoria":"Infinitivo, gerundio, participio.", "ejemplo":"Cantar, cantando, cantado.", "ejercicio":"¿Cuál es la forma no personal que expresa acción terminada?", "suggestedAnswer":"Participio." },
+        { "id":70, "name":"Clases de palabras (categorías gramaticales)", "category":"Morfología", "teoria":"Sustantivo, adjetivo, verbo, adverbio, preposición, conjunción, interjección, artículo, pronombre, determinante.", "ejemplo":"Mesa (sustantivo), rápido (adjetivo), correr (verbo).", "ejercicio":"¿Qué categoría es 'muy'?", "suggestedAnswer":"Adverbio." },
+        { "id":71, "name":"Pronombres personales en español", "category":"Morfología", "teoria":"yo, tú, vos, él, ella, ello, nosotros, vosotros, ellos, ellas, usted, ustedes.", "ejemplo":"Yo canto, tú cantas, él canta.", "ejercicio":"¿Qué pronombre se usa en Argentina como informal?", "suggestedAnswer":"Vos." },
+        { "id":72, "name":"Sistema vocálico del español", "category":"Fonética", "teoria":"5 vocales: /a/, /e/, /i/, /o/, /u/.", "ejemplo":"Pasa, peso, piso, poso, puso.", "ejercicio":"¿Cuántas vocales tiene el español?", "suggestedAnswer":"5." },
+        { "id":73, "name":"Consonantes oclusivas del español", "category":"Fonética", "teoria":"/p/, /t/, /k/, /b/, /d/, /g/.", "ejemplo":"Pato, tapa, casa, boca, dado, gato.", "ejercicio":"¿Qué punto de articulación tiene /p/ y /b/?", "suggestedAnswer":"Bilabial." },
+        { "id":74, "name":"Consonantes fricativas del español", "category":"Fonética", "teoria":"/f/, /s/, /x/, /θ/ (en España).", "ejemplo":"Faro, sapo, jarra, zapato (en España).", "ejercicio":"¿En qué dialectos no existe /θ/?", "suggestedAnswer":"En los seseantes (Hispanoamérica, Canarias, Andalucía occidental)." },
+        { "id":75, "name":"Consonantes nasales del español", "category":"Fonética", "teoria":"/m/, /n/, /ɲ/.", "ejemplo":"Mamá, nada, ñandú.", "ejercicio":"¿Qué letra representa el fonema /ɲ/?", "suggestedAnswer":"Ñ." },
+        { "id":76, "name":"Consonantes laterales del español", "category":"Fonética", "teoria":"/l/, /ʎ/ (en zonas no yeístas).", "ejemplo":"Luz, llave (en zonas con /ʎ/).", "ejercicio":"¿Qué fenómeno fusiona /ʎ/ y /ʝ/?", "suggestedAnswer":"Yeísmo." },
+        { "id":77, "name":"Consonantes vibrantes del español", "category":"Fonética", "teoria":"/ɾ/ (vibrante simple), /r/ (vibrante múltiple).", "ejemplo":"Pero (simple) vs perro (múltiple).", "ejercicio":"¿En qué posición aparece la vibrante múltiple?", "suggestedAnswer":"Inicio de palabra o tras /l/, /n/, /s/." },
+        { "id":78, "name":"Acento diacrítico en monosílabos", "category":"Ortografía", "teoria":"Tilde que diferencia significados: él/el, té/te, sí/si, mí/mi, más/mas, sé/se, dé/de.", "ejemplo":"Él llegó (pronombre) / El libro (artículo).", "ejercicio":"¿Cuándo se tilda 'sí'?", "suggestedAnswer":"Adverbio de afirmación o pronombre reflexivo ('se convenció a sí mismo')." },
+        { "id":79, "name":"Uso de la coma en oraciones", "category":"Puntuación", "teoria":"Separa elementos de enumeración, vocativos, incisos, etc.", "ejemplo":"Llegó, vio, venció. Juan, ven aquí.", "ejercicio":"Corrige: 'Necesito papel tijeras pegamento y cartulina'.", "suggestedAnswer":"Necesito papel, tijeras, pegamento y cartulina." },
+        { "id":80, "name":"Uso de los dos puntos", "category":"Puntuación", "teoria":"Introducen enumeración, cita textual, explicación o consecuencia.", "ejemplo":"Necesitas tres cosas: paciencia, esfuerzo y constancia.", "ejercicio":"Añade dos puntos en 'Me dijo vendré mañana'.", "suggestedAnswer":"Me dijo: 'Vendré mañana'." },
+        { "id":81, "name":"Uso de los puntos suspensivos", "category":"Puntuación", "teoria":"Indican suspensión del discurso, duda o final abierto.", "ejemplo":"No sé si decirle la verdad...", "ejercicio":"Escribe una frase con puntos suspensivos para expresar duda.", "suggestedAnswer":"Quizás... no sé... mejor no." },
+        { "id":82, "name":"Signos de interrogación y exclamación", "category":"Puntuación", "teoria":"En español se usan al inicio y al final.", "ejemplo":"¿Cómo estás? ¡Qué bien!", "ejercicio":"Corrige: 'Cómo te llamas?'.", "suggestedAnswer":"¿Cómo te llamas?" },
+        { "id":83, "name":"Uso de la raya (em dash)", "category":"Puntuación", "teoria":"Para incisos enfáticos y diálogos.", "ejemplo":"El resultado —que nadie esperaba— fue sorprendente.", "ejercicio":"Escribe un diálogo de dos líneas usando raya.", "suggestedAnswer":"—¿Vienes? —Sí, ahora mismo." },
+        { "id":84, "name":"Uso de las comillas", "category":"Puntuación", "teoria":"Para citas textuales, títulos de artículos o poemas, extranjerismos.", "ejemplo":"El autor dijo: 'El cambio es necesario'.", "ejercicio":"Pon comillas al título 'El cambio climático'.", "suggestedAnswer":"'El cambio climático'." },
+        { "id":85, "name":"Uso de la barra (/)", "category":"Puntuación", "teoria":"Para indicar alternativas (y/o), fechas (12/10/2024), abreviaturas (c/).", "ejemplo":"Leer y/o escribir.", "ejercicio":"Escribe la abreviatura de 'calle' con barra.", "suggestedAnswer":"c/." },
+        { "id":86, "name":"Mayúsculas en nombres propios", "category":"Ortografía", "teoria":"Nombres de personas, lugares, marcas, instituciones.", "ejemplo":"Juan, México, Google, Universidad Complutense.", "ejercicio":"Corrige: 'el río amazonas'.", "suggestedAnswer":"El río Amazonas." },
+        { "id":87, "name":"Mayúsculas después de punto", "category":"Ortografía", "teoria":"Después de punto se escribe mayúscula.", "ejemplo":"Llegó tarde. No avisó.", "ejercicio":"Corrige: 'está lloviendo. nos mojaremos'.", "suggestedAnswer":"Está lloviendo. Nos mojaremos." },
+        { "id":88, "name":"Abreviaturas (punto final)", "category":"Ortografía", "teoria":"Las abreviaturas llevan punto: Sr., Dr., pág.", "ejemplo":"Dr. Pérez atendió al paciente.", "ejercicio":"Abrevia 'señor'.", "suggestedAnswer":"Sr." },
+        { "id":89, "name":"Siglas y acrónimos", "category":"Ortografía", "teoria":"Las siglas se escriben sin puntos (ONU). Los acrónimos se leen como palabras.", "ejemplo":"ONU, UNESCO, sida.", "ejercicio":"Escribe la sigla de 'Organización de las Naciones Unidas'.", "suggestedAnswer":"ONU." },
+        { "id":90, "name":"Dequeísmo y queísmo", "category":"Sintaxis", "teoria":"Dequeísmo: añadir 'de' innecesario ('pienso de que vendrá'). Queísmo: omitir 'de' necesario ('me acuerdo que fue bonito').", "ejemplo":"Correcto: Pienso que vendrá. Correcto: Me acuerdo de que fue bonito.", "ejercicio":"Corrige 'Me di cuenta que llegaste tarde'.", "suggestedAnswer":"Me di cuenta de que llegaste tarde." },
+        { "id":91, "name":"Leísmo, laísmo y loísmo", "category":"Pronombres", "teoria":"Leísmo: usar 'le' como CD ('le vi'). Laísmo: usar 'la' como CI ('la dije'). Loísmo: usar 'lo' como CI ('lo dije').", "ejemplo":"Correcto: Le dije la verdad (leísmo aceptado).", "ejercicio":"Corrige 'La dije la verdad'.", "suggestedAnswer":"Le dije la verdad." },
+        { "id":92, "name":"Uso de 'haber' impersonal", "category":"Sintaxis", "teoria":"'Haber' en impersonal siempre en singular: hay, habrá, hubo.", "ejemplo":"Hubo muchos problemas. (No 'hubieron').", "ejercicio":"Corrige 'Habrán varias soluciones'.", "suggestedAnswer":"Habrá varias soluciones." },
+        { "id":93, "name":"Uso de 'a por' (regionalismo)", "category":"Sintaxis", "teoria":"En España se usa 'voy a por pan'; en Hispanoamérica se prefiere 'voy por pan'.", "ejemplo":"Voy por el libro (hispanoamérica).", "ejercicio":"Convierte al uso hispanoamericano: 'Salgo a por el periódico'.", "suggestedAnswer":"Salgo por el periódico." },
+        { "id":94, "name":"Uso de 'acorde a' y 'acorde con'", "category":"Sintaxis", "teoria":"'Acorde a' y 'acorde con' significan 'conforme a'.", "ejemplo":"Actuaron acorde con las normas.", "ejercicio":"Corrige 'Debe actuar acorde las reglas'.", "suggestedAnswer":"Debe actuar acorde con las reglas (o 'acorde a las reglas')." },
+        { "id":95, "name":"Laísmo en uso culto (incorrecto)", "category":"Pronombres", "teoria":"Usar 'la' como CI es incorrecto en la norma culta.", "ejemplo":"Incorrecto: 'La di el libro'. Correcto: 'Le di el libro'.", "ejercicio":"Corrige 'La escribí una carta'.", "suggestedAnswer":"Le escribí una carta." },
+        { "id":96, "name":"Uso de 'delante mío' (posesivo)", "category":"Adverbios", "teoria":"Es preferible 'delante de mí' en lugar de 'delante mío'.", "ejemplo":"Se sentó delante de mí (norma culta).", "ejercicio":"Convierte a expresión normativa: 'Detrás suyo'.", "suggestedAnswer":"Detrás de él." },
+        { "id":97, "name":"Concordancia con 'la mayoría'", "category":"Concordancia", "teoria":"'La mayoría' es singular y lleva verbo en singular.", "ejemplo":"La mayoría está de acuerdo (singular).", "ejercicio":"Elige: 'La mitad de los estudiantes (aprobó / aprobaron)'.", "suggestedAnswer":"Ambas son posibles, pero la RAE prefiere singular: 'aprobó'." },
+        { "id":98, "name":"Uso de 'cuyo' como relativo posesivo", "category":"Pronombres relativos", "teoria":"'Cuyo, cuya, cuyos, cuyas' indica posesión y concuerda con el objeto poseído.", "ejemplo":"El autor cuyo libro leí es famoso.", "ejercicio":"Completa: 'La niña ___ madre trabaja'.", "suggestedAnswer":"cuya." },
+        { "id":99, "name":"Perífrasis verbales: 'ir a + infinitivo'", "category":"Perífrasis", "teoria":"Expresa intención o acción inmediata (futuro próximo).", "ejemplo":"Voy a llamar a mi madre.", "ejercicio":"Sustituye el futuro simple: 'Comeré en un rato'.", "suggestedAnswer":"Voy a comer en un rato." },
+        { "id":100, "name":"El español como lengua global", "category":"Actualidad", "teoria":"El español es la segunda lengua materna del mundo, con unos 500 millones de hablantes.", "ejemplo":"20 países tienen al español como lengua oficial.", "ejercicio":"¿Cuántos hablantes nativos de español se calculan?", "suggestedAnswer":"Unos 500 millones." }
+    ];
+
+    const container = document.getElementById('cardsContainer');
+    tecnicas.forEach(t => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card card-flash h-100">
+                <div class="card-header bg-transparent border-0 pt-3">
+                    <div class="d-flex justify-content-between">
+                        <div><h5 class="fw-bold">${t.name}</h5><span class="badge bg-secondary">${t.category}</span></div>
+                        <button class="btn btn-sound btn-sm" onclick="speakText('${t.name}. ${t.teoria} Ejemplo: ${t.ejemplo}')"><i class="fas fa-volume-up"></i> Leer</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-2 rounded mb-2"><strong>Teoría:</strong> ${t.teoria}</div>
+                    <div class="bg-warning bg-opacity-10 p-2 rounded mb-3"><strong>Ejemplo:</strong> “${t.ejemplo}”</div>
+                    <div class="exercise-area">
+                        <label class="fw-semibold">✍️ ${t.ejercicio}</label>
+                        <textarea class="form-control mt-2" id="answer-${t.id}" rows="2" placeholder="Escribe tu respuesta..."></textarea>
+                        <button class="btn btn-outline-success btn-sm mt-2" onclick="showSuggestion(${t.id}, '${t.suggestedAnswer.replace(/'/g, "\\'")}')">Ver sugerencia</button>
+                        <div id="feedback-${t.id}" class="small mt-2" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    let currentUtterance = null, availableVoices = [];
+    function toggleVoiceControls() { let c = document.getElementById('voiceControls'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; if (!availableVoices.length) loadVoices(); }
+    function loadVoices() { availableVoices = window.speechSynthesis.getVoices(); let sel = document.getElementById('voiceSelect'); let es = availableVoices.filter(v=>v.lang.startsWith('es')); let list = es.length ? es : availableVoices; sel.innerHTML = '<option value="">Voz por defecto</option>' + list.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join(''); }
+    if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
+    function setVoice() { if(!currentUtterance) return; let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); }
+    function setRate() { if(currentUtterance) currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); }
+    function speakText(t) { if(!window.speechSynthesis) return; if(currentUtterance) window.speechSynthesis.cancel(); currentUtterance = new SpeechSynthesisUtterance(t); currentUtterance.lang = 'es-ES'; currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); window.speechSynthesis.speak(currentUtterance); }
+    function stopSpeech() { if(window.speechSynthesis) window.speechSynthesis.cancel(); currentUtterance=null; }
+    function readPageContent() { let txt = ''; document.querySelectorAll('main h1, main h2, main h3, main p, main li, .card-text, .alert').forEach(el=>{ if(el.innerText) txt+=el.innerText+'. '; }); if(txt) speakText(txt.substring(0,3000)); else speakText('No hay contenido'); }
+    function showSuggestion(id, suggested) {
+        const userAnswer = document.getElementById(`answer-${id}`).value;
+        const fb = document.getElementById(`feedback-${id}`);
+        fb.innerHTML = `<strong>Tu respuesta:</strong> "${userAnswer || '(vacío)'}"<br><strong>Sugerencia:</strong> ${suggested}`;
+        fb.style.display = 'block';
+    }
+</script>
+</body>
+</html>

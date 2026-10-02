@@ -1,0 +1,1815 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Reglas de Silabeo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">reglas de silabeo · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Regla: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una palabra y sepárala en sílabas:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «ca-sa»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 REGLAS DE SILABEO Y SEPARACIÓN DE SÍLABAS
+        //  Vocales, consonantes, diptongos, hiatos, triptongos, etc.
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'vocales', label: 'Vocales y Diptongos' },
+            { id: 'hiatos', label: 'Hiatos' },
+            { id: 'triptongos', label: 'Triptongos' },
+            { id: 'consonantes', label: 'Consonantes (Grupos)' },
+            { id: 'consonantes_especiales', label: 'Consonantes Especiales' },
+            { id: 'prefijos', label: 'Prefijos y Compuestos' },
+            { id: 'adverbios', label: 'Adverbios en -mente' },
+            { id: 'mayusculas', label: 'Palabras con Mayúsculas' },
+            { id: 'extranjerismos', label: 'Extranjerismos' },
+            { id: 'usos_redaccion', label: 'Usos en Redacción' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: VOCALES Y DIPTONGOS (1–15)
+        // ============================================================
+        const b1 = [
+            ['Sílaba: definición', 'Unidad de sonido (núcleo vocálico)',
+                'La sílaba es una unidad de sonido que se pronuncia en un solo golpe de voz. Tiene un núcleo vocálico y puede tener consonantes alrededor.',
+                'ca-sa / pe-rro / a-mor',
+                'ca-sa (2 sílabas) / pe-rro (2 sílabas)',
+                '¿Qué unidad de sonido se pronuncia en un solo golpe de voz?', ['Sílaba', 'Palabra', 'Frase', 'Texto'],
+                0, 'Escribe una palabra de tres sílabas.'
+            ],
+            ['Vocal como núcleo silábico', 'Cada vocal es el núcleo de una sílaba',
+                'Cada vocal (o grupo vocálico) forma el núcleo de una sílaba. En español, hay tantas sílabas como vocales o grupos de vocales.',
+                'ma-no / tie-rra / a-gu-a',
+                'ma-no (2 vocales → 2 sílabas) / tie-rra (2 vocales → 2 sílabas)',
+                '¿Qué elemento es el núcleo de toda sílaba?', ['Vocal', 'Consonante', 'Diptongo', 'Hiato'],
+                0, 'Escribe una palabra con dos vocales y sepárala en sílabas.'
+            ],
+            ['Diptongo: vocal abierta + cerrada', 'Diptongo (abierta + cerrada)',
+                'El diptongo es la unión de una vocal abierta (a, e, o) y una cerrada (i, u) en la misma sílaba.',
+                'cau-sa / pei-ne / a-vión',
+                'cau-sa (cau) / pei-ne (pei) / a-vión (ión)',
+                '¿Qué es un diptongo?', ['Unión de dos vocales en la misma sílaba', 'Unión de dos vocales en sílabas diferentes',
+                    'Unión de tres vocales', 'Unión de vocal y consonante'
+                ], 0, 'Escribe una palabra con diptongo y sepárala en sílabas.'
+            ],
+            ['Diptongo: vocal cerrada + abierta', 'Diptongo (cerrada + abierta)',
+                'El diptongo también se forma con vocal cerrada (i, u) seguida de abierta (a, e, o).',
+                'hie-lo / via-je / puer-ta',
+                'hie-lo (hie) / via-je (via) / puer-ta (puer)',
+                '¿Qué tipo de diptongo es "hie"?', ['Cerrada + abierta', 'Abierta + cerrada', 'Cerrada + cerrada',
+                    'Abierta + abierta'
+                ], 0, 'Escribe una palabra con diptongo cerrada + abierta.'
+            ],
+            ['Diptongo: dos vocales cerradas', 'Diptongo (cerrada + cerrada)',
+                'Las vocales cerradas (i, u) también forman diptongo entre ellas: iu, ui.',
+                'ciu-dad / cui-da-do',
+                'ciu-dad (ciu) / cui-da-do (cui)',
+                '¿Qué tipo de diptongo es "iu"?', ['Cerrada + cerrada', 'Abierta + cerrada', 'Cerrada + abierta',
+                    'Abierta + abierta'
+                ], 0, 'Escribe una palabra con diptongo de dos vocales cerradas.'
+            ],
+            ['Diptongo con h intermedia', 'La h no impide el diptongo',
+                'La letra h no impide la formación del diptongo: a-hi / a-hu / e-hi.',
+                'a-hao / pro-hibir (pro-hi-bir)',
+                'pro-hi-bir (hi es diptongo)',
+                '¿La h intermedia impide el diptongo?', ['No', 'Sí', 'Depende', 'Solo si es muda'],
+                0, 'Escribe una palabra con diptongo y h intermedia.'
+            ],
+            ['Diptongo en verbos', 'Diptongo en conjugaciones verbales',
+                'Muchos verbos tienen diptongo en su conjugación: pensar → pienso, poder → puedo.',
+                'pien-so / pue-do / vie-ne',
+                'pien-so (pien) / pue-do (pue) / vie-ne (vie)',
+                '¿Qué verbo tiene diptongo en "pienso"?', ['Pensar', 'Poder', 'Venir', 'Tener'],
+                0, 'Escribe una conjugación verbal con diptongo.'
+            ],
+            ['Diptongo en palabras con y', 'La y como vocal forma diptongo',
+                'La letra y cuando suena como vocal (i) forma diptongo: rey, hoy, muy.',
+                'rey / hoy / muy',
+                'rey (ey) / hoy (oy) / muy (uy)',
+                '¿Qué letra puede formar diptongo como vocal?', ['Y', 'W', 'K', 'H'],
+                0, 'Escribe una palabra con diptongo usando la "y".'
+            ],
+            ['Diptongo creciente', 'Di p tongo creciente (cerrada + abierta)',
+                'Diptongo creciente: vocal cerrada (i, u) + vocal abierta (a, e, o).',
+                'hie-lo / via-je / puer-ta',
+                'hie-lo (hie) / via-je (via)',
+                '¿Qué diptongo es "hie"?', ['Creciente', 'Decreciente', 'Homogéneo', 'Ninguno'],
+                0, 'Escribe una palabra con diptongo creciente.'
+            ],
+            ['Diptongo decreciente', 'Diptongo decreciente (abierta + cerrada)',
+                'Diptongo decreciente: vocal abierta (a, e, o) + vocal cerrada (i, u).',
+                'cau-sa / pei-ne / a-vión',
+                'cau-sa (cau) / pei-ne (pei)',
+                '¿Qué diptongo es "cau"?', ['Decreciente', 'Creciente', 'Homogéneo', 'Ninguno'],
+                0, 'Escribe una palabra con diptongo decreciente.'
+            ],
+            ['Diptongo homogéneo', 'Diptongo homogéneo (cerrada + cerrada)',
+                'Diptongo homogéneo: dos vocales cerradas (i, u).',
+                'ciu-dad / cui-da-do',
+                'ciu-dad (ciu) / cui-da-do (cui)',
+                '¿Qué diptongo es "ciu"?', ['Homogéneo', 'Creciente', 'Decreciente', 'Ninguno'],
+                0, 'Escribe una palabra con diptongo homogéneo.'
+            ],
+            ['Separación de diptongos', 'El diptongo no se separa',
+                'Las vocales que forman un diptongo deben permanecer en la misma sílaba.',
+                'cau-sa (no ca-u-sa) / pei-ne (no pe-i-ne)',
+                'cau-sa (cau) / pei-ne (pei)',
+                '¿Se separan las vocales de un diptongo?', ['No', 'Sí', 'Depende', 'Solo si son iguales'],
+                0, 'Escribe una palabra con diptongo y sepárala en sílabas correctamente.'
+            ],
+            ['Diptongo con tilde', 'Tilde en el diptongo',
+                'En los diptongos, la tilde se coloca sobre la vocal abierta (a, e, o) si le corresponde según las reglas de acentuación.',
+                'cam-bió / vi-ví-a / ha-bí-a (hiato)',
+                'cam-bió (ió) / vi-ví-a (ía)',
+                '¿Dónde se coloca la tilde en un diptongo?', ['Sobre la vocal abierta', 'Sobre la vocal cerrada',
+                    'Sobre ambas', 'No se coloca'
+                ], 0, 'Escribe una palabra con diptongo y tilde.'
+            ],
+            ['Diptongo con acento en la cerrada', 'Tilde en la vocal cerrada (hiato)',
+                'Cuando la vocal cerrada lleva tilde, se rompe el diptongo y se forma hiato.',
+                'pa-ís / ra-íz / ba-úl',
+                'pa-ís (pa-ís) / ra-íz (ra-íz)',
+                '¿Qué ocurre cuando la vocal cerrada lleva tilde?', ['Se forma hiato', 'Sigue siendo diptongo',
+                    'Se separa en dos sílabas', 'No ocurre nada'
+                ], 0, 'Escribe una palabra con hiato por tilde en la vocal cerrada.'
+            ],
+            ['Diptongo en palabras compuestas', 'Diptongo en compuestos',
+                'En palabras compuestas, los diptongos se mantienen dentro de cada componente.',
+                'aero-puer-to / bio-gra-fí-a',
+                'aero-puer-to (puer) / bio-gra-fí-a (bio)',
+                '¿Cómo se mantienen los diptongos en compuestos?', ['Dentro de cada componente', 'Se separan',
+                    'Se unen', 'Desaparecen'
+                ], 0, 'Escribe una palabra compuesta con diptongo.'
+            ]
+        ];
+        b1.forEach(d => addLesson('vocales', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: HIATOS (16–30)
+        // ============================================================
+        const b2 = [
+            ['Hiato: definición', 'Dos vocales en sílabas diferentes',
+                'El hiato es la secuencia de dos vocales que pertenecen a sílabas diferentes.',
+                'po-e-ta / ca-er / a-ho-ra',
+                'po-e-ta (po-e-ta) / ca-er (ca-er)',
+                '¿Qué es un hiato?', ['Dos vocales en sílabas diferentes', 'Dos vocales en la misma sílaba',
+                    'Tres vocales en la misma sílaba', 'Vocal y consonante'
+                ], 0, 'Escribe una palabra con hiato y sepárala en sílabas.'
+            ],
+            ['Hiato: vocal abierta + vocal abierta', 'Hiato (abierta + abierta)',
+                'Dos vocales abiertas (a, e, o) forman hiato y se separan en sílabas diferentes.',
+                'po-e-ta / le-ón / ca-os',
+                'po-e-ta (po-e-ta) / le-ón (le-ón)',
+                '¿Qué hiato es "po-e"?', ['Abierta + abierta', 'Cerrada + abierta', 'Abierta + cerrada',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato de dos vocales abiertas.'
+            ],
+            ['Hiato: vocal cerrada tónica + abierta', 'Hiato (cerrada tónica + abierta)',
+                'Cuando la vocal cerrada (i, u) lleva tilde, se separa de la vocal abierta formando hiato.',
+                'pa-ís / ra-íz / ba-úl',
+                'pa-ís (pa-ís) / ra-íz (ra-íz)',
+                '¿Qué hiato es "pa-ís"?', ['Cerrada tónica + abierta', 'Abierta + cerrada tónica',
+                    'Abierta + abierta', 'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato por tilde en la cerrada.'
+            ],
+            ['Hiato: vocal abierta + cerrada tónica', 'Hiato (abierta + cerrada tónica)',
+                'Cuando la vocal cerrada (i, u) es tónica y está al final, se separa de la abierta.',
+                'Mar-í-a / lo-í-a / ha-bí-a',
+                'Mar-í-a (Mar-í-a) / lo-í-a (lo-í-a)',
+                '¿Qué hiato es "Mar-í-a"?', ['Abierta + cerrada tónica', 'Cerrada tónica + abierta',
+                    'Abierta + abierta', 'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato de abierta + cerrada tónica.'
+            ],
+            ['Hiato en verbos con -ía', 'Hiato en -ía (pretérito imperfecto)',
+                'Las formas verbales terminadas en -ía llevan hiato: cantaría, comería, viviría.',
+                'can-ta-rí-a / co-me-rí-a / vi-vi-rí-a',
+                'can-ta-rí-a (rí-a) / co-me-rí-a (rí-a)',
+                '¿Qué hiato tienen los verbos en -ía?', ['Abierta + cerrada tónica', 'Cerrada tónica + abierta',
+                    'Abierta + abierta', 'Cerrada + cerrada'
+                ], 0, 'Escribe una forma verbal en -ía con hiato.'
+            ],
+            ['Hiato en palabras con -ío', 'Hiato en -ío',
+                'Las palabras con -ío (como "río", "vahído") llevan hiato.',
+                'rí-o / va-hí-do / en-ví-o',
+                'rí-o (rí-o) / va-hí-do (hí)',
+                '¿Qué hiato es "rí-o"?', ['Cerrada tónica + abierta', 'Abierta + cerrada tónica', 'Abierta + abierta',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato en -ío.'
+            ],
+            ['Hiato en palabras con -úa', 'Hiato en -úa',
+                'Las palabras con -úa (como "grúa", "súbita") llevan hiato.',
+                'grú-a / sú-bi-ta',
+                'grú-a (grú-a)',
+                '¿Qué hiato es "grú-a"?', ['Cerrada tónica + abierta', 'Abierta + cerrada tónica', 'Abierta + abierta',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato en -úa.'
+            ],
+            ['Hiato en palabras con -íe', 'Hiato en -íe',
+                'Las palabras con -íe (como "míe", "confíe") llevan hiato.',
+                'con-fí-e / mí-e',
+                'con-fí-e (fí-e) / mí-e (mí-e)',
+                '¿Qué hiato es "confíe"?', ['Cerrada tónica + abierta', 'Abierta + cerrada tónica', 'Abierta + abierta',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato en -íe.'
+            ],
+            ['Hiato en palabras con -ío, -ía, -úo, -úa', 'Hiato en -ío, -ía, -úo, -úa',
+                'Los hiatos con tilde en la cerrada son muy comunes en español.',
+                'río, María, búho, transeúnte',
+                'rí-o / Ma-rí-a / bú-ho / tran-se-ún-te',
+                '¿Qué hiato es "bú-ho"?', ['Cerrada tónica + abierta', 'Abierta + cerrada tónica', 'Abierta + abierta',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato en -úo.'
+            ],
+            ['Hiato con h intermedia', 'La h no impide el hiato',
+                'La h no impide la separación de vocales en hiato: a-hí / a-ho-ra / ve-hí-cu-lo.',
+                'a-hí / a-ho-ra / ve-hí-cu-lo',
+                'a-hí (a-hí) / a-ho-ra (a-ho-ra)',
+                '¿La h intermedia impide el hiato?', ['No', 'Sí', 'Depende', 'Solo si es aspirada'],
+                0, 'Escribe una palabra con hiato y h intermedia.'
+            ],
+            ['Hiato en palabras con prefijos', 'Hiato en compuestos con prefijos',
+                'En palabras con prefijos, el hiato se mantiene entre el prefijo y la raíz.',
+                'co-ope-rar / re-e-le-gir / pre-e-xis-tir',
+                'co-ope-rar (co-ope-rar) / re-e-le-gir (re-e-le-gir)',
+                '¿Cómo se separa el hiato en palabras con prefijos?', ['Entre el prefijo y la raíz', 'Dentro del prefijo',
+                    'Dentro de la raíz', 'No se separa'
+                ], 0, 'Escribe una palabra con prefijo y hiato.'
+            ],
+            ['Hiato en palabras con "a" + "e"', 'Hiato ae',
+                'La combinación "ae" forma hiato en palabras como "caer", "aéreo".',
+                'ca-er / a-é-re-o',
+                'ca-er (ca-er) / a-é-re-o (a-é-re-o)',
+                '¿Qué hiato es "ca-er"?', ['Abierta + abierta', 'Cerrada + abierta', 'Abierta + cerrada',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato "ae".'
+            ],
+            ['Hiato en palabras con "o" + "e"', 'Hiato oe',
+                'La combinación "oe" forma hiato en palabras como "poesía", "coetáneo".',
+                'po-e-sí-a / co-e-tá-ne-o',
+                'po-e-sí-a (po-e) / co-e-tá-ne-o (co-e)',
+                '¿Qué hiato es "po-e"?', ['Abierta + abierta', 'Cerrada + abierta', 'Abierta + cerrada',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato "oe".'
+            ],
+            ['Hiato en palabras con "a" + "o"', 'Hiato ao',
+                'La combinación "ao" forma hiato en palabras como "caos", "aeródromo".',
+                'ca-os / a-e-ró-dro-mo',
+                'ca-os (ca-os)',
+                '¿Qué hiato es "ca-os"?', ['Abierta + abierta', 'Cerrada + abierta', 'Abierta + cerrada',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato "ao".'
+            ],
+            ['Hiato en palabras con "e" + "o"', 'Hiato eo',
+                'La combinación "eo" forma hiato en palabras como "feo", "teoría".',
+                'fe-o / te-o-rí-a',
+                'fe-o (fe-o) / te-o-rí-a (te-o)',
+                '¿Qué hiato es "fe-o"?', ['Abierta + abierta', 'Cerrada + abierta', 'Abierta + cerrada',
+                    'Cerrada + cerrada'
+                ], 0, 'Escribe una palabra con hiato "eo".'
+            ]
+        ];
+        b2.forEach(d => addLesson('hiatos', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: TRIPTONGOS (31–35)
+        // ============================================================
+        const b3 = [
+            ['Triptongo: definición', 'Tres vocales en una sílaba',
+                'El triptongo es la unión de tres vocales en una sola sílaba: cerrada + abierta + cerrada.',
+                'a-ve-ri-güéis / a-ca-ri-ciáis / buey',
+                'a-ve-ri-güéis (güéis) / a-ca-ri-ciáis (ciáis)',
+                '¿Qué es un triptongo?', ['Tres vocales en una sílaba', 'Dos vocales en una sílaba',
+                    'Tres vocales en sílabas diferentes', 'Vocal + consonante'
+                ], 0, 'Escribe una palabra con triptongo y sepárala en sílabas.'
+            ],
+            ['Triptongo: cerrada + abierta + cerrada', 'Estructura del triptongo',
+                'El triptongo se forma con vocal cerrada (i, u) + vocal abierta (a, e, o) + vocal cerrada (i, u).',
+                'güéis (güéis) / ciáis (ciáis) / buey (buey)',
+                'güéis (güéis) / ciáis (ciáis)',
+                '¿Qué estructura tiene el triptongo?', ['Cerrada + abierta + cerrada', 'Abierta + cerrada + abierta',
+                    'Cerrada + cerrada + abierta', 'Abierta + abierta + cerrada'
+                ], 0, 'Escribe una palabra con triptongo.'
+            ],
+            ['Triptongo en verbos', 'Triptongo en conjugaciones verbales',
+                'Los triptongos aparecen en conjugaciones verbales de la segunda persona del plural: "vosotros" en -áis, -éis, -íais.',
+                'es-tu-diáis / a-ve-ri-güéis / a-ca-ri-ciáis',
+                'es-tu-diáis (diáis) / a-ve-ri-güéis (güéis)',
+                '¿Qué formas verbales tienen triptongo?', ['Segunda persona del plural', 'Primera persona del singular',
+                    'Tercera persona del plural', 'Infinitivo'
+                ], 0, 'Escribe una forma verbal con triptongo.'
+            ],
+            ['Triptongo con diéresis', 'Triptongo con ü',
+                'La diéresis (ü) indica que la u se pronuncia y forma triptongo: "güéis", "agüéis".',
+                'a-ve-ri-güéis / a-güéis',
+                'a-ve-ri-güéis (güéis)',
+                '¿Qué indica la diéresis en "güéis"?', ['Que la u se pronuncia', 'Que la u es muda', 'Que hay hiato',
+                    'Que hay diptongo'
+                ], 0, 'Escribe una palabra con triptongo y diéresis.'
+            ],
+            ['Triptongo con y', 'Triptongo con y (vocal)',
+                'La y como vocal forma triptongo en palabras como "buey", "hoy" (con dos vocales).',
+                'buey / muy',
+                'buey (buey) / muy (muy)',
+                '¿Qué triptongo es "buey"?', ['Cerrada + abierta + cerrada', 'Abierta + cerrada + abierta',
+                    'Cerrada + cerrada + abierta', 'Abierta + abierta + cerrada'
+                ], 0, 'Escribe una palabra con triptongo usando la "y".'
+            ]
+        ];
+        b3.forEach(d => addLesson('triptongos', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: CONSONANTES (GRUPOS) (36–55)
+        // ============================================================
+        const b4 = [
+            ['Consonante + vocal', 'C + V (sílaba directa)',
+                'La sílaba más simple es consonante + vocal: ca, pe, li, etc.',
+                'ca-sa / pe-rro / li-bro',
+                'ca-sa (ca + sa) / pe-rro (pe + rro)',
+                '¿Qué sílaba es "ca"?', ['Consonante + vocal', 'Vocal + consonante', 'Consonante + consonante',
+                    'Vocal + vocal'
+                ], 0, 'Escribe una palabra con sílabas CV.'
+            ],
+            ['Vocal + consonante', 'V + C (sílaba inversa)',
+                'La sílaba puede ser vocal + consonante: al, es, in, etc.',
+                'al-to / es-pa-da / in-te-res',
+                'al-to (al + to) / es-pa-da (es + pa + da)',
+                '¿Qué sílaba es "al"?', ['Vocal + consonante', 'Consonante + vocal', 'Consonante + consonante',
+                    'Vocal + vocal'
+                ], 0, 'Escribe una palabra con sílabas VC.'
+            ],
+            ['Consonante + vocal + consonante', 'CVC (sílaba cerrada)',
+                'La sílaba puede ser consonante + vocal + consonante: pan, sol, mar.',
+                'pan / sol / mar / can-tar',
+                'pan (pan) / sol (sol)',
+                '¿Qué sílaba es "pan"?', ['Consonante + vocal + consonante', 'Consonante + vocal',
+                    'Vocal + consonante', 'Consonante + consonante + vocal'
+                ], 0, 'Escribe una palabra con sílaba CVC.'
+            ],
+            ['Dos consonantes entre vocales', 'CC (grupo consonántico)',
+                'Cuando hay dos consonantes entre vocales, la primera va con la sílaba anterior y la segunda con la siguiente.',
+                'pen-sar / al-to / in-ten-to',
+                'pen-sar (pen + sar) / al-to (al + to)',
+                '¿Cómo se separan dos consonantes entre vocales?', ['La primera con la anterior, la segunda con la siguiente',
+                    'Las dos con la siguiente', 'Las dos con la anterior', 'Se separan en sílabas diferentes'
+                ], 0, 'Escribe una palabra con dos consonantes entre vocales.'
+            ],
+            ['Grupos consonantales (bl, br, cl, cr, etc.)', 'Grupos inseparables (bl, br, cl, cr, dr, fl, fr, gl, gr, pl, pr, tr)',
+                'Los grupos formados por "l" o "r" precedidas de otra consonante son inseparables: bl, br, cl, cr, dr, fl, fr, gl, gr, pl, pr, tr.',
+                'ha-blar / a-creditar / si-glo / con-trario',
+                'ha-blar (ha + blar) / a-creditar (a + cre + di + tar)',
+                '¿Qué grupos consonantales son inseparables?', ['bl, br, cl, cr, dr, fl, fr, gl, gr, pl, pr, tr',
+                    'bd, bf, ck, dm', 'lm, rm, tn', 'Todos'
+                ], 0, 'Escribe una palabra con un grupo consonántico inseparable.'
+            ],
+            ['Grupos con "s" + consonante', 'S + consonante (sc, sp, st, etc.)',
+                'Los grupos con "s" seguida de consonante (sc, sp, st, etc.) se separan: la "s" va con la sílaba anterior y la consonante con la siguiente.',
+                'cons-ti-tu-ción / ins-pi-rar / pers-pe-ra',
+                'cons-ti-tu-ción (cons + ti + tu + ción)',
+                '¿Cómo se separan "s" + consonante?', ['La s va con la sílaba anterior', 'La s va con la siguiente',
+                    'Van juntas', 'Depende'
+                ], 0, 'Escribe una palabra con "s" + consonante.'
+            ],
+            ['Grupos con "x" entre vocales', 'X entre vocales (ks)',
+                'La "x" se pronuncia como /ks/ y se separa: la "k" va con la sílaba anterior y la "s" con la siguiente.',
+                'ex-ce-len-te / ex-ta-sis',
+                'ex-ce-len-te (ex + ce + len + te) / ex-ta-sis (ex + ta + sis)',
+                '¿Cómo se separa la "x"?', ['La ks se separa (k con la anterior, s con la siguiente)',
+                    'Va con la siguiente sílaba', 'Va con la anterior', 'No se separa'
+                ], 0, 'Escribe una palabra con "x" entre vocales.'
+            ],
+            ['Grupos con "r" y "rr"', 'R y RR (separación)',
+                'La "r" simple y la "rr" van con la vocal siguiente: a-rro-yo / ca-rro / pe-rro.',
+                'ca-rro / a-rro-yo / pe-rro',
+                'ca-rro (ca + rro) / a-rro-yo (a + rro + yo)',
+                '¿Cómo se separa la "rr"?', ['Va con la siguiente sílaba', 'Va con la anterior', 'Se divide en r + r',
+                    'Depende'
+                ], 0, 'Escribe una palabra con "rr".'
+            ],
+            ['Grupos con "l" y "ll"', 'L y LL (separación)',
+                'La "l" simple y la "ll" van con la vocal siguiente: a-llo / ca-llo / ba-lla.',
+                'a-llo / ca-llo / ba-lla',
+                'a-llo (a + llo) / ca-llo (ca + llo)',
+                '¿Cómo se separa la "ll"?', ['Va con la siguiente sílaba', 'Va con la anterior', 'Se divide en l + l',
+                    'Depende'
+                ], 0, 'Escribe una palabra con "ll".'
+            ],
+            ['Grupos con "ch"', 'CH (inseparable)',
+                'El dígrafo "ch" es inseparable y va con la vocal siguiente: chico, mucho, leche.',
+                'chi-co / mu-cho / le-che',
+                'chi-co (chi + co) / mu-cho (mu + cho)',
+                '¿Cómo se separa la "ch"?', ['Es inseparable', 'Se divide en c + h', 'Va con la anterior',
+                    'Depende'
+                ], 0, 'Escribe una palabra con "ch".'
+            ],
+            ['Grupos con "gu" (g + u)', 'Gu (con u muda)',
+                'La "gu" con "u" muda forma parte de la sílaba siguiente: gua-rro / pe-gar.',
+                'gua-rro / pe-gar',
+                'gua-rro (gua + rro) / pe-gar (pe + gar)',
+                '¿Cómo se separa la "gu" con u muda?', ['Va con la siguiente sílaba', 'Se divide en g + u',
+                    'Va con la anterior', 'Depende'
+                ], 0, 'Escribe una palabra con "gu" y u muda.'
+            ],
+            ['Grupos con "qu" (q + u)', 'Qu (con u muda)',
+                'La "qu" con "u" muda forma parte de la sílaba siguiente: que-rer / quie-ro.',
+                'que-rer / quie-ro',
+                'que-rer (que + rer) / quie-ro (quie + ro)',
+                '¿Cómo se separa la "qu"?', ['Va con la siguiente sílaba', 'Se divide en q + u', 'Va con la anterior',
+                    'Depende'
+                ], 0, 'Escribe una palabra con "qu".'
+            ],
+            ['Grupos con "gu" (g + ü)', 'Gü (con diéresis)',
+                'La "gü" con diéresis (ü) es separable: la ü va con la sílaba siguiente.',
+                'pi-güe-la / a-ve-ri-güéis',
+                'pi-güe-la (pi + güe + la) / a-ve-ri-güéis',
+                '¿Cómo se separa la "gü" con diéresis?', ['La ü va con la siguiente sílaba', 'Va con la anterior',
+                    'Se divide en g + ü', 'Depende'
+                ], 0, 'Escribe una palabra con "gü".'
+            ],
+            ['Grupos con "h" intermedia', 'H intermedia (no impide la separación)',
+                'La "h" intermedia no impide la separación silábica: a-ho-rrar / pro-hi-bir.',
+                'a-ho-rrar / pro-hi-bir',
+                'a-ho-rrar (a + ho + rrar) / pro-hi-bir (pro + hi + bir)',
+                '¿Cómo afecta la "h" a la separación silábica?', ['No impide la separación', 'Impide la separación',
+                    'Siempre va con la anterior', 'Siempre va con la siguiente'
+                ], 0, 'Escribe una palabra con "h" intermedia.'
+            ],
+            ['Grupos con "y" entre vocales', 'Y entre vocales (sonido consonántico)',
+                'La "y" entre vocales actúa como consonante y va con la vocal siguiente: a-yu-dar / ha-yu-ga.',
+                'a-yu-dar / ha-yu-ga',
+                'a-yu-dar (a + yu + dar) / ha-yu-ga (ha + yu + ga)',
+                '¿Cómo se separa la "y" entre vocales?', ['Va con la siguiente sílaba', 'Va con la anterior',
+                    'Se divide en dos consonantes', 'Depende'
+                ], 0, 'Escribe una palabra con "y" entre vocales.'
+            ],
+            ['Grupos con "w"', 'W en extranjerismos',
+                'La "w" se separa con la vocal siguiente: ki-os-co / wá-ter.',
+                'ki-os-co / wá-ter',
+                'ki-os-co (ki + os + co) / wá-ter (wá + ter)',
+                '¿Cómo se separa la "w"?', ['Va con la siguiente vocal', 'Va con la anterior', 'Se divide en u + v',
+                    'Depende'
+                ], 0, 'Escribe una palabra con "w".'
+            ]
+        ];
+        b4.forEach(d => addLesson('consonantes', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: CONSONANTES ESPECIALES (56–65)
+        // ============================================================
+        const b5 = [
+            ['Separación de "c" y "s" en "sc"', 'SC (separación)',
+                'La combinación "sc" se separa: la "s" va con la sílaba anterior y la "c" con la siguiente.',
+                'cons-cien-cia / cons-ti-tu-ción',
+                'cons-cien-cia (cons + cien + cia) / cons-ti-tu-ción',
+                '¿Cómo se separa "sc"?', ['s con la anterior, c con la siguiente', 'Ambas con la siguiente',
+                    'Ambas con la anterior', 'Se dividen en s + c'
+                ], 0, 'Escribe una palabra con "sc".'
+            ],
+            ['Separación de "b" y "l" en "bl"', 'BL (inseparable)',
+                'El grupo "bl" es inseparable y va con la siguiente sílaba: ha-blar, a-blar.',
+                'ha-blar / a-blar',
+                'ha-blar (ha + blar) / a-blar (a + blar)',
+                '¿Cómo se separa "bl"?', ['Es inseparable', 'b con la anterior, l con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "bl".'
+            ],
+            ['Separación de "b" y "r" en "br"', 'BR (inseparable)',
+                'El grupo "br" es inseparable y va con la siguiente sílaba: ha-blar, a-brir.',
+                'ha-blar / a-brir',
+                'ha-blar (ha + blar) / a-brir (a + brir)',
+                '¿Cómo se separa "br"?', ['Es inseparable', 'b con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "br".'
+            ],
+            ['Separación de "d" y "r" en "dr"', 'DR (inseparable)',
+                'El grupo "dr" es inseparable y va con la siguiente sílaba: pa-dre, ha-dri-en.',
+                'pa-dre / ha-dri-en',
+                'pa-dre (pa + dre) / ha-dri-en (ha + dri + en)',
+                '¿Cómo se separa "dr"?', ['Es inseparable', 'd con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "dr".'
+            ],
+            ['Separación de "f" y "r" en "fr"', 'FR (inseparable)',
+                'El grupo "fr" es inseparable y va con la siguiente sílaba: con-fron-tar, a-fre-nar.',
+                'con-fron-tar / a-fre-nar',
+                'con-fron-tar (con + fron + tar) / a-fre-nar (a + fre + nar)',
+                '¿Cómo se separa "fr"?', ['Es inseparable', 'f con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "fr".'
+            ],
+            ['Separación de "g" y "l" en "gl"', 'GL (inseparable)',
+                'El grupo "gl" es inseparable y va con la siguiente sílaba: si-glo, a-glo-me-rar.',
+                'si-glo / a-glo-me-rar',
+                'si-glo (si + glo) / a-glo-me-rar (a + glo + me + rar)',
+                '¿Cómo se separa "gl"?', ['Es inseparable', 'g con la anterior, l con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "gl".'
+            ],
+            ['Separación de "g" y "r" en "gr"', 'GR (inseparable)',
+                'El grupo "gr" es inseparable y va con la siguiente sílaba: a-gra-dar, su-gre.',
+                'a-gra-dar / su-gre',
+                'a-gra-dar (a + gra + dar) / su-gre (su + gre)',
+                '¿Cómo se separa "gr"?', ['Es inseparable', 'g con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "gr".'
+            ],
+            ['Separación de "p" y "l" en "pl"', 'PL (inseparable)',
+                'El grupo "pl" es inseparable y va con la siguiente sílaba: a-plau-dir, su-pli-car.',
+                'a-plau-dir / su-pli-car',
+                'a-plau-dir (a + plau + dir) / su-pli-car (su + pli + car)',
+                '¿Cómo se separa "pl"?', ['Es inseparable', 'p con la anterior, l con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "pl".'
+            ],
+            ['Separación de "p" y "r" en "pr"', 'PR (inseparable)',
+                'El grupo "pr" es inseparable y va con la siguiente sílaba: a-pro-char, com-prar.',
+                'a-pro-char / com-prar',
+                'a-pro-char (a + pro + char) / com-prar (com + prar)',
+                '¿Cómo se separa "pr"?', ['Es inseparable', 'p con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "pr".'
+            ],
+            ['Separación de "t" y "r" en "tr"', 'TR (inseparable)',
+                'El grupo "tr" es inseparable y va con la siguiente sílaba: con-tra, a-tra-par.',
+                'con-tra / a-tra-par',
+                'con-tra (con + tra) / a-tra-par (a + tra + par)',
+                '¿Cómo se separa "tr"?', ['Es inseparable', 't con la anterior, r con la siguiente',
+                    'Ambas con la siguiente', 'Ambas con la anterior'
+                ], 0, 'Escribe una palabra con "tr".'
+            ]
+        ];
+        b5.forEach(d => addLesson('consonantes_especiales', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: PREFIJOS Y COMPUESTOS (66–75)
+        // ============================================================
+        const b6 = [
+            ['Separación en palabras con prefijos', 'Prefijo + raíz (separación)',
+                'En palabras con prefijos, se separa el prefijo de la raíz: pre-ver, des-hacer, re-construir.',
+                'pre-ver / des-hacer / re-construir',
+                'pre-ver (pre + ver) / des-hacer (des + hacer)',
+                '¿Cómo se separan las palabras con prefijos?', ['Separando el prefijo de la raíz',
+                    'Juntando el prefijo con la raíz', 'Depende', 'No se separan'
+                ], 0, 'Escribe una palabra con prefijo y sepárala.'
+            ],
+            ['Separación en palabras compuestas', 'Compuesto (separación en sus elementos)',
+                'En palabras compuestas, se separan sus elementos: ro-bo-cas-tro, ce-rro-jo, per-ro-ki-os-co.',
+                'ro-bo-cas-tro / per-ro-ki-os-co',
+                'ro-bo-cas-tro (robo + castro) / per-ro-ki-os-co (perro + ki + os + co)',
+                '¿Cómo se separan las palabras compuestas?', ['Separando sus elementos', 'Juntando todo',
+                    'Separando solo la última sílaba', 'Depende'
+                ], 0, 'Escribe una palabra compuesta y sepárala.'
+            ],
+            ['Separación en palabras con prefijos y diptongos', 'Prefijo + diptongo',
+                'Cuando el prefijo termina en vocal y la raíz comienza con diptongo, se mantiene el diptongo en la raíz.',
+                're-uin-irse / pre-ven-ción',
+                're-uin-irse (re + uin + ir + se)',
+                '¿Cómo se separan los prefijos con diptongo?', ['El diptongo se mantiene en la raíz', 'Se separa el diptongo',
+                    'Depende', 'No se separa'
+                ], 0, 'Escribe una palabra con prefijo y diptongo.'
+            ],
+            ['Separación en palabras con prefijos terminados en vocal', 'Prefijo terminado en vocal',
+                'Cuando el prefijo termina en vocal y la raíz comienza con vocal, puede haber hiato o no según la acentuación.',
+                'co-o-pe-rar (co + ope + rar) / re-e-le-gir (re + ele + gir)',
+                'co-o-pe-rar (co + o + pe + rar)',
+                '¿Cómo se separan los prefijos terminados en vocal?', ['Se separan del hiato si lo hay', 'Se juntan siempre',
+                    'Depende de la palabra', 'No se separan'
+                ], 0, 'Escribe una palabra con prefijo terminado en vocal.'
+            ],
+            ['Separación en palabras con prefijos terminados en consonante', 'Prefijo terminado en consonante',
+                'Cuando el prefijo termina en consonante, se separa de la raíz: sub-suelo, trans-por-te.',
+                'sub-sue-lo / trans-por-te',
+                'sub-sue-lo (sub + sue + lo) / trans-por-te (trans + por + te)',
+                '¿Cómo se separan los prefijos terminados en consonante?', ['Separando el prefijo de la raíz',
+                    'Juntando el prefijo con la raíz', 'Depende', 'No se separan'
+                ], 0, 'Escribe una palabra con prefijo terminado en consonante.'
+            ],
+            ['Separación en palabras con prefijos "ex" y "extra"', 'Ex- / Extra- (separación)',
+                'Los prefijos "ex-" y "extra-" se separan de la raíz: ex-tra-ño, ex-ce-len-te.',
+                'ex-tra-ño / ex-ce-len-te',
+                'ex-tra-ño (ex + tra + ño) / ex-ce-len-te (ex + ce + len + te)',
+                '¿Cómo se separan "ex-" y "extra-"?', ['Separando el prefijo de la raíz', 'Juntando todo',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe una palabra con "ex-" y sepárala.'
+            ],
+            ['Separación en palabras con prefijos "bi", "tri", "multi"', 'Prefijos de cantidad',
+                'Los prefijos de cantidad (bi-, tri-, multi-) se separan de la raíz: bi-bli-o-te-ca, tri-ángu-lo.',
+                'bi-bli-o-te-ca / tri-án-gu-lo',
+                'bi-bli-o-te-ca (bi + blio + te + ca)',
+                '¿Cómo se separan los prefijos de cantidad?', ['Separando el prefijo de la raíz', 'Juntando todo',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe una palabra con "bi-" y sepárala.'
+            ],
+            ['Separación en palabras con sufijos', 'Raíz + sufijo',
+                'Los sufijos se separan de la raíz: ca-sa (raíz) + -mi-en-to → ca-sa-mien-to.',
+                'ca-sa-mien-to / a-mor-so',
+                'ca-sa-mien-to (casa + miento)',
+                '¿Cómo se separan los sufijos?', ['Separando el sufijo de la raíz', 'Juntando todo', 'Depende',
+                    'No se separan'
+                ], 0, 'Escribe una palabra con sufijo y sepárala.'
+            ],
+            ['Separación en verbos con pronombres enclíticos', 'Verbo + pronombre',
+                'Los pronombres enclíticos se separan del verbo: de-cir-me, es-cri-bir-le, dar-melo (dar-me-lo).',
+                'de-cir-me / es-cri-bir-le / dar-me-lo',
+                'de-cir-me (de + cir + me) / es-cri-bir-le (es + cri + bir + le)',
+                '¿Cómo se separan los pronombres enclíticos?', ['Separándolos del verbo', 'Juntándolos al verbo',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe un verbo con pronombre enclítico y sepáralo.'
+            ],
+            ['Separación en palabras con "mente" (adverbios)', 'Adverbio en -mente',
+                'Los adverbios terminados en -mente se separan en dos partes: la palabra base y "mente".',
+                'rápida-mente / fácil-mente',
+                'rápida-mente (rápida + mente) / fácil-mente (fácil + mente)',
+                '¿Cómo se separan los adverbios en -mente?', ['En dos partes: palabra base + mente', 'En una sola sílaba',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe un adverbio en -mente y sepáralo.'
+            ]
+        ];
+        b6.forEach(d => addLesson('prefijos', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: ADVERBIOS EN -MENTE (76–80)
+        // ============================================================
+        const b7 = [
+            ['Adverbios en -mente: separación', 'Base + -mente (dos partes)',
+                'Los adverbios en -mente se separan en la base y el sufijo "-mente".',
+                'rápida-mente / fácil-mente',
+                'rápida-mente (rápida + mente) / fácil-mente (fácil + mente)',
+                '¿Cómo se separan los adverbios en -mente?', ['En dos partes', 'En una sola sílaba', 'Depende',
+                    'No se separan'
+                ], 0, 'Escribe un adverbio en -mente y sepáralo.'
+            ],
+            ['Adverbios en -mente: tilde', 'Tilde en la base',
+                'Los adverbios en -mente conservan la tilde de la base si la tenían.',
+                'rápida-mente (rápida tiene tilde) / fácil-mente (fácil tiene tilde)',
+                'rápida-mente (rápida + mente) / fácil-mente (fácil + mente)',
+                '¿Qué ocurre con la tilde en los adverbios en -mente?', ['Se mantiene en la base', 'Se pierde',
+                    'Se traslada a la última sílaba', 'Depende'
+                ], 0, 'Escribe un adverbio en -mente con tilde.'
+            ],
+            ['Adverbios en -mente: separación silábica', 'Sílabas en la base + -men-te',
+                'La base se separa en sílabas y "-mente" se separa como "men-te".',
+                'rá-pi-da-men-te / fá-cil-men-te',
+                'rá-pi-da-men-te (rá + pi + da + men + te)',
+                '¿Cómo se separa "-mente" en sílabas?', ['Men-te', 'Men-te', 'Men-te', 'Men-te'],
+                0, 'Escribe la separación silábica de "rápidamente".'
+            ],
+            ['Adverbios en -mente: ejemplos', 'Ejemplos de separación',
+                'Ejemplos: cortés-mente → cor-tés-men-te, alegre-mente → a-le-gre-men-te.',
+                'cor-tés-men-te / a-le-gre-men-te',
+                'cor-tés-men-te (cor + tés + men + te)',
+                '¿Cómo se separa "cortésmente"?', ['Cor-tés-men-te', 'Cor-tés-men-te', 'Cor-tés-men-te',
+                    'Cor-tés-men-te'
+                ], 0, 'Escribe la separación de "alegremente".'
+            ],
+            ['Adverbios en -mente con diptongo', 'Diptongo en la base + -mente',
+                'Si la base tiene diptongo, se mantiene: dulce-mente → dul-ce-men-te.',
+                'dul-ce-men-te / sua-ve-men-te',
+                'dul-ce-men-te (dul + ce + men + te)',
+                '¿Cómo se separan los adverbios en -mente con diptongo?', ['El diptongo se mantiene en la base',
+                    'Se pierde', 'Depende', 'No se separa'
+                ], 0, 'Escribe la separación de "suavemente".'
+            ]
+        ];
+        b7.forEach(d => addLesson('adverbios', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: PALABRAS CON MAYÚSCULAS (81–85)
+        // ============================================================
+        const b8 = [
+            ['Separación en nombres propios', 'Nombres propios (separación normal)',
+                'Los nombres propios se separan en sílabas igual que los comunes.',
+                'Pe-dro / Ma-rí-a / Car-los',
+                'Pe-dro (Pe + dro) / Ma-rí-a (Ma + rí + a)',
+                '¿Cómo se separan los nombres propios?', ['Igual que los comunes', 'De forma especial', 'Depende',
+                    'No se separan'
+                ], 0, 'Escribe la separación de tu nombre.'
+            ],
+            ['Separación en siglas', 'Siglas (no se separan)',
+                'Las siglas no se separan en sílabas porque son una unidad.',
+                'ONU / RAE / UNESCO',
+                'ONU (no se separa) / RAE (no se separa)',
+                '¿Cómo se separan las siglas?', ['No se separan', 'Se separan en sílabas', 'Depende', 'Se separan en letras'],
+                0, 'Escribe una sigla y su separación.'
+            ],
+            ['Separación en acrónimos lexicalizados', 'Acrónimos (separación normal)',
+                'Los acrónimos lexicalizados se separan como palabras normales: o-vni, la-ser.',
+                'o-vni / la-ser',
+                'o-vni (o + vni) / la-ser (la + ser)',
+                '¿Cómo se separan los acrónimos lexicalizados?', ['Como palabras normales', 'No se separan', 'Depende',
+                    'Se separan en letras'
+                ], 0, 'Escribe un acrónimo lexicalizado y sepáralo.'
+            ],
+            ['Separación en nombres de marcas', 'Marcas (separación normal)',
+                'Los nombres de marcas se separan según su pronunciación: Co-ca-Co-la, Ni-ke.',
+                'Co-ca-Co-la / Ni-ke',
+                'Co-ca-Co-la (Co + ca + Co + la) / Ni-ke (Ni + ke)',
+                '¿Cómo se separan los nombres de marcas?', ['Según su pronunciación', 'No se separan', 'Depende',
+                    'Se separan en letras'
+                ], 0, 'Escribe una marca y sepárala.'
+            ],
+            ['Separación en títulos de obras', 'Títulos (separación normal)',
+                'Los títulos de obras se separan en sílabas como palabras comunes.',
+                'Cien-a-ños-de-so-le-dad / El-Qui-jo-te',
+                'Cien-a-ños-de-so-le-dad / El-Qui-jo-te',
+                '¿Cómo se separan los títulos?', ['Como palabras comunes', 'No se separan', 'Depende', 'Se separan en letras'],
+                0, 'Escribe un título y sepáralo.'
+            ]
+        ];
+        b8.forEach(d => addLesson('mayusculas', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: EXTRANJERISMOS (86–90)
+        // ============================================================
+        const b9 = [
+            ['Separación en palabras de origen inglés', 'Extranjerismos (adaptación)',
+                'Los extranjerismos se separan según su pronunciación adaptada al español: fút-bol, in-tér-net.',
+                'fút-bol / in-tér-net',
+                'fút-bol (fút + bol) / in-tér-net (in + tér + net)',
+                '¿Cómo se separan los extranjerismos?', ['Según su pronunciación adaptada', 'Como en el idioma original',
+                    'Depende', 'No se separan'
+                ], 0, 'Escribe un extranjerismo y sepáralo.'
+            ],
+            ['Separación en palabras de origen francés', 'Galicismos (adaptación)',
+                'Los galicismos se separan según su pronunciación adaptada: cha-lé, bu-le-var.',
+                'cha-lé / bu-le-var',
+                'cha-lé (cha + lé) / bu-le-var (bu + le + var)',
+                '¿Cómo se separan los galicismos?', ['Según su pronunciación adaptada', 'Como en francés', 'Depende',
+                    'No se separan'
+                ], 0, 'Escribe un galicismo y sepáralo.'
+            ],
+            ['Separación en palabras de origen italiano', 'Italianismos (adaptación)',
+                'Los italianismos se separan según su pronunciación adaptada: pi-zza, spa-gue-ti.',
+                'pi-zza / spa-gue-ti',
+                'pi-zza (pi + zza) / spa-gue-ti (spa + gue + ti)',
+                '¿Cómo se separan los italianismos?', ['Según su pronunciación adaptada', 'Como en italiano', 'Depende',
+                    'No se separan'
+                ], 0, 'Escribe un italianismo y sepáralo.'
+            ],
+            ['Separación en palabras de origen latín', 'Latinismos (separación normal)',
+                'Los latinismos se separan como palabras españolas: cur-rí-cu-lum, re-fe-rén-dum.',
+                'cur-rí-cu-lum / re-fe-rén-dum',
+                'cur-rí-cu-lum (cur + rí + cu + lum) / re-fe-rén-dum (re + fe + rén + dum)',
+                '¿Cómo se separan los latinismos?', ['Como palabras españolas', 'Como en latín', 'Depende', 'No se separan'],
+                0, 'Escribe un latinismo y sepáralo.'
+            ],
+            ['Separación en palabras con "x" en extranjerismos', 'X en extranjerismos',
+                'La "x" en extranjerismos se separa como en español: ex-ten-der, ex-ce-len-te.',
+                'ex-ten-der / ex-ce-len-te',
+                'ex-ten-der (ex + ten + der) / ex-ce-len-te (ex + ce + len + te)',
+                '¿Cómo se separa la "x" en extranjerismos?', ['Como en español', 'Como en el idioma original', 'Depende',
+                    'No se separa'
+                ], 0, 'Escribe un extranjerismo con "x" y sepáralo.'
+            ]
+        ];
+        b9.forEach(d => addLesson('extranjerismos', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: USOS EN REDACCIÓN (91–100)
+        // ============================================================
+        const b10 = [
+            ['Silabeo en textos narrativos', 'Narrativa (separación al final de línea)',
+                'En la redacción narrativa, el silabeo se usa para dividir palabras al final de línea.',
+                'El caballo galo-pa-ba por el cam-po.',
+                'ga-lo-pa-ba / cam-po',
+                '¿Para qué se usa el silabeo en narrativa?', ['Para dividir palabras al final de línea',
+                    'Para dar ritmo', 'Para separar oraciones', 'Para enfatizar'
+                ], 0, 'Escribe una frase narrativa con una palabra dividida al final de línea.'
+            ],
+            ['Silabeo en textos descriptivos', 'Descriptivo (ritmo y musicalidad)',
+                'En la descripción, el silabeo puede dar ritmo y musicalidad al texto.',
+                'La ca-sa blan-ca y gran-de.',
+                'ca-sa / blan-ca / gran-de',
+                '¿Qué efecto tiene el silabeo en la descripción?', ['Ritmo y musicalidad', 'Claridad', 'Precisión',
+                    'Énfasis'
+                ], 0, 'Escribe una frase descriptiva con ritmo silábico.'
+            ],
+            ['Silabeo en textos expositivos', 'Expositivo (claridad y precisión)',
+                'En la redacción expositiva, el silabeo ayuda a la claridad y precisión.',
+                'La len-gua es un sis-te-ma de co-mu-ni-ca-ción.',
+                'len-gua / sis-te-ma / co-mu-ni-ca-ción',
+                '¿Qué ayuda el silabeo en la exposición?', ['Claridad y precisión', 'Ritmo', 'Énfasis', 'Musicalidad'],
+                0, 'Escribe una frase expositiva con silabeo claro.'
+            ],
+            ['Silabeo en textos argumentativos', 'Argumentativo (énfasis)',
+                'En la argumentación, el silabeo puede enfatizar ideas clave.',
+                'La e-du-ca-ción es fun-da-men-tal.',
+                'e-du-ca-ción / fun-da-men-tal',
+                '¿Qué efecto tiene el silabeo en la argumentación?', ['Énfasis', 'Claridad', 'Ritmo', 'Musicalidad'],
+                0, 'Escribe una frase argumentativa con silabeo enfático.'
+            ],
+            ['Silabeo en poesía', 'Poesía (ritmo y métrica)',
+                'En poesía, el silabeo es fundamental para la métrica y el ritmo.',
+                'a-mor / de-mas-i-a-do / lu-na',
+                'a-mor (2 sílabas) / de-mas-i-a-do (5 sílabas)',
+                '¿Para qué se usa el silabeo en poesía?', ['Métrica y ritmo', 'Claridad', 'Precisión', 'Énfasis'],
+                0, 'Escribe un verso y cuenta sus sílabas.'
+            ],
+            ['Silabeo en letras de canciones', 'Canciones (ritmo musical)',
+                'En las letras de canciones, el silabeo se adapta al ritmo musical.',
+                'can-tar / can-ta-rás',
+                'can-tar (2 sílabas) / can-ta-rás (3 sílabas)',
+                '¿Para qué se usa el silabeo en canciones?', ['Ritmo musical', 'Claridad', 'Precisión', 'Énfasis'],
+                0, 'Escribe un verso de canción con silabeo.'
+            ],
+            ['Silabeo en publicidad', 'Publicidad (impacto)',
+                'En publicidad, el silabeo crea eslóganes impactantes.',
+                'se-gun-do / pre-mium',
+                'se-gun-do (3 sílabas) / pre-mium (2 sílabas)',
+                '¿Qué efecto tiene el silabeo en publicidad?', ['Impacto', 'Claridad', 'Precisión', 'Ritmo'],
+                0, 'Escribe un eslogan publicitario con silabeo impactante.'
+            ],
+            ['Silabeo en nombres de marca', 'Marcas (memorabilidad)',
+                'Los nombres de marca suelen tener un silabeo corto y memorable.',
+                'Co-ca / Ni-ke / A-di-das',
+                'Co-ca (2 sílabas) / Ni-ke (2 sílabas)',
+                '¿Qué características tiene el silabeo de las marcas?', ['Corto y memorable', 'Largo y complejo',
+                    'Con hiato', 'Con diptongo'
+                ], 0, 'Escribe un nombre de marca con silabeo corto.'
+            ],
+            ['Silabeo en nombres de dominio', 'Dominios (separación para lectura)',
+                'Los nombres de dominio se dividen para facilitar la lectura.',
+                'www . a-ma-zo-na . com',
+                'a-ma-zo-na (4 sílabas)',
+                '¿Para qué se divide un nombre de dominio en sílabas?', ['Para facilitar la lectura', 'Para el SEO',
+                    'Para la pronunciación', 'Para la escritura'
+                ], 0, 'Escribe un nombre de dominio dividido en sílabas.'
+            ],
+            ['Revisión general: reglas de silabeo', 'Resumen de las reglas',
+                'El silabeo en español sigue reglas claras: diptongos, hiatos, triptongos, grupos consonantales y separación de prefijos y sufijos.',
+                'ca-sa / cau-sa / ca-er / buey / pre-ver',
+                'ca-sa (2 sílabas) / cau-sa (2 sílabas) / ca-er (2 sílabas) / buey (1 sílaba)',
+                '¿Cuántas sílabas tiene "ca-sa"?', ['2', '3', '4', '1'],
+                0, 'Escribe cinco palabras con diferentes estructuras silábicas.'
+            ]
+        ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Regla: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Reglas de Silabeo');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Silabeo cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

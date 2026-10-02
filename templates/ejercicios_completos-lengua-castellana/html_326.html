@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Flota Fonética · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-verde: #69f0ae;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+
+        /* Botones claros y visibles */
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- SIDEBAR -->
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🎙️ FLOTA FONÉTICA<small>100 TÉCNICAS · FONOLOGÍA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="vox" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Vox <span class="badge-personaje bg-verde">Articuladora</span></a>
+        <a class="nav-link" data-section="sonora" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Sonora <span class="badge-personaje bg-dorado">Acústica</span></a>
+        <a class="nav-link" data-section="audia" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Audia <span class="badge-personaje bg-azul">Perceptiva</span></a>
+        <a class="nav-link" data-section="fono" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Fono <span class="badge-personaje bg-purpura">Fonóloga</span></a>
+        <a class="nav-link" data-section="tonica" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Tónica <span class="badge-personaje bg-rojo">Prosódica</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <!-- MAIN -->
+    <main class="main-stellar">
+        <!-- DASHBOARD -->
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🎙️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Teoría + Ejemplo + Ejercicio + Reto</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Fonología y Fonética</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la fonología/fonética castellana:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-verde);">Vox</strong> – Producción de sonidos (articulación).</li>
+                    <li><strong style="color:var(--neon-dorado);">Sonora</strong> – Ondas y espectrogramas (acústica).</li>
+                    <li><strong style="color:var(--neon-azul);">Audia</strong> – Percepción y audición.</li>
+                    <li><strong style="color:var(--neon-purpura);">Fono</strong> – Sistema fonológico, pares mínimos.</li>
+                    <li><strong style="color:var(--neon-rojo);">Tónica</strong> – Acento, entonación, ritmo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Secciones dinámicas -->
+        <div id="section-vox" class="section-content" style="display:none;"></div>
+        <div id="section-sonora" class="section-content" style="display:none;"></div>
+        <div id="section-audia" class="section-content" style="display:none;"></div>
+        <div id="section-fono" class="section-content" style="display:none;"></div>
+        <div id="section-tonica" class="section-content" style="display:none;"></div>
+
+        <!-- SEGUIMIENTO -->
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    vox: {
+        nombre: "Vox", color: "verde", icono: "bi-robot",
+        especialidad: "Fonética articulatoria (producción de sonidos)",
+        tecnicas: [
+            { titulo: "Aparato fonador", teoria: "El aparato fonador incluye pulmones, laringe, cuerdas vocales, faringe, cavidad oral y nasal. El sonido se produce al pasar el aire por estos órganos.", ejemplo: "Los pulmones son el motor; las cuerdas vocales son la fuente sonora; la boca y la nariz son los filtros.", ejercicio: "Nombra 5 órganos del aparato fonador.", reto: "Dibuja un esquema simple del aparato fonador y etiqueta sus partes." },
+            { titulo: "Puntos de articulación", teoria: "Los puntos de articulación son lugares donde se obstruye o modifica el flujo del aire: bilabial, labiodental, interdental, dental, alveolar, palatal, velar, uvular.", ejemplo: "'p' y 'b' son bilabiales; 't' y 'd' son dentales; 'k' y 'g' son velares.", ejercicio: "Clasifica 5 consonantes por su punto de articulación.", reto: "Pronuncia cada sonido y siente dónde toca tu lengua." },
+            { titulo: "Modos de articulación", teoria: "Los modos describen cómo se produce la obstrucción: oclusivo, fricativo, africado, nasal, lateral, vibrante.", ejemplo: "'p' oclusivo (cierre total), 's' fricativo (cierre parcial), 'm' nasal (aire por nariz).", ejercicio: "Clasifica 5 consonantes por su modo de articulación.", reto: "Graba tu voz diciendo cada modo y escucha la diferencia." },
+            { titulo: "Sordas y sonoras", teoria: "Las consonantes pueden ser sordas (no vibran las cuerdas vocales) o sonoras (vibran).", ejemplo: "'p' sorda vs 'b' sonora; 't' sorda vs 'd' sonora; 'k' sorda vs 'g' sonora.", ejercicio: "Escribe 3 pares sorda/sonora.", reto: "Coloca tu mano en la garganta y pronuncia cada par; siente la vibración." },
+            { titulo: "Vocales del castellano", teoria: "El español tiene 5 vocales: /a/, /e/, /i/, /o/, /u/. Se clasifican por altura (abiertas/cerradas) y localización (anterior/central/posterior).", ejemplo: "/a/ abierta central; /e/ media anterior; /i/ cerrada anterior; /o/ media posterior; /u/ cerrada posterior.", ejercicio: "Escribe 5 palabras que empiecen con cada vocal.", reto: "Pronuncia las 5 vocales en orden y escucha cómo cambia tu boca." },
+            { titulo: "Consonantes del castellano", teoria: "El sistema consonántico del español incluye 18-24 fonemas según dialecto: oclusivas, fricativas, nasales, laterales, vibrantes, africadas.", ejemplo: "Oclusivas: p,b,t,d,k,g; fricativas: f,θ,s,x; nasales: m,n,ɲ; laterales: l,ʎ.", ejercicio: "Escribe 3 palabras con cada tipo de consonante.", reto: "Graba una lista de palabras y clasifica sus consonantes." },
+            { titulo: "Fonema /b/", teoria: "El fonema /b/ es bilabial sonoro oclusivo en posición inicial o tras nasal, y fricativo en otros contextos (betacismo).", ejemplo: "'boca' (oclusivo), 'la boca' (fricativo), 'cabeza' (fricativo).", ejercicio: "Escribe 5 palabras con /b/ en diferentes posiciones.", reto: "Pronuncia estas palabras y siente la diferencia." },
+            { titulo: "Fonema /d/", teoria: "El fonema /d/ es dental sonoro oclusivo en posición inicial o tras nasal, y fricativo en otros contextos.", ejemplo: "'dedo' (oclusivo al inicio y fricativo en el medio), 'la dedo' no existe, 'la dama' (oclusivo tras 'l').", ejercicio: "Escribe 5 palabras con /d/ en diferentes posiciones.", reto: "Practica la pronunciación de 'dedo', 'dado', 'duda'." },
+            { titulo: "Fonema /g/", teoria: "El fonema /g/ es velar sonoro oclusivo en posición inicial o tras nasal, y fricativo/elidido en otros contextos.", ejemplo: "'gato' (oclusivo), 'la gata' (fricativo), 'guerra' (oclusivo por la 'u').", ejercicio: "Escribe 5 palabras con /g/ en diferentes posiciones.", reto: "Pronuncia 'gato', 'fuego', 'amigo' y siente la diferencia." },
+            { titulo: "Fonema /s/", teoria: "El fonema /s/ es alveolar fricativo sordo. En algunas regiones se aspira o se reduce al final de sílaba.", ejemplo: "'sopa', 'casa' (s alveolar), 'las casas' (puede ser aspirado en el sur).", ejercicio: "Escribe 5 palabras con /s/ en diferentes posiciones.", reto: "Graba y escucha tu /s/ en 'estudiar', 'casa', 'los niños'." },
+            { titulo: "Fonema /r/", teoria: "La 'r' simple y la 'r' múltiple. La vibrante simple /ɾ/ (corto), la vibrante múltiple /r/ (largo).", ejemplo: "'pero' (/ɾ/), 'perro' (/r/), 'caro' (/ɾ/), 'carro' (/r/).", ejercicio: "Escribe 5 pares de palabras diferenciadas por la r simple o múltiple.", reto: "Practica la diferencia: 'pero' vs 'perro', 'caro' vs 'carro'." },
+            { titulo: "Fonema /ʎ/", teoria: "La 'elle' /ʎ/ es palatal lateral sonora. En muchos dialectos se ha fusionado con /j/ (yeísmo).", ejemplo: "'pollo' (/ʎ/ o /j/ según dialecto), 'llave' (/ʎ/ o /j/).", ejercicio: "Escribe 5 palabras con 'll' o 'y'.", reto: "Graba y escucha tu pronunciación de 'llave', 'pollo', 'yegua'." },
+            { titulo: "Fonema /ɲ/", teoria: "La 'eñe' /ɲ/ es palatal nasal sonora. Es uno de los sonidos más característicos del español.", ejemplo: "'niño', 'leña', 'enseñar' (la 'ñ' siempre es /ɲ/).", ejercicio: "Escribe 5 palabras con 'ñ'.", reto: "Pronuncia 'niño', 'mañana', 'enseñar' con atención a la 'ñ'." },
+            { titulo: "Fonema /x/", teoria: "La 'j' y la 'g' ante e/i representan /x/, una fricativa velar sorda.", ejemplo: "'jota', 'gente', 'guitarra' (en algunas regiones se pronuncia más suave, en otras fuerte).", ejercicio: "Escribe 5 palabras con /x/.", reto: "Pronuncia 'juego', 'gente', 'jamón' y escucha tu /x/." },
+            { titulo: "Fonema /θ/", teoria: "La 'z' y la 'c' ante e/i representan /θ/ en dialectos con distinción (la mayor parte de España).", ejemplo: "'zapato', 'cena', 'cocinar' (con distinción). En dialectos seseantes, se pronuncia /s/.", ejercicio: "Escribe 3 palabras con /θ/.", reto: "Practica la diferencia: 'casa' (/s/) vs 'caza' (/θ/)." },
+            { titulo: "Fonema /f/", teoria: "La /f/ es labiodental fricativo sorda. Es uno de los sonidos más estables del español.", ejemplo: "'faro', 'confiar', 'fernando'.", ejercicio: "Escribe 5 palabras con /f/.", reto: "Pronuncia 'fácil', 'jefe', 'afuera'." },
+            { titulo: "Diptongos", teoria: "Los diptongos son secuencias de dos vocales en la misma sílaba: una abierta + cerrada (ai, au, ei, eu, oi, ou) o cerrada + abierta (ia, ie, io, ua, ue, uo).", ejemplo: "'paisaje' (ai), 'cielo' (ie), 'cuatro' (ua).", ejercicio: "Escribe 5 palabras con diptongo.", reto: "Pronuncia y divide en sílabas: 'cielo', 'paisaje', 'cuatro'." },
+            { titulo: "Triptongos", teoria: "Los triptongos son secuencias de tres vocales en la misma sílaba: cerrada + abierta + cerrada (iai, iei, uai, uei).", ejemplo: "'limpiáis' (iáis), 'buey' (uey), 'averiguáis' (uáis).", ejercicio: "Escribe 3 palabras con triptongo.", reto: "Pronuncia y divide: 'limpiáis', 'buey', 'estudiáis'." },
+            { titulo: "Hiato", teoria: "El hiato ocurre cuando dos vocales se pronuncian en sílabas diferentes, por ejemplo, dos vocales abiertas o una cerrada tónica.", ejemplo: "'poema' (o-e), 'creer' (e-e), 'país' (a-í).", ejercicio: "Escribe 5 palabras con hiato.", reto: "Pronuncia y separa: 'poema', 'país', 'ahí'." },
+            { titulo: "Fonética de las nasales", teoria: "Las nasales /m/, /n/, /ɲ/ se producen con el aire saliendo por la nariz. En posición final de sílaba, pueden asimilarse a la consonante siguiente.", ejemplo: "'campo' (m + p), 'canción' (n + c), 'naranja' (n).", ejercicio: "Escribe 5 palabras con cada nasal.", reto: "Pronuncia 'cinco', 'enfermo', 'jamón'." }
+        ]
+    },
+    sonora: {
+        nombre: "Sonora", color: "dorado", icono: "bi-robot",
+        especialidad: "Fonética acústica (ondas y espectrogramas)",
+        tecnicas: [
+            { titulo: "Onda sonora", teoria: "El sonido es una onda que se propaga en el aire. Tiene propiedades como frecuencia, amplitud, duración y forma de onda.", ejemplo: "La frecuencia se mide en Hertz (Hz); el oído humano escucha entre 20 y 20.000 Hz.", ejercicio: "Investiga y escribe las frecuencias típicas de la voz humana.", reto: "Graba tu voz y obsérvala en un espectrograma." },
+            { titulo: "Frecuencia fundamental", teoria: "La frecuencia fundamental (F0) es la frecuencia más baja de la voz, determinada por la velocidad de vibración de las cuerdas vocales.", ejemplo: "La F0 de una voz masculina adulta ronda los 80-150 Hz; la femenina, 150-250 Hz.", ejercicio: "Estima tu frecuencia fundamental con un afinador o app.", reto: "Graba tu voz y mide tu F0 con un software como Praat." },
+            { titulo: "Formantes", teoria: "Los formantes son frecuencias de resonancia que dan color a los sonidos. Los dos primeros formantes (F1 y F2) definen las vocales.", ejemplo: "/a/ tiene F1 alto y F2 medio; /i/ tiene F1 bajo y F2 alto; /u/ tiene F1 bajo y F2 bajo.", ejercicio: "Busca los valores típicos de F1 y F2 para las 5 vocales.", reto: "Graba las vocales y mide sus formantes en un espectrograma." },
+            { titulo: "Espectrograma", teoria: "El espectrograma es una representación visual del sonido: tiempo en el eje X, frecuencia en el Y, intensidad en el color.", ejemplo: "Las vocales aparecen como barras horizontales (formantes); las consonantes como ruido o pausas.", ejercicio: "Busca imágenes de espectrogramas de voz humana.", reto: "Graba una frase y obsérvala en un espectrograma." },
+            { titulo: "Intensidad o amplitud", teoria: "La intensidad (amplitud) del sonido se mide en decibelios (dB). Corresponde al volumen o fuerza del sonido.", ejemplo: "Una conversación normal ronda los 40-60 dB; un grito, 80-90 dB.", ejercicio: "Mide el volumen de tu voz en diferentes situaciones.", reto: "Graba tu voz en susurro, habla normal y grito; compara." },
+            { titulo: "Duración de los sonidos", teoria: "Los sonidos tienen una duración medida en milisegundos. Las vocales suelen ser más largas que las consonantes.", ejemplo: "Las vocales tónicas son más largas que las átonas; las finales de frase también se alargan.", ejercicio: "Mide la duración de una vocal en diferentes palabras.", reto: "Graba y mide la duración de /a/ en 'casa' y en 'casaaaa'." },
+            { titulo: "Armónicos y parciales", teoria: "Los sonidos complejos contienen armónicos (múltiplos de la F0). Los armónicos determinan el timbre.", ejemplo: "Una voz con muchos armónicos suena 'rica' o 'cálida'; con pocos, 'plana' o 'metálica'.", ejercicio: "Investiga los armónicos de tu voz.", reto: "Graba y analiza el espectro de tu voz." },
+            { titulo: "Fricativas en espectrograma", teoria: "Las fricativas (/s/, /f/, /x/) aparecen como ruido en las frecuencias altas, sin bandas de formantes claras.", ejemplo: "'sopa' muestra un ruido de fricación en los agudos; 'faro' muestra ruido en los medios.", ejercicio: "Busca imágenes de espectrogramas de fricativas.", reto: "Graba y observa las fricativas en un espectrograma." },
+            { titulo: "Oclusivas en espectrograma", teoria: "Las oclusivas (/p/, /t/, /k/, /b/, /d/, /g/) muestran un cierre (silencio) seguido de una explosión.", ejemplo: "'pato' muestra un espacio de silencio seguido de una pequeña explosión.", ejercicio: "Busca imágenes de espectrogramas de oclusivas.", reto: "Graba y observa las oclusivas en un espectrograma." },
+            { titulo: "Nasales en espectrograma", teoria: "Las nasales (/m/, /n/, /ɲ/) muestran formantes con poca intensidad y un descenso de F1.", ejemplo: "'mano' muestra una nasal antes de la vocal.", ejercicio: "Busca imágenes de espectrogramas de nasales.", reto: "Graba y observa las nasales en un espectrograma." },
+            { titulo: "Vocales en espectrograma", teoria: "Las vocales se identifican por sus dos primeros formantes: F1 (altura de la lengua) y F2 (posición anterior/posterior).", ejemplo: "/a/ = F1 alto (800 Hz), F2 medio (1200 Hz); /i/ = F1 bajo (300 Hz), F2 alto (2500 Hz).", ejercicio: "Busca la tabla de formantes para las vocales del español.", reto: "Graba las 5 vocales y mide sus F1 y F2." },
+            { titulo: "Espectro de sonido", teoria: "El espectro de un sonido muestra la amplitud de cada frecuencia presente (F0, armónicos).", ejemplo: "Un sonido armónico tiene picos en la F0 y sus múltiplos; un sonido ruidoso tiene energía en todas las frecuencias.", ejercicio: "Investiga qué sonidos son armónicos y cuáles ruidosos.", reto: "Graba y analiza el espectro de una vocal y de una fricativa." },
+            { titulo: "Cepstrum", teoria: "El cepstrum es una transformación del espectro para medir la F0. Se usa para extraer la frecuencia fundamental.", ejemplo: "El pico de cepstrum corresponde a la F0.", ejercicio: "Investiga qué es el cepstrum y para qué sirve.", reto: "Usa Praat para obtener el cepstrum de tu voz." },
+            { titulo: "Curva de entonación", teoria: "La curva de entonación es la variación de la F0 a lo largo de una frase. Refleja el contorno melódico.", ejemplo: "Una pregunta tiene una curva ascendente al final; una afirmación, descendente.", ejercicio: "Dibuja la curva de entonación de una frase afirmativa y una interrogativa.", reto: "Graba y analiza la curva de entonación de una frase." },
+            { titulo: "Segmentación acústica", teoria: "La segmentación acústica consiste en dividir el flujo del habla en segmentos (fonemas) basados en el espectrograma y la forma de onda.", ejemplo: "Se buscan cambios abruptos en la forma de onda, pausas y bandas de formantes.", ejercicio: "Intenta segmentar una grabación de tu voz.", reto: "Usa Praat para segmentar una frase tuya." },
+            { titulo: "Voz y ruido", teoria: "El habla tiene componentes periódicos (voz) y aperiódicos (ruido). Las vocales son periódicas, las fricativas ruidosas.", ejemplo: "'s' es ruido; 'a' es periódica. 'sa' muestra la transición.", ejercicio: "Identifica elementos periódicos y ruidosos en una grabación.", reto: "Graba y separa partes periódicas y aperiódicas." },
+            { titulo: "Coarticulación acústica", teoria: "La coarticulación acústica se manifiesta en la variación de los formantes debido al contexto, especialmente la transición formántica.", ejemplo: "La /i/ en 'si' y en 'se' tendrá formantes ligeramente diferentes por el contexto.", ejercicio: "Graba la misma vocal en diferentes contextos y compara.", reto: "Mide y compara formantes de la /i/ en 'sí', 'sé', 'sá'." },
+            { titulo: "Efecto de la velocidad", teoria: "La velocidad del habla afecta los parámetros acústicos: duración de vocales, número de sílabas por minuto, pausas.", ejemplo: "El habla rápida reduce la duración de las vocales y puede debilitar algunos sonidos.", ejercicio: "Graba una frase a velocidad normal y rápida, compáralas.", reto: "Mide la duración de las vocales en ambas grabaciones." },
+            { titulo: "Efecto del énfasis", teoria: "El énfasis aumenta la intensidad, alarga la duración y eleva la F0 de las sílabas tónicas.", ejemplo: "En 'cásate', la 'ca' tiene más intensidad que las otras sílabas.", ejercicio: "Graba la misma palabra con y sin énfasis.", reto: "Mide la intensidad y F0 de la sílaba tónica vs átonas." },
+            { titulo: "Análisis acústico de la entonación", teoria: "El análisis de la entonación mide la variación de F0 en la frase para estudiar el tono, las preguntas, las declaraciones, la cortesía.", ejemplo: "La cortesía a menudo tiene curvas de entonación ascendentes moderadas.", ejercicio: "Investiga los patrones entonativos del español.", reto: "Graba y analiza la entonación de una pregunta, una afirmación y un imperativo." }
+        ]
+    },
+    audia: {
+        nombre: "Audia", color: "azul", icono: "bi-robot",
+        especialidad: "Fonética perceptiva (cómo oímos los sonidos)",
+        tecnicas: [
+            { titulo: "Oído humano", teoria: "El oído humano es el órgano receptor del sonido. Consta de oído externo, medio e interno. Las ondas se transforman en señales nerviosas.", ejemplo: "El oído externo capta el sonido, el medio lo amplifica y el interno lo convierte en impulsos nerviosos.", ejercicio: "Investiga y describe el oído externo, medio e interno.", reto: "Haz un esquema del oído y etiqueta sus partes." },
+            { titulo: "Percepción de frecuencias", teoria: "El oído humano percibe frecuencias de 20 a 20.000 Hz. La sensibilidad varía con la frecuencia; los agudos son más difíciles de oír para los adultos.", ejemplo: "La mayoría de la energía del habla está por debajo de 8.000 Hz.", ejercicio: "Investiga la curva de audición humana.", reto: "Haz una prueba de audición online para frecuencias altas y bajas." },
+            { titulo: "Percepción de vocales", teoria: "Las vocales se perciben por la posición de los formantes, especialmente F1 y F2. El oído es sensible a las relaciones entre formantes.", ejemplo: "La /i/ se percibe cuando F2 es alto; la /u/ cuando F2 es bajo.", ejercicio: "Escucha y diferencia las 5 vocales en diferentes contextos.", reto: "Graba y modifica F1 y F2 de una vocal; observa cómo cambia la percepción." },
+            { titulo: "Percepción de consonantes", teoria: "Las consonantes se perciben por sus características acústicas: oclusión, fricación, nasalidad, punto de articulación.", ejemplo: "La /p/ se percibe por el cierre y la explosión; la /s/ por el ruido de fricación.", ejercicio: "Escucha y diferencia pares de consonantes (p/b, t/d, k/g).", reto: "Crea un test de percepción de consonantes y pruébalo con alguien." },
+            { titulo: "Efecto de la coarticulación en la percepción", teoria: "La coarticulación afecta a la percepción: un sonido se percibe diferente según el contexto.", ejemplo: "La /d/ en 'dedo' suena diferente que en 'adelante' debido a la coarticulación.", ejercicio: "Escucha la misma consonante en diferentes contextos.", reto: "Graba la /d/ en diferentes palabras y observa cómo varía." },
+            { titulo: "Percepción del acento", teoria: "El acento se percibe por la combinación de intensidad, duración y frecuencia en la sílaba tónica.", ejemplo: "En 'cántaro', la 'cán' suena más prominente que las otras sílabas.", ejercicio: "Identifica la sílaba tónica en 10 palabras.", reto: "Graba palabras con acento en diferentes posiciones y compáralas." },
+            { titulo: "Percepción del tono", teoria: "El tono (variación de F0) se percibe como melodia. El español no es tonal, pero el tono indica modalidad (pregunta, afirmación).", ejemplo: "La pregunta tiene F0 ascendente al final; la afirmación descendente.", ejercicio: "Escucha frases e identifica la modalidad por el tono.", reto: "Graba una frase como pregunta y como afirmación; compáralas." },
+            { titulo: "Umbrales auditivos", teoria: "Los umbrales auditivos son los niveles mínimos de sonido que se pueden percibir. Varían con la frecuencia y la persona.", ejemplo: "El umbral a 1000 Hz es de unos 0 dB; a 100 Hz es más alto (~30 dB).", ejercicio: "Investiga la curva de umbrales auditivos.", reto: "Haz una prueba de umbral auditivo con audífonos." },
+            { titulo: "Enmascaramiento auditivo", teoria: "El enmascaramiento ocurre cuando un sonido fuerte impide oír otro más suave. Puede ser simultáneo o temporal.", ejemplo: "Una voz fuerte puede enmascarar una conversación más suave.", ejercicio: "Investiga los tipos de enmascaramiento auditivo.", reto: "Prueba el enmascaramiento con sonidos de diferentes frecuencias." },
+            { titulo: "Percepción del habla en ruido", teoria: "La percepción del habla en ruido es más difícil. Se usan pistas contextuales, visuales y lingüísticas para entender.", ejemplo: "Leer los labios ayuda en entornos ruidosos.", ejercicio: "Escucha una grabación con diferentes niveles de ruido.", reto: "Graba una frase con ruido de fondo y evalúa la inteligibilidad." },
+            { titulo: "Efecto de la edad en la percepción", teoria: "La percepción del habla cambia con la edad: los agudos se pierden (presbiacusia), la velocidad de procesamiento disminuye.", ejemplo: "Los adultos mayores suelen tener dificultad con consonantes agudas como 's' y 'f'.", ejercicio: "Investiga la presbiacusia y sus efectos.", reto: "Prueba a entender el habla con un filtro de agudos." },
+            { titulo: "Percepción del ritmo", teoria: "El ritmo del habla se percibe por la duración de sílabas y pausas. El español tiene un ritmo de sílabas en lugar de acentos.", ejemplo: "Las sílabas en español tienden a tener duración similar.", ejercicio: "Escucha y marca el ritmo de una frase.", reto: "Graba y compara el ritmo de español y de otro idioma (inglés)." },
+            { titulo: "Percepción de la entonación", teoria: "La entonación se percibe como la melodía de la frase. Comunica actitud, énfasis, modalidad.", ejemplo: "Una entonación ascendente puede indicar pregunta; descendente, afirmación.", ejercicio: "Escucha frases con diferentes entonaciones y clasifícalas.", reto: "Graba una misma frase con diferentes entonaciones." },
+            { titulo: "Percepción del habla y cerebro", teoria: "El cerebro procesa el habla en áreas especializadas (área de Broca, área de Wernicke). El oído lleva la señal al cerebro.", ejemplo: "El área de Wernicke procesa el significado; Broca, la producción.", ejercicio: "Investiga las áreas cerebrales del lenguaje.", reto: "Lee sobre afasias y cómo afectan la percepción." },
+            { titulo: "Efecto del contexto en la percepción", teoria: "El contexto semántico y sintáctico ayuda a entender el habla, incluso si no se oyen bien todos los sonidos.", ejemplo: "Si oyes '_uelo', sabes que puede ser 'suelo', 'cielo', 'vuelo' según el contexto.", ejercicio: "Identifica palabras borrosas por el contexto.", reto: "Graba una frase con una palabra distorsionada; pide a alguien que la identifique." },
+            { titulo: "Percepción y atención", teoria: "La atención selectiva permite concentrarse en un sonido e ignorar otros (efecto cóctel).", ejemplo: "En una fiesta, puedes oír a una persona aunque haya ruido.", ejercicio: "Practica la atención selectiva en una grabación con varias voces.", reto: "Graba una conversación en un lugar ruidoso y transcríbela." },
+            { titulo: "Percepción de la duración", teoria: "La duración de los sonidos afecta la percepción: vocales largas pueden percibirse como tónicas, cortas como átonas.", ejemplo: "En 'casa' la 'a' es larga; en 'caso' la 'a' es corta.", ejercicio: "Mide la duración de vocales en diferentes palabras.", reto: "Graba y modifica la duración de una vocal; observa el cambio perceptivo." },
+            { titulo: "Percepción de la intensidad", teoria: "La intensidad se percibe como volumen. El oído humano tiene una curva de percepción no lineal (decibelios A, C).", ejemplo: "Un sonido de 40 dB se percibe como 'bajo'; 70 dB como 'fuerte'.", ejercicio: "Escucha sonidos de diferentes intensidades y clasifícalos.", reto: "Mide la intensidad del habla en diferentes situaciones." },
+            { titulo: "Percepción del timbre", teoria: "El timbre se percibe por la distribución de armónicos. Permite reconocer voces e instrumentos.", ejemplo: "La misma nota en una voz y en una flauta suenan diferente por el timbre.", ejercicio: "Escucha la misma frase de diferentes personas y reconoce al hablante.", reto: "Graba tu voz y compárala con la de otra persona." },
+            { titulo: "Percepción del habla en el cerebro", teoria: "El cerebro procesa el habla de forma jerárquica: sonidos → fonemas → palabras → frases → significado.", ejemplo: "Se activan diferentes regiones del cerebro según la tarea lingüística.", ejercicio: "Investiga las rutas cerebrales del habla.", reto: "Lee un texto en voz alta y observa tu propio procesamiento." }
+        ]
+    },
+    fono: {
+        nombre: "Fono", color: "purpura", icono: "bi-robot",
+        especialidad: "Fonología (sistema de sonidos, pares mínimos, rasgos)",
+        tecnicas: [
+            { titulo: "Fonema vs alófono", teoria: "El fonema es una unidad abstracta que distingue significado (ej. /p/ vs /b/). Los alófonos son variantes de un fonema (ej. /b/ oclusiva vs fricativa).", ejemplo: "'pala' vs 'bala' → /p/ y /b/ son fonemas distintos. La /b/ de 'boca' y 'lobo' son alófonos.", ejercicio: "Identifica pares de palabras que se diferencian por un fonema.", reto: "Encuentra alófonos de los fonemas /b/, /d/, /g/." },
+            { titulo: "Pares mínimos", teoria: "Un par mínimo es un par de palabras que se diferencian por un solo fonema en la misma posición.", ejemplo: "'pala' vs 'bala' (/p/ vs /b/), 'casa' vs 'caza' (/s/ vs /θ/), 'pero' vs 'perro' (/ɾ/ vs /r/).", ejercicio: "Escribe 5 pares mínimos del español.", reto: "Crea 10 pares mínimos con diferentes fonemas." },
+            { titulo: "Rasgos distintivos", teoria: "Los rasgos distintivos son propiedades binarias que definen los fonemas (ej. sonoro/sordo, nasal/oral, anterior/posterior).", ejemplo: "/p/ = [-sonoro, -nasal, +oclusivo, +bilabial]; /b/ = [+sonoro, -nasal, +oclusivo, +bilabial].", ejercicio: "Define los rasgos de 5 fonemas.", reto: "Haz una tabla de rasgos para todas las consonantes del español." },
+            { titulo: "Neutralización", teoria: "La neutralización ocurre cuando dos fonemas distintos se pronuncian igual en ciertos contextos (ej. /b/ y /p/ después de /s/ en 'espejo').", ejemplo: "En 'espejo', la 'p' se pronuncia como /b/ en muchos dialectos (neutralización).", ejercicio: "Investiga la neutralización en español.", reto: "Encuentra ejemplos de neutralización en tu propio habla." },
+            { titulo: "Archifonema", teoria: "El archifonema es la unidad que representa la neutralización, escrita con mayúscula (ej. /B/ para la neutralización de /p/ y /b/).", ejemplo: "En 'espejo', el archifonema /B/ representa la neutralización.", ejercicio: "Investiga los archifonemas del español.", reto: "Escribe 3 ejemplos de archifonemas en palabras." },
+            { titulo: "Inventario fonológico del español", teoria: "El inventario fonológico del español incluye 5 vocales y entre 18 y 24 consonantes según la variedad.", ejemplo: "Consonantes: p, b, t, d, k, g, f, θ, s, x, m, n, ɲ, l, ʎ, ɾ, r, ʧ, ʤ.", ejercicio: "Haz una lista de todos los fonemas del español.", reto: "Compara el inventario de tu variedad con el estándar." },
+            { titulo: "Fonemas oclusivos", teoria: "Los fonemas oclusivos son /p/, /b/, /t/, /d/, /k/, /g/. Se caracterizan por un cierre completo del flujo de aire.", ejemplo: "'pato', 'bato', 'tato', 'dato', 'cato' (no existe), 'gato'.", ejercicio: "Escribe 3 palabras con cada oclusiva.", reto: "Graba y compara las oclusivas sordas y sonoras." },
+            { titulo: "Fonemas fricativos", teoria: "Los fonemas fricativos son /f/, /θ/, /s/, /x/ (y alófonos de oclusivas). Se caracterizan por una fricción del aire.", ejemplo: "'faro', 'zapato' (con distinción), 'sopa', 'jota'.", ejercicio: "Escribe 3 palabras con cada fricativa.", reto: "Graba y analiza las fricativas del español." },
+            { titulo: "Fonemas nasales", teoria: "Los fonemas nasales son /m/, /n/, /ɲ/. Se producen con el aire saliendo por la nariz.", ejemplo: "'mano', 'nano', 'niño'.", ejercicio: "Escribe 3 palabras con cada nasal.", reto: "Graba y siente la vibración nasal en cada una." },
+            { titulo: "Fonemas laterales y vibrantes", teoria: "Los fonemas laterales son /l/, /ʎ/. Los vibrantes son /ɾ/ (simple) y /r/ (múltiple).", ejemplo: "'lado', 'llave' (con /ʎ/), 'pero' (/ɾ/), 'perro' (/r/).", ejercicio: "Escribe 3 palabras con cada uno.", reto: "Graba y compara las vibrantes simple y múltiple." },
+            { titulo: "Fonemas africados", teoria: "Los fonemas africados son /ʧ/ ('ch') y /ʤ/ (en algunas variedades). Se producen con una oclusión seguida de fricación.", ejemplo: "'chico' (/ʧ/), 'yo' (/ʤ/ en algunas variedades).", ejercicio: "Escribe 3 palabras con /ʧ/.", reto: "Graba y analiza la africada /ʧ/." },
+            { titulo: "Sistema vocálico", teoria: "El sistema vocálico del español tiene 5 vocales: /a/, /e/, /i/, /o/, /u/. Se diferencian por altura y localización.", ejemplo: "/i/ cerrada anterior, /e/ media anterior, /a/ abierta central, /o/ media posterior, /u/ cerrada posterior.", ejercicio: "Clasifica las 5 vocales por altura y localización.", reto: "Haz un triángulo vocálico del español." },
+            { titulo: "Fonotaxis", teoria: "La fonotaxis estudia las combinaciones de sonidos permitidas en una lengua (ej. en español no hay palabras que empiecen con /tl/).", ejemplo: "En español, las sílabas pueden ser CV, VC, V, CVC (limitado).", ejercicio: "Investiga las restricciones fonotácticas del español.", reto: "Analiza las sílabas de 10 palabras." },
+            { titulo: "Sílaba", teoria: "La sílaba es una unidad fonológica con un núcleo (vocal) y márgenes (consonantes). En español, la estructura más común es CV.", ejemplo: "'pa' (CV), 'a' (V), 'pan' (CVC), 'tres' (CCV).", ejercicio: "Divide 10 palabras en sílabas.", reto: "Analiza la estructura silábica de una oración." },
+            { titulo: "Estructura silábica", teoria: "La sílaba tiene tres partes: ataque (consonantes), núcleo (vocal), coda (consonantes). El núcleo es obligatorio.", ejemplo: "'tren' = ataque 'tr', núcleo 'e', coda 'n'.", ejercicio: "Analiza la estructura silábica de 5 palabras.", reto: "Clasifica palabras por su tipo silábico (CV, CVC, CCV, etc.)." },
+            { titulo: "Fonología del acento", teoria: "El acento es un rasgo suprasegmental que destaca una sílaba. El acento léxico es fijo en el español.", ejemplo: "Las palabras agudas, graves y esdrújulas tienen el acento en la última, penúltima o antepenúltima sílaba.", ejercicio: "Clasifica 10 palabras por su tipo de acento.", reto: "Escribe una lista de 10 palabras con acento en diferentes sílabas." },
+            { titulo: "Reglas de acentuación", teoria: "El acento gráfico (tilde) sigue reglas fonológicas: agudas llevan tilde si terminan en N, S o vocal; graves si no terminan en N, S o vocal; esdrújulas siempre.", ejemplo: "'canción' (aguda, N → tilde), 'árbol' (grave, L → tilde), 'pájaro' (esdrújula → tilde).", ejercicio: "Acentúa 10 palabras según las reglas.", reto: "Escribe 10 palabras con y sin tilde correctamente." },
+            { titulo: "Alomorfía", teoria: "La alomorfía es la variación de morfemas en diferentes contextos. Ejemplo: el plural puede ser /s/ (casa-s), /es/ (coche-s).", ejemplo: "El plural de 'casa' es /s/, el de 'coche' es /es/, el de 'pez' es /es/ (peces).", ejercicio: "Analiza los alomorfos del plural.", reto: "Encuentra alomorfos en otros morfemas (verbos, adjetivos)." },
+            { titulo: "Historia de la fonología", teoria: "La fonología moderna nació con el Círculo de Praga y el estructuralismo. Saussure, Trubetzkoy y Jakobson son figuras clave.", ejemplo: "El concepto de fonema como unidad distintiva es de Trubetzkoy.", ejercicio: "Investiga y escribe un resumen de la historia de la fonología.", reto: "Lee un texto de Trubetzkoy o Jakobson y resume sus ideas." },
+            { titulo: "Fonología y ortografía", teoria: "La ortografía del español se basa en principios fonológicos: un fonema puede tener varias grafías (ej. /b/ → b, v).", ejemplo: "/b/ se escribe b o v; /x/ se escribe j o g (ante e/i).", ejercicio: "Investiga las reglas ortográficas basadas en la fonología.", reto: "Escribe un texto con palabras que tengan grafías de fonemas variables." }
+        ]
+    },
+    tonica: {
+        nombre: "Tónica", color: "rojo", icono: "bi-robot",
+        especialidad: "Prosodia: acento, entonación, ritmo",
+        tecnicas: [
+            { titulo: "Acento", teoria: "El acento es la prominencia de una sílaba por intensidad, duración o tono. En español, el acento es léxico y distingue palabras.", ejemplo: "'cántara' vs 'cantará' (el acento cambia el significado).", ejercicio: "Identifica la sílaba tónica en 10 palabras.", reto: "Escribe 5 pares de palabras donde el acento cambie el significado." },
+            { titulo: "Entonación", teoria: "La entonación es la variación de la frecuencia fundamental (F0) a lo largo de una frase. Comunica modalidad y actitud.", ejemplo: "Afirmación: 'Viene' (descendente); Pregunta: '¿Viene?' (ascendente).", ejercicio: "Graba y analiza la entonación de una frase afirmativa e interrogativa.", reto: "Graba una misma frase con diferentes actitudes (alegre, triste, enojado)." },
+            { titulo: "Ritmo", teoria: "El ritmo del habla está determinado por la duración de sílabas y la regularidad de los acentos.", ejemplo: "El español tiene un ritmo de sílabas (las sílabas tienden a durar lo mismo).", ejercicio: "Graba una frase y mide la duración de las sílabas.", reto: "Compara el ritmo del español con el inglés." },
+            { titulo: "Acento de intensidad", teoria: "El acento de intensidad es el énfasis en una sílaba que la hace más prominente por volumen.", ejemplo: "En 'cántara', la 'cán' es más fuerte (intensidad) que las otras.", ejercicio: "Pronuncia palabras con diferentes acentos de intensidad.", reto: "Graba y mide la intensidad de las sílabas de 'cántara' y 'cantará'." },
+            { titulo: "Acento de duración", teoria: "El acento de duración alarga la sílaba tónica. En español, la duración es un correlato importante del acento.", ejemplo: "En 'casa', la 'ca' es más larga que la 'sa'.", ejercicio: "Mide la duración de sílabas tónicas y átonas.", reto: "Graba y compara la duración de sílabas en diferentes palabras." },
+            { titulo: "Acento de tono", teoria: "El acento de tono implica una variación de la F0 en la sílaba tónica (subida o bajada).", ejemplo: "En español, la sílaba tónica a menudo tiene una F0 más alta.", ejercicio: "Graba y mide la F0 de sílabas tónicas y átonas.", reto: "Analiza el contorno de F0 en una palabra con acento." },
+            { titulo: "Tono", teoria: "El tono es la variación de F0 a nivel de sílaba o palabra. El español no es tonal léxicamente, pero la entonación usa el tono.", ejemplo: "En las preguntas, el tono sube al final.", ejercicio: "Identifica el tono en una frase.", reto: "Graba y dibuja el contorno tonal de una frase." },
+            { titulo: "Curva de entonación", teoria: "La curva de entonación es la representación gráfica de la variación de F0 a lo largo de una frase.", ejemplo: "Una pregunta tiene una curva ascendente al final; una afirmación, descendente.", ejercicio: "Dibuja la curva de entonación de una frase.", reto: "Graba y analiza la curva de entonación con un software como Praat." },
+            { titulo: "Tipos de entonación", teoria: "Hay varios tipos de entonación: enunciativa (descendente), interrogativa (ascendente), imperativa (descendente), exclamativa (ascendente).", ejemplo: "'Viene.' (enunciativa), '¿Viene?' (interrogativa), '¡Viene!' (exclamativa).", ejercicio: "Graba los 4 tipos de entonación.", reto: "Analiza la entonación de diferentes tipos de oraciones." },
+            { titulo: "Ritmo y velocidad", teoria: "La velocidad del habla afecta el ritmo y la duración de los sonidos. El habla rápida reduce las pausas y acorta las sílabas.", ejemplo: "En una conversación rápida, las palabras se encadenan.", ejercicio: "Graba una frase a diferentes velocidades.", reto: "Mide el número de sílabas por minuto en diferentes situaciones." },
+            { titulo: "Pausas", teoria: "Las pausas son silencios que organizan el flujo del habla. Pueden ser sintácticas (entre frases) o de vacilación (de relleno).", ejemplo: "En 'Voy al mercado, compro pan, y vuelvo', las comas indican pausas.", ejercicio: "Transcribe una grabación indicando las pausas.", reto: "Analiza las pausas en una grabación de una conversación." },
+            { titulo: "Ritmo y acento", teoria: "El ritmo se basa en la regularidad de los acentos. En español, los acentos ocurren cada dos o tres sílabas.", ejemplo: "En 'La casa de Juan', los acentos están en 'ca' y 'Juan'.", ejercicio: "Marca los acentos en una frase.", reto: "Analiza el patrón de acentos en una grabación." },
+            { titulo: "Entonación y modalidad", teoria: "La entonación indica la modalidad: afirmación, pregunta, exclamación, mandato, duda.", ejemplo: "Una pregunta se reconoce por la subida tonal final; un mandato por la bajada.", ejercicio: "Graba oraciones de diferentes modalidades.", reto: "Analiza la entonación de una conversación para identificar modalidades." },
+            { titulo: "Entonación y énfasis", teoria: "El énfasis se logra por un pico de F0 o un alargamiento de la sílaba. Se usa para destacar información nueva o importante.", ejemplo: "'Quiero una MANZANA' (énfasis en 'manzana').", ejercicio: "Graba una frase con y sin énfasis.", reto: "Analiza los picos de F0 en frases con énfasis." },
+            { titulo: "Acento y significado", teoria: "El acento puede cambiar el significado en español (pares mínimos de acento).", ejemplo: "'cántara' (vasija) vs 'cantara' (verbo), 'sábana' (sábila) vs 'sabana' (llanura).", ejercicio: "Encuentra 5 pares de palabras diferenciadas por el acento.", reto: "Escribe oraciones con cada par." },
+            { titulo: "Prosodia", teoria: "La prosodia es el estudio de todos los fenómenos suprasegmentales: acento, entonación, ritmo, duración.", ejemplo: "La prosodia da musicalidad al habla y expresa emociones.", ejercicio: "Investiga y define la prosodia.", reto: "Analiza la prosodia de una grabación." },
+            { titulo: "Emoción y prosodia", teoria: "La prosodia expresa emociones: alegría (entonación ascendente), tristeza (descendente, lento), ira (rápido, fuerte).", ejemplo: "Una frase dicha con alegría suena distinta a la misma frase con tristeza.", ejercicio: "Graba una frase con diferentes emociones.", reto: "Pide a alguien que adivine la emoción de tu grabación." },
+            { titulo: "Prosodia y pragmática", teoria: "La prosodia ayuda a interpretar el significado pragmático: cortesía, sarcasmo, ironía.", ejemplo: "'Muy bien' puede ser sincero o irónico según la entonación.", ejercicio: "Graba y practica el sarcasmo y la ironía.", reto: "Analiza la prosodia del sarcasmo en una conversación." },
+            { titulo: "Variación dialectal de la entonación", teoria: "La entonación varía entre dialectos. El español andaluz tiene diferentes patrones al del español de Madrid.", ejemplo: "La entonación del español mexicano es distinta a la del español argentino.", ejercicio: "Escucha diferentes dialectos y compara sus entonaciones.", reto: "Analiza una grabación de tu dialecto y de otro." },
+            { titulo: "Acento y aprendizaje", teoria: "El acento y la entonación son claves en el aprendizaje de una lengua. Un buen acento facilita la comprensión.", ejemplo: "Un acento extranjero marcado puede dificultar la comunicación.", ejercicio: "Practica la entonación de frases con nativos.", reto: "Graba y mejora tu entonación comparándola con un nativo." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+// Navegación
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['vox','sonora','audia','fono','tonica'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+// Lector de voz (Speech Synthesis)
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) {
+        alert('Tu navegador no soporta la síntesis de voz.');
+        return;
+    }
+    // Si ya está sonando, detener
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) {
+            boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar';
+            boton.classList.remove('escuchando');
+        }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() {
+            boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar';
+            boton.classList.remove('escuchando');
+        };
+        utterance.onerror = function() {
+            boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar';
+            boton.classList.remove('escuchando');
+        };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+// Renderizar una amazona
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic en cada una para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_fonetica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

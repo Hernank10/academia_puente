@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Flota Redactora · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📝 FLOTA REDACTORA<small>100 TÉCNICAS · REDACCIÓN</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="claridad" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Claridad <span class="badge-personaje bg-dorado">Precisión</span></a>
+        <a class="nav-link" data-section="estructura" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Estructura <span class="badge-personaje bg-azul">Organización</span></a>
+        <a class="nav-link" data-section="estilo" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Estilo <span class="badge-personaje bg-verde">Elegancia</span></a>
+        <a class="nav-link" data-section="persuasion" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Persuasión <span class="badge-personaje bg-purpura">Convicción</span></a>
+        <a class="nav-link" data-section="correccion" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Corrección <span class="badge-personaje bg-rojo">Revisión</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📝</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Redacción y estilo</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Redacción y estilo</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la redacción y el estilo:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Claridad</strong> – Precisión, concisión, legibilidad, palabras exactas.</li>
+                    <li><strong style="color:var(--neon-azul);">Estructura</strong> – Organización, párrafos, transiciones, coherencia.</li>
+                    <li><strong style="color:var(--neon-verde);">Estilo</strong> – Elegancia, ritmo, figuras retóricas, voz personal.</li>
+                    <li><strong style="color:var(--neon-purpura);">Persuasión</strong> – Convicción, argumentación, retórica, impacto.</li>
+                    <li><strong style="color:var(--neon-rojo);">Corrección</strong> – Revisión, edición, pulido, gramática y ortografía.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-claridad" class="section-content" style="display:none;"></div>
+        <div id="section-estructura" class="section-content" style="display:none;"></div>
+        <div id="section-estilo" class="section-content" style="display:none;"></div>
+        <div id="section-persuasion" class="section-content" style="display:none;"></div>
+        <div id="section-correccion" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    claridad: {
+        nombre: "Claridad", color: "dorado", icono: "bi-robot",
+        especialidad: "Precisión, concisión, legibilidad, palabras exactas",
+        tecnicas: [
+            { titulo: "El principio de la palabra exacta", teoria: "Elige la palabra que exprese exactamente lo que quieres decir. No te conformes con la primera que te venga a la mente.", recurso: "Palabra exacta", ejemplo: "En lugar de 'cosa', usa 'objeto', 'asunto', 'cuestión', 'tema' según el contexto.", ejercicio: "Reescribe 3 frases usando palabras más precisas.", reto: "Escribe un texto de 100 palabras sin usar la palabra 'cosa'." },
+            { titulo: "La eliminación de muletillas", teoria: "Las muletillas ('en plan', 'o sea', 'tipo', 'como que') empobrecen tu escritura y la hacen menos precisa.", recurso: "Eliminar muletillas", ejemplo: "En lugar de 'Estaba como que cansado', escribe 'Estaba cansado'.", ejercicio: "Identifica y elimina 5 muletillas de un texto.", reto: "Escribe un párrafo de 50 palabras sin usar muletillas." },
+            { titulo: "La concisión", teoria: "Di lo que tengas que decir con el menor número de palabras posible. Elimina lo superfluo.", recurso: "Concisión", ejemplo: "En lugar de 'En mi opinión personal, creo que...', escribe 'Creo que...'.", ejercicio: "Reduce un párrafo de 50 palabras a 30 sin perder significado.", reto: "Escribe un texto de 100 palabras con la máxima concisión." },
+            { titulo: "La economía del lenguaje", teoria: "Cada palabra debe tener una función. Si una palabra no aporta nada, quítala.", recurso: "Economía del lenguaje", ejemplo: "En lugar de 'subir arriba', escribe 'subir'. En lugar de 'bajar abajo', escribe 'bajar'.", ejercicio: "Elimina las redundancias de 5 frases.", reto: "Escribe un texto de 150 palabras sin redundancias." },
+            { titulo: "El verbo como motor de la frase", teoria: "Usa verbos activos y precisos. Los verbos son el motor de la frase y le dan vida.", recurso: "Verbos activos", ejemplo: "En lugar de 'hizo una caminata', escribe 'caminó'. En lugar de 'realizó una investigación', escribe 'investigó'.", ejercicio: "Reescribe 5 frases con verbos más activos.", reto: "Escribe un texto de 100 palabras con verbos activos." },
+            { titulo: "La voz activa frente a la pasiva", teoria: "La voz activa ('El perro persigue al gato') es más directa y clara que la pasiva ('El gato es perseguido por el perro').", recurso: "Voz activa", ejemplo: "En lugar de 'La carta fue escrita por Juan', escribe 'Juan escribió la carta'.", ejercicio: "Convierte 5 frases pasivas a activas.", reto: "Escribe un texto de 100 palabras en voz activa." },
+            { titulo: "La simplicidad sintáctica", teoria: "Las frases simples y cortas son más fáciles de entender. No abuses de las subordinadas.", recurso: "Simplicidad sintáctica", ejemplo: "En lugar de 'El libro que me regaló mi hermana, que es muy inteligente, es mi favorito', escribe 'Mi hermana me regaló un libro. Es mi favorito. Mi hermana es muy inteligente.'", ejercicio: "Divide 3 frases largas en frases cortas.", reto: "Escribe un texto de 100 palabras con frases de menos de 15 palabras." },
+            { titulo: "El orden lógico de las ideas", teoria: "Organiza tus ideas de forma lógica: primero lo general, luego lo específico; primero la causa, luego el efecto.", recurso: "Orden lógico", ejemplo: "Explica primero el concepto y luego da ejemplos.", ejercicio: "Reordena un texto desordenado.", reto: "Escribe un texto con orden lógico." },
+            { titulo: "La coherencia textual", teoria: "Todas las partes del texto deben girar en torno a la idea principal. No te desvíes.", recurso: "Coherencia", ejemplo: "Si estás hablando de la importancia de la lectura, no te pongas a hablar de la música.", ejercicio: "Revisa un texto y elimina lo que no sea coherente.", reto: "Escribe un texto coherente de 150 palabras." },
+            { titulo: "La cohesión con conectores", teoria: "Usa conectores (además, por otro lado, en conclusión) para unir las ideas y dar fluidez.", recurso: "Conectores", ejemplo: "'Además de ser saludable, el deporte es social. Por otro lado, mejora la autoestima. En conclusión, es esencial.'", ejercicio: "Añade conectores a un texto.", reto: "Escribe un texto con 5 conectores diferentes." },
+            { titulo: "La paráfrasis para la claridad", teoria: "Si una idea es compleja, parafraséala (dila de otra forma) para asegurarte de que se entienda.", recurso: "Paráfrasis", ejemplo: "Primero explica el concepto con palabras técnicas, luego con palabras sencillas.", ejercicio: "Parafrasea 3 conceptos complejos.", reto: "Escribe un texto con paráfrasis." },
+            { titulo: "El ejemplo como herramienta de claridad", teoria: "Un ejemplo concreto aclara cualquier idea abstracta.", recurso: "Ejemplo concreto", ejemplo: "En lugar de explicar el concepto de 'empoderamiento', cuenta la historia de alguien que se empoderó.", ejercicio: "Añade ejemplos a 3 explicaciones abstractas.", reto: "Escribe un texto con 3 ejemplos concretos." },
+            { titulo: "La definición precisa", teoria: "Define los términos clave que uses en tu texto, especialmente si son técnicos.", recurso: "Definición precisa", ejemplo: "Define 'sustantivo' como 'palabra que designa personas, animales, cosas, ideas o sentimientos'.", ejercicio: "Define 3 términos clave de tu ámbito.", reto: "Escribe un texto con definiciones." },
+            { titulo: "El uso de listas para organizar", teoria: "Las listas (numeradas o con viñetas) facilitan la lectura y la comprensión de información compleja.", recurso: "Listas", ejemplo: "Las listas de tareas, los pasos de un proceso, etc.", ejercicio: "Convierte un párrafo denso en una lista.", reto: "Escribe un texto con listas." },
+            { titulo: "El título como resumen", teoria: "El título debe resumir el contenido del texto y llamar la atención.", recurso: "Título", ejemplo: "'Cómo mejorar tu escritura en 10 pasos' es un título claro.", ejercicio: "Escribe 3 títulos para un texto.", reto: "Escribe un texto con un título atractivo." },
+            { titulo: "El primer párrafo como gancho", teoria: "El primer párrafo debe enganchar al lector y presentar el tema de forma clara.", recurso: "Primer párrafo", ejemplo: "Empieza con una pregunta, una anécdota o una afirmación impactante.", ejercicio: "Escribe 3 primeros párrafos diferentes.", reto: "Escribe un texto con un primer párrafo impactante." },
+            { titulo: "La claridad del pronombre", teoria: "Asegúrate de que los pronombres ('él', 'ella', 'ello', 'esto') tengan un referente claro.", recurso: "Pronombre claro", ejemplo: "En lugar de 'Juan le dio un libro a Pedro. Él lo leyó', escribe 'Juan le dio un libro a Pedro. Pedro lo leyó'.", ejercicio: "Corrige 3 frases con pronombres ambiguos.", reto: "Escribe un texto sin pronombres ambiguos." },
+            { titulo: "La claridad del adverbio", teoria: "Coloca los adverbios cerca del verbo al que modifican para evitar ambigüedades.", recurso: "Adverbio claro", ejemplo: "En lugar de 'Ella solo lee los libros de aventuras', escribe 'Solo lee libros de aventuras' o 'Lee solo libros de aventuras' según lo que quieras decir.", ejercicio: "Reubica 3 adverbios para aclarar el significado.", reto: "Escribe un texto con adverbios claramente colocados." },
+            { titulo: "La claridad del orden de palabras", teoria: "El orden de las palabras en español es flexible, pero el orden más claro es: sujeto + verbo + complementos.", recurso: "Orden de palabras", ejemplo: "En lugar de 'A Juan le gusta el fútbol', escribe 'A Juan le gusta el fútbol' (el orden ya está bien).", ejercicio: "Reordena 3 frases para hacerlas más claras.", reto: "Escribe un texto con orden claro." },
+            { titulo: "La claridad del contexto", teoria: "Asegúrate de que el lector tenga suficiente contexto para entender tu texto.", recurso: "Contexto", ejemplo: "Si hablas de un evento, explica primero qué es ese evento.", ejercicio: "Añade contexto a 3 frases sueltas.", reto: "Escribe un texto con contexto suficiente." }
+        ]
+    },
+    estructura: {
+        nombre: "Estructura", color: "azul", icono: "bi-robot",
+        especialidad: "Organización, párrafos, transiciones, coherencia",
+        tecnicas: [
+            { titulo: "La estructura de tres partes", teoria: "Todo texto debe tener introducción, desarrollo y conclusión. Es la estructura básica de la escritura.", recurso: "3 partes", ejemplo: "Una carta de opinión: introducción (presenta el tema), desarrollo (argumentos), conclusión (llamado a la acción).", ejercicio: "Escribe un texto con tres partes.", reto: "Escribe un texto de 200 palabras con tres partes." },
+            { titulo: "El párrafo como unidad de pensamiento", teoria: "Cada párrafo debe desarrollar una idea principal. La primera oración del párrafo debe anunciar esa idea.", recurso: "Párrafo", ejemplo: "Oración tópica: 'La lectura mejora el vocabulario'. Desarrollo: 'Estudios muestran que...'", ejercicio: "Escribe 3 párrafos con oración tópica.", reto: "Escribe un texto de 5 párrafos." },
+            { titulo: "La transición entre párrafos", teoria: "Los conectores y las frases de transición guían al lector de un párrafo a otro.", recurso: "Transición", ejemplo: "'Por otro lado', 'En consecuencia', 'Sin embargo', 'Además'.", ejercicio: "Añade transiciones a un texto.", reto: "Escribe un texto con 4 transiciones." },
+            { titulo: "La estructura deductiva", teoria: "Empieza con la tesis (idea general) y luego da ejemplos y detalles. Es el orden más común.", recurso: "Estructura deductiva", ejemplo: "Tesis: 'El deporte es saludable'. Ejemplos: 'Correr mejora el corazón, nadar tonifica'.", ejercicio: "Escribe un párrafo deductivo.", reto: "Escribe un texto deductivo de 150 palabras." },
+            { titulo: "La estructura inductiva", teoria: "Empieza con ejemplos y detalles, y termina con la tesis. Es muy efectivo para persuadir.", recurso: "Estructura inductiva", ejemplo: "Ejemplos: 'El ejercicio reduce el estrés, mejora el sueño, da energía'. Tesis: 'El deporte es esencial para la salud'.", ejercicio: "Escribe un párrafo inductivo.", reto: "Escribe un texto inductivo de 150 palabras." },
+            { titulo: "La estructura de problema-solución", teoria: "Presenta un problema y luego ofrece una o más soluciones.", recurso: "Problema-solución", ejemplo: "Problema: 'La contaminación aumenta'. Solución: 'Usar transporte público y reciclar'.", ejercicio: "Escribe un párrafo de problema-solución.", reto: "Escribe un texto de problema-solución." },
+            { titulo: "La estructura de causa-efecto", teoria: "Explica las causas de un fenómeno y sus efectos.", recurso: "Causa-efecto", ejemplo: "Causa: 'El cambio climático'. Efecto: 'Aumento de temperaturas y sequías'.", ejercicio: "Escribe un párrafo de causa-efecto.", reto: "Escribe un texto de causa-efecto." },
+            { titulo: "La estructura comparativa", teoria: "Compara dos opciones, mostrando sus ventajas y desventajas.", recurso: "Comparativa", ejemplo: "Opción A: 'Estudiar en casa'. Opción B: 'Estudiar en la biblioteca'.", ejercicio: "Escribe un párrafo comparativo.", reto: "Escribe un texto comparativo." },
+            { titulo: "La estructura cronológica", teoria: "Cuenta los eventos en el orden en que ocurrieron.", recurso: "Cronológica", ejemplo: "'Me levanté, desayuné y salí a trabajar'.", ejercicio: "Escribe un párrafo cronológico.", reto: "Escribe un texto cronológico." },
+            { titulo: "La estructura jerárquica", teoria: "Organiza los argumentos de mayor a menor importancia.", recurso: "Jerárquica", ejemplo: "Primero el argumento más fuerte, luego el secundario, etc.", ejercicio: "Organiza 3 argumentos jerárquicamente.", reto: "Escribe un texto jerárquico." },
+            { titulo: "La estructura del embudo", teoria: "Empieza con una idea general y ve hacia lo específico.", recurso: "Embudo", ejemplo: "General: 'La tecnología cambia la educación'. Específico: 'Las aulas digitales y los recursos en línea'.", ejercicio: "Escribe un párrafo de embudo.", reto: "Escribe un texto de embudo." },
+            { titulo: "La estructura de la pirámide", teoria: "Empieza con un detalle concreto y ve hacia lo general.", recurso: "Pirámide", ejemplo: "Detalle: 'Las redes sociales aumentan el tiempo de pantalla'. General: 'La tecnología afecta nuestra salud mental'.", ejercicio: "Escribe un párrafo de pirámide.", reto: "Escribe un texto de pirámide." },
+            { titulo: "La estructura de la pregunta-respuesta", teoria: "Formula una pregunta al inicio y respóndela en el desarrollo.", recurso: "Pregunta-respuesta", ejemplo: "Pregunta: '¿Cuál es la diferencia entre 'sino' y 'si no'?'", ejercicio: "Escribe un párrafo de pregunta-respuesta.", reto: "Escribe un texto de pregunta-respuesta." },
+            { titulo: "La estructura del viaje", teoria: "Cuenta una historia como un viaje, con un punto de partida, un recorrido y un destino.", recurso: "Viaje", ejemplo: "Viaje de un personaje de un lugar a otro, o viaje de una idea.", ejercicio: "Escribe un párrafo de viaje.", reto: "Escribe un texto de viaje." },
+            { titulo: "La estructura del diálogo", teoria: "Alterna voces para crear dinamismo y revelar información a través de la conversación.", recurso: "Diálogo", ejemplo: "Un diálogo entre dos personajes que discuten un tema.", ejercicio: "Escribe un párrafo en forma de diálogo.", reto: "Escribe un texto en forma de diálogo." },
+            { titulo: "La estructura del ensayo", teoria: "El ensayo tiene una tesis, argumentos y una conclusión. Es una estructura formal y reflexiva.", recurso: "Ensayo", ejemplo: "Un ensayo sobre la importancia de la lectura.", ejercicio: "Escribe un mini-ensayo de 3 párrafos.", reto: "Escribe un ensayo de 5 párrafos." },
+            { titulo: "La estructura del artículo", teoria: "El artículo tiene un título, una introducción, un desarrollo y una conclusión. Es informativo.", recurso: "Artículo", ejemplo: "Un artículo sobre los beneficios del deporte.", ejercicio: "Escribe un artículo breve.", reto: "Escribe un artículo de 200 palabras." },
+            { titulo: "La estructura de la carta", teoria: "La carta tiene un saludo, un cuerpo y una despedida. Es personal o formal.", recurso: "Carta", ejemplo: "Una carta de presentación, una carta de opinión.", ejercicio: "Escribe una carta breve.", reto: "Escribe una carta formal." },
+            { titulo: "La estructura del correo electrónico", teoria: "El correo tiene un asunto, un saludo, un cuerpo y una despedida. Es profesional.", recurso: "Correo electrónico", ejemplo: "Un correo a un profesor, a un cliente.", ejercicio: "Escribe un correo profesional.", reto: "Escribe un correo persuasivo." },
+            { titulo: "La estructura del resumen", teoria: "El resumen condensa la información principal de un texto, manteniendo su estructura básica.", recurso: "Resumen", ejemplo: "Resumen de un artículo, de un libro, de una conferencia.", ejercicio: "Resume un texto de 200 palabras en 50.", reto: "Escribe un resumen de un texto largo." }
+        ]
+    },
+    estilo: {
+        nombre: "Estilo", color: "verde", icono: "bi-robot",
+        especialidad: "Elegancia, ritmo, figuras retóricas, voz personal",
+        tecnicas: [
+            { titulo: "La elección del tono", teoria: "El tono es la actitud del autor hacia su tema y su audiencia. Puede ser serio, irónico, humorístico, formal, informal.", recurso: "Tono", ejemplo: "Un tono irónico para una crítica social, un tono serio para un ensayo académico.", ejercicio: "Escribe un mismo texto en dos tonos diferentes.", reto: "Escribe un texto con un tono definido." },
+            { titulo: "La voz personal", teoria: "Tu voz personal es tu estilo único de escribir. Se desarrolla con la práctica.", recurso: "Voz personal", ejemplo: "La voz de Gabriel García Márquez es inconfundible.", ejercicio: "Escribe un texto en tu voz personal.", reto: "Escribe un texto que solo tú podrías haber escrito." },
+            { titulo: "La metáfora", teoria: "La metáfora identifica un término real con uno imaginario: 'Tus ojos son dos estrellas'.", recurso: "Metáfora", ejemplo: "'La vida es un viaje', 'El amor es una guerra'.", ejercicio: "Escribe 3 metáforas.", reto: "Escribe un texto con metáforas." },
+            { titulo: "El símil", teoria: "El símil compara usando 'como' o 'cual': 'Corre como un guepardo'.", recurso: "Símil", ejemplo: "'Brillaba como el sol', 'Cantaba cual ruiseñor'.", ejercicio: "Escribe 3 símiles.", reto: "Escribe un texto con símiles." },
+            { titulo: "La personificación", teoria: "La personificación atribuye cualidades humanas a objetos: 'El viento susurraba secretos'.", recurso: "Personificación", ejemplo: "'La luna me sonreía', 'El mar rugió de furia'.", ejercicio: "Escribe 3 personificaciones.", reto: "Escribe un texto con personificaciones." },
+            { titulo: "La hipérbole", teoria: "La hipérbole exagera para enfatizar: 'Tengo un hambre que me comería un mundo'.", recurso: "Hipérbole", ejemplo: "'Te he llamado un millón de veces', 'Estoy muerto de cansancio'.", ejercicio: "Escribe 3 hipérboles.", reto: "Escribe un texto con hipérboles." },
+            { titulo: "La antítesis", teoria: "La antítesis contrapone ideas opuestas: 'El amor y el odio', 'La luz y la oscuridad'.", recurso: "Antítesis", ejemplo: "'Rico de día, pobre de noche', 'Saber y no saber'.", ejercicio: "Escribe 3 antítesis.", reto: "Escribe un texto con antítesis." },
+            { titulo: "La anáfora", teoria: "La anáfora repite palabras al inicio de frases: 'Lucha por tus sueños. Lucha por tu gente. Lucha por ti'.", recurso: "Anáfora", ejemplo: "'Ven, ven, ven', 'Siempre, siempre, siempre'.", ejercicio: "Escribe 3 anáforas.", reto: "Escribe un texto con anáforas." },
+            { titulo: "La epífora", teoria: "La epífora repite palabras al final de frases: 'Los sueños se construyen, los sueños se siembran, los sueños se cosechan'.", recurso: "Epífora", ejemplo: "'...y nada más', '...para siempre'.", ejercicio: "Escribe 3 epíforas.", reto: "Escribe un texto con epíforas." },
+            { titulo: "El paralelismo", teoria: "El paralelismo repite estructuras gramaticales: 'Vine, vi, vencí'.", recurso: "Paralelismo", ejemplo: "'Leer, escribir, pensar', 'Correr, saltar, nadar'.", ejercicio: "Escribe 3 paralelismos.", reto: "Escribe un texto con paralelismos." },
+            { titulo: "La interrogación retórica", teoria: "La interrogación retórica es una pregunta que no espera respuesta: '¿Acaso no merecemos un futuro mejor?'", recurso: "Interrogación retórica", ejemplo: "'¿Quién no ha soñado con volar?', '¿Qué es la vida sin amor?'", ejercicio: "Escribe 3 interrogaciones retóricas.", reto: "Escribe un texto con interrogaciones retóricas." },
+            { titulo: "La exclamación", teoria: "La exclamación expresa emoción: '¡Qué bonito!', '¡No puedo creerlo!'", recurso: "Exclamación", ejemplo: "'¡Qué maravilla!', '¡Increíble!'", ejercicio: "Escribe 3 exclamaciones.", reto: "Escribe un texto con exclamaciones." },
+            { titulo: "La ironía", teoria: "La ironía dice lo contrario de lo que se piensa: 'Claro, confía en él, seguro que no te falla'.", recurso: "Ironía", ejemplo: "'Qué buen día para quedarse en casa' (cuando llueve).", ejercicio: "Escribe 3 ironías.", reto: "Escribe un texto con ironía." },
+            { titulo: "El humor", teoria: "El humor hace el texto más ligero y cercano. Puede ser sutil o explícito.", recurso: "Humor", ejemplo: "Una anécdota divertida, un juego de palabras.", ejercicio: "Escribe un texto con humor.", reto: "Escribe un texto humorístico." },
+            { titulo: "La variedad sintáctica", teoria: "Alterna frases cortas y largas para dar ritmo a tu texto.", recurso: "Variedad sintáctica", ejemplo: "Corta: 'Llegué. Vi. Vencí'. Larga: 'Después de un largo viaje, finalmente llegué a la ciudad y me preparé para la batalla'.", ejercicio: "Escribe un texto con variedad sintáctica.", reto: "Escribe un texto con ritmo." },
+            { titulo: "El ritmo de la prosa", teoria: "El ritmo se logra con la longitud de las frases, las pausas y la repetición de sonidos.", recurso: "Ritmo", ejemplo: "La prosa de García Márquez tiene un ritmo hipnótico.", ejercicio: "Escribe un texto con ritmo.", reto: "Escribe un texto con ritmo poético." },
+            { titulo: "La musicalidad", teoria: "La musicalidad se logra con la elección de palabras y la combinación de sonidos.", recurso: "Musicalidad", ejemplo: "La aliteración ('El susurro del silencio') crea musicalidad.", ejercicio: "Escribe un texto con musicalidad.", reto: "Escribe un texto con aliteración." },
+            { titulo: "La precisión del adjetivo", teoria: "Elige adjetivos precisos que aporten información, no adjetivos vacíos ('bueno', 'malo', 'bonito').", recurso: "Adjetivo preciso", ejemplo: "En lugar de 'un buen libro', di 'un libro fascinante, cautivador, inolvidable'.", ejercicio: "Reescribe 5 frases con adjetivos precisos.", reto: "Escribe un texto sin adjetivos vacíos." },
+            { titulo: "La elección del registro", teoria: "Elige el registro adecuado: formal para textos académicos, informal para textos personales.", recurso: "Registro", ejemplo: "Un currículum es formal; un mensaje a un amigo es informal.", ejercicio: "Escribe un mismo texto en dos registros.", reto: "Escribe un texto con un registro adecuado." },
+            { titulo: "La autenticidad", teoria: "Sé auténtico en tu escritura. La autenticidad conecta con el lector.", recurso: "Autenticidad", ejemplo: "Escribe desde tus experiencias y emociones.", ejercicio: "Escribe un texto auténtico.", reto: "Escribe un texto que te represente." }
+        ]
+    },
+    persuasion: {
+        nombre: "Persuasión", color: "purpura", icono: "bi-robot",
+        especialidad: "Convicción, argumentación, retórica, impacto",
+        tecnicas: [
+            { titulo: "El argumento", teoria: "Un argumento es una razón que apoya una tesis. Debe ser claro y estar bien fundamentado.", recurso: "Argumento", ejemplo: "Tesis: 'La lectura es esencial'. Argumento: 'Mejora el vocabulario y la comprensión'.", ejercicio: "Escribe 3 argumentos para una tesis.", reto: "Escribe un texto argumentativo." },
+            { titulo: "La evidencia", teoria: "La evidencia son los datos, hechos o ejemplos que apoyan el argumento.", recurso: "Evidencia", ejemplo: "Dato: 'El 80% de los estudiantes que leen mejoran sus notas'.", ejercicio: "Añade evidencia a 3 argumentos.", reto: "Escribe un texto con evidencia." },
+            { titulo: "La refutación anticipada", teoria: "Anticipa las objeciones a tu argumento y respóndelas antes de que las hagan.", recurso: "Refutación", ejemplo: "'Algunos dirán que el deporte es caro, pero hay opciones gratuitas como correr al aire libre'.", ejercicio: "Escribe una refutación.", reto: "Escribe un texto con refutaciones." },
+            { titulo: "La apelación a la razón (logos)", teoria: "Usa la lógica y los datos para persuadir.", recurso: "Logos", ejemplo: "'Los datos muestran que las ciudades con más áreas verdes tienen menos contaminación'.", ejercicio: "Escribe un argumento basado en logos.", reto: "Escribe un texto con logos." },
+            { titulo: "La apelación a la emoción (pathos)", teoria: "Apela a las emociones del lector: alegría, tristeza, miedo, esperanza.", recurso: "Pathos", ejemplo: "'Imagina a tus hijos creciendo en un mundo sin naturaleza. ¿Eso es lo que quieres?'", ejercicio: "Escribe un argumento basado en pathos.", reto: "Escribe un texto con pathos." },
+            { titulo: "La apelación a la credibilidad (ethos)", teoria: "Establece tu credibilidad: tu experiencia, tu formación, tus valores.", recurso: "Ethos", ejemplo: "'Como profesor de oratoria con 20 años de experiencia, sé que la comunicación es clave'.", ejercicio: "Escribe un argumento basado en ethos.", reto: "Escribe un texto con ethos." },
+            { titulo: "El storytelling", teoria: "Cuenta una historia para conectar emocionalmente y hacer más persuasivo tu mensaje.", recurso: "Storytelling", ejemplo: "'Recuerdo cuando mi abuela me enseñó a leer. Esa noche, el mundo se abrió ante mí'.", ejercicio: "Escribe una historia persuasiva.", reto: "Escribe un texto con storytelling." },
+            { titulo: "La pregunta retórica", teoria: "Las preguntas retóricas involucran al lector y lo llevan a tu conclusión.", recurso: "Pregunta retórica", ejemplo: "'¿Quién no quiere un futuro mejor para sus hijos?'", ejercicio: "Escribe 3 preguntas retóricas.", reto: "Escribe un texto con preguntas retóricas." },
+            { titulo: "El llamado a la acción (CTA)", teoria: "Dile al lector exactamente qué hacer y por qué hacerlo ahora.", recurso: "CTA", ejemplo: "'Suscríbete ahora para no perderte las próximas técnicas y empieza a mejorar tu escritura hoy'.", ejercicio: "Escribe un CTA.", reto: "Escribe un texto con CTA." },
+            { titulo: "La urgencia", teoria: "Crea urgencia diciendo que hay poco tiempo o pocas oportunidades.", recurso: "Urgencia", ejemplo: "'Plazas limitadas. Inscríbete hoy o perderás la oportunidad'.", ejercicio: "Escribe una frase con urgencia.", reto: "Escribe un texto con urgencia." },
+            { titulo: "El testimonio", teoria: "Usa testimonios o casos reales para dar credibilidad.", recurso: "Testimonio", ejemplo: "'Juan empezó a leer 20 minutos al día y en un año triplicó su vocabulario'.", ejercicio: "Escribe un testimonio.", reto: "Escribe un texto con testimonios." },
+            { titulo: "La comparación", teoria: "Compara tu propuesta con otras para mostrar su superioridad.", recurso: "Comparación", ejemplo: "'Mientras otros métodos son lentos, este sistema te da resultados en una semana'.", ejercicio: "Escribe una comparación persuasiva.", reto: "Escribe un texto con comparaciones." },
+            { titulo: "La metáfora persuasiva", teoria: "Usa metáforas para hacer tu idea más tangible y convincente.", recurso: "Metáfora persuasiva", ejemplo: "'La escritura es el arma más poderosa. Afílala cada día'.", ejercicio: "Escribe 3 metáforas persuasivas.", reto: "Escribe un texto con metáforas persuasivas." },
+            { titulo: "La repetición estratégica", teoria: "Repite la idea principal varias veces a lo largo del texto para fijarla.", recurso: "Repetición", ejemplo: "'Escribe claro. Escribe directo. Escribe para ser escuchado'.", ejercicio: "Escribe un texto con repetición.", reto: "Escribe un texto con repetición estratégica." },
+            { titulo: "La antítesis persuasiva", teoria: "Contrapone tu propuesta a la opción contraria para mostrar su superioridad.", recurso: "Antítesis persuasiva", ejemplo: "'Mientras otros te dicen que no puedes, yo te digo que sí puedes'.", ejercicio: "Escribe una antítesis persuasiva.", reto: "Escribe un texto con antítesis." },
+            { titulo: "La ironía persuasiva", teoria: "La ironía puede desarmar al oponente y hacer tu argumento más fuerte.", recurso: "Ironía persuasiva", ejemplo: "'Claro, no leer te hará más inteligente... como no respirar te hará más sano'.", ejercicio: "Escribe una ironía persuasiva.", reto: "Escribe un texto con ironía persuasiva." },
+            { titulo: "La pregunta directa", teoria: "Haz una pregunta directa al lector para involucrarlo.", recurso: "Pregunta directa", ejemplo: "'¿Tú qué harías en esa situación?'", ejercicio: "Escribe 3 preguntas directas.", reto: "Escribe un texto con preguntas directas." },
+            { titulo: "La anécdota personal", teoria: "Las historias personales te hacen auténtico y conectan con el lector.", recurso: "Anécdota personal", ejemplo: "'Cuando empecé a escribir, nadie me leía. Hasta que aprendí estas técnicas...'", ejercicio: "Escribe una anécdota personal.", reto: "Escribe un texto con anécdotas." },
+            { titulo: "La cita de autoridad", teoria: "Cita a expertos o figuras reconocidas para reforzar tu argumento.", recurso: "Cita", ejemplo: "'Como dice el filósofo Séneca: \"No es que tengamos poco tiempo, es que perdemos mucho\"'.", ejercicio: "Escribe una cita de autoridad.", reto: "Escribe un texto con citas." },
+            { titulo: "El cierre con fuerza", teoria: "Termina con una frase memorable que resuene en el lector.", recurso: "Cierre", ejemplo: "'Las palabras tienen poder. Úsalas para construir, no para destruir'.", ejercicio: "Escribe un cierre potente.", reto: "Escribe un texto con cierre potente." }
+        ]
+    },
+    correccion: {
+        nombre: "Corrección", color: "rojo", icono: "bi-robot",
+        especialidad: "Revisión, edición, pulido, gramática y ortografía",
+        tecnicas: [
+            { titulo: "La revisión en voz alta", teoria: "Leer en voz alta ayuda a detectar errores gramaticales y problemas de ritmo.", recurso: "Revisión en voz alta", ejemplo: "Lee tu texto en voz alta y corrige lo que suene mal.", ejercicio: "Revisa un texto en voz alta.", reto: "Corrige un texto después de leerlo en voz alta." },
+            { titulo: "La revisión en frío", teoria: "Deja reposar el texto un día y revísalo con ojos nuevos.", recurso: "Revisión en frío", ejemplo: "Escribe hoy, revisa mañana.", ejercicio: "Revisa un texto al día siguiente.", reto: "Corrige un texto después de 24 horas." },
+            { titulo: "La corrección de tildes", teoria: "Las reglas de acentuación: agudas, graves y esdrújulas. Revisa cada palabra.", recurso: "Tildes", ejemplo: "Revisa si las agudas llevan tilde (terminan en n, s o vocal), las graves no (si no terminan en n, s o vocal), las esdrújulas siempre.", ejercicio: "Corrige las tildes de 10 palabras.", reto: "Escribe un texto sin errores de tilde." },
+            { titulo: "La corrección de puntuación", teoria: "La coma, el punto, el punto y coma, los dos puntos, las comillas, los paréntesis.", recurso: "Puntuación", ejemplo: "Revisa que las comas estén bien colocadas y que los puntos separen oraciones.", ejercicio: "Corrige la puntuación de un texto.", reto: "Escribe un texto con puntuación perfecta." },
+            { titulo: "La concordancia", teoria: "El verbo debe concordar con el sujeto en número y persona; el adjetivo con el sustantivo en género y número.", recurso: "Concordancia", ejemplo: "'Los niños juegan' (plural). 'La casa blanca' (femenino singular).", ejercicio: "Corrige los errores de concordancia en 5 frases.", reto: "Escribe un texto sin errores de concordancia." },
+            { titulo: "El uso de 'sino' y 'si no'", teoria: "'Sino' es oposición ('No vine a rendirme, sino a vencer'). 'Si no' es condición negativa ('Si no vienes, pierdes').", recurso: "Sino / Si no", ejemplo: "'No es alto, sino bajo' (sino). 'Si no estudias, suspenderás' (si no).", ejercicio: "Corrige el uso de 'sino' y 'si no' en 5 frases.", reto: "Escribe un texto sin errores de 'sino/ si no'." },
+            { titulo: "El uso de 'porque', 'por qué', 'porqué', 'por que'", teoria: "'Porque' (causa), 'por qué' (pregunta), 'porqué' (sustantivo), 'por que' (preposición + pronombre).", recurso: "Porque", ejemplo: "'Gané porque luché'. '¿Por qué luchaste?'. 'No entiendo el porqué'. 'La razón por que lucho'.", ejercicio: "Corrige 5 frases con estos usos.", reto: "Escribe un texto sin errores de 'porque'." },
+            { titulo: "El uso de 'ahí', 'hay', 'ay'", teoria: "'Ahí' (lugar), 'hay' (existencia), 'ay' (dolor).", recurso: "Ahí / Hay / Ay", ejemplo: "'La espada está ahí'. 'Hay un guerrero'. '¡Ay, me duele!'", ejercicio: "Corrige 5 frases con estos usos.", reto: "Escribe un texto sin errores de 'ahí/hay/ay'." },
+            { titulo: "El uso de 'a ver' y 'haber'", teoria: "'A ver' expresa expectativa ('Vamos a ver'). 'Haber' es verbo ('Debe haber comida').", recurso: "A ver / Haber", ejemplo: "'A ver qué pasa'. 'Tiene que haber una solución'.", ejercicio: "Corrige 5 frases con estos usos.", reto: "Escribe un texto sin errores de 'a ver/haber'." },
+            { titulo: "La eliminación de errores de estilo", teoria: "Elimina repeticiones, frases hechas, palabras vacías y lugares comunes.", recurso: "Errores de estilo", ejemplo: "En lugar de 'muy bueno', di 'excelente'. En lugar de 'hacer', usa un verbo más preciso.", ejercicio: "Corrige un texto eliminando errores de estilo.", reto: "Escribe un texto sin errores de estilo." },
+            { titulo: "La corrección de la ortografía de la 'b' y la 'v'", teoria: "Se escribe 'b' después de 'm' (hombre), en verbos terminados en -bir (escribir), y en palabras que comienzan con bu-, bur-, bus-.", recurso: "B y V", ejemplo: "'hombre', 'escribir', 'bueno', 'vicepresidente'.", ejercicio: "Corrige 10 palabras con 'b' y 'v'.", reto: "Escribe un texto sin errores de 'b/v'." },
+            { titulo: "La corrección de la ortografía de la 'g' y la 'j'", teoria: "Se escribe 'g' en verbos terminados en -ger, -gir (coger). Se escribe 'j' en el resto.", recurso: "G y J", ejemplo: "'coger' (g), 'tejer' (j), 'jirafa' (j).", ejercicio: "Corrige 10 palabras con 'g' y 'j'.", reto: "Escribe un texto sin errores de 'g/j'." },
+            { titulo: "La corrección de la ortografía de la 'c', 's' y 'z'", teoria: "La 'c' se usa en verbos terminados en -cer, -cir (conocer). La 'z' en terminaciones -anza, -azgo (esperanza). La 's' en adjetivos con -oso, -osa (peligroso).", recurso: "C, S, Z", ejemplo: "'conocer' (c), 'esperanza' (z), 'peligroso' (s).", ejercicio: "Corrige 10 palabras con 'c', 's' y 'z'.", reto: "Escribe un texto sin errores de 'c/s/z'." },
+            { titulo: "La corrección de la ortografía de la 'h'", teoria: "La 'h' se escribe en palabras que comienzan con 'hie-', 'hue-', 'hu-', y en los verbos 'haber', 'hacer'.", recurso: "H", ejemplo: "'hierro', 'hueso', 'hacer', 'haber'.", ejercicio: "Corrige 10 palabras con 'h'.", reto: "Escribe un texto sin errores de 'h'." },
+            { titulo: "La corrección de la ortografía de la 'y' y la 'll'", teoria: "La 'y' se escribe al final de palabra (cuando no es vocal) y en la conjunción 'y'. La 'll' en palabras que provienen de 'li-', 'le-', etc.", recurso: "Y y LL", ejemplo: "'hay', 'muy', 'rey', 'llave', 'lluvia'.", ejercicio: "Corrige 10 palabras con 'y' y 'll'.", reto: "Escribe un texto sin errores de 'y/ll'." },
+            { titulo: "La corrección de la ortografía de la 'ñ'", teoria: "La 'ñ' se escribe en palabras que provienen de 'ni-', 'ne-', 'na-', etc.", recurso: "Ñ", ejemplo: "'niño', 'leña', 'enseñar'.", ejercicio: "Corrige 10 palabras con 'ñ'.", reto: "Escribe un texto sin errores de 'ñ'." },
+            { titulo: "La corrección de queísmos y dequeísmos", teoria: "'Queísmo' (quitar el DE): 'Estoy seguro que vendrá' → 'Estoy seguro de que vendrá'. 'Dequeísmo' (poner DE de más): 'Pienso de que...' → 'Pienso que...'.", recurso: "Queísmo / Dequeísmo", ejemplo: "'Me alegro de que vengas' (correcto). 'Me alegro que vengas' (queísmo).", ejercicio: "Corrige 5 frases con queísmo o dequeísmo.", reto: "Escribe un texto sin queísmo ni dequeísmo." },
+            { titulo: "La corrección de laísmo, loísmo y leísmo", teoria: "'Le' para CI (a quién). 'Lo/La' para CD (qué o a quién).", recurso: "Laísmo / Loísmo / Leísmo", ejemplo: "'Le di un libro' (CI correcto). 'La di un libro' (laísmo, incorrecto). 'Lo vi ayer' (CD correcto). 'Le vi ayer' (leísmo, incorrecto).", ejercicio: "Corrige 5 frases con laísmo, loísmo o leísmo.", reto: "Escribe un texto sin laísmo/loísmo/leísmo." },
+            { titulo: "La corrección del gerundio", teoria: "El gerundio (ando/iendo) indica simultaneidad o anterioridad, nunca posterioridad.", recurso: "Gerundio", ejemplo: "'Llegó corriendo' (mientras llegaba, corría). 'Llegó y preguntó' (NO 'llegó preguntando').", ejercicio: "Corrige 5 frases con gerundios mal usados.", reto: "Escribe un texto con gerundios correctos." },
+            { titulo: "La corrección del uso de mayúsculas y minúsculas", teoria: "Las mayúsculas se usan al inicio de oración, nombres propios, títulos, etc.", recurso: "Mayúsculas", ejemplo: "'Juan vive en Madrid. La capital es Madrid.'", ejercicio: "Corrige el uso de mayúsculas en un texto.", reto: "Escribe un texto con mayúsculas correctas." },
+            { titulo: "La revisión final", teoria: "Haz una última revisión global del texto antes de darlo por terminado.", recurso: "Revisión final", ejemplo: "Revisa la ortografía, la gramática, la coherencia y el estilo.", ejercicio: "Revisa un texto completo.", reto: "Escribe un texto y revísalo por completo." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['claridad','estructura','estilo','persuasion','correccion'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_redactora_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

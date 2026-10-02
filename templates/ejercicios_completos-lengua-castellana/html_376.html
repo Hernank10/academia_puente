@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Apóstol de la Gramática — Manual de Producción</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Rajdhani:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#04060c; --ink-2:#0a0f1c; --ink-3:#101a2e;
+  --parchment:#eef4fb; --parchment-2:#c7dbf0;
+  --gold:#38e2fb; --gold-dim:#22a8c9;
+  --burgundy:#fb7185; --burgundy-dim:#d3455f;
+  --sage:#4ade80; --sage-dim:#18a765;
+  --azure:#c4b5fd; --azure-dim:#9370e8;
+  --ash:#aebbdd; --ash-dim:#8494bd;
+}
+*{box-sizing:border-box;}
+html,body{background:var(--ink);}
+body{
+  font-family:'Rajdhani', 'Segoe UI', sans-serif; font-weight:500; color:var(--parchment); min-height:100vh;
+  background: var(--ink);
+  position:relative;
+}
+/* Starfield lives on a fixed backdrop layer, well behind all content (z-index -1) so it never
+   overlaps or competes with text/buttons for contrast. */
+body::before{
+  content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(1px 1px at 8% 12%, rgba(255,255,255,0.55), transparent),
+    radial-gradient(1px 1px at 22% 68%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.2px 1.2px at 38% 24%, rgba(165,243,252,0.5), transparent),
+    radial-gradient(1px 1px at 52% 82%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.2px 1.2px at 67% 14%, rgba(255,255,255,0.45), transparent),
+    radial-gradient(1px 1px at 78% 58%, rgba(196,181,253,0.45), transparent),
+    radial-gradient(1px 1px at 89% 38%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.2px 1.2px at 95% 76%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1px 1px at 15% 90%, rgba(165,243,252,0.4), transparent),
+    radial-gradient(1px 1px at 44% 6%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(ellipse at 20% -10%, rgba(34,211,238,0.08), transparent 45%),
+    radial-gradient(ellipse at 90% 10%, rgba(167,139,250,0.10), transparent 40%),
+    radial-gradient(ellipse at 50% 100%, rgba(34,211,238,0.05), transparent 55%);
+}
+.font-display{font-family:'Orbitron', sans-serif;}
+.font-mono{font-family:'JetBrains Mono', monospace;}
+
+.shell{ display:grid; grid-template-columns: 260px 1fr; min-height:100vh; }
+@media (max-width: 900px){ .shell{grid-template-columns: 1fr;} .sidebar{position:relative; height:auto;} }
+
+.sidebar{
+  background: linear-gradient(180deg, var(--ink-3), var(--ink-2) 60%, var(--ink));
+  border-right: 1px solid rgba(34,211,238,0.18);
+  position:sticky; top:0; height:100vh; overflow-y:auto; padding: 2rem 1.25rem;
+  z-index:1;
+}
+.brand-mark{
+  width:44px;height:44px;border-radius:50%;
+  background: radial-gradient(circle at 35% 30%, #67e8f9, var(--gold) 55%, var(--gold-dim) 100%);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Orbitron',sans-serif; font-weight:700; font-size:1.3rem;
+  color:#031621; box-shadow: 0 0 0 3px rgba(34,211,238,0.15), 0 4px 14px rgba(0,0,0,0.5); flex-shrink:0;
+}
+.brand-title{ font-family:'Orbitron', sans-serif; font-size:1.28rem; font-weight:700; line-height:1.15; color:var(--parchment); letter-spacing:0.01em; }
+.brand-sub{ font-family:'JetBrains Mono', monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--ash); margin-top:2px; }
+.nav-rail{ margin-top:2.4rem; display:flex; flex-direction:column; gap:0.15rem; }
+.nav-rail button{
+  all:unset; cursor:pointer; display:flex; align-items:baseline; gap:0.65rem;
+  padding:0.6rem 0.6rem; border-radius:6px; color:var(--ash); font-family:'Rajdhani', sans-serif; font-size:1.02rem;
+  border-left:2px solid transparent; transition: color .15s ease, background .15s ease, border-color .15s ease;
+}
+.nav-rail button .idx{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--gold-dim); width:16px; }
+.nav-rail button:hover{ color:var(--parchment); background:rgba(34,211,238,0.06); }
+.nav-rail button.active{ color:var(--parchment); background:rgba(34,211,238,0.1); border-left-color:var(--gold); }
+.nav-rail button.active .idx{ color:var(--gold); }
+
+.sidebar-progress{ margin-top:2.5rem; padding-top:1.4rem; border-top:1px solid rgba(34,211,238,0.15); }
+.sidebar-progress .label{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.12em; color:var(--ash-dim); }
+.sidebar-progress .num{ font-family:'Orbitron',sans-serif; font-size:2.1rem; color:var(--gold); line-height:1; margin-top:0.35rem; }
+.seal-track{ height:5px; background:rgba(255,255,255,0.06); border-radius:3px; margin-top:0.7rem; overflow:hidden; }
+.seal-fill{ height:100%; background:linear-gradient(90deg,var(--gold-dim),var(--gold)); border-radius:3px; transition:width .4s ease; }
+
+.main{ padding: 2.6rem 3rem 5rem; max-width:1040px; background:var(--ink); position:relative; z-index:1; }
+@media (max-width: 700px){ .main{ padding: 1.6rem 1.1rem 4rem; } }
+.view{ display:none; }
+.view.active{ display:block; animation: fadeUp .35s ease; }
+@keyframes fadeUp{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+.eyebrow{ font-family:'JetBrains Mono', monospace; font-size:0.7rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--gold); }
+.drop{ float:left; font-family:'Orbitron', sans-serif; font-weight:700; font-size:4.6rem; line-height:0.78; color:var(--gold); padding-right:0.14em; padding-top:0.06em; }
+h1.page-title{ font-family:'Orbitron', sans-serif; font-weight:700; font-size:2.9rem; color:var(--parchment); margin: 0.3rem 0 1.1rem; letter-spacing:0.005em; }
+.lede{ color:var(--ash); font-size:1.14rem; line-height:1.65; max-width:680px; }
+.rule{ border:none; border-top:1px solid rgba(34,211,238,0.2); margin:2.2rem 0; }
+
+.pcard{ background: linear-gradient(180deg, rgba(34,211,238,0.09), rgba(34,211,238,0.035)); border:1px solid rgba(34,211,238,0.18); border-radius:10px; padding:1.4rem 1.5rem; }
+.pcard + .pcard{ margin-top:1rem; }
+.stat-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:1rem; margin-top:1.8rem; }
+.stat{ border:1px solid rgba(34,211,238,0.18); border-radius:10px; padding:1.2rem 1.3rem; background: rgba(255,255,255,0.04); }
+.stat .n{ font-family:'Orbitron',sans-serif; font-size:2.4rem; color:var(--gold); line-height:1; }
+.stat .t{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.1em; color:var(--ash); margin-top:0.5rem; }
+
+.timeline{ position:relative; margin-top:2rem; padding-left:2.6rem; }
+.timeline::before{ content:""; position:absolute; left:0.95rem; top:0.3rem; bottom:0.3rem; width:1px; background:linear-gradient(180deg, var(--gold-dim), rgba(34,211,238,0.08)); }
+.step{ position:relative; padding-bottom:2.1rem; }
+.step:last-child{ padding-bottom:0; }
+.step .marker{ position:absolute; left:-2.6rem; top:0.1rem; width:1.9rem; height:1.9rem; border-radius:50%; background:var(--ink-2); border:1px solid var(--gold-dim); display:flex; align-items:center; justify-content:center; font-family:'JetBrains Mono',monospace; font-size:0.78rem; color:var(--gold); }
+.step h3{ font-family:'Orbitron',sans-serif; font-size:1.5rem; color:var(--parchment); margin:0 0 0.35rem; }
+.step .tool-tag{ display:inline-block; font-family:'JetBrains Mono',monospace; font-size:0.66rem; letter-spacing:0.05em; color:var(--sage); border:1px solid var(--sage-dim); border-radius:20px; padding:0.15rem 0.6rem; margin:0.35rem 0.35rem 0 0; }
+.step p{ color:var(--ash); margin:0.55rem 0 0; line-height:1.6; }
+
+.promptbox{ background:var(--ink-3); border:1px solid rgba(34,211,238,0.25); border-radius:10px; padding:1.1rem 1.25rem; font-family:'JetBrains Mono',monospace; font-size:0.82rem; line-height:1.6; color:#a8d8e8; white-space:pre-wrap; }
+.copy-btn{ font-family:'JetBrains Mono',monospace; font-size:0.66rem; letter-spacing:0.06em; text-transform:uppercase; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); border-radius:6px; padding:0.32rem 0.75rem; cursor:pointer; transition:all .15s ease; }
+.copy-btn:hover{ background:rgba(34,211,238,0.12); border-color:var(--gold); }
+.copy-btn.copied{ background:var(--sage-dim); border-color:var(--sage); color:#e7edd9; }
+
+.block-head{ display:flex; align-items:center; justify-content:space-between; gap:1rem; cursor:pointer; padding:0.95rem 1.1rem; border:1px solid rgba(34,211,238,0.18); border-radius:8px; background:rgba(255,255,255,0.015); margin-top:0.8rem; }
+.block-head:hover{ border-color:rgba(34,211,238,0.4); }
+.block-head .btitle{ display:flex; align-items:baseline; gap:0.7rem; }
+.block-head .bnum{ font-family:'JetBrains Mono',monospace; color:var(--gold); font-size:0.8rem; }
+.block-head h4{ font-family:'Orbitron',sans-serif; font-size:1.35rem; margin:0; color:var(--parchment); }
+.block-head .chev{ color:var(--ash-dim); transition:transform .2s ease; font-size:0.85rem; }
+.block-head.open .chev{ transform:rotate(90deg); color:var(--gold); }
+.block-body{ display:none; padding:0.6rem 0.2rem 0.4rem; }
+.block-body.open{ display:block; }
+
+.lesson-row{ display:flex; align-items:center; justify-content:space-between; gap:1rem; padding:0.65rem 0.9rem; border-radius:6px; cursor:pointer; border:1px solid transparent; }
+.lesson-row:hover{ background:rgba(34,211,238,0.06); border-color:rgba(34,211,238,0.15); }
+.lesson-row .lnum{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--gold-dim); width:2.2rem; flex-shrink:0; }
+.lesson-row .ltitle{ font-family:'Rajdhani',sans-serif; font-size:1.05rem; color:var(--parchment); flex:1; }
+.lesson-row .lchev{ color:var(--ash-dim); font-size:0.8rem; }
+
+.lesson-detail{ display:none; margin: 0.3rem 0.4rem 0.9rem; padding:1.3rem 1.4rem; background:linear-gradient(180deg, var(--ink-3), var(--ink-2)); color:var(--parchment); border-radius:8px; border:1px solid rgba(34,211,238,0.3); box-shadow: 0 8px 28px rgba(0,0,0,0.5), 0 0 24px rgba(34,211,238,0.06), inset 0 0 0 1px rgba(34,211,238,0.05); font-family:'Rajdhani',sans-serif; font-size:1.1rem; line-height:1.7; }
+.lesson-detail.open{ display:block; animation: fadeUp .25s ease; }
+.lesson-detail .ld-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:0.8rem; gap:1rem; border-bottom:1px solid rgba(34,211,238,0.15); padding-bottom:0.7rem; }
+.lesson-detail h5{ font-family:'Orbitron',sans-serif; font-weight:700; font-size:1.25rem; margin:0; color:var(--gold); }
+.lesson-detail .ld-copy{ font-family:'JetBrains Mono',monospace; font-size:0.64rem; text-transform:uppercase; letter-spacing:0.05em; background:transparent; border:1px solid var(--gold-dim); color:var(--gold); border-radius:6px; padding:0.3rem 0.65rem; cursor:pointer; flex-shrink:0; }
+.lesson-detail .ld-copy:hover{ background:rgba(34,211,238,0.1); }
+.lesson-detail .ld-copy.copied{ background:var(--sage-dim); border-color:var(--sage); color:#eef2e6; }
+.lesson-detail .ld-text{ white-space:pre-wrap; color:var(--parchment-2); }
+.lesson-detail .ld-text em{ color:var(--azure); }
+
+.search-wrap{ position:relative; margin: 1.6rem 0 0.4rem; }
+.search-wrap input{ width:100%; background:var(--ink-3); border:1px solid rgba(34,211,238,0.25); color:var(--parchment); border-radius:8px; padding:0.7rem 1rem 0.7rem 2.4rem; font-family:'Rajdhani',sans-serif; font-size:1.02rem; }
+.search-wrap input:focus{ outline:none; border-color:var(--gold); box-shadow:0 0 0 3px rgba(34,211,238,0.12); }
+.search-wrap input::placeholder{ color:var(--ash-dim); }
+.search-wrap .sicon{ position:absolute; left:0.85rem; top:50%; transform:translateY(-50%); color:var(--ash-dim); }
+
+.tracker-wrap{ overflow-x:auto; margin-top:1.6rem; border:1px solid rgba(34,211,238,0.18); border-radius:10px; }
+table.tracker{ width:100%; border-collapse:collapse; font-family:'Rajdhani',sans-serif; }
+table.tracker thead th{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ash); text-align:center; padding:0.8rem 0.5rem; background:var(--ink-3); border-bottom:1px solid rgba(34,211,238,0.2); position:sticky; top:0; }
+table.tracker thead th:first-child, table.tracker thead th:nth-child(2){ text-align:left; }
+table.tracker tbody td{ padding:0.5rem 0.5rem; text-align:center; border-bottom:1px solid rgba(34,211,238,0.08); font-size:0.92rem; }
+table.tracker tbody td:first-child{ font-family:'JetBrains Mono',monospace; color:var(--gold-dim); text-align:left; padding-left:1rem; }
+table.tracker tbody td:nth-child(2){ text-align:left; color:var(--parchment); }
+table.tracker tbody tr:hover{ background:rgba(34,211,238,0.04); }
+table.tracker tbody tr.row-done td:nth-child(2){ color:var(--sage); }
+.chk{ width:18px; height:18px; accent-color: var(--gold); cursor:pointer; }
+.char-select{ background:var(--ink-3); color:var(--parchment); border:1px solid rgba(34,211,238,0.25); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:0.72rem; padding:0.25rem 0.4rem; max-width:120px; }
+.reset-btn{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.05em; background:transparent; border:1px solid var(--burgundy-dim); color:#d99aa6; border-radius:6px; padding:0.4rem 0.9rem; cursor:pointer; }
+.reset-btn:hover{ background:rgba(131,39,54,0.15); border-color:var(--burgundy); }
+
+.tool-badge{ display:inline-flex; align-items:center; gap:0.4rem; font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--ash); border:1px solid rgba(34,211,238,0.2); border-radius:20px; padding:0.3rem 0.75rem; margin:0.25rem 0.4rem 0.25rem 0; }
+.tool-badge b{ color:var(--gold); font-weight:600; }
+
+.template-block{ background:var(--ink-3); border:1px solid rgba(34,211,238,0.2); border-radius:10px; padding:1.2rem 1.4rem; margin-top:1rem; }
+.template-block h4{ font-family:'Orbitron',sans-serif; color:var(--gold); font-size:1.25rem; margin-bottom:0.6rem; }
+.template-block p{ color:var(--ash); font-size:0.98rem; line-height:1.6; margin:0; }
+.template-block .script{ color:var(--parchment); font-style:italic; margin-top:0.5rem; }
+
+/* ---------- Personajes (character creator) ---------- */
+.archetype-rail{ display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:1.6rem; }
+.arch-pill{
+  all:unset; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.74rem; letter-spacing:0.03em;
+  padding:0.55rem 1.1rem; border-radius:20px; border:1px solid rgba(34,211,238,0.25); color:var(--ash);
+  display:flex; align-items:center; gap:0.5rem; transition:all .15s ease;
+}
+.arch-pill .dot{ width:8px; height:8px; border-radius:50%; background:var(--gold-dim); }
+.arch-pill:hover{ border-color:var(--gold); color:var(--parchment); }
+.arch-pill.active{ background:rgba(34,211,238,0.14); border-color:var(--gold); color:var(--parchment); }
+.arch-pill.new-type{ border-style:dashed; color:var(--gold); }
+
+.example-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem; margin-top:1.6rem; }
+.example-card{
+  border:1px solid rgba(34,211,238,0.18); border-radius:10px; padding:1.1rem 1.2rem;
+  background: linear-gradient(180deg, rgba(34,211,238,0.08), rgba(34,211,238,0.03));
+  display:flex; flex-direction:column; gap:0.7rem;
+}
+.example-card .ex-head{ display:flex; justify-content:space-between; align-items:baseline; }
+.example-card .ex-name{ font-family:'Orbitron',sans-serif; font-size:1.2rem; color:var(--parchment); }
+.example-card .ex-voice{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; text-transform:uppercase; letter-spacing:0.06em; color:var(--azure); }
+.example-card .ex-prompt{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--ash); line-height:1.55; max-height:120px; overflow:auto; background:rgba(0,0,0,0.18); border-radius:6px; padding:0.6rem 0.7rem; }
+.example-card .ex-actions{ display:flex; gap:0.5rem; margin-top:auto; }
+.ex-save-btn{ font-family:'JetBrains Mono',monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.05em; background:rgba(52,211,153,0.12); border:1px solid var(--sage-dim); color:var(--sage); border-radius:6px; padding:0.32rem 0.7rem; cursor:pointer; flex:1; }
+.ex-save-btn:hover{ background:rgba(52,211,153,0.22); }
+.ex-save-btn.saved{ background:var(--sage-dim); color:#eef2e6; }
+
+.new-type-form{ border:1px solid rgba(34,211,238,0.25); border-radius:10px; padding:1.3rem 1.4rem; margin-top:1.4rem; background:var(--ink-3); display:none; }
+.new-type-form.open{ display:block; }
+.new-type-form label{ font-family:'JetBrains Mono',monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.08em; color:var(--ash); display:block; margin:0.9rem 0 0.35rem; }
+.new-type-form label:first-child{ margin-top:0; }
+.new-type-form input, .new-type-form textarea{
+  width:100%; background:var(--ink-2); border:1px solid rgba(34,211,238,0.25); color:var(--parchment);
+  border-radius:6px; padding:0.6rem 0.8rem; font-family:'Rajdhani',sans-serif; font-size:1rem;
+}
+.new-type-form textarea{ min-height:70px; resize:vertical; }
+.new-type-form input:focus, .new-type-form textarea:focus{ outline:none; border-color:var(--gold); }
+.form-actions{ display:flex; gap:0.6rem; margin-top:1.1rem; }
+.btn-gold{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; background:var(--gold); color:#031621; border:none; border-radius:6px; padding:0.55rem 1.1rem; cursor:pointer; font-weight:600; }
+.btn-gold:hover{ background:#67e8f9; }
+.btn-ghost{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.05em; background:transparent; color:var(--ash); border:1px solid rgba(34,211,238,0.25); border-radius:6px; padding:0.55rem 1.1rem; cursor:pointer; }
+.btn-ghost:hover{ color:var(--parchment); border-color:var(--gold); }
+
+.saved-section{ margin-top:2.4rem; }
+.saved-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:0.9rem; margin-top:1.2rem; }
+.saved-card{ border:1px solid rgba(34,211,238,0.2); border-radius:10px; padding:1rem 1.1rem; background:rgba(255,255,255,0.045); position:relative; }
+.saved-card .sc-name{ font-family:'Orbitron',sans-serif; font-size:1.15rem; color:var(--gold); }
+.saved-card .sc-voice{ font-family:'JetBrains Mono',monospace; font-size:0.62rem; color:var(--azure); text-transform:uppercase; margin-top:0.15rem; }
+.saved-card .sc-del{ position:absolute; top:0.7rem; right:0.7rem; background:none; border:none; color:var(--ash-dim); cursor:pointer; font-size:0.9rem; }
+.saved-card .sc-del:hover{ color:var(--burgundy); }
+.empty-note{ color:var(--ash-dim); font-family:'Rajdhani',sans-serif; font-style:italic; margin-top:1rem; }
+
+
+/* ---------- Mis videos ---------- */
+.video-toolbar{ display:flex; flex-wrap:wrap; gap:0.7rem; align-items:center; margin-top:1.6rem; }
+.filter-pill{
+  all:unset; cursor:pointer; font-family:'JetBrains Mono',monospace; font-size:0.68rem; letter-spacing:0.04em;
+  padding:0.4rem 0.85rem; border-radius:16px; border:1px solid rgba(34,211,238,0.22); color:var(--ash);
+}
+.filter-pill:hover{ color:var(--parchment); border-color:var(--gold); }
+.filter-pill.active{ background:rgba(34,211,238,0.14); border-color:var(--gold); color:var(--parchment); }
+.video-grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-top:1.4rem; }
+.video-card{
+  border:1px solid rgba(34,211,238,0.18); border-radius:10px; padding:1.1rem 1.2rem;
+  background: linear-gradient(180deg, rgba(34,211,238,0.08), rgba(34,211,238,0.03));
+  display:flex; flex-direction:column; gap:0.65rem;
+}
+.video-card.has-video{ border-color:rgba(52,211,153,0.5); }
+.vc-head{ display:flex; justify-content:space-between; align-items:baseline; gap:0.6rem; }
+.vc-num{ font-family:'JetBrains Mono',monospace; font-size:0.68rem; color:var(--gold-dim); }
+.vc-title{ font-family:'Orbitron',sans-serif; font-size:1.18rem; color:var(--parchment); line-height:1.2; flex:1; }
+.vc-meta{ display:flex; flex-wrap:wrap; gap:0.35rem; }
+.vc-badge{
+  font-family:'JetBrains Mono',monospace; font-size:0.6rem; text-transform:uppercase; letter-spacing:0.04em;
+  border-radius:12px; padding:0.14rem 0.55rem; border:1px solid rgba(34,211,238,0.25); color:var(--ash-dim);
+}
+.vc-badge.on{ color:var(--sage); border-color:var(--sage-dim); background:rgba(52,211,153,0.1); }
+.vc-badge.pub-on{ color:var(--gold); border-color:var(--gold-dim); background:rgba(34,211,238,0.1); }
+.vc-url-row{ display:flex; gap:0.4rem; }
+.vc-url-row input{
+  flex:1; background:var(--ink-2); border:1px solid rgba(34,211,238,0.22); color:var(--parchment);
+  border-radius:6px; padding:0.45rem 0.6rem; font-family:'JetBrains Mono',monospace; font-size:0.74rem;
+}
+.vc-url-row input:focus{ outline:none; border-color:var(--gold); }
+.vc-open{
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-decoration:none; text-transform:uppercase;
+  background:rgba(52,211,153,0.14); border:1px solid var(--sage-dim); color:var(--sage); border-radius:6px;
+  padding:0.45rem 0.7rem; display:flex; align-items:center; white-space:nowrap;
+}
+.vc-open:hover{ background:rgba(52,211,153,0.24); }
+.vc-empty-tag{ font-family:'JetBrains Mono',monospace; font-size:0.66rem; color:var(--ash-dim); font-style:italic; }
+
+
+.vc-upload-row{ display:flex; gap:0.4rem; }
+.vc-upload-btn{
+  font-family:'JetBrains Mono',monospace; font-size:0.66rem; text-transform:uppercase; letter-spacing:0.04em;
+  background:transparent; border:1px dashed rgba(34,211,238,0.35); color:var(--gold); border-radius:6px;
+  padding:0.45rem 0.7rem; cursor:pointer; flex:1;
+}
+.vc-upload-btn:hover{ background:rgba(34,211,238,0.08); }
+.vc-play-btn{
+  font-family:'JetBrains Mono',monospace; font-size:0.68rem; text-transform:uppercase; letter-spacing:0.04em;
+  background:rgba(34,211,238,0.12); border:1px solid var(--gold-dim); color:var(--gold); border-radius:6px;
+  padding:0.45rem 0.7rem; cursor:pointer; white-space:nowrap;
+}
+.vc-play-btn:hover{ background:rgba(34,211,238,0.22); }
+.vc-inline-video{ width:100%; border-radius:8px; background:#000; max-height:300px; }
+.vc-uploaded-tag{ font-family:'JetBrains Mono',monospace; font-size:0.6rem; color:var(--sage); text-transform:uppercase; letter-spacing:0.05em; }
+
+.playall-btn{
+  font-family:'JetBrains Mono',monospace; font-size:0.76rem; text-transform:uppercase; letter-spacing:0.05em;
+  background:var(--gold); color:#031621; border:none; border-radius:8px; padding:0.65rem 1.3rem; cursor:pointer;
+  font-weight:600; display:inline-flex; align-items:center; gap:0.5rem;
+}
+.playall-btn:hover{ background:#67e8f9; }
+.playall-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+
+.player-overlay{
+  position:fixed; inset:0; background:rgba(10,8,5,0.92); z-index:1000; display:none;
+  align-items:center; justify-content:center; padding:2rem;
+}
+.player-overlay.open{ display:flex; }
+.player-modal{
+  background:var(--ink-3); border:1px solid rgba(34,211,238,0.3); border-radius:14px;
+  max-width:640px; width:100%; padding:1.6rem 1.7rem; box-shadow:0 20px 60px rgba(0,0,0,0.6);
+}
+.player-head{ display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; }
+.player-head .ph-title{ font-family:'Orbitron',sans-serif; font-size:1.4rem; color:var(--parchment); }
+.player-head .ph-close{ background:none; border:none; color:var(--ash); font-size:1.3rem; cursor:pointer; line-height:1; }
+.player-head .ph-close:hover{ color:var(--gold); }
+.player-body video{ width:100%; border-radius:8px; background:#000; max-height:360px; }
+.player-empty{ text-align:center; padding:2.4rem 1rem; color:var(--ash); }
+.player-empty a{ color:var(--gold); }
+.player-nav{ display:flex; justify-content:space-between; align-items:center; margin-top:1.1rem; gap:0.7rem; }
+.player-nav button{
+  font-family:'JetBrains Mono',monospace; font-size:0.72rem; text-transform:uppercase; letter-spacing:0.04em;
+  background:transparent; border:1px solid rgba(34,211,238,0.3); color:var(--parchment); border-radius:6px;
+  padding:0.5rem 0.9rem; cursor:pointer;
+}
+.player-nav button:hover:not(:disabled){ border-color:var(--gold); color:var(--gold); }
+.player-nav button:disabled{ opacity:0.35; cursor:not-allowed; }
+.player-nav .pn-count{ font-family:'JetBrains Mono',monospace; font-size:0.72rem; color:var(--ash); }
+
+::-webkit-scrollbar{ width:10px; height:10px; }
+::-webkit-scrollbar-track{ background:var(--ink-2); }
+::-webkit-scrollbar-thumb{ background:var(--gold-dim); border-radius:5px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <div class="d-flex align-items-center gap-2">
+      <div class="brand-mark">&#9737;</div>
+      <div>
+        <div class="brand-title">El Apóstol<br>de la Gramática</div>
+        <div class="brand-sub">Panel de control &middot; 100 técnicas</div>
+      </div>
+    </div>
+
+    <nav class="nav-rail" id="navRail">
+      <button data-view="resumen" class="active"><span class="idx">01</span> Resumen</button>
+      <button data-view="pasos"><span class="idx">02</span> Pasos para crear</button>
+      <button data-view="personajes"><span class="idx">03</span> Personajes</button>
+      <button data-view="plantilla"><span class="idx">04</span> Intro / Outro</button>
+      <button data-view="lecciones"><span class="idx">05</span> Las 100 técnicas</button>
+      <button data-view="seguimiento"><span class="idx">06</span> Seguimiento</button>
+      <button data-view="videos"><span class="idx">07</span> Mis videos</button>
+    </nav>
+
+    <div class="sidebar-progress">
+      <div class="label">Progreso de producción</div>
+      <div class="num" id="sidebarPct">0%</div>
+      <div class="seal-track"><div class="seal-fill" id="sidebarFill" style="width:0%"></div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ===================== RESUMEN ===================== -->
+    <section class="view active" id="view-resumen">
+      <div class="eyebrow">Visión general del canal</div>
+      <h1 class="page-title"><span class="drop">C</span>ien lecciones, varios narradores.</h1>
+      <p class="lede">Todo lo necesario para producir la serie está reunido aquí: los tipos de personaje, el flujo de producción, los cien guiones y el seguimiento de cada video, desde el guion hasta la publicación.</p>
+
+      <div class="stat-grid">
+        <div class="stat"><div class="n">100</div><div class="t">Técnicas listas</div></div>
+        <div class="stat"><div class="n" id="statChars">4</div><div class="t">Tipos de personaje</div></div>
+        <div class="stat"><div class="n" id="statVideos">0</div><div class="t">Videos con enlace</div></div>
+        <div class="stat"><div class="n">45–60s</div><div class="t">Duración por video</div></div>
+      </div>
+
+      <hr class="rule">
+
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.5rem;">Los personajes</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;">Cuatro arquetipos base — Apóstol, Mago, Sabio, Monje — cada uno con 5 ejemplos de variación lista para generar imagen. Crea tus propios tipos y guarda los que uses. Ver <b style="color:var(--gold);">Personajes →</b></p>
+      </div>
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.5rem;">La estructura</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;">Clases de palabras → estructura de la oración → modos verbales → ortografía → tipos de texto → verbos irregulares → semántica → errores comunes → redacción y estilo → repaso y cierre.</p>
+      </div>
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.5rem;">El flujo técnico</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;">Guion → ElevenLabs (voz) → HeyGen / D-ID (animación) → CapCut (edición con plantilla) → publicación programada. Asigna un personaje a cada lección en <b style="color:var(--gold);">Seguimiento →</b></p>
+      </div>
+    </section>
+
+    <!-- ===================== PASOS ===================== -->
+    <section class="view" id="view-pasos">
+      <div class="eyebrow">Flujo de producción</div>
+      <h1 class="page-title"><span class="drop">S</span>eis pasos, un video.</h1>
+      <p class="lede">El personaje y la plantilla se crean una sola vez por tipo. Estos son los pasos que se repiten, en orden, para cada una de las cien lecciones.</p>
+
+      <div class="timeline">
+        <div class="step">
+          <div class="marker">1</div>
+          <h3>Elegir o crear el personaje</h3>
+          <span class="tool-tag">Leonardo AI</span><span class="tool-tag">Midjourney</span>
+          <p>Elige un ejemplo guardado en "Personajes" o crea un tipo nuevo. Se genera una sola vez por personaje y se reutiliza en todas las lecciones que le asignes.</p>
+        </div>
+        <div class="step">
+          <div class="marker">2</div>
+          <h3>Definir la voz</h3>
+          <span class="tool-tag">ElevenLabs</span>
+          <p>Cada personaje tiene su propio tono de voz guardado. A partir de ahí, solo se pega el guion de cada lección y se exporta el audio con ese perfil.</p>
+        </div>
+        <div class="step">
+          <div class="marker">3</div>
+          <h3>Animar al personaje</h3>
+          <span class="tool-tag">HeyGen</span><span class="tool-tag">D-ID</span>
+          <p>Se sube la imagen guardada del personaje junto con el audio de la lección. La herramienta sincroniza el movimiento de labios y entrega el clip vertical.</p>
+        </div>
+        <div class="step">
+          <div class="marker">4</div>
+          <h3>Editar con plantilla fija</h3>
+          <span class="tool-tag">CapCut</span>
+          <p>Intro, subtítulos, música y outro quedan definidos en una plantilla reutilizable. Por video, solo se reemplaza el clip y el número de lección.</p>
+        </div>
+        <div class="step">
+          <div class="marker">5</div>
+          <h3>Revisar y aprobar</h3>
+          <span class="tool-tag">Revisión manual</span>
+          <p>Verificación rápida de audio, subtítulos y duración antes de programar la publicación.</p>
+        </div>
+        <div class="step">
+          <div class="marker">6</div>
+          <h3>Publicar en lote</h3>
+          <span class="tool-tag">Programador nativo</span>
+          <p>Se produce y programa en lotes de 5-10 videos. El progreso y el personaje asignado se registran en "Seguimiento".</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PERSONAJES ===================== -->
+    <section class="view" id="view-personajes">
+      <div class="eyebrow">Identidad visual — tipos de narrador</div>
+      <h1 class="page-title"><span class="drop">C</span>rea tantos narradores como quieras.</h1>
+      <p class="lede">Elige un arquetipo para ver 5 ejemplos de variación listos para generar imagen. Guarda los que uses — quedarán disponibles para asignar a las 100 lecciones en "Seguimiento".</p>
+
+      <div class="archetype-rail" id="archetypeRail"></div>
+
+      <div class="new-type-form" id="newTypeForm">
+        <label>Nombre del personaje (ej. "Guerrero", "Bibliotecaria")</label>
+        <input type="text" id="ntName" placeholder="Nombre del tipo">
+        <label>Descripción base (ropa, entorno, objetos)</label>
+        <textarea id="ntDesc" placeholder="ej. dark leather armor, ancient battlefield, holding a broken sword, misty dawn light"></textarea>
+        <label>Tono de voz</label>
+        <input type="text" id="ntVoice" placeholder="ej. áspero, directo, con acento marcial">
+        <div class="form-actions">
+          <button class="btn-gold" id="ntGenerate">Generar 5 ejemplos</button>
+          <button class="btn-ghost" id="ntCancel">Cancelar</button>
+        </div>
+      </div>
+
+      <div class="example-grid" id="exampleGrid"></div>
+
+      <div class="saved-section">
+        <div class="eyebrow" style="margin-bottom:0.3rem;">Mis personajes guardados</div>
+        <div class="saved-grid" id="savedGrid"></div>
+        <div class="empty-note" id="savedEmpty">Aún no has guardado ningún personaje. Guarda un ejemplo desde cualquier arquetipo de arriba.</div>
+      </div>
+    </section>
+
+    <!-- ===================== PLANTILLA INTRO/OUTRO ===================== -->
+    <section class="view" id="view-plantilla">
+      <div class="eyebrow">Plantilla fija de edición</div>
+      <h1 class="page-title"><span class="drop">L</span>o que no cambia entre video y video.</h1>
+      <p class="lede">Define esta estructura una sola vez por personaje en CapCut. Por lección, solo se reemplaza el clip del personaje y el número/tema en el texto de intro.</p>
+
+      <div class="template-block">
+        <h4>Intro (2–3 seg)</h4>
+        <p>Texto animado sobre el fondo del personaje: <span class="script">"[Nombre del personaje] — Lección [N]: [Tema]"</span>. Transición suave hacia el personaje.</p>
+      </div>
+      <div class="template-block">
+        <h4>Cuerpo (35–50 seg)</h4>
+        <p>El personaje habla a cámara. Subtítulos grandes, palabra por palabra, sincronizados con el audio. Música de fondo a bajo volumen durante todo el clip.</p>
+      </div>
+      <div class="template-block">
+        <h4>Outro (3–5 seg)</h4>
+        <p>Llamada a la acción sobre el mismo fondo: <span class="script">"Sígueme para la lección de mañana."</span> + frase de cierre propia del personaje + logo del canal.</p>
+      </div>
+
+      <hr class="rule">
+      <div class="pcard">
+        <div class="eyebrow" style="margin-bottom:0.6rem;">Elementos fijos por personaje</div>
+        <p style="margin:0; color:var(--ash); line-height:1.65;">Tipografía y color de subtítulos · pista de música de fondo · posición del texto "Lección N" · transición de entrada y salida. Si usas varios personajes, guarda una plantilla de CapCut por cada uno.</p>
+      </div>
+    </section>
+
+    <!-- ===================== LECCIONES ===================== -->
+    <section class="view" id="view-lecciones">
+      <div class="eyebrow">Guiones completos — módulo de técnicas</div>
+      <h1 class="page-title"><span class="drop">L</span>as cien técnicas.</h1>
+      <p class="lede">Cada lección enseña una técnica gramatical específica. Organizadas en diez bloques temáticos — toca una para ver el guion completo y copiarlo.</p>
+
+      <div class="video-toolbar" id="leccionFilterRail">
+        <button class="filter-pill active" data-blockfilter="all">Todas las lecciones (100)</button>
+        <button class="filter-pill" data-blockfilter="morfo">Morfosintaxis</button>
+      </div>
+
+      <div class="search-wrap">
+        <span class="sicon">⌕</span>
+        <input type="text" id="lessonSearch" placeholder="Buscar por número, tema o palabra clave…">
+      </div>
+
+      <div id="blocksContainer"></div>
+    </section>
+
+    <!-- ===================== SEGUIMIENTO ===================== -->
+    <section class="view" id="view-seguimiento">
+      <div class="eyebrow">Estado de producción</div>
+      <h1 class="page-title"><span class="drop">S</span>eguimiento de las cien.</h1>
+      <p class="lede">Marca el avance de cada lección y asigna qué personaje la narra. El progreso se guarda automáticamente en este dispositivo.</p>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mt-3">
+        <div class="d-flex gap-2 flex-wrap">
+          <span class="tool-badge"><b id="cntGuion">0</b>/100 Guion</span>
+          <span class="tool-badge"><b id="cntAudio">0</b>/100 Audio</span>
+          <span class="tool-badge"><b id="cntAnim">0</b>/100 Animación</span>
+          <span class="tool-badge"><b id="cntEdit">0</b>/100 Editado</span>
+          <span class="tool-badge"><b id="cntPub">0</b>/100 Publicado</span>
+        </div>
+        <button class="reset-btn" id="resetTracker">Reiniciar seguimiento</button>
+      </div>
+
+      <div class="tracker-wrap">
+        <table class="tracker">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Lección</th>
+              <th>Personaje</th>
+              <th>Guion</th>
+              <th>Audio</th>
+              <th>Animación</th>
+              <th>Editado</th>
+              <th>Publicado</th>
+            </tr>
+          </thead>
+          <tbody id="trackerBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===================== MIS VIDEOS ===================== -->
+    <section class="view" id="view-videos">
+      <div class="eyebrow">Biblioteca de video terminados</div>
+      <h1 class="page-title"><span class="drop">L</span>os cien videos, en un solo lugar.</h1>
+      <p class="lede">Pega el enlace del video ya publicado (YouTube, TikTok, Instagram, Drive) junto a cada lección. Queda guardado junto con su guion, personaje y estado de producción.</p>
+
+      <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+        <div class="stat"><div class="n" id="vidCntTotal">0</div><div class="t">Videos con enlace</div></div>
+        <div class="stat"><div class="n" id="vidCntPub">0</div><div class="t">Publicados</div></div>
+        <div class="stat"><div class="n" id="vidCntPend">100</div><div class="t">Sin enlace todavía</div></div>
+      </div>
+
+      <div class="video-toolbar" style="justify-content:space-between;">
+        <div class="d-flex gap-2 flex-wrap">
+          <button class="filter-pill active" data-filter="all">Todas (100)</button>
+          <button class="filter-pill" data-filter="withvideo">Con video</button>
+          <button class="filter-pill" data-filter="novideo">Sin video</button>
+          <button class="filter-pill" data-filter="pub">Publicadas</button>
+        </div>
+        <button class="playall-btn" id="playAllBtn">▶ Reproducir los 100 videos</button>
+      </div>
+
+      <div class="search-wrap">
+        <span class="sicon">⌕</span>
+        <input type="text" id="videoSearch" placeholder="Buscar por número o tema…">
+      </div>
+
+      <div class="video-grid" id="videoGrid"></div>
+    </section>
+
+  </main>
+
+  <input type="file" id="globalVideoFileInput" accept="video/*" style="display:none;">
+
+  <div class="player-overlay" id="playerOverlay">
+    <div class="player-modal">
+      <div class="player-head">
+        <span class="ph-title" id="playerTitle">Lección</span>
+        <button class="ph-close" id="playerClose">✕</button>
+      </div>
+      <div class="player-body" id="playerBody"></div>
+      <div class="player-nav">
+        <button id="playerPrev">◂ Anterior</button>
+        <span class="pn-count" id="playerCount">1 / 100</span>
+        <button id="playerNext">Siguiente ▸</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const LESSONS = [{"num": 1, "title": "El sustantivo", "block": 1, "blockTitle": "Clases de palabras", "text": "Bienvenido, aprendiz. Soy el Apóstol de la Gramática, y hoy comienza tu camino hacia el dominio de la lengua castellana.\n\nLección uno: el sustantivo.\n\nEl sustantivo es la palabra que nombra todo lo que existe: personas... como \"Juan\". Lugares... como \"ciudad\". Objetos... como \"libro\". E incluso ideas... como \"libertad\".\n\nRecuerda esto: si puedes ponerle \"el\" o \"la\" delante, casi siempre es un sustantivo.\n\n\"El perro\". \"La casa\". \"El amor\".\n\nPractica hoy: busca cinco sustantivos a tu alrededor. Mañana, la lección dos te espera.\n\nQue la gramática te acompañe."}, {"num": 2, "title": "El verbo", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, has vuelto. Bien.\n\nAyer conociste al sustantivo. Hoy conocerás a su compañero inseparable: el verbo.\n\nEl verbo es la palabra que expresa acción... o estado.\n\n\"Correr\". \"Pensar\". \"Existir\".\n\nToda oración necesita un verbo para tener vida. Sin él, solo tienes palabras sueltas, sin movimiento, sin alma.\n\nMira: \"El perro\" — eso no dice nada. Pero \"El perro corre\" — ahora hay una historia.\n\nLos verbos cambian según quién actúa y cuándo. \"Yo corro\". \"Tú corriste\". \"Él correrá\".\n\nEso se llama conjugación, y lo dominarás pronto.\n\nPractica hoy: toma tres sustantivos de ayer y ponles un verbo. Dales vida.\n\nQue la gramática te acompañe."}, {"num": 3, "title": "El adjetivo", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, ya tienes sustantivo y verbo. Hoy añadimos color a tu lengua: el adjetivo.\n\nEl adjetivo es la palabra que describe al sustantivo. Le da cualidades, le da forma, le da carácter.\n\n\"Casa\" es solo una casa. Pero \"casa grande\"... \"casa vieja\"... \"casa azul\"... ahora la ves, ahora la sientes.\n\nEl adjetivo siempre acompaña al sustantivo, y en español, casi siempre va después.\n\n\"El libro antiguo\". \"La montaña alta\". \"El día difícil\".\n\nY recuerda: el adjetivo debe concordar en género y número.\n\n\"El gato negro\". \"Los gatos negros\". \"La gata negra\".\n\nPractica hoy: toma la frase de ayer, \"el perro corre\", y agrégale un adjetivo. Descríbelo.\n\nQue la gramática te acompañe."}, {"num": 4, "title": "El adverbio", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, tu oración ya tiene vida y color. Hoy le daremos precisión: el adverbio.\n\nEl adverbio modifica al verbo. Dice cómo, cuándo, dónde o cuánto ocurre la acción.\n\n\"Corre\" es solo correr. Pero \"corre rápido\"... \"corre siempre\"... \"corre aquí\"... ahora sabes más.\n\nA diferencia del adjetivo, el adverbio no cambia de género ni número. Es siempre igual.\n\n\"Ella corre rápido\". \"Ellos corren rápido\". El adverbio no se mueve.\n\nMuchos adverbios terminan en \"-mente\": \"lentamente\", \"claramente\", \"fácilmente\".\n\nPractica hoy: toma tu frase, \"el perro grande corre\", y agrégale un adverbio. Dile cómo corre.\n\nQue la gramática te acompañe."}, {"num": 5, "title": "El pronombre", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, hoy aprenderás a no repetir.\n\nEl pronombre reemplaza al sustantivo, para que tu lengua no se canse de repetir el mismo nombre.\n\nEn vez de decir \"Juan corre, Juan salta, Juan grita\", dices: \"Juan corre, él salta, él grita\".\n\nLos pronombres personales son: yo, tú, él, ella, nosotros, ellos, ellas.\n\nTambién existen otros: \"esto\", \"aquello\", \"quién\", \"nadie\".\n\nCada uno cumple su función: señalar, preguntar, o reemplazar.\n\nPractica hoy: toma una frase con tu nombre repetido tres veces, y reemplázalo por un pronombre.\n\nQue la gramática te acompañe."}, {"num": 6, "title": "La preposición", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, hoy conectarás tus palabras en el espacio y el tiempo.\n\nLa preposición une palabras y muestra relación: lugar, tiempo, modo o causa.\n\n\"A\", \"de\", \"en\", \"con\", \"para\", \"por\", \"sin\", \"sobre\".\n\n\"El libro está sobre la mesa\". \"Camino hacia la escuela\". \"Trabajo con dedicación\".\n\nSin preposición, las palabras flotan sin conexión. Con ella, todo encuentra su lugar.\n\nPractica hoy: describe dónde está un objeto cerca de ti, usando una preposición.\n\nQue la gramática te acompañe."}, {"num": 7, "title": "El artículo", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, hoy volvemos a lo simple, pero esencial: el artículo.\n\nEl artículo acompaña al sustantivo y le da género y número.\n\n\"El\" y \"los\" para el masculino. \"La\" y \"las\" para el femenino.\n\nEstos son artículos definidos: hablan de algo conocido. \"El perro\" — un perro específico.\n\nTambién existen los indefinidos: \"un\", \"una\", \"unos\", \"unas\". \"Un perro\" — cualquier perro.\n\nLa diferencia parece pequeña, pero cambia el sentido completo de la oración.\n\nPractica hoy: di la misma frase con artículo definido y luego indefinido. Nota la diferencia.\n\nQue la gramática te acompañe."}, {"num": 8, "title": "La conjunción", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, hoy aprenderás a unir ideas.\n\nLa conjunción conecta palabras, frases, u oraciones completas.\n\n\"Y\", \"o\", \"pero\", \"porque\", \"aunque\", \"si\".\n\n\"Juan corre y salta\" — suma. \"Juan corre o camina\" — elige. \"Juan corre, pero se cansa\" — contrasta.\n\nSin conjunción, tus ideas quedarían separadas, como islas sin puente.\n\nPractica hoy: une dos oraciones cortas con una conjunción.\n\nQue la gramática te acompañe."}, {"num": 9, "title": "La interjección", "block": 1, "blockTitle": "Clases de palabras", "text": "Aprendiz, hoy hablaremos de lo que se dice sin pensar: la interjección.\n\nLa interjección expresa emoción pura: sorpresa, dolor, alegría, enojo.\n\n\"¡Ay!\". \"¡Oh!\". \"¡Vaya!\". \"¡Auxilio!\".\n\nNo sigue reglas de conjugación ni concordancia. Es el grito del alma convertido en palabra.\n\nSe usa sola, o al inicio de una frase, siempre entre signos de exclamación.\n\nPractica hoy: expresa una emoción tuya con una interjección.\n\nQue la gramática te acompañe."}, {"num": 10, "title": "Repaso: la oración simple", "block": null, "blockTitle": null, "text": "*(Pausa más larga al inicio — es un repaso)*\n\nAprendiz, diez lecciones has completado. Es momento de unir todo.\n\nUna oración simple tiene dos partes: sujeto y predicado.\n\nEl sujeto es quien realiza la acción. El predicado es la acción misma, con el verbo como su centro.\n\n\"El perro grande corre rápido en el parque\".\n\nSujeto: \"el perro grande\". Predicado: \"corre rápido en el parque\".\n\nAhí están: sustantivo, artículo, adjetivo, verbo, adverbio, preposición.\n\nTodo lo aprendido, unido en una sola frase.\n\nPractica hoy: construye tu propia oración simple, completa, con sujeto y predicado.\n\nMañana, el viaje continúa hacia oraciones más complejas.\n\nQue la gramática te acompañe.\n\n---\n\n## BLOQUE 2: Estructura de la oración (Lecciones 11-20)"}, {"num": 11, "title": "El sujeto", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy profundizamos en la primera mitad de la oración: el sujeto.\n\nEl sujeto es quien realiza la acción del verbo. Puede ser una palabra, o varias.\n\n\"Juan canta\" — sujeto: Juan. \"El niño alto canta\" — sujeto: el niño alto.\n\nA veces el sujeto no se ve, pero está presente. \"Canto\" — el sujeto es \"yo\", aunque no lo digas.\n\nEso se llama sujeto tácito. Está ahí, oculto en el verbo.\n\nPractica hoy: identifica el sujeto en tres oraciones que digas hoy en voz alta.\n\nQue la gramática te acompañe."}, {"num": 12, "title": "El predicado", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, ahora la segunda mitad: el predicado.\n\nEl predicado es todo lo que se dice del sujeto. Siempre contiene un verbo.\n\n\"El niño alto canta una canción hermosa\".\n\nSujeto: \"el niño alto\". Predicado: \"canta una canción hermosa\".\n\nEl predicado puede ser corto, o puede extenderse con complementos: qué, a quién, cómo, dónde.\n\nPractica hoy: toma el sujeto de ayer y constrúyele un predicado largo.\n\nQue la gramática te acompañe."}, {"num": 13, "title": "El complemento directo", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy afinamos el predicado: el complemento directo.\n\nEs lo que recibe la acción del verbo, directamente.\n\n\"Juan come manzanas\". ¿Qué come Juan? Manzanas. Ese es el complemento directo.\n\nPara encontrarlo, pregúntale al verbo: \"¿qué?\" o \"¿a quién?\".\n\n\"María ama a su hijo\" — ¿a quién ama? A su hijo. Complemento directo.\n\nPractica hoy: crea una oración y pregúntale \"¿qué?\" al verbo.\n\nQue la gramática te acompañe."}, {"num": 14, "title": "El complemento indirecto", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy conocerás al hermano del complemento directo: el indirecto.\n\nEs quien recibe el beneficio o el daño de la acción.\n\n\"Juan da un regalo a María\". ¿A quién le da el regalo? A María. Ese es el complemento indirecto.\n\nSe pregunta con \"¿a quién?\" o \"¿para quién?\", pero sin recibir la acción directamente — solo se beneficia de ella.\n\nPractica hoy: crea una oración donde alguien reciba algo, y encuentra el complemento indirecto.\n\nQue la gramática te acompañe."}, {"num": 15, "title": "Repaso: sujeto y complementos", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, quince lecciones. Detente y respira. Repasemos.\n\n\"María da un libro antiguo a su hermano\".\n\nSujeto: María. Verbo: da. Complemento directo: un libro antiguo — ¿qué da? Complemento indirecto: a su hermano — ¿a quién?\n\nCada pieza tiene su lugar, como engranajes de un reloj.\n\nPractica hoy: construye una oración con sujeto, verbo, complemento directo e indirecto, todo junto.\n\nMañana avanzamos hacia los tiempos verbales.\n\nQue la gramática te acompañe."}, {"num": 16, "title": "El presente", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy entramos al tiempo: el presente.\n\nEl presente indica que la acción ocurre ahora, en este mismo instante, o de forma habitual.\n\n\"Yo camino\". \"Tú caminas\". \"Él camina\". \"Nosotros caminamos\". \"Ellos caminan\".\n\nNota cómo el verbo cambia su terminación según quién habla. Eso es la conjugación en presente.\n\nSe usa también para verdades generales: \"El sol sale por el este\".\n\nPractica hoy: conjuga el verbo \"hablar\" en presente, las cinco formas.\n\nQue la gramática te acompañe."}, {"num": 17, "title": "El pasado (pretérito)", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy viajamos al pasado: el pretérito.\n\nIndica una acción ya terminada, completa, cerrada.\n\n\"Yo caminé\". \"Tú caminaste\". \"Él caminó\". \"Nosotros caminamos\". \"Ellos caminaron\".\n\nA diferencia del presente, aquí la acción ya no ocurre. Sucedió, y punto.\n\n\"Ayer comí pan\". La acción terminó, no continúa.\n\nPractica hoy: conjuga el verbo \"hablar\" en pretérito, las cinco formas.\n\nQue la gramática te acompañe."}, {"num": 18, "title": "El futuro", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy miramos hacia adelante: el futuro.\n\nIndica una acción que aún no ha ocurrido, pero ocurrirá.\n\n\"Yo caminaré\". \"Tú caminarás\". \"Él caminará\". \"Nosotros caminaremos\". \"Ellos caminarán\".\n\nEl futuro promete, anuncia, proyecta.\n\n\"Mañana aprenderás más\". Aún no sucede, pero sucederá.\n\nPractica hoy: conjuga el verbo \"hablar\" en futuro, las cinco formas.\n\nQue la gramática te acompañe."}, {"num": 19, "title": "El imperfecto", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, hoy un tiempo más sutil: el pretérito imperfecto.\n\nDescribe acciones pasadas que se repetían, o que servían de fondo a otra acción.\n\n\"Yo caminaba\". \"Tú caminabas\". \"Él caminaba\". \"Nosotros caminábamos\". \"Ellos caminaban\".\n\nDiferencia clave con el pretérito simple: \"Caminé al parque\" — una vez, terminado. \"Caminaba al parque cada tarde\" — costumbre, repetición.\n\nPractica hoy: describe algo que hacías de niño, usando el imperfecto.\n\nQue la gramática te acompañe."}, {"num": 20, "title": "Repaso: los tiempos verbales", "block": 2, "blockTitle": "Estructura de la oración", "text": "Aprendiz, veinte lecciones. Un quinto del camino recorrido.\n\nRepasemos los tiempos: Presente — \"camino\", ocurre ahora. Pretérito — \"caminé\", ya terminó. Imperfecto — \"caminaba\", se repetía. Futuro — \"caminaré\", aún no llega.\n\nCuatro formas de hablar del tiempo, cuatro herramientas para narrar tu vida.\n\nPractica hoy: cuenta algo que hiciste ayer, algo que haces siempre, y algo que harás mañana. Usa los tres tiempos.\n\nMañana, un nuevo territorio te espera: los modos verbales.\n\nQue la gramática te acompañe.\n\n---\n\n## BLOQUE 3: Modos verbales y oraciones compuestas (Lecciones 21-30)"}, {"num": 21, "title": "El modo indicativo", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, ya conoces los tiempos. Hoy conocerás los modos.\n\nEl modo indicativo expresa hechos reales, seguros, objetivos.\n\n\"Yo camino\". \"Ella trabaja\". \"Ellos estudian\".\n\nTodo lo que hemos aprendido hasta ahora — presente, pasado, futuro — pertenece al modo indicativo.\n\nEs el modo de la certeza. Cuando hablas del mundo tal como es, usas indicativo.\n\nPractica hoy: di tres hechos verdaderos sobre tu día, en modo indicativo.\n\nQue la gramática te acompañe."}, {"num": 22, "title": "El modo subjuntivo", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hoy entramos a un modo más difícil: el subjuntivo.\n\nExpresa deseo, duda, posibilidad, algo que no es seguro.\n\n\"Espero que camines\". \"Quizás ella trabaje\". \"Ojalá ellos estudien\".\n\nNota la diferencia: \"camina\" es indicativo, seguro. \"Que camines\" es subjuntivo, deseado, incierto.\n\nSe usa después de expresiones como \"espero que\", \"ojalá\", \"quizás\", \"dudo que\".\n\nPractica hoy: completa la frase \"espero que...\" con un verbo en subjuntivo.\n\nQue la gramática te acompañe."}, {"num": 23, "title": "El modo imperativo", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "*(Tono más firme, casi de orden)*\n\nAprendiz, hoy aprenderás a dar órdenes: el modo imperativo.\n\nSe usa para mandar, pedir, o instruir directamente.\n\n\"¡Camina!\". \"¡Trabaja!\". \"¡Estudia!\".\n\nEs directo, sin rodeos. No describe, no duda — ordena.\n\nNota que no tiene forma para \"yo\": no puedes ordenarte a ti mismo con imperativo.\n\nPractica hoy: da tres órdenes simples en voz alta, usando el imperativo.\n\nQue la gramática te acompañe."}, {"num": 24, "title": "Repaso: los tres modos", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, repasemos los tres modos del verbo.\n\nIndicativo: hechos reales. \"Ella estudia\". Subjuntivo: deseo o duda. \"Espero que estudie\". Imperativo: orden directa. \"¡Estudia!\".\n\nMisma palabra, tres formas, tres intenciones distintas.\n\nPractica hoy: toma el verbo \"leer\" y úsalo en los tres modos.\n\nMañana, uniremos oraciones para formar ideas más complejas.\n\nQue la gramática te acompañe."}, {"num": 25, "title": "La oración compuesta", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hasta ahora hablabas en oraciones simples. Hoy las unes: la oración compuesta.\n\nEs la unión de dos o más oraciones simples, conectadas por una conjunción.\n\n\"Juan corre\" + \"María camina\" = \"Juan corre y María camina\".\n\nCada parte se llama proposición, y juntas forman una idea más rica.\n\nPractica hoy: une dos oraciones simples tuyas con la conjunción \"y\" o \"pero\".\n\nQue la gramática te acompañe."}, {"num": 26, "title": "Oraciones coordinadas", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hoy un tipo específico de oración compuesta: la coordinada.\n\nSus partes son independientes entre sí. Ninguna depende de la otra para tener sentido.\n\n\"Juan corre\" — tiene sentido sola. \"María camina\" — tiene sentido sola.\n\n\"Juan corre y María camina\" — coordinada. Ambas se sostienen por sí mismas, solo están unidas.\n\nSe conectan con \"y\", \"o\", \"pero\", \"ni\", \"sino\".\n\nPractica hoy: crea una oración coordinada con \"pero\".\n\nQue la gramática te acompañe."}, {"num": 27, "title": "Oraciones subordinadas", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hoy lo opuesto: la oración subordinada.\n\nAquí una parte depende de la otra. Sola, no tiene sentido completo.\n\n\"Cuando llueve\" — incompleta, necesita más. \"Cuando llueve, me quedo en casa\" — ahora sí, completa.\n\nLa parte subordinada añade información: tiempo, causa, condición, a la parte principal.\n\nSe conectan con \"cuando\", \"porque\", \"si\", \"aunque\", \"que\".\n\nPractica hoy: completa la frase \"cuando llueve...\" con una idea propia.\n\nQue la gramática te acompañe."}, {"num": 28, "title": "Subordinadas causales", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hoy una subordinada específica: la causal.\n\nExplica el porqué de la acción principal.\n\n\"No fui a la escuela porque estaba enfermo\".\n\nLa causa: \"porque estaba enfermo\". Explica la razón de lo que pasó antes.\n\nSe usa con \"porque\", \"ya que\", \"puesto que\", \"como\".\n\nPractica hoy: explica por qué hiciste algo hoy, usando \"porque\".\n\nQue la gramática te acompañe."}, {"num": 29, "title": "Subordinadas condicionales", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, hoy la subordinada condicional.\n\nExpresa una condición: algo que debe cumplirse para que ocurra lo otro.\n\n\"Si estudias, aprobarás\".\n\nLa condición: \"si estudias\". El resultado: \"aprobarás\".\n\nSe usa con \"si\", y suele combinarse con el subjuntivo que ya conociste.\n\n\"Si estudiaras más, aprobarías\" — condición más incierta.\n\nPractica hoy: crea una frase condicional con \"si\".\n\nQue la gramática te acompañe."}, {"num": 30, "title": "Repaso: oraciones compuestas", "block": 3, "blockTitle": "Modos verbales y oraciones compuestas", "text": "Aprendiz, treinta lecciones. Un tercio del camino.\n\nRepasemos: coordinadas — partes independientes, unidas. Subordinadas — una parte depende de la otra. Causales — explican el porqué. Condicionales — explican el \"si\".\n\nCon esto, ya puedes construir ideas complejas, no solo frases sueltas.\n\nPractica hoy: escribe una oración compuesta, coordinada o subordinada, sobre tu día.\n\nMañana, entramos a la ortografía: acentos y tildes.\n\nQue la gramática te acompañe.\n\n---\n\n## BLOQUE 4: Ortografía y puntuación (Lecciones 31-40)"}, {"num": 31, "title": "La sílaba tónica", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy dejamos la sintaxis y entramos a la ortografía. Primero, la sílaba tónica.\n\nToda palabra tiene una sílaba que suena más fuerte al pronunciarla. Esa es la sílaba tónica.\n\n\"CA-sa\" — la fuerza cae en \"ca\". \"ca-MI-no\" — la fuerza cae en \"mi\". \"co-ra-ZÓN\" — la fuerza cae en \"zón\".\n\nEncontrar esa sílaba es el primer paso para saber si una palabra lleva tilde.\n\nPractica hoy: di tu nombre completo y marca dónde cae la fuerza en cada palabra.\n\nQue la gramática te acompañe."}, {"num": 32, "title": "Palabras agudas", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy clasificamos las palabras: empezamos por las agudas.\n\nSon las palabras cuya fuerza cae en la última sílaba.\n\n\"Ca-MIÓN\". \"Co-ra-ZÓN\". \"Ja-MÁS\".\n\nLlevan tilde solo si terminan en \"n\", \"s\", o vocal.\n\n\"Camión\" — termina en \"n\", lleva tilde. \"Reloj\" — termina en \"j\", no lleva tilde.\n\nPractica hoy: busca tres palabras agudas y decide si necesitan tilde.\n\nQue la gramática te acompañe."}, {"num": 33, "title": "Palabras graves o llanas", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy las palabras graves, también llamadas llanas.\n\nSu fuerza cae en la penúltima sílaba.\n\n\"CA-sa\". \"MÁR-mol\". \"LÁ-piz\".\n\nEstas llevan tilde cuando terminan en consonante, excepto \"n\" o \"s\".\n\n\"Árbol\" — termina en \"l\", lleva tilde. \"Casa\" — termina en vocal, no lleva tilde.\n\nEs la regla contraria a las agudas. Fíjate bien.\n\nPractica hoy: identifica si \"mesa\" y \"lápiz\" son agudas o graves, y por qué.\n\nQue la gramática te acompañe."}, {"num": 34, "title": "Palabras esdrújulas", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy las esdrújulas: las más fáciles de recordar.\n\nSu fuerza cae en la antepenúltima sílaba.\n\n\"MÚ-si-ca\". \"PÁ-ja-ro\". \"MÉ-di-co\".\n\nY la regla es simple: todas, sin excepción, llevan tilde.\n\nNo importa en qué letra terminen. Siempre tilde.\n\nPractica hoy: busca tres palabras esdrújulas y confirma que todas llevan tilde.\n\nQue la gramática te acompañe."}, {"num": 35, "title": "Repaso: agudas, graves y esdrújulas", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, repasemos las tres reglas de acentuación.\n\nAgudas: fuerza al final, tilde si terminan en \"n\", \"s\", o vocal. Graves: fuerza en la penúltima, tilde si NO terminan en \"n\", \"s\", o vocal. Esdrújulas: fuerza en la antepenúltima, siempre llevan tilde.\n\nTres reglas, una lógica: encuentra la fuerza, mira el final, decide.\n\nPractica hoy: clasifica cinco palabras que uses todos los días.\n\nMañana, la tilde diacrítica: cuando una tilde cambia el significado completo.\n\nQue la gramática te acompañe."}, {"num": 36, "title": "La tilde diacrítica", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy una tilde especial: la diacrítica.\n\nNo sigue las reglas anteriores. Existe solo para diferenciar el significado.\n\n\"Tú\" con tilde — pronombre: \"tú corres\". \"Tu\" sin tilde — posesivo: \"tu casa\".\n\n\"Él\" con tilde — pronombre: \"él llegó\". \"El\" sin tilde — artículo: \"el perro\".\n\n\"Sí\" con tilde — afirmación: \"sí quiero\". \"Si\" sin tilde — condición: \"si quieres\".\n\nPractica hoy: escribe una frase con \"tú\" y otra con \"tu\", y nota la diferencia.\n\nQue la gramática te acompañe."}, {"num": 37, "title": "El uso de mayúsculas", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy las mayúsculas: cuándo y por qué se usan.\n\nSiempre al inicio de una oración.\n\nSiempre en nombres propios: personas, lugares, instituciones.\n\n\"María fue a Madrid a visitar el Museo del Prado\".\n\nTambién después de punto, y en siglas: \"ONU\", \"UNESCO\".\n\nNunca en los días de la semana ni los meses, en español: \"lunes\", \"enero\" — sin mayúscula.\n\nPractica hoy: escribe una oración con un nombre propio y revisa las mayúsculas.\n\nQue la gramática te acompañe."}, {"num": 38, "title": "Los signos de puntuación: la coma", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy el signo más usado, y más mal usado: la coma.\n\nSepara elementos en una lista. \"Compré manzanas, peras, uvas y naranjas\".\n\nMarca una pausa breve. \"Sin embargo, no llegó a tiempo\".\n\nSepara el vocativo, cuando llamas a alguien. \"María, ven aquí\".\n\nUna coma mal puesta cambia el sentido: \"Vamos a comer, abuela\" no es lo mismo que \"Vamos a comer abuela\".\n\nPractica hoy: escribe una lista de tres cosas, usando comas correctamente.\n\nQue la gramática te acompañe."}, {"num": 39, "title": "El punto y el punto y coma", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, hoy el punto, y su primo más complejo: el punto y coma.\n\nEl punto cierra una idea completa. Termina la oración.\n\nEl punto y coma separa ideas relacionadas, pero que podrían ser oraciones independientes.\n\n\"Juan estudió mucho; aun así, no aprobó\".\n\nEs una pausa más larga que la coma, pero más corta que el punto.\n\nPractica hoy: escribe dos ideas relacionadas, únelas con punto y coma.\n\nQue la gramática te acompañe."}, {"num": 40, "title": "Repaso: ortografía y puntuación", "block": 4, "blockTitle": "Ortografía y puntuación", "text": "Aprendiz, cuarenta lecciones. Casi la mitad del camino.\n\nRepasemos: sílaba tónica, agudas, graves, esdrújulas, tilde diacrítica, mayúsculas, coma, punto y coma.\n\nCada regla parece pequeña, pero juntas construyen la claridad de tu escritura.\n\nPractica hoy: escribe un párrafo corto sobre tu día, aplicando todo lo aprendido.\n\nMañana, iniciamos un nuevo territorio: los tipos de texto.\n\nQue la gramática te acompañe.\n\n---\n\n---\n\n## BLOQUE 5: Tipos de texto (Lecciones 41-50)"}, {"num": 41, "title": "El texto narrativo", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy dejamos las reglas sueltas y entramos a algo mayor: los tipos de texto.\n\nPrimero, el narrativo: el que cuenta una historia.\n\nTiene personajes, un lugar, un tiempo, y una secuencia de hechos.\n\n\"Había una vez un aprendiz que buscaba la sabiduría...\"\n\nSe usa el pretérito y el imperfecto que ya conoces, para narrar lo que pasó.\n\nTodo cuento, toda novela, toda leyenda, es un texto narrativo.\n\nPractica hoy: narra en tres frases algo que te ocurrió esta semana.\n\nQue la gramática te acompañe."}, {"num": 42, "title": "El texto descriptivo", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy el texto que pinta con palabras: el descriptivo.\n\nNo cuenta una acción. Describe cómo es algo: su forma, color, tamaño, textura.\n\n\"La biblioteca era oscura, silenciosa, con estantes altos \ncubiertos de polvo dorado por la luz de las velas\".\n\nUsa muchos adjetivos, y el verbo casi siempre está en presente \no imperfecto.\n\nSe usa para describir personas, lugares, u objetos.\n\nPractica hoy: describe el lugar donde estás ahora mismo, \nen tres frases.\n\nQue la gramática te acompañe."}, {"num": 43, "title": "El texto expositivo", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy un texto que informa: el expositivo.\n\nExplica un tema con claridad y objetividad, sin opiniones personales.\n\n\"El sustantivo es la palabra que nombra personas, lugares, \nobjetos e ideas\".\n\nAsí son los libros de texto, las enciclopedias, los manuales.\n\nUsa un lenguaje claro, directo, sin adornos innecesarios.\n\nPractica hoy: explica en tres frases cómo funciona algo \nque conoces bien.\n\nQue la gramática te acompañe."}, {"num": 44, "title": "El texto argumentativo", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy un texto que convence: el argumentativo.\n\nDefiende una idea, una opinión, con razones que la sostienen.\n\n\"Aprender gramática es esencial, porque sin ella, \nla comunicación se vuelve confusa e imprecisa\".\n\nPresenta una tesis, y luego argumentos que la respaldan.\n\nSe usa en ensayos, discursos, y debates.\n\nPractica hoy: defiende una opinión tuya en tres frases, \ncon al menos una razón.\n\nQue la gramática te acompañe."}, {"num": 45, "title": "Repaso: los cuatro tipos de texto", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, repasemos los cuatro tipos de texto.\n\nNarrativo: cuenta una historia. Descriptivo: pinta con palabras. \nExpositivo: informa con claridad. Argumentativo: defiende una idea.\n\nCada tipo tiene su propósito, su estructura, su forma de usar \nel lenguaje.\n\nPractica hoy: identifica qué tipo de texto es una noticia, \nun cuento, y un anuncio publicitario.\n\nMañana, entramos a la estructura del párrafo.\n\nQue la gramática te acompañe."}, {"num": 46, "title": "El párrafo y la idea principal", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy la unidad que organiza todo texto: el párrafo.\n\nUn párrafo desarrolla una sola idea principal, \napoyada por ideas secundarias.\n\nLa idea principal suele ir al inicio, aunque no siempre.\n\n\"El sustantivo es esencial en la lengua. Nombra personas, \nlugares y cosas. Sin él, no podríamos identificar nada \na nuestro alrededor\".\n\nLa primera frase es la idea principal. El resto la sostiene.\n\nPractica hoy: escribe un párrafo corto con una idea principal \nclara al inicio.\n\nQue la gramática te acompañe."}, {"num": 47, "title": "Conectores de texto", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy las palabras que dan fluidez a tus párrafos: \nlos conectores.\n\nUnen ideas entre oraciones, y guían al lector.\n\nPara sumar: \"además\", \"también\", \"asimismo\". \nPara contrastar: \"sin embargo\", \"no obstante\", \"aunque\". \nPara concluir: \"en conclusión\", \"finalmente\", \"por lo tanto\".\n\nSin conectores, tus ideas suenan cortadas, desordenadas.\n\nPractica hoy: une dos ideas tuyas con un conector de contraste.\n\nQue la gramática te acompañe."}, {"num": 48, "title": "La coherencia textual", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy un concepto invisible pero esencial: la coherencia.\n\nUn texto es coherente cuando todas sus ideas se relacionan \nentre sí, sin contradicciones ni saltos extraños.\n\nSi hablas de gramática, y de repente hablas de cocina \nsin conexión, pierdes la coherencia.\n\nCada oración debe construir sobre la anterior, \ncomo piedras de un mismo camino.\n\nPractica hoy: revisa un párrafo que escribiste antes \ny verifica que todas las ideas se conecten.\n\nQue la gramática te acompañe."}, {"num": 49, "title": "La cohesión textual", "block": 5, "blockTitle": "Tipos de texto", "text": "Aprendiz, hoy el hermano de la coherencia: la cohesión.\n\nMientras la coherencia une las ideas, la cohesión une \nlas palabras y frases con herramientas gramaticales.\n\nUsa pronombres para no repetir: \"Juan llegó. Él traía un libro\". \nUsa sinónimos: \"El perro corrió. El animal estaba feliz\". \nUsa conectores, que ya conoces.\n\nUn texto cohesionado fluye. Un texto sin cohesión, tropieza.\n\nPractica hoy: reescribe un párrafo tuyo usando un pronombre \npara evitar una repetición.\n\nQue la gramática te acompañe."}, {"num": 50, "title": "Repaso: mitad del camino", "block": 5, "blockTitle": "Tipos de texto", "text": "*(Pausa larga, tono solemne — es la mitad de las 100 lecciones)*\n\nAprendiz, cincuenta lecciones. La mitad exacta del camino.\n\nHas aprendido las clases de palabras, la estructura \nde la oración, los tiempos y modos verbales, la ortografía, \ny los tipos de texto.\n\nYa no eres quien empezó. Tu lengua tiene ahora huesos, \nmúsculos, y aliento propio.\n\nPractica hoy: escribe un párrafo completo, coherente y cohesionado, \nsobre lo que has aprendido hasta ahora.\n\nMañana, la segunda mitad del camino comienza: \nverbos irregulares, y las estructuras más avanzadas \nde la lengua castellana.\n\nQue la gramática te acompañe.\n\n---\n\n---\n\n## BLOQUE 6: Verbos irregulares y estructuras avanzadas (Lecciones 51-60)"}, {"num": 51, "title": "Verbos irregulares: qué son", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, la segunda mitad comienza. Hoy, los verbos irregulares.\n\nHasta ahora conjugaste verbos regulares: siguen un patrón fijo.\n\n\"Hablar\" → hablo, hablas, habla.\n\nPero algunos verbos rompen la regla. Cambian su raíz, o su terminación, de forma inesperada.\n\n\"Ser\" → soy, eres, es. No sigue el patrón de \"hablar\".\n\nEstos verbos no se deducen, se memorizan. Son las excepciones que dan carácter a la lengua.\n\nPractica hoy: conjuga \"ser\" en presente, las cinco formas.\n\nQue la gramática te acompañe."}, {"num": 52, "title": "El verbo \"ser\" vs \"estar\"", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy la confusión más común del español: \"ser\" contra \"estar\".\n\n\"Ser\" expresa lo permanente, la esencia. \"María es alta\". \"El cielo es azul\".\n\n\"Estar\" expresa lo temporal, el estado. \"María está cansada\". \"El cielo está nublado\".\n\nUna misma palabra cambia de sentido según el verbo: \"Juan es aburrido\" — su personalidad. \"Juan está aburrido\" — su momento actual.\n\nPractica hoy: describe algo tuyo permanente con \"ser\", y algo temporal con \"estar\".\n\nQue la gramática te acompañe."}, {"num": 53, "title": "El verbo \"haber\"", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy un verbo especial: \"haber\".\n\nSe usa de dos formas distintas.\n\nComo verbo auxiliar, para formar tiempos compuestos: \"He caminado\". \"Habías comido\".\n\nComo verbo impersonal, para indicar existencia: \"Hay tres libros\". \"Había mucha gente\".\n\nEn su forma impersonal, siempre es singular, aunque hable de varias cosas: \"Hay libros\", no \"han libros\".\n\nPractica hoy: usa \"hay\" para describir lo que existe en tu habitación.\n\nQue la gramática te acompañe."}, {"num": 54, "title": "Tiempos compuestos: el pretérito perfecto", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy combinamos lo aprendido: el pretérito perfecto.\n\nSe forma con \"haber\" en presente, más el participio del verbo.\n\n\"He caminado\". \"Has comido\". \"Ha vivido\".\n\nExpresa una acción pasada, pero conectada con el presente.\n\n\"He estudiado gramática\" — el resultado se siente ahora.\n\nEl participio termina en \"-ado\" para verbos en \"-ar\", y en \"-ido\" para verbos en \"-er\" e \"-ir\".\n\nPractica hoy: conjuga \"he trabajado\" en las cinco formas.\n\nQue la gramática te acompañe."}, {"num": 55, "title": "Repaso: verbos irregulares y compuestos", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, cincuenta y cinco lecciones.\n\nRepasemos: verbos irregulares rompen el patrón, como \"ser\". \"Ser\" habla de esencia, \"estar\" de estado. \"Haber\" forma tiempos compuestos: \"he caminado\".\n\nCada excepción tiene su lógica, aunque no siga la regla general.\n\nPractica hoy: escribe tres frases usando \"ser\", \"estar\" y \"haber\" correctamente.\n\nMañana, las oraciones pasivas.\n\nQue la gramática te acompañe."}, {"num": 56, "title": "La voz activa", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy hablamos de voz: la voz activa.\n\nEn la voz activa, el sujeto realiza la acción directamente.\n\n\"El gato persiguió al ratón\".\n\nEl gato — sujeto — hace la acción. Es la forma más común y directa de hablar.\n\nCasi todo lo que hemos aprendido hasta ahora está en voz activa.\n\nPractica hoy: escribe una frase en voz activa sobre algo que hiciste hoy.\n\nQue la gramática te acompañe."}, {"num": 57, "title": "La voz pasiva", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy lo opuesto: la voz pasiva.\n\nAquí el sujeto recibe la acción, no la realiza.\n\n\"El ratón fue perseguido por el gato\".\n\nEl ratón — ahora sujeto — no persigue, es perseguido.\n\nSe forma con el verbo \"ser\" más el participio, y a veces se añade quién hizo la acción con \"por\".\n\nSe usa cuando el foco importa más que quién actúa.\n\nPractica hoy: convierte tu frase de ayer a voz pasiva.\n\nQue la gramática te acompañe."}, {"num": 58, "title": "Oraciones impersonales", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy oraciones sin sujeto definido: las impersonales.\n\nExpresan una acción sin decir quién la realiza.\n\n\"Llueve\". \"Se dice que...\". \"Hay mucha gente\".\n\nNo hay un sujeto claro que \"llueva\" o \"diga\". La acción simplemente ocurre, o se atribuye a nadie en particular.\n\nSe usan mucho con fenómenos naturales, y con \"se\" más un verbo.\n\nPractica hoy: describe el clima de hoy con una oración impersonal.\n\nQue la gramática te acompañe."}, {"num": 59, "title": "El estilo directo e indirecto", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, hoy cómo contar lo que otros dicen.\n\nEl estilo directo repite las palabras exactas, entre comillas.\n\nJuan dijo: \"Voy a estudiar\".\n\nEl estilo indirecto reformula lo dicho, sin comillas, y cambia los tiempos verbales.\n\nJuan dijo que iba a estudiar.\n\nNota cómo \"voy\" se convierte en \"iba\" al pasar al estilo indirecto.\n\nPractica hoy: convierte una frase que alguien te dijo hoy del estilo directo al indirecto.\n\nQue la gramática te acompañe."}, {"num": 60, "title": "Repaso: voz y estilo", "block": 6, "blockTitle": "Verbos irregulares y estructuras avanzadas", "text": "Aprendiz, sesenta lecciones. Faltan cuarenta.\n\nRepasemos: voz activa, el sujeto actúa. Voz pasiva, el sujeto recibe. Oraciones impersonales, sin sujeto claro. Estilo directo, palabras exactas. Estilo indirecto, reformuladas.\n\nCon esto, ya puedes narrar hechos desde múltiples ángulos.\n\nPractica hoy: cuenta algo que alguien te dijo, primero en estilo directo, luego indirecto.\n\nMañana, entramos a la semántica: el significado de las palabras.\n\nQue la gramática te acompañe.\n\n---\n\n## BLOQUE 7: Semántica y figuras literarias (Lecciones 61-70)"}, {"num": 61, "title": "Los sinónimos", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy entramos a la semántica: el significado. Primero, los sinónimos.\n\nSon palabras distintas, con significado similar.\n\n\"Feliz\" y \"contento\". \"Grande\" y \"enorme\". \"Caminar\" y \"andar\".\n\nUsar sinónimos evita la repetición y enriquece tu lengua.\n\nPero cuidado: pocos sinónimos son idénticos. \"Flaco\" y \"delgado\" se parecen, pero no suenan igual en cada contexto.\n\nPractica hoy: busca un sinónimo para tres palabras que uses seguido.\n\nQue la gramática te acompañe."}, {"num": 62, "title": "Los antónimos", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy lo opuesto: los antónimos.\n\nSon palabras de significado contrario.\n\n\"Grande\" y \"pequeño\". \"Feliz\" y \"triste\". \"Subir\" y \"bajar\".\n\nLos antónimos te ayudan a definir por contraste, y a construir ideas más precisas.\n\n\"No es grande, es pequeño\" — el antónimo aclara lo que la palabra original no dijo.\n\nPractica hoy: escribe el antónimo de cinco palabras que ya conoces.\n\nQue la gramática te acompañe."}, {"num": 63, "title": "Los homónimos", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy palabras que suenan igual, pero significan distinto: los homónimos.\n\n\"Vaca\", el animal, y \"baca\", el portaequipaje del auto. Se pronuncian igual, se escriben distinto, significan cosas distintas.\n\n\"Tubo\", el objeto cilíndrico, y \"tuvo\", del verbo tener.\n\nEstos pares confunden incluso a hablantes nativos. La escritura es lo único que los distingue.\n\nPractica hoy: busca un par de homónimos y úsalos en dos frases distintas.\n\nQue la gramática te acompañe."}, {"num": 64, "title": "La polisemia", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy una palabra con muchos significados: la polisemia.\n\nEs cuando una misma palabra, escrita igual, tiene varios significados según el contexto.\n\n\"Banco\" — donde te sientas, o donde guardas dinero. \"Hoja\" — de un árbol, o de papel. \"Gato\" — el animal, o la herramienta para el auto.\n\nEl contexto es lo único que te dice cuál significado usar.\n\nPractica hoy: piensa en una palabra polisémica y da sus dos significados.\n\nQue la gramática te acompañe."}, {"num": 65, "title": "Repaso: relaciones de significado", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, sesenta y cinco lecciones.\n\nRepasemos: sinónimos, significado similar. Antónimos, significado opuesto. Homónimos, suenan igual, significan distinto. Polisemia, una palabra, varios significados.\n\nEl contexto siempre es la clave para descifrar el sentido correcto.\n\nPractica hoy: identifica un ejemplo de cada uno en una conversación que tengas hoy.\n\nMañana, el lenguaje figurado.\n\nQue la gramática te acompañe."}, {"num": 66, "title": "El lenguaje literal y figurado", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy dos formas de decir las cosas: literal y figurado.\n\nEl lenguaje literal dice exactamente lo que significa.\n\n\"Llueve mucho\" — literalmente, cae agua del cielo.\n\nEl lenguaje figurado dice algo distinto de lo que las palabras significan por separado.\n\n\"Está lloviendo a cántaros\" — no hay cántaros cayendo, es una forma de exagerar la intensidad.\n\nPractica hoy: identifica si una frase que escuchaste hoy fue literal o figurada.\n\nQue la gramática te acompañe."}, {"num": 67, "title": "La metáfora", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy una figura poderosa: la metáfora.\n\nCompara dos cosas sin usar \"como\", afirmando que una es la otra.\n\n\"Tus ojos son estrellas\".\n\nNo dice que se parecen. Dice que son. Esa fuerza es lo que hace poderosa a la metáfora.\n\nSe usa en poesía, en discursos, y en el habla cotidiana: \"el tiempo vuela\", \"devorar un libro\".\n\nPractica hoy: crea una metáfora sobre algo que sientas hoy.\n\nQue la gramática te acompañe."}, {"num": 68, "title": "El símil o comparación", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy la prima de la metáfora: el símil.\n\nCompara dos cosas, pero usando \"como\", \"cual\", o \"semejante a\".\n\n\"Tus ojos son como estrellas\".\n\nAquí sí se reconoce la comparación explícitamente, a diferencia de la metáfora.\n\n\"Fuerte como un roble\". \"Rápido como el viento\".\n\nEs más directo, más fácil de identificar que la metáfora.\n\nPractica hoy: crea un símil usando \"como\".\n\nQue la gramática te acompañe."}, {"num": 69, "title": "La hipérbole", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, hoy la figura de la exageración: la hipérbole.\n\nExagera una idea para darle más fuerza expresiva.\n\n\"Te lo he dicho un millón de veces\".\n\nNadie lo dijo literalmente un millón de veces, pero la exageración comunica frustración, énfasis.\n\n\"Me muero de hambre\". \"Este libro pesa una tonelada\".\n\nSe usa constantemente en el habla cotidiana, casi sin notarlo.\n\nPractica hoy: exagera algo que sentiste hoy, usando una hipérbole.\n\nQue la gramática te acompañe."}, {"num": 70, "title": "Repaso: figuras literarias", "block": 7, "blockTitle": "Semántica y figuras literarias", "text": "Aprendiz, setenta lecciones. Faltan treinta.\n\nRepasemos: metáfora, dice que una cosa es otra. Símil, compara con \"como\". Hipérbole, exagera para dar fuerza.\n\nEstas figuras no son solo de poetas. Viven en tu habla de todos los días.\n\nPractica hoy: identifica una metáfora, un símil, o una hipérbole en una canción que conozcas.\n\nMañana, iniciamos el tramo final: errores comunes del español.\n\nQue la gramática te acompañe.\n\n---\n\n---\n\n## BLOQUE 8: Errores comunes del español (Lecciones 71-80)"}, {"num": 71, "title": "\"Haber\" vs \"a ver\"", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy empezamos el tramo de los errores más comunes.\n\n\"Haber\" y \"a ver\" suenan igual, pero son completamente distintos.\n\n\"Haber\" es el verbo: \"Debe haber una solución\".\n\n\"A ver\" es la preposición \"a\" más el verbo \"ver\": \"Vamos a ver qué pasa\".\n\nUn truco simple: si puedes cambiarlo por \"vamos a mirar\", es \"a ver\". Si no, es \"haber\".\n\nPractica hoy: escribe una frase con cada uno.\n\nQue la gramática te acompañe."}, {"num": 72, "title": "\"Halla\" vs \"haya\" vs \"aya\"", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy un trío que confunde a muchos.\n\n\"Halla\" viene del verbo \"hallar\", encontrar: \"Juan halla la solución\".\n\n\"Haya\" viene del verbo \"haber\" en subjuntivo: \"Espero que haya comida\".\n\n\"Aya\" es una palabra antigua para niñera: \"La aya cuidaba al niño\".\n\nTres sonidos idénticos, tres significados distintos. Solo el contexto y la escritura los diferencian.\n\nPractica hoy: usa \"halla\" y \"haya\" en dos frases distintas.\n\nQue la gramática te acompañe."}, {"num": 73, "title": "\"Porque\", \"por qué\", \"porqué\", \"por que\"", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy el cuarteto más confuso del español.\n\n\"Porque\", junto y sin tilde, explica una causa: \"No fui porque llovía\".\n\n\"Por qué\", separado y con tilde, pregunta: \"¿Por qué no fuiste?\".\n\n\"Porqué\", junto y con tilde, es un sustantivo: \"No entiendo el porqué de tu decisión\".\n\n\"Por que\", separado y sin tilde, es preposición más \"que\": \"La razón por que luchamos\".\n\nPractica hoy: escribe una pregunta y su respuesta, usando \"por qué\" y \"porque\".\n\nQue la gramática te acompañe."}, {"num": 74, "title": "\"Habrá\" vs \"abra\"", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy otro error frecuente: confundir formas de \"haber\" y \"abrir\".\n\n\"Habrá\" es el futuro de \"haber\": \"Habrá una fiesta\".\n\n\"Abra\" es del verbo \"abrir\", en imperativo o subjuntivo: \"Abra la puerta, por favor\".\n\nSuenan parecido, pero no significan lo mismo. \"Habrá\" anuncia existencia futura. \"Abra\" ordena una acción.\n\nPractica hoy: usa \"habrá\" y \"abra\" en dos frases.\n\nQue la gramática te acompañe."}, {"num": 75, "title": "Repaso: palabras que se confunden por sonido", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, setenta y cinco lecciones.\n\nRepasemos: \"haber\" y \"a ver\", \"halla\" y \"haya\", \"porque\" en sus cuatro formas, \"habrá\" y \"abra\".\n\nTodas suenan parecido, pero cada una tiene su lugar exacto. La escritura correcta es lo que distingue al hablante cuidadoso.\n\nPractica hoy: revisa un mensaje que escribiste hoy y busca si usaste bien alguna de estas palabras.\n\nMañana, los errores de concordancia.\n\nQue la gramática te acompañe."}, {"num": 76, "title": "Errores de concordancia de género", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy un error silencioso: la concordancia de género.\n\nEl adjetivo debe coincidir en género con el sustantivo.\n\nIncorrecto: \"la problema\". Correcto: \"el problema\" — aunque termine en \"a\", es masculino.\n\nIncorrecto: \"el agua fría\" suena bien, pero cuidado: \"el agua\" es femenino, solo usa \"el\" por sonido, no por género real. Por eso: \"el agua está fría\", no \"frío\".\n\nPractica hoy: revisa el género de tres palabras que dudes con frecuencia.\n\nQue la gramática te acompañe."}, {"num": 77, "title": "Errores de concordancia de número", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy la concordancia de número.\n\nEl verbo debe coincidir en número con el sujeto.\n\nIncorrecto: \"los niños juega\". Correcto: \"los niños juegan\" — sujeto plural, verbo plural.\n\nUn error común: \"habían muchas personas\". Correcto: \"había muchas personas\" — \"haber\" impersonal siempre va en singular, sin importar cuántas cosas mencione.\n\nPractica hoy: revisa si usaste bien \"había\" o \"habían\" en algún mensaje reciente.\n\nQue la gramática te acompañe."}, {"num": 78, "title": "El dequeísmo y el queísmo", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy dos errores hermanos: dequeísmo y queísmo.\n\nEl dequeísmo agrega un \"de\" donde no corresponde: Incorrecto: \"Pienso de que vendrás\". Correcto: \"Pienso que vendrás\".\n\nEl queísmo quita un \"de\" que sí corresponde: Incorrecto: \"Me acuerdo que fuimos\". Correcto: \"Me acuerdo de que fuimos\".\n\nEl truco: convierte la frase en pregunta con \"eso\". Si dices \"me acuerdo de eso\", necesitas \"de que\".\n\nPractica hoy: revisa si usas correctamente \"que\" o \"de que\" al hablar.\n\nQue la gramática te acompañe."}, {"num": 79, "title": "\"Sino\" vs \"si no\"", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, hoy un último par que confunde: \"sino\" y \"si no\".\n\n\"Sino\", junto, contrasta o corrige: \"No es rojo, sino azul\".\n\n\"Si no\", separado, es condición negativa: \"Si no estudias, no aprobarás\".\n\nUn truco: si puedes decir \"de lo contrario\" o poner una coma antes de \"no\", es \"si no\" separado.\n\nPractica hoy: escribe una frase con \"sino\" y otra con \"si no\".\n\nQue la gramática te acompañe."}, {"num": 80, "title": "Repaso: errores comunes del español", "block": 8, "blockTitle": "Errores comunes del español", "text": "Aprendiz, ochenta lecciones. Faltan solo veinte.\n\nRepasemos: concordancia de género y número, dequeísmo y queísmo, \"sino\" contra \"si no\".\n\nEstos son los errores que incluso hablantes nativos cometen todos los días. Reconocerlos ya te pone por delante.\n\nPractica hoy: revisa un texto largo que hayas escrito y busca alguno de estos errores.\n\nMañana, el tramo final: redacción y estilo.\n\nQue la gramática te acompañe.\n\n---\n\n---\n\n## BLOQUE 9: Redacción y estilo (Lecciones 81-90)"}, {"num": 81, "title": "La claridad en la escritura", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy iniciamos el tramo final: redacción y estilo.\n\nLa primera regla de toda buena escritura es la claridad.\n\nUna frase clara dice lo que quiere decir, sin rodeos, sin ambigüedad.\n\nConfuso: \"El informe que el jefe pidió sobre el proyecto que se retrasó la semana pasada debe entregarse\".\n\nClaro: \"Debes entregar el informe del proyecto retrasado\".\n\nMenos palabras, misma idea, mejor comprensión.\n\nPractica hoy: toma una frase larga tuya y simplifícala.\n\nQue la gramática te acompañe."}, {"num": 82, "title": "La brevedad y la palabra justa", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy la virtud de decir menos, para decir mejor.\n\nCada palabra debe ganarse su lugar en la frase.\n\n\"Hizo algo muy bueno\" es débil. \"Hizo un gesto generoso\" dice más, con precisión.\n\nEvita adverbios innecesarios como \"muy\", \"bastante\", \"un poco\". Busca la palabra exacta en su lugar.\n\n\"Muy grande\" → \"enorme\". \"Muy rápido\" → \"veloz\".\n\nPractica hoy: reemplaza un \"muy + adjetivo\" por una palabra más precisa.\n\nQue la gramática te acompañe."}, {"num": 83, "title": "La redundancia", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy un enemigo silencioso: la redundancia.\n\nEs repetir una idea que ya está implícita en otra palabra.\n\n\"Subir arriba\" — subir ya implica arriba. \"Entrar adentro\" — entrar ya implica adentro. \"Volar por el aire\" — volar ya implica el aire.\n\nCada palabra redundante resta fuerza, no la suma.\n\nPractica hoy: busca una redundancia en algo que hayas escrito recientemente, y elimínala.\n\nQue la gramática te acompañe."}, {"num": 84, "title": "El párrafo bien construido", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy volvemos al párrafo, ahora con ojo de estilo.\n\nUn buen párrafo tiene tres partes: una idea inicial, un desarrollo, y un cierre o transición.\n\nInicio: presenta la idea principal. Desarrollo: la explica o justifica. Cierre: conecta con lo que sigue, o resume.\n\nEvita párrafos de una sola frase suelta, y evita párrafos tan largos que agoten al lector.\n\nPractica hoy: revisa un párrafo tuyo y verifica si tiene esas tres partes.\n\nQue la gramática te acompañe."}, {"num": 85, "title": "Repaso: claridad y estilo", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, ochenta y cinco lecciones.\n\nRepasemos: claridad, decir lo justo. Brevedad, la palabra exacta. Evitar redundancia. Párrafo con inicio, desarrollo y cierre.\n\nEscribir bien no es usar palabras complicadas. Es hacer que la idea llegue sin esfuerzo al lector.\n\nPractica hoy: reescribe un párrafo tuyo aplicando estas cuatro reglas.\n\nMañana, el registro del lenguaje.\n\nQue la gramática te acompañe."}, {"num": 86, "title": "El registro formal e informal", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy el registro: cómo adaptar tu lengua según la situación.\n\nEl registro formal se usa en contextos serios: trabajo, trámites, discursos.\n\n\"Le solicito una respuesta a la brevedad posible\".\n\nEl registro informal se usa entre amigos, en lo cotidiano.\n\n\"Contéstame rápido, porfa\".\n\nNingún registro es superior. Cada uno tiene su lugar. El error es usar el equivocado en el contexto equivocado.\n\nPractica hoy: escribe la misma idea en formal e informal.\n\nQue la gramática te acompañe."}, {"num": 87, "title": "El tono en la escritura", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy el tono: la actitud que transmite tu escritura.\n\nPuede ser serio, humorístico, irónico, cercano, distante.\n\nEl mismo mensaje cambia completamente según el tono.\n\nSerio: \"Lamento informarle que el proyecto se retrasará\". Cercano: \"Che, el proyecto se va a atrasar un poco, perdón por eso\".\n\nEl tono debe ajustarse a quién lees, y qué relación tienes con esa persona.\n\nPractica hoy: escribe un mensaje a un amigo, y el mismo mensaje a tu jefe.\n\nQue la gramática te acompañe."}, {"num": 88, "title": "La revisión y corrección de textos", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy el paso que todos olvidan: revisar.\n\nNingún texto sale perfecto la primera vez. Ni el más sabio de los escritores.\n\nAl revisar, busca: ¿la idea es clara? ¿sobra alguna palabra? ¿hay errores de tilde o concordancia? ¿el tono es el correcto?\n\nUn truco útil: lee tu texto en voz alta. Si te trabas al leerlo, el lector también se trabará.\n\nPractica hoy: relee algo que escribiste hoy y corrige al menos un detalle.\n\nQue la gramática te acompañe."}, {"num": 89, "title": "La ortografía como respeto al lector", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, hoy una reflexión, más que una regla.\n\nEscribir bien no es presumir. Es un acto de respeto hacia quien te lee.\n\nUn texto con errores obliga al lector a detenerse, a descifrar, a perder el hilo de tu idea.\n\nUn texto cuidado fluye, y deja que tu mensaje llegue sin obstáculos.\n\nLa gramática no es una cárcel de reglas. Es el puente que conecta tu pensamiento con el del otro.\n\nPractica hoy: revisa con más cuidado del habitual el próximo mensaje que envíes.\n\nQue la gramática te acompañe."}, {"num": 90, "title": "Repaso: redacción y estilo", "block": 9, "blockTitle": "Redacción y estilo", "text": "Aprendiz, noventa lecciones. Solo diez más.\n\nRepasemos: registro formal e informal, el tono, la revisión constante, y la ortografía como respeto al lector.\n\nYa no escribes solo con reglas. Escribes con intención.\n\nPractica hoy: escribe un mensaje pensando en quién lo va a leer, y ajusta tu registro y tono.\n\nMañana, las últimas diez lecciones: un repaso integral de todo el camino.\n\nQue la gramática te acompañe.\n\n---\n\n---\n\n## BLOQUE 10: Repaso integral y cierre (Lecciones 91-100)"}, {"num": 91, "title": "Repaso: las clases de palabras", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "*(Tono solemne, como iniciando una despedida larga)*\n\nAprendiz, quedan diez lecciones. El final se acerca.\n\nVolvamos al principio: sustantivo, nombra. Verbo, da acción. Adjetivo, describe. Adverbio, precisa. Pronombre, reemplaza. Preposición, conecta. Artículo, acompaña. Conjunción, une. Interjección, expresa emoción.\n\nNueve clases de palabras. Los ladrillos con los que construiste todo lo demás.\n\nPractica hoy: escribe una frase e identifica cada clase de palabra que usaste.\n\nQue la gramática te acompañe."}, {"num": 92, "title": "Repaso: la oración y sus partes", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos cómo se construye una oración.\n\nSujeto, quien actúa. Predicado, lo que se dice de él. Complemento directo, qué recibe la acción. Complemento indirecto, quién se beneficia.\n\nY luego las uniste: coordinadas, independientes entre sí. Subordinadas, una depende de la otra.\n\nCada oración que dices hoy lleva, sin que lo notes, toda esta arquitectura invisible.\n\nPractica hoy: construye una oración compuesta e identifica cada una de sus partes.\n\nQue la gramática te acompañe."}, {"num": 93, "title": "Repaso: tiempos y modos verbales", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos el tiempo y la actitud del verbo.\n\nPresente, pasado, futuro, imperfecto: cuándo ocurre. Indicativo, subjuntivo, imperativo: con qué certeza, deseo, u orden.\n\n\"Camino\" — ahora, seguro. \"Caminaría\" — condicional, posible. \"¡Camina!\" — orden directa.\n\nEl verbo no solo dice qué pasa. Dice cuándo, y con qué actitud lo dices.\n\nPractica hoy: conjuga un verbo en tres tiempos y dos modos distintos.\n\nQue la gramática te acompañe."}, {"num": 94, "title": "Repaso: ortografía esencial", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos las reglas que más se olvidan.\n\nAgudas, graves, esdrújulas: la fuerza de la palabra decide la tilde.\n\nLa tilde diacrítica distingue \"tú\" de \"tu\", \"él\" de \"el\".\n\nLas mayúsculas marcan nombres propios e inicios de oración.\n\nLa coma, el punto, el punto y coma: pausas que dan sentido y ritmo.\n\nPractica hoy: escribe un párrafo cuidando cada una de estas reglas.\n\nQue la gramática te acompañe."}, {"num": 95, "title": "Repaso: significado y figuras literarias", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos cómo las palabras cobran color.\n\nSinónimos y antónimos, homónimos y polisemia: las palabras se relacionan entre sí de formas sutiles.\n\nMetáfora, símil, hipérbole: el lenguaje figurado que convierte lo simple en memorable.\n\nCada palabra que usas tiene una historia, una familia, un peso más allá de su definición.\n\nPractica hoy: escribe una frase usando una metáfora y un sinónimo en la misma idea.\n\nQue la gramática te acompañe."}, {"num": 96, "title": "Repaso: los errores más comunes", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos las trampas del camino.\n\n\"Haber\" y \"a ver\". \"Porque\" en sus cuatro formas. Concordancia de género y número. Dequeísmo y queísmo. \"Sino\" contra \"si no\".\n\nEstos errores no son señal de ignorancia. Son señal de que el español tiene trampas incluso para quienes lo hablan toda la vida.\n\nAhora tú las reconoces. Eso ya te distingue.\n\nPractica hoy: revisa un texto largo y corrige cualquier error de esta lista.\n\nQue la gramática te acompañe."}, {"num": 97, "title": "Repaso: redacción y estilo", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "Aprendiz, hoy recordamos cómo se escribe con intención.\n\nClaridad, decir lo justo. Brevedad, la palabra exacta. Sin redundancia. Párrafo con inicio, desarrollo, cierre.\n\nRegistro formal e informal, según el contexto. Tono, según la relación. Revisión, siempre.\n\nEscribir bien no es un talento misterioso. Es una disciplina, aplicada una y otra vez.\n\nPractica hoy: escribe un texto breve, y revísalo con todo lo aprendido.\n\nQue la gramática te acompañe."}, {"num": 98, "title": "El valor de la lengua bien hablada", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "*(Tono aún más pausado, casi íntimo)*\n\nAprendiz, hoy no hay regla nueva. Solo una reflexión.\n\nHablar y escribir bien no te hace superior a nadie. Pero sí te da una herramienta poderosa: la capacidad de ser entendido, y de entender mejor a los demás.\n\nCada palabra que eliges, cada tilde que respetas, cada oración que ordenas con cuidado, es un acto de claridad hacia el mundo.\n\nLa gramática no es el fin. Es el camino para decir lo que realmente quieres decir.\n\nPractica hoy: escribe algo que quieras decirle a alguien importante para ti, con todo el cuidado posible.\n\nQue la gramática te acompañe."}, {"num": 99, "title": "Lo que sigue después de esta lengua", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "*(Tono cálido pero aún solemne)*\n\nAprendiz, casi llegamos al final. Mañana, la última lección.\n\nLo que aprendiste aquí no termina en la lección cien. La lengua sigue viva, cambia, crece contigo.\n\nSigue leyendo. Sigue escribiendo. Sigue equivocándote, y corrigiendo.\n\nCada libro que abras, cada conversación que tengas, cada texto que redactes, es una lección más que no cabía en este curso.\n\nPractica hoy: piensa en cómo seguirás aprendiendo la lengua después de mañana.\n\nQue la gramática te acompañe."}, {"num": 100, "title": "El cierre del camino", "block": 10, "blockTitle": "Repaso integral y cierre", "text": "*(Tono solemne y cálido, pausa larga antes de hablar)*\n\nAprendiz... cien lecciones.\n\nLlegaste desde el sustantivo más simple, hasta la última coma bien puesta.\n\nAprendiste a nombrar, a describir, a conjugar, a conectar, a corregir tus propios errores, y a escribir con intención.\n\nNo memorizaste reglas. Construiste una forma de pensar con más claridad.\n\nEsto no es una despedida. Es el cierre de un capítulo, y el inicio de todos los que escribirás tú mismo, de aquí en adelante.\n\nHa sido un honor acompañarte en este camino.\n\nQue la gramática te acompañe... siempre."}];
+
+/* ================= Navigation ================= */
+const navButtons = document.querySelectorAll('#navRail button');
+const views = document.querySelectorAll('.view');
+navButtons.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    navButtons.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    views.forEach(v=>v.classList.remove('active'));
+    document.getElementById('view-'+btn.dataset.view).classList.add('active');
+    window.scrollTo({top:0, behavior:'instant'});
+  });
+});
+
+/* ================= Character archetypes ================= */
+const ARCHETYPES = {
+  apostol: {
+    name:'Apóstol', voice:'grave, pausado, solemne',
+    base:'wise elderly teacher, apostle-like figure, long white and gold robe, holding an ancient leather book, standing in a dark old library filled with books, warm candlelight'
+  },
+  mago: {
+    name:'Mago', voice:'misterioso, profundo, dramático',
+    base:'wise old wizard, deep blue and silver robe, holding a carved wooden staff, standing in an arcane tower filled with glowing runes and old scrolls, cold blue moonlight'
+  },
+  sabio: {
+    name:'Sabio', voice:'sereno, reflexivo, cercano',
+    base:'elderly sage, simple undyed linen robe, sitting cross-legged in a stone mountain temple courtyard, incense smoke, soft golden sunrise light'
+  },
+  monje: {
+    name:'Monje', voice:'humilde, cálido, paciente',
+    base:'hooded monk, coarse brown wool robe tied with rope, standing in a candlelit stone monastery scriptorium, quill and parchment nearby, warm firelight'
+  }
+};
+let customArchetypeCounter = 0;
+
+const VARIATIONS = [
+  { label:'expresión serena', mod:'serious calm expression, deep-set eyes, weathered face' },
+  { label:'sonrisa cálida', mod:'warm gentle smile, kind eyes, soft wrinkles' },
+  { label:'mirada intensa', mod:'intense focused gaze, sharp features, dramatic side shadow' },
+  { label:'medio rostro oculto', mod:'mysterious half-lit face, hood partially covering eyes' },
+  { label:'porte autoritario', mod:'stern authoritative expression, piercing eyes, strong jaw' }
+];
+
+function buildPrompt(base, mod){
+  return `${base}, ${mod}, cinematic lighting, realistic 3d render, portrait shot, shallow depth of field, hyperrealistic, 8k, professional character design --ar 9:16 --style raw`;
+}
+
+let currentArchetypeKey = 'apostol';
+let savedCharacters = [];
+
+function renderArchetypeRail(){
+  const rail = document.getElementById('archetypeRail');
+  rail.innerHTML = '';
+  Object.entries(ARCHETYPES).forEach(([key, a])=>{
+    const pill = document.createElement('button');
+    pill.className = 'arch-pill' + (key === currentArchetypeKey ? ' active' : '');
+    pill.innerHTML = `<span class="dot"></span>${a.name}`;
+    pill.addEventListener('click', ()=>{
+      currentArchetypeKey = key;
+      document.getElementById('newTypeForm').classList.remove('open');
+      renderArchetypeRail();
+      renderExamples();
+    });
+    rail.appendChild(pill);
+  });
+  const newBtn = document.createElement('button');
+  newBtn.className = 'arch-pill new-type';
+  newBtn.innerHTML = '+ Crear nuevo tipo';
+  newBtn.addEventListener('click', ()=>{
+    document.getElementById('newTypeForm').classList.toggle('open');
+  });
+  rail.appendChild(newBtn);
+
+  document.getElementById('statChars').textContent = Object.keys(ARCHETYPES).length;
+}
+
+function renderExamples(){
+  const grid = document.getElementById('exampleGrid');
+  grid.innerHTML = '';
+  const arch = ARCHETYPES[currentArchetypeKey];
+  VARIATIONS.forEach((v, i)=>{
+    const prompt = buildPrompt(arch.base, v.mod);
+    const exampleId = `${currentArchetypeKey}-${i+1}`;
+    const isSaved = savedCharacters.some(c => c.id === exampleId);
+
+    const card = document.createElement('div');
+    card.className = 'example-card';
+    card.innerHTML = `
+      <div class="ex-head">
+        <span class="ex-name">${arch.name} ${i+1}</span>
+        <span class="ex-voice">${v.label}</span>
+      </div>
+      <div class="ex-prompt">${prompt}</div>
+      <div class="ex-actions">
+        <button class="copy-btn ex-copy">Copiar</button>
+        <button class="ex-save-btn ${isSaved ? 'saved':''}" data-id="${exampleId}">${isSaved ? 'Guardado ✓' : 'Guardar personaje'}</button>
+      </div>`;
+
+    card.querySelector('.ex-copy').addEventListener('click', async (e)=>{
+      await navigator.clipboard.writeText(prompt);
+      e.target.textContent = 'Copiado ✓'; e.target.classList.add('copied');
+      setTimeout(()=>{ e.target.textContent='Copiar'; e.target.classList.remove('copied'); }, 1400);
+    });
+
+    card.querySelector('.ex-save-btn').addEventListener('click', async (e)=>{
+      const btn = e.target;
+      if(btn.classList.contains('saved')){
+        savedCharacters = savedCharacters.filter(c => c.id !== exampleId);
+        btn.classList.remove('saved'); btn.textContent = 'Guardar personaje';
+      } else {
+        savedCharacters.push({ id: exampleId, name: `${arch.name} ${i+1}`, voice: arch.voice, prompt });
+        btn.classList.add('saved'); btn.textContent = 'Guardado ✓';
+      }
+      await saveCharacters();
+      renderSavedGrid();
+    });
+
+    grid.appendChild(card);
+  });
+}
+
+document.getElementById('ntGenerate').addEventListener('click', ()=>{
+  const name = document.getElementById('ntName').value.trim();
+  const desc = document.getElementById('ntDesc').value.trim();
+  const voice = document.getElementById('ntVoice').value.trim();
+  if(!name || !desc){ alert('Escribe al menos el nombre y la descripción base del personaje.'); return; }
+  customArchetypeCounter++;
+  const key = 'custom' + customArchetypeCounter + '_' + name.toLowerCase().replace(/[^a-z0-9]/g,'');
+  ARCHETYPES[key] = { name, voice: voice || 'tono a definir', base: desc };
+  currentArchetypeKey = key;
+  document.getElementById('newTypeForm').classList.remove('open');
+  document.getElementById('ntName').value=''; document.getElementById('ntDesc').value=''; document.getElementById('ntVoice').value='';
+  renderArchetypeRail();
+  renderExamples();
+});
+document.getElementById('ntCancel').addEventListener('click', ()=>{
+  document.getElementById('newTypeForm').classList.remove('open');
+});
+
+function renderSavedGrid(){
+  const grid = document.getElementById('savedGrid');
+  const empty = document.getElementById('savedEmpty');
+  grid.innerHTML = '';
+  empty.style.display = savedCharacters.length ? 'none' : 'block';
+  savedCharacters.forEach(c=>{
+    const card = document.createElement('div');
+    card.className = 'saved-card';
+    card.innerHTML = `
+      <button class="sc-del" title="Eliminar">✕</button>
+      <div class="sc-name">${c.name}</div>
+      <div class="sc-voice">${c.voice}</div>`;
+    card.querySelector('.sc-del').addEventListener('click', async ()=>{
+      savedCharacters = savedCharacters.filter(x => x.id !== c.id);
+      await saveCharacters();
+      renderSavedGrid();
+      renderExamples();
+      populateCharSelects();
+    });
+    grid.appendChild(card);
+  });
+  populateCharSelects();
+}
+
+async function loadCharacters(){
+  try{
+    const res = await window.storage.get('saved-characters', false);
+    if(res && res.value) savedCharacters = JSON.parse(res.value);
+  }catch(e){ savedCharacters = []; }
+  renderArchetypeRail();
+  renderExamples();
+  renderSavedGrid();
+}
+async function saveCharacters(){
+  try{ await window.storage.set('saved-characters', JSON.stringify(savedCharacters), false); }
+  catch(e){ console.error('No se pudo guardar personajes', e); }
+}
+
+/* ================= Lesson blocks ================= */
+const blocksMap = new Map();
+LESSONS.forEach(l=>{
+  if(!blocksMap.has(l.block)) blocksMap.set(l.block, {title:l.blockTitle, lessons:[]});
+  blocksMap.get(l.block).lessons.push(l);
+});
+const container = document.getElementById('blocksContainer');
+
+const MORFOSINTAXIS_BLOCKS = [1,2,3,6]; // clases de palabras, estructura de la oración, modos verbales, verbos irregulares
+let leccionBlockFilter = 'all';
+let leccionSearchTerm = '';
+
+function renderBlocks(filterText){
+  leccionSearchTerm = filterText !== undefined ? filterText : leccionSearchTerm;
+  container.innerHTML = '';
+  const f = (leccionSearchTerm||'').trim().toLowerCase();
+  [...blocksMap.entries()].sort((a,b)=>a[0]-b[0]).forEach(([bnum, bdata])=>{
+    if(leccionBlockFilter === 'morfo' && !MORFOSINTAXIS_BLOCKS.includes(bnum)) return;
+    const filteredLessons = f ? bdata.lessons.filter(l =>
+      String(l.num).includes(f) || l.title.toLowerCase().includes(f) || l.text.toLowerCase().includes(f)
+    ) : bdata.lessons;
+    if(f && filteredLessons.length === 0) return;
+    const first = bdata.lessons[0].num, last = bdata.lessons[bdata.lessons.length-1].num;
+
+    const head = document.createElement('div');
+    head.className = 'block-head' + (f ? ' open' : '');
+    head.innerHTML = `<div class="btitle"><span class="bnum">BLOQUE ${bnum} · ${first}–${last}</span><h4>${bdata.title}</h4></div><span class="chev">▸</span>`;
+
+    const body = document.createElement('div');
+    body.className = 'block-body' + (f ? ' open' : '');
+
+    filteredLessons.forEach(l=>{
+      const row = document.createElement('div');
+      row.className = 'lesson-row';
+      row.innerHTML = `<span class="lnum">${String(l.num).padStart(2,'0')}</span><span class="ltitle">${l.title}</span><span class="lchev">▸</span>`;
+
+      const detail = document.createElement('div');
+      detail.className = 'lesson-detail';
+      const safeText = l.text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\*\((.+?)\)\*/g, '<em>($1)</em>');
+      detail.innerHTML = `<div class="ld-head"><h5>Lección ${l.num} — ${l.title}</h5><button class="ld-copy">Copiar guion</button></div><div class="ld-text">${safeText}</div>`;
+
+      row.addEventListener('click', ()=>{
+        const isOpen = detail.classList.contains('open');
+        detail.classList.toggle('open', !isOpen);
+        row.querySelector('.lchev').style.transform = !isOpen ? 'rotate(90deg)' : 'rotate(0)';
+      });
+      detail.querySelector('.ld-copy').addEventListener('click', async (e)=>{
+        e.stopPropagation();
+        const btn = e.target;
+        try{
+          await navigator.clipboard.writeText(`Lección ${l.num} — ${l.title}\n\n` + l.text.replace(/\*\((.+?)\)\*\n\n/g,''));
+          btn.textContent = 'Copiado ✓'; btn.classList.add('copied');
+          setTimeout(()=>{ btn.textContent='Copiar guion'; btn.classList.remove('copied'); }, 1500);
+        }catch(err){ btn.textContent = 'Error'; }
+      });
+
+      body.appendChild(row);
+      body.appendChild(detail);
+    });
+
+    head.addEventListener('click', ()=>{ head.classList.toggle('open'); body.classList.toggle('open'); });
+    container.appendChild(head);
+    container.appendChild(body);
+  });
+}
+renderBlocks('');
+document.getElementById('lessonSearch').addEventListener('input', (e)=> renderBlocks(e.target.value));
+document.querySelectorAll('#leccionFilterRail .filter-pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#leccionFilterRail .filter-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    leccionBlockFilter = btn.dataset.blockfilter;
+    renderBlocks();
+  });
+});
+
+/* ================= Tracker (persisted) ================= */
+const STAGES = ['guion','audio','anim','edit','pub'];
+let trackerState = {};
+
+async function loadTracker(){
+  try{
+    const res = await window.storage.get('tracker-state', false);
+    if(res && res.value){ trackerState = JSON.parse(res.value); }
+  }catch(e){ trackerState = {}; }
+  LESSONS.forEach(l=>{
+    if(!trackerState[l.num]) trackerState[l.num] = {guion:true, audio:false, anim:false, edit:false, pub:false, char:'', videoUrl:''};
+    if(trackerState[l.num].char === undefined) trackerState[l.num].char = '';
+    if(trackerState[l.num].videoUrl === undefined) trackerState[l.num].videoUrl = '';
+  });
+  renderTracker();
+  renderVideoGrid();
+}
+async function saveTracker(){
+  try{ await window.storage.set('tracker-state', JSON.stringify(trackerState), false); }
+  catch(e){ console.error('No se pudo guardar el progreso', e); }
+}
+
+function renderTracker(){
+  const tbody = document.getElementById('trackerBody');
+  tbody.innerHTML = '';
+  LESSONS.forEach(l=>{
+    const st = trackerState[l.num];
+    const tr = document.createElement('tr');
+    if(st.pub) tr.classList.add('row-done');
+    const charOptions = ['<option value="">—</option>'].concat(
+      savedCharacters.map(c => `<option value="${c.id}" ${st.char===c.id?'selected':''}>${c.name}</option>`)
+    ).join('');
+    tr.innerHTML = `
+      <td>${String(l.num).padStart(3,'0')}</td>
+      <td>${l.title}</td>
+      <td><select class="char-select" data-num="${l.num}">${charOptions}</select></td>
+      ${STAGES.map(s=>`<td><input type="checkbox" class="chk" data-num="${l.num}" data-stage="${s}" ${st[s] ? 'checked':''}></td>`).join('')}
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('.chk').forEach(chk=>{
+    chk.addEventListener('change', async (e)=>{
+      const num = e.target.dataset.num, stage = e.target.dataset.stage;
+      trackerState[num][stage] = e.target.checked;
+      e.target.closest('tr').classList.toggle('row-done', trackerState[num].pub);
+      updateCounts();
+      await saveTracker();
+      renderVideoGrid();
+    });
+  });
+  tbody.querySelectorAll('.char-select').forEach(sel=>{
+    sel.addEventListener('change', async (e)=>{
+      trackerState[e.target.dataset.num].char = e.target.value;
+      await saveTracker();
+      renderVideoGrid();
+    });
+  });
+
+  updateCounts();
+}
+function populateCharSelects(){
+  if(document.getElementById('trackerBody').children.length) renderTracker();
+}
+
+function updateCounts(){
+  const counts = {guion:0, audio:0, anim:0, edit:0, pub:0};
+  Object.values(trackerState).forEach(st=>{ STAGES.forEach(s=>{ if(st[s]) counts[s]++; }); });
+  document.getElementById('cntGuion').textContent = counts.guion;
+  document.getElementById('cntAudio').textContent = counts.audio;
+  document.getElementById('cntAnim').textContent = counts.anim;
+  document.getElementById('cntEdit').textContent = counts.edit;
+  document.getElementById('cntPub').textContent = counts.pub;
+  const pct = Math.round((counts.pub / 100) * 100);
+  document.getElementById('sidebarPct').textContent = pct + '%';
+  document.getElementById('sidebarFill').style.width = pct + '%';
+}
+
+document.getElementById('resetTracker').addEventListener('click', async ()=>{
+  if(!confirm('¿Reiniciar todo el seguimiento de producción? Esta acción no se puede deshacer.')) return;
+  LESSONS.forEach(l=>{ trackerState[l.num] = {guion:true, audio:false, anim:false, edit:false, pub:false, char:'', videoUrl:''}; });
+  renderTracker();
+  renderVideoGrid();
+  await saveTracker();
+});
+
+/* ================= Mis videos ================= */
+let videoFilter = 'all';
+let videoSearchTerm = '';
+
+function renderVideoGrid(){
+  const grid = document.getElementById('videoGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  const term = videoSearchTerm.trim().toLowerCase();
+  let withVideo = 0, pubCount = 0;
+
+  const filtered = LESSONS.filter(l=>{
+    const st = trackerState[l.num] || {};
+    if(st.videoUrl) withVideo++;
+    if(st.pub) pubCount++;
+    if(term && !(String(l.num).includes(term) || l.title.toLowerCase().includes(term))) return false;
+    if(videoFilter === 'withvideo' && !st.videoUrl) return false;
+    if(videoFilter === 'novideo' && st.videoUrl) return false;
+    if(videoFilter === 'pub' && !st.pub) return false;
+    return true;
+  });
+
+  document.getElementById('vidCntTotal').textContent = withVideo;
+  document.getElementById('vidCntPub').textContent = pubCount;
+  document.getElementById('vidCntPend').textContent = 100 - withVideo;
+  const statVideos = document.getElementById('statVideos');
+  if(statVideos) statVideos.textContent = withVideo;
+
+  filtered.forEach(l=>{
+    const st = trackerState[l.num] || {guion:true,audio:false,anim:false,edit:false,pub:false,char:'',videoUrl:''};
+    const charObj = savedCharacters.find(c => c.id === st.char);
+    const uploadedUrl = uploadedVideos[l.num];
+    const card = document.createElement('div');
+    card.className = 'video-card' + ((st.videoUrl || uploadedUrl) ? ' has-video' : '');
+    card.innerHTML = `
+      <div class="vc-head">
+        <span class="vc-num">${String(l.num).padStart(3,'0')}</span>
+        <span class="vc-title">${l.title}</span>
+      </div>
+      <div class="vc-meta">
+        <span class="vc-badge ${st.audio?'on':''}">Audio</span>
+        <span class="vc-badge ${st.anim?'on':''}">Animación</span>
+        <span class="vc-badge ${st.edit?'on':''}">Editado</span>
+        <span class="vc-badge ${st.pub?'pub-on':''}">${st.pub ? 'Publicado' : 'No publicado'}</span>
+        ${charObj ? `<span class="vc-badge on">${charObj.name}</span>` : ''}
+      </div>
+      ${uploadedUrl ? `<video class="vc-inline-video" src="${uploadedUrl}" controls></video><span class="vc-uploaded-tag">Video cargado en este dispositivo</span>` : ''}
+      <div class="vc-url-row">
+        <input type="text" class="vid-url-input" data-num="${l.num}" placeholder="Enlace del video (YouTube, TikTok, Drive…)" value="${(st.videoUrl||'').replace(/"/g,'&quot;')}">
+        ${st.videoUrl ? `<a class="vc-open" href="${st.videoUrl}" target="_blank" rel="noopener">Ver ▸</a>` : ''}
+      </div>
+      <div class="vc-upload-row">
+        <button class="vc-upload-btn" data-num="${l.num}">${uploadedUrl ? 'Reemplazar video' : 'Cargar video'}</button>
+        <button class="vc-play-btn" data-num="${l.num}" ${(!st.videoUrl && !uploadedUrl) ? 'disabled' : ''}>▶ Reproducir</button>
+      </div>
+      ${(!st.videoUrl && !uploadedUrl) ? '<span class="vc-empty-tag">Sin video todavía</span>' : ''}
+    `;
+
+    const input = card.querySelector('.vid-url-input');
+    input.addEventListener('change', async (e)=>{
+      trackerState[l.num].videoUrl = e.target.value.trim();
+      await saveTracker();
+      renderVideoGrid();
+    });
+
+    card.querySelector('.vc-upload-btn').addEventListener('click', ()=>{
+      pendingUploadLesson = l.num;
+      document.getElementById('globalVideoFileInput').click();
+    });
+
+    card.querySelector('.vc-play-btn').addEventListener('click', ()=>{
+      openPlayer(l.num);
+    });
+
+    grid.appendChild(card);
+  });
+
+  if(filtered.length === 0){
+    grid.innerHTML = '<p class="empty-note">No hay lecciones que coincidan con este filtro.</p>';
+  }
+}
+
+document.querySelectorAll('.filter-pill').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.filter-pill').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    videoFilter = btn.dataset.filter;
+    renderVideoGrid();
+  });
+});
+const videoSearchInput = document.getElementById('videoSearch');
+if(videoSearchInput){
+  videoSearchInput.addEventListener('input', (e)=>{
+    videoSearchTerm = e.target.value;
+    renderVideoGrid();
+  });
+}
+
+/* ================= Cargar video local + Reproductor ================= */
+let uploadedVideos = {}; // lessonNum -> blob object URL (memoria de esta sesión, no persiste al recargar)
+let pendingUploadLesson = null;
+let playerCurrentIndex = 0; // índice sobre LESSONS
+
+document.getElementById('globalVideoFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file || pendingUploadLesson === null) return;
+  const num = pendingUploadLesson;
+  if(uploadedVideos[num]) URL.revokeObjectURL(uploadedVideos[num]);
+  uploadedVideos[num] = URL.createObjectURL(file);
+  pendingUploadLesson = null;
+  e.target.value = '';
+  renderVideoGrid();
+});
+
+function lessonHasPlayable(num){
+  return !!(uploadedVideos[num] || (trackerState[num] && trackerState[num].videoUrl));
+}
+
+function openPlayer(lessonNum){
+  playerCurrentIndex = LESSONS.findIndex(l => l.num === lessonNum);
+  if(playerCurrentIndex === -1) playerCurrentIndex = 0;
+  document.getElementById('playerOverlay').classList.add('open');
+  renderPlayerFrame();
+}
+
+function closePlayer(){
+  document.getElementById('playerOverlay').classList.remove('open');
+  const vid = document.getElementById('playerBody').querySelector('video');
+  if(vid) vid.pause();
+}
+
+function renderPlayerFrame(){
+  const l = LESSONS[playerCurrentIndex];
+  const st = trackerState[l.num] || {};
+  const uploadedUrl = uploadedVideos[l.num];
+  document.getElementById('playerTitle').textContent = `Lección ${l.num} — ${l.title}`;
+  document.getElementById('playerCount').textContent = `${playerCurrentIndex+1} / 100`;
+
+  const body = document.getElementById('playerBody');
+  if(uploadedUrl){
+    body.innerHTML = `<video src="${uploadedUrl}" controls autoplay></video>`;
+    const vid = body.querySelector('video');
+    vid.addEventListener('ended', ()=>{
+      if(playerCurrentIndex < LESSONS.length - 1){ playerCurrentIndex++; renderPlayerFrame(); }
+    });
+  } else if(st.videoUrl){
+    body.innerHTML = `<div class="player-empty">Este video vive en un enlace externo.<br><br><a href="${st.videoUrl}" target="_blank" rel="noopener">Abrir ${st.videoUrl}</a></div>`;
+  } else {
+    body.innerHTML = `<div class="player-empty">Todavía no hay video para esta lección.<br>Carga un archivo o pega un enlace desde su tarjeta.</div>`;
+  }
+
+  document.getElementById('playerPrev').disabled = playerCurrentIndex === 0;
+  document.getElementById('playerNext').disabled = playerCurrentIndex === LESSONS.length - 1;
+}
+
+document.getElementById('playerClose').addEventListener('click', closePlayer);
+document.getElementById('playerOverlay').addEventListener('click', (e)=>{
+  if(e.target.id === 'playerOverlay') closePlayer();
+});
+document.getElementById('playerPrev').addEventListener('click', ()=>{
+  if(playerCurrentIndex > 0){ playerCurrentIndex--; renderPlayerFrame(); }
+});
+document.getElementById('playerNext').addEventListener('click', ()=>{
+  if(playerCurrentIndex < LESSONS.length - 1){ playerCurrentIndex++; renderPlayerFrame(); }
+});
+
+document.getElementById('playAllBtn').addEventListener('click', ()=>{
+  const firstPlayable = LESSONS.findIndex(l => lessonHasPlayable(l.num));
+  playerCurrentIndex = firstPlayable === -1 ? 0 : firstPlayable;
+  document.getElementById('playerOverlay').classList.add('open');
+  renderPlayerFrame();
+});
+
+/* ================= Init ================= */
+(async function init(){
+  await loadCharacters();
+  await loadTracker();
+})();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

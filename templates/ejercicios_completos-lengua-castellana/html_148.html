@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Fábula (Teón) en ciencia ficción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(20, 40, 70, 0.8) 0%, transparent 60%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #d0dbe8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #4a7a9c;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #8bc4e0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 20px rgba(80, 160, 220, 0.2);
+        }
+        .header h1 span {
+            background: #3a6a8c;
+            color: #e0f0ff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            border: 1px solid #5a8aaa;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #7a9ab0;
+            background: rgba(60, 120, 180, 0.15);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #4a7a9c;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #141c26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #8bb0c8;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #1a2a3a; color: #c0dcee; }
+        .block-nav button.active {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border-color: #4a8aaa;
+            box-shadow: 0 0 20px rgba(60, 140, 220, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 510px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a4a5c;
+        }
+        .card-front {
+            background: #121c26;
+            background-image: linear-gradient(145deg, #0e1820 0%, #1a2a36 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 3px solid #3a7a9c;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #4a8aaa;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6a9ab0;
+            background: #1a2a3a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            border: 1px solid #3a5a6a;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #8bc4e0;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #9ab8d0;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #5a7a8a;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #2a4a5c;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #0e1820;
+            background-image: linear-gradient(160deg, #0c1620 0%, #16222e 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #4a8aaa;
+            border-bottom: 1px solid #3a6a8c;
+        }
+        .card-back .definicion {
+            background: rgba(60, 140, 220, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .sintaxis {
+            background: rgba(60, 180, 120, 0.10);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #5a8a7a;
+            margin-bottom: 0.3rem;
+            color: #a0c8b8;
+            font-family: monospace;
+        }
+        .card-back .estructura {
+            background: rgba(60, 140, 200, 0.08);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(60, 140, 220, 0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #4a8aaa;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #8bc4e0;
+        }
+        .card-back .ejercicio {
+            background: #1a2a3a;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #b0c8d8;
+            border: 1px solid #2a4a5c;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2a4a5c;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #0a141c;
+            color: #d0dbe8;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #4a8aaa;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #3a7a9c; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #6abe6a; }
+        .card-back .feedback-msg.incorrecto { color: #d46a6a; }
+        .card-back .respuesta-correcta {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5a7a8a;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #121c26;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #8bc4e0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6a9ab0;
+        }
+        .quiz-pregunta {
+            background: #0c1620;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #1a2a3a;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: #c0dcee;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #0e1820;
+            border: 1px solid #2a4a5c;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #b0c8d8;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #1a2a3a; }
+        .quiz-opciones button.correct {
+            background: #1a5a3a;
+            border-color: #3a8a5a;
+            color: #b0e8c0;
+        }
+        .quiz-opciones button.incorrect {
+            background: #5a2a2a;
+            border-color: #8a4a4a;
+            color: #e8b0b0;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #1a2a3a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            color: #b0c8d8;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #2a5a7a;
+            border: none;
+            color: #e0f0ff;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #3a7a9c; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5a7a8a;
+            border-top: 1px solid #1a2a3a;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>🦊 Fábula (Teón) en ciencia ficción <span>100 técnicas</span></h1>
+        <div class="sub">relatos breves · enseñanzas · sintaxis · ejemplos</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>fábulas en ciencia ficción</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">Escribe tu respuesta en cada tarjeta y verifica · Explora las fábulas del cosmos</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS DE FÁBULA (TEÓN) EN CIENCIA FICCIÓN
+    // Cada técnica: nombre, definición/teoría, estructura sintáctica,
+    // fórmula de redacción, ejemplo (relato breve con enseñanza), ejercicio y respuesta.
+    // Distribuidas en 4 bloques: Animales cósmicos, Seres tecnológicos,
+    // Planetas y estrellas, Seres míticos.
+    // ================================================================
+    const TECNICAS = [];
+
+    // =================== BLOQUE 1: FÁBULAS DE ANIMALES CÓSMICOS (25) ===================
+    const animales = [
+        { nombre: "El zorro y la estrella", definicion: "Fábula sobre la humildad y la sabiduría.", sintaxis: "Un [animal] encontró una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un zorro encontró una estrella fugaz y aprendió que la verdadera sabiduría no está en el brillo, sino en la humildad.", ejercicio: "¿Qué fábula enseña que la humildad es más valiosa que el brillo?", respuesta: "El zorro y la estrella" },
+        { nombre: "El lobo y la nebulosa", definicion: "Fábula sobre la paciencia y la observación.", sintaxis: "Un [animal] observó una [nebulosa] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un lobo observó la nebulosa durante años y comprendió que la paciencia revela los secretos del cosmos.", ejercicio: "¿Qué fábula enseña que la paciencia revela secretos?", respuesta: "El lobo y la nebulosa" },
+        { nombre: "El cuervo y el agujero negro", definicion: "Fábula sobre la precaución.", sintaxis: "Un [animal] se acercó a un [agujero negro] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cuervo se acercó a un agujero negro y aprendió que la curiosidad sin precaución puede ser peligrosa.", ejercicio: "¿Qué fábula enseña que la curiosidad sin precaución es peligrosa?", respuesta: "El cuervo y el agujero negro" },
+        { nombre: "La liebre y el cometa", definicion: "Fábula sobre la constancia.", sintaxis: "Una [liebre] y un [cometa] compitieron y aprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una liebre y un cometa compitieron; la liebre aprendió que la constancia vence a la velocidad.", ejercicio: "¿Qué fábula enseña que la constancia vence a la velocidad?", respuesta: "La liebre y el cometa" },
+        { nombre: "El búho y la luna", definicion: "Fábula sobre la sabiduría.", sintaxis: "Un [búho] miró la [luna] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un búho miró la luna y comprendió que la sabiduría no está en el conocimiento, sino en la capacidad de asombrarse.", ejercicio: "¿Qué fábula enseña que la sabiduría está en asombrarse?", respuesta: "El búho y la luna" },
+        { nombre: "El gato y el satélite", definicion: "Fábula sobre la adaptación.", sintaxis: "Un [gato] observó un [satélite] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un gato observó un satélite y aprendió que la adaptación es clave para sobrevivir en el espacio.", ejercicio: "¿Qué fábula enseña que la adaptación es clave?", respuesta: "El gato y el satélite" },
+        { nombre: "El ratón y la nave", definicion: "Fábula sobre la astucia.", sintaxis: "Un [ratón] entró en una [nave] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un ratón entró en una nave espacial y descubrió que la astucia es mejor que la fuerza bruta.", ejercicio: "¿Qué fábula enseña que la astucia es mejor que la fuerza?", respuesta: "El ratón y la nave" },
+        { nombre: "El águila y la galaxia", definicion: "Fábula sobre la perspectiva.", sintaxis: "Un [águila] voló sobre una [galaxia] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un águila voló sobre una galaxia y comprendió que la perspectiva cambia todo.", ejercicio: "¿Qué fábula enseña que la perspectiva cambia todo?", respuesta: "El águila y la galaxia" },
+        { nombre: "El delfín y el planeta", definicion: "Fábula sobre la inteligencia.", sintaxis: "Un [delfín] exploró un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un delfín exploró un planeta y aprendió que la inteligencia no es exclusiva de los humanos.", ejercicio: "¿Qué fábula enseña que la inteligencia no es exclusiva de los humanos?", respuesta: "El delfín y el planeta" },
+        { nombre: "El murciélago y el eclipse", definicion: "Fábula sobre la adaptación.", sintaxis: "Un [murciélago] vio un [eclipse] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un murciélago vio un eclipse y comprendió que la oscuridad puede ser una oportunidad.", ejercicio: "¿Qué fábula enseña que la oscuridad puede ser una oportunidad?", respuesta: "El murciélago y el eclipse" },
+        { nombre: "El mono y el telescopio", definicion: "Fábula sobre el conocimiento.", sintaxis: "Un [mono] usó un [telescopio] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un mono usó un telescopio y descubrió que el conocimiento amplía el universo.", ejercicio: "¿Qué fábula enseña que el conocimiento amplía el universo?", respuesta: "El mono y el telescopio" },
+        { nombre: "El pingüino y el meteorito", definicion: "Fábula sobre la paciencia.", sintaxis: "Un [pingüino] esperó un [meteorito] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un pingüino esperó un meteorito y aprendió que la paciencia trae recompensas.", ejercicio: "¿Qué fábula enseña que la paciencia trae recompensas?", respuesta: "El pingüino y el meteorito" },
+        { nombre: "El camaleón y la estrella", definicion: "Fábula sobre la identidad.", sintaxis: "Un [camaleón] imitó una [estrella] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un camaleón imitó una estrella y comprendió que la verdadera identidad no se encuentra en la imitación.", ejercicio: "¿Qué fábula enseña que la identidad no está en la imitación?", respuesta: "El camaleón y la estrella" },
+        { nombre: "El pez y la luna", definicion: "Fábula sobre los sueños.", sintaxis: "Un [pez] soñó con la [luna] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un pez soñó con la luna y descubrió que los sueños pueden hacerte volar.", ejercicio: "¿Qué fábula enseña que los sueños pueden hacerte volar?", respuesta: "El pez y la luna" },
+        { nombre: "El colibrí y la nebulosa", definicion: "Fábula sobre la pequeñez.", sintaxis: "Un [colibrí] voló por una [nebulosa] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un colibrí voló por una nebulosa y aprendió que lo pequeño también puede ser grandioso.", ejercicio: "¿Qué fábula enseña que lo pequeño también puede ser grandioso?", respuesta: "El colibrí y la nebulosa" },
+        { nombre: "El escorpión y el agujero de gusano", definicion: "Fábula sobre la naturaleza.", sintaxis: "Un [escorpión] viajó por un [agujero de gusano] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un escorpión viajó por un agujero de gusano y comprendió que su naturaleza lo acompañaba.", ejercicio: "¿Qué fábula enseña que la naturaleza no cambia?", respuesta: "El escorpión y el agujero de gusano" },
+        { nombre: "El cangrejo y el asteroide", definicion: "Fábula sobre la perseverancia.", sintaxis: "Un [cangrejo] caminó por un [asteroide] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cangrejo caminó por un asteroide y aprendió que la perseverancia mueve montañas.", ejercicio: "¿Qué fábula enseña que la perseverancia mueve montañas?", respuesta: "El cangrejo y el asteroide" },
+        { nombre: "El camello y el desierto estelar", definicion: "Fábula sobre la resistencia.", sintaxis: "Un [camello] cruzó un [desierto estelar] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un camello cruzó un desierto estelar y descubrió que la resistencia es la clave de la supervivencia.", ejercicio: "¿Qué fábula enseña que la resistencia es clave?", respuesta: "El camello y el desierto estelar" },
+        { nombre: "El ciervo y la constelación", definicion: "Fábula sobre la belleza.", sintaxis: "Un [ciervo] miró una [constelación] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un ciervo miró una constelación y comprendió que la belleza está en los ojos de quien mira.", ejercicio: "¿Qué fábula enseña que la belleza está en los ojos de quien mira?", respuesta: "El ciervo y la constelación" },
+        { nombre: "El gato y el satélite (II)", definicion: "Fábula sobre la curiosidad.", sintaxis: "Un [gato] jugó con un [satélite] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un gato jugó con un satélite y aprendió que la curiosidad sin medida puede causar daños.", ejercicio: "¿Qué fábula enseña que la curiosidad sin medida puede causar daños?", respuesta: "El gato y el satélite (II)" },
+        { nombre: "El dragón y la estrella", definicion: "Fábula sobre el poder y la responsabilidad.", sintaxis: "Un [dragón] protegió una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un dragón protegió una estrella y aprendió que el poder debe usarse con responsabilidad.", ejercicio: "¿Qué fábula enseña que el poder debe usarse con responsabilidad?", respuesta: "El dragón y la estrella" },
+        { nombre: "El unicornio y la Vía Láctea", definicion: "Fábula sobre la pureza.", sintaxis: "Un [unicornio] recorrió la [Vía Láctea] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un unicornio recorrió la Vía Láctea y descubrió que la pureza del corazón ilumina el camino.", ejercicio: "¿Qué fábula enseña que la pureza del corazón ilumina el camino?", respuesta: "El unicornio y la Vía Láctea" },
+        { nombre: "El fénix y el sol", definicion: "Fábula sobre el renacimiento.", sintaxis: "Un [fénix] renació del [sol] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un fénix renació del sol y comprendió que el renacimiento es posible después de cada caída.", ejercicio: "¿Qué fábula enseña que el renacimiento es posible?", respuesta: "El fénix y el sol" },
+        { nombre: "El grifo y el cometa (II)", definicion: "Fábula sobre la libertad.", sintaxis: "Un [grifo] voló junto a un [cometa] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un grifo voló junto a un cometa y aprendió que la libertad es el vuelo del alma.", ejercicio: "¿Qué fábula enseña que la libertad es el vuelo del alma?", respuesta: "El grifo y el cometa (II)" },
+        { nombre: "El lobo y la nebulosa (II)", definicion: "Fábula sobre la adaptabilidad.", sintaxis: "Un [lobo] se adaptó a una [nebulosa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un lobo se adaptó a una nebulosa y descubrió que la adaptabilidad es la clave de la evolución.", ejercicio: "¿Qué fábula enseña que la adaptabilidad es clave de la evolución?", respuesta: "El lobo y la nebulosa (II)" },
+        { nombre: "El gato y el eclipse (II)", definicion: "Fábula sobre la percepción.", sintaxis: "Un [gato] vio un [eclipse] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un gato vio un eclipse y comprendió que a veces la oscuridad revela la luz.", ejercicio: "¿Qué fábula enseña que la oscuridad revela la luz?", respuesta: "El gato y el eclipse (II)" },
+    ];
+    animales.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "animal", ...t }));
+
+    // =================== BLOQUE 2: FÁBULAS DE SERES TECNOLÓGICOS (25) ===================
+    const tecnologicos = [
+        { nombre: "El robot y la estrella", definicion: "Fábula sobre el propósito.", sintaxis: "Un [robot] buscó una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un robot buscó una estrella y aprendió que el propósito no está en la meta, sino en el viaje.", ejercicio: "¿Qué fábula enseña que el propósito está en el viaje?", respuesta: "El robot y la estrella" },
+        { nombre: "La IA y el planeta", definicion: "Fábula sobre la comprensión.", sintaxis: "Una [IA] analizó un [planeta] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una IA analizó un planeta y comprendió que la comprensión trasciende los datos.", ejercicio: "¿Qué fábula enseña que la comprensión trasciende los datos?", respuesta: "La IA y el planeta" },
+        { nombre: "El androide y el agujero negro", definicion: "Fábula sobre la identidad.", sintaxis: "Un [androide] se acercó a un [agujero negro] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un androide se acercó a un agujero negro y descubrió que la identidad no es binaria.", ejercicio: "¿Qué fábula enseña que la identidad no es binaria?", respuesta: "El androide y el agujero negro" },
+        { nombre: "El cíborg y la luna", definicion: "Fábula sobre la humanidad.", sintaxis: "Un [cíborg] miró la [luna] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cíborg miró la luna y aprendió que la humanidad no depende del cuerpo.", ejercicio: "¿Qué fábula enseña que la humanidad no depende del cuerpo?", respuesta: "El cíborg y la luna" },
+        { nombre: "El holograma y la galaxia", definicion: "Fábula sobre la realidad.", sintaxis: "Un [holograma] viajó por una [galaxia] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un holograma viajó por una galaxia y comprendió que la realidad es una cuestión de percepción.", ejercicio: "¿Qué fábula enseña que la realidad es una cuestión de percepción?", respuesta: "El holograma y la galaxia" },
+        { nombre: "El clon y el sol", definicion: "Fábula sobre la unicidad.", sintaxis: "Un [clon] buscó su [sol] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un clon buscó su sol y descubrió que la unicidad no está en el origen.", ejercicio: "¿Qué fábula enseña que la unicidad no está en el origen?", respuesta: "El clon y el sol" },
+        { nombre: "El mutante y la estrella", definicion: "Fábula sobre la diferencia.", sintaxis: "Un [mutante] observó una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un mutante observó una estrella y aprendió que la diferencia es una fortaleza.", ejercicio: "¿Qué fábula enseña que la diferencia es una fortaleza?", respuesta: "El mutante y la estrella" },
+        { nombre: "El nanobot y el planeta", definicion: "Fábula sobre la pequeñez.", sintaxis: "Un [nanobot] exploró un [planeta] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un nanobot exploró un planeta y comprendió que la pequeñez no limita la grandeza.", ejercicio: "¿Qué fábula enseña que la pequeñez no limita la grandeza?", respuesta: "El nanobot y el planeta" },
+        { nombre: "El robot y la luna (II)", definicion: "Fábula sobre la curiosidad.", sintaxis: "Un [robot] siguió a la [luna] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un robot siguió a la luna y aprendió que la curiosidad es el motor del conocimiento.", ejercicio: "¿Qué fábula enseña que la curiosidad es el motor del conocimiento?", respuesta: "El robot y la luna (II)" },
+        { nombre: "La IA y el agujero negro (II)", definicion: "Fábula sobre la ética.", sintaxis: "Una [IA] analizó un [agujero negro] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una IA analizó un agujero negro y descubrió que la ética debe guiar la tecnología.", ejercicio: "¿Qué fábula enseña que la ética debe guiar la tecnología?", respuesta: "La IA y el agujero negro (II)" },
+        { nombre: "El androide y el cometa", definicion: "Fábula sobre la libertad.", sintaxis: "Un [androide] viajó con un [cometa] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un androide viajó con un cometa y comprendió que la libertad es un derecho de todos.", ejercicio: "¿Qué fábula enseña que la libertad es un derecho de todos?", respuesta: "El androide y el cometa" },
+        { nombre: "El cíborg y la nebulosa", definicion: "Fábula sobre la evolución.", sintaxis: "Un [cíborg] observó una [nebulosa] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cíborg observó una nebulosa y aprendió que la evolución es un proceso continuo.", ejercicio: "¿Qué fábula enseña que la evolución es un proceso continuo?", respuesta: "El cíborg y la nebulosa" },
+        { nombre: "El holograma y el sol", definicion: "Fábula sobre la luz.", sintaxis: "Un [holograma] brilló como el [sol] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un holograma brilló como el sol y descubrió que la luz interior es eterna.", ejercicio: "¿Qué fábula enseña que la luz interior es eterna?", respuesta: "El holograma y el sol" },
+        { nombre: "El clon y la galaxia", definicion: "Fábula sobre la conexión.", sintaxis: "Un [clon] se conectó con una [galaxia] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un clon se conectó con una galaxia y comprendió que todos estamos conectados.", ejercicio: "¿Qué fábula enseña que todos estamos conectados?", respuesta: "El clon y la galaxia" },
+        { nombre: "El mutante y el agujero negro (II)", definicion: "Fábula sobre la transformación.", sintaxis: "Un [mutante] entró en un [agujero negro] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un mutante entró en un agujero negro y aprendió que la transformación es el camino al cambio.", ejercicio: "¿Qué fábula enseña que la transformación es el camino al cambio?", respuesta: "El mutante y el agujero negro (II)" },
+        { nombre: "El nanobot y la estrella", definicion: "Fábula sobre la perseverancia.", sintaxis: "Un [nanobot] viajó a una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un nanobot viajó a una estrella y descubrió que la perseverancia vence la distancia.", ejercicio: "¿Qué fábula enseña que la perseverancia vence la distancia?", respuesta: "El nanobot y la estrella" },
+        { nombre: "El robot y el planeta (II)", definicion: "Fábula sobre el cuidado.", sintaxis: "Un [robot] cuidó un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un robot cuidó un planeta y aprendió que el cuidado es la base de la supervivencia.", ejercicio: "¿Qué fábula enseña que el cuidado es la base de la supervivencia?", respuesta: "El robot y el planeta (II)" },
+        { nombre: "La IA y el cometa (II)", definicion: "Fábula sobre la previsión.", sintaxis: "Una [IA] predijo un [cometa] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una IA predijo un cometa y comprendió que la previsión es clave para la supervivencia.", ejercicio: "¿Qué fábula enseña que la previsión es clave?", respuesta: "La IA y el cometa (II)" },
+        { nombre: "El androide y la luna (II)", definicion: "Fábula sobre la esperanza.", sintaxis: "Un [androide] miró la [luna] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un androide miró la luna y descubrió que la esperanza ilumina incluso las noches más oscuras.", ejercicio: "¿Qué fábula enseña que la esperanza ilumina la oscuridad?", respuesta: "El androide y la luna (II)" },
+        { nombre: "El cíborg y el sol (II)", definicion: "Fábula sobre la energía.", sintaxis: "Un [cíborg] se cargó con el [sol] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cíborg se cargó con el sol y aprendió que la energía renovable es el futuro.", ejercicio: "¿Qué fábula enseña que la energía renovable es el futuro?", respuesta: "El cíborg y el sol (II)" },
+        { nombre: "El holograma y el agujero negro (II)", definicion: "Fábula sobre la ilusión.", sintaxis: "Un [holograma] se reflejó en un [agujero negro] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un holograma se reflejó en un agujero negro y comprendió que la ilusión puede ser más real que la realidad.", ejercicio: "¿Qué fábula enseña que la ilusión puede ser más real que la realidad?", respuesta: "El holograma y el agujero negro (II)" },
+        { nombre: "El clon y la nebulosa (II)", definicion: "Fábula sobre la creatividad.", sintaxis: "Un [clon] creó una [nebulosa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un clon creó una nebulosa y descubrió que la creatividad es el poder de crear mundos.", ejercicio: "¿Qué fábula enseña que la creatividad es el poder de crear mundos?", respuesta: "El clon y la nebulosa (II)" },
+        { nombre: "El mutante y el planeta (II)", definicion: "Fábula sobre la adaptación.", sintaxis: "Un [mutante] se adaptó a un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un mutante se adaptó a un planeta y aprendió que la adaptación es la clave de la evolución.", ejercicio: "¿Qué fábula enseña que la adaptación es la clave de la evolución?", respuesta: "El mutante y el planeta (II)" },
+        { nombre: "El nanobot y el agujero negro (II)", definicion: "Fábula sobre la pequeñez y la grandeza.", sintaxis: "Un [nanobot] entró en un [agujero negro] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un nanobot entró en un agujero negro y descubrió que lo pequeño también puede ser infinito.", ejercicio: "¿Qué fábula enseña que lo pequeño también puede ser infinito?", respuesta: "El nanobot y el agujero negro (II)" },
+        { nombre: "El robot y la galaxia", definicion: "Fábula sobre la exploración.", sintaxis: "Un [robot] exploró una [galaxia] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un robot exploró una galaxia y comprendió que la exploración es el camino al conocimiento.", ejercicio: "¿Qué fábula enseña que la exploración es el camino al conocimiento?", respuesta: "El robot y la galaxia" },
+    ];
+    tecnologicos.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "tecnológico", ...t }));
+
+    // =================== BLOQUE 3: FÁBULAS DE PLANETAS Y ESTRELLAS (25) ===================
+    const planetas = [
+        { nombre: "El planeta y la estrella", definicion: "Fábula sobre la interdependencia.", sintaxis: "Un [planeta] orbitó una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta orbitó una estrella y aprendió que la interdependencia es la base de la vida.", ejercicio: "¿Qué fábula enseña que la interdependencia es la base de la vida?", respuesta: "El planeta y la estrella" },
+        { nombre: "La luna y el sol", definicion: "Fábula sobre el equilibrio.", sintaxis: "La [luna] y el [sol] alternaron y comprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "La luna y el sol alternaron y comprendieron que el equilibrio es la clave del cosmos.", ejercicio: "¿Qué fábula enseña que el equilibrio es la clave del cosmos?", respuesta: "La luna y el sol" },
+        { nombre: "El cometa y el planeta", definicion: "Fábula sobre la fugacidad.", sintaxis: "Un [cometa] pasó junto a un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cometa pasó junto a un planeta y aprendió que la fugacidad no le quita valor al momento.", ejercicio: "¿Qué fábula enseña que la fugacidad no le quita valor al momento?", respuesta: "El cometa y el planeta" },
+        { nombre: "La nebulosa y la estrella", definicion: "Fábula sobre el nacimiento.", sintaxis: "Una [nebulosa] dio a luz a una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una nebulosa dio a luz a una estrella y descubrió que el nacimiento es el comienzo de un ciclo.", ejercicio: "¿Qué fábula enseña que el nacimiento es el comienzo de un ciclo?", respuesta: "La nebulosa y la estrella" },
+        { nombre: "El agujero negro y la galaxia", definicion: "Fábula sobre el misterio.", sintaxis: "Un [agujero negro] absorbió una [galaxia] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un agujero negro absorbió una galaxia y comprendió que el misterio es parte del universo.", ejercicio: "¿Qué fábula enseña que el misterio es parte del universo?", respuesta: "El agujero negro y la galaxia" },
+        { nombre: "El planeta rojo y la estrella", definicion: "Fábula sobre la esperanza.", sintaxis: "Un [planeta rojo] miró una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta rojo miró una estrella y aprendió que la esperanza nunca se apaga.", ejercicio: "¿Qué fábula enseña que la esperanza nunca se apaga?", respuesta: "El planeta rojo y la estrella" },
+        { nombre: "El planeta azul y la luna", definicion: "Fábula sobre la vida.", sintaxis: "Un [planeta azul] miró la [luna] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta azul miró la luna y descubrió que la vida es un milagro.", ejercicio: "¿Qué fábula enseña que la vida es un milagro?", respuesta: "El planeta azul y la luna" },
+        { nombre: "El planeta gaseoso y el viento", definicion: "Fábula sobre la flexibilidad.", sintaxis: "Un [planeta gaseoso] se dejó llevar por el [viento] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta gaseoso se dejó llevar por el viento y aprendió que la flexibilidad es la clave de la supervivencia.", ejercicio: "¿Qué fábula enseña que la flexibilidad es clave?", respuesta: "El planeta gaseoso y el viento" },
+        { nombre: "El planeta helado y el sol", definicion: "Fábula sobre el cambio.", sintaxis: "Un [planeta helado] se acercó al [sol] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta helado se acercó al sol y comprendió que el cambio es inevitable.", ejercicio: "¿Qué fábula enseña que el cambio es inevitable?", respuesta: "El planeta helado y el sol" },
+        { nombre: "La estrella fugaz y el planeta", definicion: "Fábula sobre los deseos.", sintaxis: "Una [estrella fugaz] pasó por un [planeta] y enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una estrella fugaz pasó por un planeta y enseñó que los deseos pueden hacerse realidad.", ejercicio: "¿Qué fábula enseña que los deseos pueden hacerse realidad?", respuesta: "La estrella fugaz y el planeta" },
+        { nombre: "El planeta y su luna", definicion: "Fábula sobre la lealtad.", sintaxis: "Un [planeta] y su [luna] orbitaron juntos y aprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta y su luna orbitaron juntos y aprendieron que la lealtad es eterna.", ejercicio: "¿Qué fábula enseña que la lealtad es eterna?", respuesta: "El planeta y su luna" },
+        { nombre: "La estrella doble y el cometa", definicion: "Fábula sobre la cooperación.", sintaxis: "Una [estrella doble] y un [cometa] colaboraron y descubrieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una estrella doble y un cometa colaboraron y descubrieron que la cooperación crea armonía.", ejercicio: "¿Qué fábula enseña que la cooperación crea armonía?", respuesta: "La estrella doble y el cometa" },
+        { nombre: "El planeta y el asteroide", definicion: "Fábula sobre la prevención.", sintaxis: "Un [planeta] evitó un [asteroide] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta evitó un asteroide y aprendió que la prevención salva vidas.", ejercicio: "¿Qué fábula enseña que la prevención salva vidas?", respuesta: "El planeta y el asteroide" },
+        { nombre: "La galaxia y la estrella", definicion: "Fábula sobre el propósito.", sintaxis: "Una [galaxia] guió a una [estrella] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una galaxia guió a una estrella y comprendió que el propósito da sentido al viaje.", ejercicio: "¿Qué fábula enseña que el propósito da sentido al viaje?", respuesta: "La galaxia y la estrella" },
+        { nombre: "El cúmulo y la estrella", definicion: "Fábula sobre la comunidad.", sintaxis: "Un [cúmulo] acogió a una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un cúmulo acogió a una estrella y aprendió que la comunidad es la fuerza.", ejercicio: "¿Qué fábula enseña que la comunidad es la fuerza?", respuesta: "El cúmulo y la estrella" },
+        { nombre: "El planeta enano y la estrella", definicion: "Fábula sobre el valor.", sintaxis: "Un [planeta enano] orbitó una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta enano orbitó una estrella y descubrió que el valor no está en el tamaño.", ejercicio: "¿Qué fábula enseña que el valor no está en el tamaño?", respuesta: "El planeta enano y la estrella" },
+        { nombre: "La nebulosa y el planeta", definicion: "Fábula sobre la creación.", sintaxis: "Una [nebulosa] creó un [planeta] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una nebulosa creó un planeta y comprendió que la creación es el acto más sublime.", ejercicio: "¿Qué fábula enseña que la creación es el acto más sublime?", respuesta: "La nebulosa y el planeta" },
+        { nombre: "El agujero de gusano y el planeta", definicion: "Fábula sobre los atajos.", sintaxis: "Un [agujero de gusano] conectó dos [planetas] y enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un agujero de gusano conectó dos planetas y enseñó que los atajos pueden acercar mundos.", ejercicio: "¿Qué fábula enseña que los atajos pueden acercar mundos?", respuesta: "El agujero de gusano y el planeta" },
+        { nombre: "El sol y la Tierra", definicion: "Fábula sobre la dependencia.", sintaxis: "El [sol] y la [Tierra] se necesitaron y aprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "El sol y la Tierra se necesitaron y aprendieron que la dependencia es la base de la vida.", ejercicio: "¿Qué fábula enseña que la dependencia es la base de la vida?", respuesta: "El sol y la Tierra" },
+        { nombre: "La estrella y el planeta (II)", definicion: "Fábula sobre la luz.", sintaxis: "Una [estrella] iluminó a un [planeta] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una estrella iluminó a un planeta y descubrió que la luz es un regalo que no se agota.", ejercicio: "¿Qué fábula enseña que la luz es un regalo que no se agota?", respuesta: "La estrella y el planeta (II)" },
+        { nombre: "El planeta y el cometa (II)", definicion: "Fábula sobre la fugacidad y la eternidad.", sintaxis: "Un [planeta] y un [cometa] reflexionaron sobre [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta y un cometa reflexionaron sobre la fugacidad y aprendieron que lo eterno está en el recuerdo.", ejercicio: "¿Qué fábula enseña que lo eterno está en el recuerdo?", respuesta: "El planeta y el cometa (II)" },
+        { nombre: "La luna y el cometa", definicion: "Fábula sobre la compañía.", sintaxis: "La [luna] y el [cometa] viajaron juntos y comprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "La luna y el cometa viajaron juntos y comprendieron que la compañía hace el viaje más hermoso.", ejercicio: "¿Qué fábula enseña que la compañía hace el viaje más hermoso?", respuesta: "La luna y el cometa" },
+        { nombre: "El planeta rojo y el planeta azul", definicion: "Fábula sobre la amistad.", sintaxis: "Un [planeta rojo] y un [planeta azul] se encontraron y aprendieron que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta rojo y un planeta azul se encontraron y aprendieron que la amistad trasciende el color.", ejercicio: "¿Qué fábula enseña que la amistad trasciende el color?", respuesta: "El planeta rojo y el planeta azul" },
+        { nombre: "La estrella y la nebulosa (II)", definicion: "Fábula sobre el renacimiento.", sintaxis: "Una [estrella] renació de una [nebulosa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una estrella renació de una nebulosa y descubrió que el renacimiento es parte del ciclo cósmico.", ejercicio: "¿Qué fábula enseña que el renacimiento es parte del ciclo cósmico?", respuesta: "La estrella y la nebulosa (II)" },
+        { nombre: "El planeta y el agujero negro (II)", definicion: "Fábula sobre el respeto.", sintaxis: "Un [planeta] respetó a un [agujero negro] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un planeta respetó a un agujero negro y aprendió que el respeto es la base de la convivencia cósmica.", ejercicio: "¿Qué fábula enseña que el respeto es la base de la convivencia?", respuesta: "El planeta y el agujero negro (II)" },
+    ];
+    planetas.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "planetario", ...t }));
+
+    // =================== BLOQUE 4: FÁBULAS DE SERES MÍTICOS Y CÓSMICOS (25) ===================
+    const miticos = [
+        { nombre: "El dragón y el cometa", definicion: "Fábula sobre el poder y la humildad.", sintaxis: "Un [dragón] persiguió un [cometa] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un dragón persiguió un cometa y aprendió que el poder sin humildad es un camino sin retorno.", ejercicio: "¿Qué fábula enseña que el poder sin humildad es un camino sin retorno?", respuesta: "El dragón y el cometa" },
+        { nombre: "El fénix y la estrella", definicion: "Fábula sobre el renacimiento y la esperanza.", sintaxis: "Un [fénix] renació de las cenizas de una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un fénix renació de las cenizas de una estrella y descubrió que la esperanza es eterna.", ejercicio: "¿Qué fábula enseña que la esperanza es eterna?", respuesta: "El fénix y la estrella" },
+        { nombre: "El unicornio y la Vía Láctea (II)", definicion: "Fábula sobre la pureza y la luz.", sintaxis: "Un [unicornio] bebió de la [Vía Láctea] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un unicornio bebió de la Vía Láctea y comprendió que la pureza del corazón ilumina el camino.", ejercicio: "¿Qué fábula enseña que la pureza del corazón ilumina el camino?", respuesta: "El unicornio y la Vía Láctea (II)" },
+        { nombre: "El grifo y el sol", definicion: "Fábula sobre la libertad y el vuelo.", sintaxis: "Un [grifo] voló hacia el [sol] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un grifo voló hacia el sol y aprendió que la libertad es el vuelo del alma.", ejercicio: "¿Qué fábula enseña que la libertad es el vuelo del alma?", respuesta: "El grifo y el sol" },
+        { nombre: "El centauro y la constelación", definicion: "Fábula sobre la sabiduría y la guía.", sintaxis: "Un [centauro] observó una [constelación] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un centauro observó una constelación y descubrió que la sabiduría guía el camino.", ejercicio: "¿Qué fábula enseña que la sabiduría guía el camino?", respuesta: "El centauro y la constelación" },
+        { nombre: "La sirenita y el planeta", definicion: "Fábula sobre el deseo y la realidad.", sintaxis: "Una [sirenita] soñó con un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una sirenita soñó con un planeta y aprendió que el deseo sin acción no es suficiente.", ejercicio: "¿Qué fábula enseña que el deseo sin acción no es suficiente?", respuesta: "La sirenita y el planeta" },
+        { nombre: "El fauno y la nebulosa", definicion: "Fábula sobre la naturaleza y el arte.", sintaxis: "Un [fauno] tocó una flauta en una [nebulosa] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un fauno tocó una flauta en una nebulosa y comprendió que el arte es la voz del universo.", ejercicio: "¿Qué fábula enseña que el arte es la voz del universo?", respuesta: "El fauno y la nebulosa" },
+        { nombre: "El titán y el planeta", definicion: "Fábula sobre la fuerza y la responsabilidad.", sintaxis: "Un [titán] sostuvo un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un titán sostuvo un planeta y aprendió que la fuerza debe ir acompañada de responsabilidad.", ejercicio: "¿Qué fábula enseña que la fuerza debe ir acompañada de responsabilidad?", respuesta: "El titán y el planeta" },
+        { nombre: "El dios y la estrella", definicion: "Fábula sobre la creación y el poder.", sintaxis: "Un [dios] creó una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un dios creó una estrella y descubrió que el poder de crear conlleva el deber de cuidar.", ejercicio: "¿Qué fábula enseña que el poder de crear conlleva el deber de cuidar?", respuesta: "El dios y la estrella" },
+        { nombre: "El demonio y el agujero negro", definicion: "Fábula sobre la tentación y la redención.", sintaxis: "Un [demonio] tentó a un [agujero negro] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un demonio tentó a un agujero negro y aprendió que la tentación puede llevar a la redención.", ejercicio: "¿Qué fábula enseña que la tentación puede llevar a la redención?", respuesta: "El demonio y el agujero negro" },
+        { nombre: "El ángel y el cometa", definicion: "Fábula sobre la guía y la protección.", sintaxis: "Un [ángel] guió a un [cometa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un ángel guió a un cometa y descubrió que la guía es la luz del viajero.", ejercicio: "¿Qué fábula enseña que la guía es la luz del viajero?", respuesta: "El ángel y el cometa" },
+        { nombre: "El gigante y la luna", definicion: "Fábula sobre la pequeñez y la grandeza.", sintaxis: "Un [gigante] miró la [luna] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un gigante miró la luna y comprendió que la verdadera grandeza no está en el tamaño.", ejercicio: "¿Qué fábula enseña que la verdadera grandeza no está en el tamaño?", respuesta: "El gigante y la luna" },
+        { nombre: "El mago y la estrella", definicion: "Fábula sobre el conocimiento y la humildad.", sintaxis: "Un [mago] consultó una [estrella] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un mago consultó una estrella y aprendió que el conocimiento sin humildad es un camino de perdición.", ejercicio: "¿Qué fábula enseña que el conocimiento sin humildad es un camino de perdición?", respuesta: "El mago y la estrella" },
+        { nombre: "El oráculo y el planeta", definicion: "Fábula sobre la profecía y la acción.", sintaxis: "Un [oráculo] predijo el futuro de un [planeta] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un oráculo predijo el futuro de un planeta y descubrió que la profecía solo es útil si se actúa.", ejercicio: "¿Qué fábula enseña que la profecía solo es útil si se actúa?", respuesta: "El oráculo y el planeta" },
+        { nombre: "El genio y la lámpara cósmica", definicion: "Fábula sobre los deseos y las consecuencias.", sintaxis: "Un [genio] concedió deseos en una [lámpara cósmica] y enseñó que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un genio concedió deseos en una lámpara cósmica y enseñó que todo deseo tiene consecuencias.", ejercicio: "¿Qué fábula enseña que todo deseo tiene consecuencias?", respuesta: "El genio y la lámpara cósmica" },
+        { nombre: "El troll y el puente estelar", definicion: "Fábula sobre la generosidad.", sintaxis: "Un [troll] protegió un [puente estelar] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un troll protegió un puente estelar y aprendió que la generosidad es la verdadera riqueza.", ejercicio: "¿Qué fábula enseña que la generosidad es la verdadera riqueza?", respuesta: "El troll y el puente estelar" },
+        { nombre: "El elfo y la estrella fugaz", definicion: "Fábula sobre la magia y la realidad.", sintaxis: "Un [elfo] atrapó una [estrella fugaz] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un elfo atrapó una estrella fugaz y descubrió que la magia es la realidad del cosmos.", ejercicio: "¿Qué fábula enseña que la magia es la realidad del cosmos?", respuesta: "El elfo y la estrella fugaz" },
+        { nombre: "El duende y el planeta", definicion: "Fábula sobre la astucia y la sabiduría.", sintaxis: "Un [duende] engañó a un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un duende engañó a un planeta y aprendió que la astucia sin sabiduría es un arma de doble filo.", ejercicio: "¿Qué fábula enseña que la astucia sin sabiduría es un arma de doble filo?", respuesta: "El duende y el planeta" },
+        { nombre: "El ogro y la estrella", definicion: "Fábula sobre la apariencia y la esencia.", sintaxis: "Un [ogro] miró una [estrella] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un ogro miró una estrella y comprendió que la verdadera esencia no está en la apariencia.", ejercicio: "¿Qué fábula enseña que la verdadera esencia no está en la apariencia?", respuesta: "El ogro y la estrella" },
+        { nombre: "El hada y la nebulosa", definicion: "Fábula sobre la belleza y la creación.", sintaxis: "Un [hada] danzó en una [nebulosa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un hada danzó en una nebulosa y descubrió que la belleza es la creación del alma.", ejercicio: "¿Qué fábula enseña que la belleza es la creación del alma?", respuesta: "El hada y la nebulosa" },
+        { nombre: "El gnomo y el planeta", definicion: "Fábula sobre la paciencia y la perseverancia.", sintaxis: "Un [gnomo] cavó un túnel en un [planeta] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un gnomo cavó un túnel en un planeta y aprendió que la paciencia y la perseverancia mueven montañas.", ejercicio: "¿Qué fábula enseña que la paciencia y la perseverancia mueven montañas?", respuesta: "El gnomo y el planeta" },
+        { nombre: "El dios del trueno y el cometa", definicion: "Fábula sobre el poder y la sabiduría.", sintaxis: "Un [dios del trueno] controló un [cometa] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un dios del trueno controló un cometa y descubrió que el poder debe ser guiado por la sabiduría.", ejercicio: "¿Qué fábula enseña que el poder debe ser guiado por la sabiduría?", respuesta: "El dios del trueno y el cometa" },
+        { nombre: "La diosa de la luna y el planeta", definicion: "Fábula sobre la luz y la oscuridad.", sintaxis: "Una [diosa de la luna] iluminó a un [planeta] y comprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Una diosa de la luna iluminó a un planeta y comprendió que la luz y la oscuridad son dos caras de la misma moneda.", ejercicio: "¿Qué fábula enseña que la luz y la oscuridad son dos caras de la misma moneda?", respuesta: "La diosa de la luna y el planeta" },
+        { nombre: "El titán del tiempo y la estrella", definicion: "Fábula sobre el tiempo y la eternidad.", sintaxis: "Un [titán del tiempo] midió una [estrella] y descubrió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un titán del tiempo midió una estrella y descubrió que el tiempo es relativo, pero la eternidad es absoluta.", ejercicio: "¿Qué fábula enseña que el tiempo es relativo?", respuesta: "El titán del tiempo y la estrella" },
+        { nombre: "El demiurgo y el cosmos", definicion: "Fábula sobre la creación y el orden.", sintaxis: "Un [demiurgo] ordenó el [cosmos] y aprendió que [enseñanza].", estructura: "Estructura: [Introducción] [Desarrollo] [Moraleja].", ejemplo: "Un demiurgo ordenó el cosmos y aprendió que el orden es la base de la creación.", ejercicio: "¿Qué fábula enseña que el orden es la base de la creación?", respuesta: "El demiurgo y el cosmos" },
+    ];
+    miticos.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "mítico", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Animales cósmicos', 'Seres tecnológicos', 'Planetas y estrellas', 'Seres míticos'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.definicion}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejemplo y ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#8bc4e0;margin-bottom:0.2rem;">🦊 ${t.nombre}</div>
+                            <div class="definicion"><strong>📘 Teoría:</strong> ${t.definicion}</div>
+                            <div class="sintaxis"><strong>📐 Fórmula:</strong> ${t.sintaxis}</div>
+                            <div class="estructura"><strong>📊 Estructura:</strong> ${t.estructura}</div>
+                            <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#2a5a7a;color:#e0f0ff;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

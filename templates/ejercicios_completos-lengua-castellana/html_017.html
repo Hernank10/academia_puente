@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas adjetivales</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados {
+            text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic;
+        }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.seleccionado { border-color:var(--rojo-corrector); background:var(--rojo-claro); }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas adjetivales · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'epíteto', 'superlativo', 'sinestesia', 'antepuesto')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de uso del adjetivo extraídas de la mejor prosa en lengua castellana de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto, devolviendo al oficio de escribir su dimensión física y artesanal.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas adjetivales han sido seleccionadas a partir del análisis estilístico de autores como Gabriel García Márquez, Julio Cortázar, Juan Rulfo, Roberto Bolaño, Javier Marías, Mario Vargas Llosa, Alejo Carpentier, Carmen Martín Gaite y muchos otros. Se han organizado en diez familias que cubren posición, gradación, epítetos, metáfora adjetival, neología, acumulación y más.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia estilística</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Posición del adjetivo",
+                tecnicas: [
+                    {nombre:"Adjetivo antepuesto valorativo", desc:"El adjetivo antepuesto expresa una cualidad subjetiva o inherente.", ej:"la dulce espera, la verde hierba."},
+                    {nombre:"Adjetivo pospuesto restrictivo", desc:"El adjetivo pospuesto distingue al sustantivo de otros de su clase.", ej:"los libros antiguos, la casa vacía."},
+                    {nombre:"Anteposición con matiz afectivo", desc:"El adjetivo antepuesto aporta emotividad o énfasis.", ej:"mi pobre amigo, la feliz noticia."},
+                    {nombre:"Posposición con valor especificativo", desc:"Se pospone para indicar una característica objetiva y necesaria.", ej:"una camisa blanca, un coche rápido."},
+                    {nombre:"Anteposición en lenguaje poético", desc:"Recurso muy usado en poesía para crear musicalidad.", ej:"la blanca nieve, el claro día."},
+                    {nombre:"Cambio semántico por posición", desc:"Algunos adjetivos cambian de significado según vayan delante o detrás.", ej:"un gran hombre / un hombre grande."},
+                    {nombre:"Anteposición de adjetivos descriptivos largos", desc:"En prosa barroca, se anteponen adjetivos extensos para crear ritmo.", ej:"las interminables y polvorientas llanuras de la infancia."},
+                    {nombre:"Posposición encadenada", desc:"Dos o más adjetivos pospuestos crean una descripción minuciosa.", ej:"una mujer alta, delgada, silenciosa."},
+                    {nombre:"Anteposición de participio", desc:"El participio antepuesto adquiere un tono literario o arcaizante.", ej:"la cansada viajera, el perdido tesoro."},
+                    {nombre:"Alternancia rítmica antepuesto-pospuesto", desc:"Combinar posiciones crea un vaivén estilístico.", ej:"el dulce sabor amargo, la clara noche oscura."}
+                ]
+            },
+            {
+                nombre: "B. Gradación del adjetivo",
+                tecnicas: [
+                    {nombre:"Superlativo absoluto con -ísimo", desc:"Intensificación mediante el sufijo -ísimo.", ej:"Era un día tristísimo."},
+                    {nombre:"Superlativo con adverbio (muy, sumamente)", desc:"Uso de 'muy' o equivalentes para la gradación extrema.", ej:"una situación muy delicada."},
+                    {nombre:"Comparativo de igualdad poético", desc:"'tan... como' con valor enfático.", ej:"tan frágil como el cristal."},
+                    {nombre:"Comparativo de superioridad con 'más que'", desc:"Establece jerarquía entre dos elementos.", ej:"más terco que una mula."},
+                    {nombre:"Comparativo de inferioridad", desc:"Uso de 'menos... que' para matizar.", ej:"menos complicado de lo que parecía."},
+                    {nombre:"Superlativo relativo", desc:"'el más... de' para destacar dentro de un conjunto.", ej:"el más valiente de todos."},
+                    {nombre:"Superlativo con prefijos (re-, archi-, super-)", desc:"Prefijación intensiva.", ej:"un tipo archiconocido, una chica superlista."},
+                    {nombre:"Comparativo progresivo (cada vez más)", desc:"Aumento gradual de una cualidad.", ej:"Se volvía cada vez más distante."},
+                    {nombre:"Superlativo orgánico o sintético", desc:"Formas especiales como óptimo, pésimo, máximo, mínimo.", ej:"en condiciones pésimas."},
+                    {nombre:"Atenuación con 'algo', 'un tanto'", desc:"Gradación que suaviza la cualidad.", ej:"Estaba algo confuso, un tanto descolocado."}
+                ]
+            },
+            {
+                nombre: "C. Epítetos y fórmulas fijas",
+                tecnicas: [
+                    {nombre:"Epíteto épico", desc:"Adjetivo fijo que acompaña a un nombre propio.", ej:"el ingenioso hidalgo, la luminosa mañana."},
+                    {nombre:"Epíteto natural o inherente", desc:"Adjetivo que expresa una cualidad propia del sustantivo.", ej:"la blanca nieve, el ardiente fuego."},
+                    {nombre:"Epíteto con valor ornamental", desc:"Epíteto que no añade información sino belleza.", ej:"la verde pradera, el azul cielo."},
+                    {nombre:"Fórmula fija en narrativa oral", desc:"Adjetivo repetido como recurso de oralidad.", ej:"la hermosa princesa, el valiente guerrero."},
+                    {nombre:"Epíteto irónico", desc:"Adjetivo esperable usado con intención sarcástica.", ej:"el honrado político."},
+                    {nombre:"Epíteto degradado o inverso", desc:"Adjetivo que contradice la expectativa.", ej:"la sucia luz del amanecer."},
+                    {nombre:"Doble epíteto", desc:"Dos adjetivos antepuestos que forman una unidad rítmica.", ej:"la dulce y agridulce memoria."},
+                    {nombre:"Epíteto pospuesto con valor enfático", desc:"Epíteto detrás del nombre que refuerza una cualidad esencial.", ej:"la noche oscura, el lobo feroz."},
+                    {nombre:"Epíteto en aposición", desc:"Adjetivo o frase adjetival separada por comas.", ej:"El hombre, siempre insatisfecho, buscaba más."},
+                    {nombre:"Epíteto tras verbo copulativo", desc:"Atributo que actúa como epíteto en función predicativa.", ej:"La vida es breve."}
+                ]
+            },
+            {
+                nombre: "D. Adjetivación metafórica",
+                tecnicas: [
+                    {nombre:"Adjetivo sensorial para concepto abstracto", desc:"Cualidad física aplicada a una idea.", ej:"una tristeza áspera, una alegría redonda."},
+                    {nombre:"Adjetivo de color para emociones", desc:"Color asociado a un estado anímico.", ej:"una pasión roja, una melancolía gris."},
+                    {nombre:"Adjetivo táctil para sonido", desc:"Textura aplicada a lo auditivo.", ej:"una voz aterciopelada, un ruido áspero."},
+                    {nombre:"Adjetivo gustativo para experiencias", desc:"Sabor que define una vivencia.", ej:"una derrota amarga, un recuerdo dulce."},
+                    {nombre:"Adjetivo de temperatura para relaciones", desc:"Calor/frío en vínculos humanos.", ej:"una mirada helada, una bienvenida cálida."},
+                    {nombre:"Adjetivo de peso para conceptos", desc:"Levedad o pesadez en ideas.", ej:"un argumento pesado, una conversación ligera."},
+                    {nombre:"Adjetivo de movimiento para lo estático", desc:"Dinamismo aplicado a objetos quietos.", ej:"una montaña danzante, una casa que se encoge."},
+                    {nombre:"Adjetivo sonoro para lo visual", desc:"Sonido que define una imagen.", ej:"un silencio estruendoso, colores chillones."},
+                    {nombre:"Animalización adjetival", desc:"Atribución de cualidades animales a personas.", ej:"una astucia gatuna, una elegancia felina."},
+                    {nombre:"Personificación adjetival", desc:"Adjetivo humano aplicado a objetos.", ej:"el reloj puntual, la ventana curiosa."}
+                ]
+            },
+            {
+                nombre: "E. Acumulación y enumeración",
+                tecnicas: [
+                    {nombre:"Asíndeton adjetival", desc:"Adjetivos sin conjunción para crear ritmo rápido.", ej:"Era una mujer alta, delgada, morena, elegante."},
+                    {nombre:"Polisíndeton adjetival", desc:"Repetición de 'y' para dar solemnidad o lentitud.", ej:"Y era hermosa y triste y lejana y mía."},
+                    {nombre:"Enumeración caótica", desc:"Adjetivos dispares que crean un collage sensorial.", ej:"una sensación dulce, áspera, cálida, metálica."},
+                    {nombre:"Acumulación gradativa", desc:"Adjetivos en orden creciente de intensidad.", ej:"Estaba inquieto, nervioso, desesperado."},
+                    {nombre:"Acumulación decreciente", desc:"Adjetivos que van perdiendo intensidad.", ej:"un grito desgarrador, fuerte, audible, apenas un susurro."},
+                    {nombre:"Parejas adjetivales antitéticas", desc:"Dos adjetivos opuestos que crean tensión.", ej:"una calma tensa, una dulzura amarga."},
+                    {nombre:"Tríada adjetival clásica", desc:"Tres adjetivos que forman una unidad descriptiva.", ej:"una noche oscura, fría y silenciosa."},
+                    {nombre:"Asociación insólita", desc:"Adjetivos que normalmente no irían juntos.", ej:"un perfume denso y transparente."},
+                    {nombre:"Ristra de epítetos", desc:"Sucesión de epítetos que adornan al sustantivo.", ej:"el bueno, noble, leal y valeroso caballero."},
+                    {nombre:"Adjetivación diseminada", desc:"Adjetivos repartidos a lo largo del párrafo, no juntos.", ej:"Era una casa antigua. Las ventanas, polvorientas. El jardín, salvaje."}
+                ]
+            },
+            {
+                nombre: "F. Adjetivos compuestos y parasintéticos",
+                tecnicas: [
+                    {nombre:"Adjetivo compuesto con guion", desc:"Unión de dos palabras para un nuevo adjetivo.", ej:"una mirada triste-dulce, un tono rojo-anaranjado."},
+                    {nombre:"Adjetivo parasintético (a- + raíz + -ado)", desc:"Formación con prefijo y sufijo simultáneos.", ej:"un rostro aniñado, un carácter amilanado."},
+                    {nombre:"Adjetivo compuesto por prefijo culto", desc:"Prefijos como 'hiper-', 'hipo-', 'ultra-'.", ej:"un discurso hiperbólico, un esfuerzo ínfimo."},
+                    {nombre:"Adjetivo con sufijo apreciativo", desc:"Diminutivos o aumentativos con valor afectivo.", ej:"una vocecita dulce, un gesto grandote."},
+                    {nombre:"Participio compuesto como adjetivo", desc:"Formas como 'recién llegado', 'bien hablado'.", ej:"un hombre bien parecido, una noticia mal recibida."},
+                    {nombre:"Adjetivo de color compuesto", desc:"Colores con matiz mediante dos palabras.", ej:"verde botella, azul cielo, rojo sangre."},
+                    {nombre:"Adjetivo gentilicio compuesto", desc:"Gentilicios que combinan dos procedencias.", ej:"italo-argentino, franco-español."},
+                    {nombre:"Compuesto con adverbio + adjetivo", desc:"Adverbio que modifica al adjetivo formando una unidad.", ej:"un personaje medio loco, una propuesta poco clara."},
+                    {nombre:"Compuesto con verbo + sustantivo", desc:"Estructura verbal que funciona como adjetivo.", ej:"un hombre matacaballos, un gesto rompecorazones."},
+                    {nombre:"Compuesto de dos adjetivos antónimos", desc:"Fusión de opuestos que genera un nuevo matiz.", ej:"claroscuro, tristefeliz."}
+                ]
+            },
+            {
+                nombre: "G. Neologismos y creación adjetival",
+                tecnicas: [
+                    {nombre:"Adjetivo derivado de sustantivo propio", desc:"A partir de un nombre propio (marca, persona, lugar).", ej:"un gesto borgiano, un ambiente kafkiano."},
+                    {nombre:"Adjetivo por sufijación inusual", desc:"Uso de sufijos poco frecuentes para crear nuevos adjetivos.", ej:"un sabor tormentoso, una actitud puercoespínica."},
+                    {nombre:"Adjetivo verbal inventado", desc:"Creación de un adjetivo a partir de un verbo.", ej:"una mirada enamoradora, un gesto despertante."},
+                    {nombre:"Adjetivo por prefijación creativa", desc:"Prefijos inesperados que crean matices nuevos.", ej:"antiaburrido, ultrasutil, semipresente."},
+                    {nombre:"Adjetivo por analogía fonética", desc:"Invención que juega con la sonoridad.", ej:"un humor chinchoso, una textura flinflante."},
+                    {nombre:"Adjetivo coloquial lexicalizado", desc:"Término informal que se asienta en la lengua.", ej:"un tío guay, una peli chunga."},
+                    {nombre:"Extranjerismo adjetivado", desc:"Adjetivo tomado de otra lengua y adaptado.", ej:"un look cool, una actitud snob."},
+                    {nombre:"Adjetivo por metátesis o juego de letras", desc:"Alteración del orden de letras para crear un adjetivo nuevo.", ej:"un día estopendo (por estupendo)."},
+                    {nombre:"Adjetivo de argot generacional", desc:"Término propio de una generación.", ej:"un plan random, una vibra chida."},
+                    {nombre:"Adjetivo onomatopéyico", desc:"Imitación de un sonido transformada en adjetivo.", ej:"un silencio pum, una risa crac."}
+                ]
+            },
+            {
+                nombre: "H. Funciones sintácticas especiales",
+                tecnicas: [
+                    {nombre:"Adjetivo en aposición explicativa", desc:"Separado por comas, añade una cualidad no restrictiva.", ej:"El agua, cristalina, corría entre las piedras."},
+                    {nombre:"Adjetivo predicativo subjetivo", desc:"Atributo que refleja una opinión del hablante.", ej:"Lo considero injusto."},
+                    {nombre:"Adjetivo predicativo objetivo", desc:"Cualidad comprobable del objeto.", ej:"Encontré roto el jarrón."},
+                    {nombre:"Adjetivo como complemento de régimen", desc:"Adjetivo que rige preposición.", ej:"Está orgulloso de su trabajo."},
+                    {nombre:"Adjetivo en construcción absoluta", desc:"Adjetivo solo, al inicio o final, con valor circunstancial.", ej:"Cansados, se retiraron."},
+                    {nombre:"Adjetivo nominalizado con artículo neutro", desc:"Uso de 'lo' + adjetivo.", ej:"Lo bueno, lo malo, lo interesante."},
+                    {nombre:"Adjetivo en vocativo", desc:"Adjetivo que llama o invoca.", ej:"¡Querida!, ¡Hermoso!"},
+                    {nombre:"Adjetivo como adverbio (uso coloquial)", desc:"Adjetivo con función de adverbio, muy frecuente en América.", ej:"Cantan lindo, habla claro."},
+                    {nombre:"Adjetivo especificativo pospuesto sin artículo", desc:"Estructura que crea un sintagma compacto.", ej:"cosas raras, gente buena."},
+                    {nombre:"Adjetivo en estructura comparativa elíptica", desc:"Omisión del segundo término de la comparación.", ej:"Es más listo... (de lo que parece)."}
+                ]
+            },
+            {
+                nombre: "I. Restricción, omisión y silencio adjetival",
+                tecnicas: [
+                    {nombre:"Ausencia total de adjetivos", desc:"Prosa desnuda que gana fuerza por sustracción.", ej:"Abrió la puerta. La casa. El silencio."},
+                    {nombre:"Adjetivo único y definitivo", desc:"Un solo adjetivo que concentra toda la descripción.", ej:"Era una mujer triste."},
+                    {nombre:"Adjetivo elidido por reticencia", desc:"Se insinúa el adjetivo pero no se escribe.", ej:"Era un hombre muy... (dejando el adjetivo en el aire)."},
+                    {nombre:"Adjetivo pospuesto con pausa (coma)", desc:"La coma crea expectación antes del adjetivo.", ej:"Era una noche, oscura."},
+                    {nombre:"Adjetivo sugerido por contexto", desc:"El lector deduce la cualidad sin mencionarla.", ej:"Llovía sobre el tejado de zinc."},
+                    {nombre:"Negación del adjetivo esperable", desc:"Se niega la cualidad que el lector anticipa.", ej:"No era precisamente guapo."},
+                    {nombre:"Adjetivo pospuesto al punto", desc:"Adjetivo que aparece como frase independiente.", ej:"Era su mirada. Limpia."},
+                    {nombre:"Adjetivo entre guiones", desc:"Inciso que interrumpe la frase para calificar.", ej:"Su actitud —generosa, quizá en exceso— le trajo problemas."},
+                    {nombre:"Adjetivo en pregunta retórica", desc:"El adjetivo aparece dentro de una pregunta que no espera respuesta.", ej:"¿No era acaso evidente?"},
+                    {nombre:"Adjetivo implícito en sustantivo", desc:"Uso de un sustantivo que ya contiene la cualidad.", ej:"un susurro (en lugar de 'un sonido suave')."}
+                ]
+            },
+            {
+                nombre: "J. Adjetivo y ritmo de la frase",
+                tecnicas: [
+                    {nombre:"Adjetivo al inicio como tema", desc:"El adjetivo abre la oración y fija el tono.", ej:"Increíble aquella historia."},
+                    {nombre:"Adjetivo al final como cierre", desc:"El adjetivo cierra la frase con contundencia.", ej:"La noticia lo dejó perplejo."},
+                    {nombre:"Adjetivo repetido (anáfora)", desc:"El mismo adjetivo inicia varias frases.", ej:"Hermosa la mañana. Hermoso el paisaje. Hermoso el recuerdo."},
+                    {nombre:"Adjetivo en quiasmo", desc:"Estructura cruzada de adjetivos y sustantivos.", ej:"Dulce libertad, libertad dulce."},
+                    {nombre:"Adjetivo en paralelismo", desc:"Misma estructura adjetival en dos frases.", ej:"Fácil de decir, difícil de hacer."},
+                    {nombre:"Adjetivo quebrado por encabalgamiento", desc:"Adjetivo que pasa a la línea siguiente en poesía o prosa poética.", ej:"La tarde era / interminable."},
+                    {nombre:"Adjetivo con aliteración", desc:"Repetición de sonidos en el adjetivo y su entorno.", ej:"el suave susurro del viento."},
+                    {nombre:"Adjetivo bimembre rítmico", desc:"Dos adjetivos de similar longitud que crean balance.", ej:"una voz grave y pausada."},
+                    {nombre:"Cadena de adjetivos breves", desc:"Adjetivos cortos que aceleran el ritmo.", ej:"Alto, claro, limpio, puro."},
+                    {nombre:"Adjetivo largo y descriptivo al final", desc:"Un adjetivo extenso que frena la frase y amplía la imagen.", ej:"Se adentró en el bosque, oscuro, impenetrable, misteriosísimo."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoAdjetival')) {
+                const p = JSON.parse(localStorage.getItem('progresoAdjetival'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoAdjetival', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea la técnica <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

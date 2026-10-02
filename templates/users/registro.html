@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .auth-wrapper { max-width: 480px; margin: 3rem auto; padding: 2rem;
+        background: #161b22; border: 1px solid #30363d; border-radius: 12px; }
+    .auth-title { color: #f1c40f; font-weight: 700; margin-bottom: 0.5rem; text-align: center; }
+    .auth-sub { color: #8b949e; text-align: center; margin-bottom: 2rem; font-size: 0.9rem; }
+
+    .form-label-custom { color: #c9d1d9; font-size: 0.9rem; margin-bottom: 0.3rem; display: block; }
+    .form-input { width: 100%; padding: 0.7rem 1rem; background: #0d1117;
+        border: 1px solid #30363d; border-radius: 8px; color: #e6edf3;
+        font-size: 1rem; margin-bottom: 1rem; transition: all 0.2s; }
+    .form-input:focus { outline: none; border-color: #f1c40f;
+        box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1); }
+    .form-input.input-error { border-color: #ff6b6b;
+        box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.15); }
+
+    .rol-group { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+        margin-bottom: 1rem; }
+    .rol-option { cursor: pointer; }
+    .rol-option input { display: none; }
+    .rol-option .rol-card {
+        background: #0d1117; border: 2px solid #30363d; border-radius: 10px;
+        padding: 1rem; text-align: center; transition: all 0.2s;
+    }
+    .rol-option input:checked + .rol-card {
+        border-color: #f1c40f; background: #1a2332;
+        box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.15);
+    }
+    .rol-icon { font-size: 2rem; display: block; margin-bottom: 0.3rem; }
+    .rol-name { font-weight: 700; color: #e6edf3; font-size: 0.9rem; }
+    .rol-desc { font-size: 0.75rem; color: #8b949e; margin-top: 0.25rem; }
+
+    .btn-submit { width: 100%; padding: 0.8rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border: none; border-radius: 8px;
+        cursor: pointer; font-size: 1rem; transition: all 0.2s; }
+    .btn-submit:hover { transform: scale(1.02); }
+
+    .auth-footer { text-align: center; margin-top: 1.5rem; color: #8b949e; font-size: 0.9rem; }
+    .auth-footer a { color: #f1c40f; text-decoration: none; }
+
+    .alert-error { background: #3d1f1f; border: 1px solid #6b2222; color: #ff9999;
+        padding: 0.75rem; border-radius: 8px; margin-bottom: 0.75rem; font-size: 0.9rem; }
+
+    .ya-tienes-cuenta {
+        background: #1f2f3d; border: 1px solid #58a6ff; color: #a5d1ff;
+        padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1rem;
+        text-align: center; font-size: 0.9rem;
+    }
+    .ya-tienes-cuenta a { color: #58a6ff; font-weight: 700; text-decoration: none; }
+    .ya-tienes-cuenta a:hover { text-decoration: underline; }
+</style>
+
+<div class="auth-wrapper">
+    <h1 class="auth-title">🎓 Crear cuenta</h1>
+    <p class="auth-sub">Únete a la Academia Puente Digital</p>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert-error">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if errores_campos and 'email' in errores_campos %}
+        <div class="ya-tienes-cuenta">
+            ¿Ya tienes cuenta con ese email?
+            <a href="{% url 'users:login' %}">Inicia sesión aquí →</a>
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <label class="form-label-custom">Soy...</label>
+        <div class="rol-group">
+            <label class="rol-option">
+                <input type="radio" name="rol" value="estudiante"
+                       {% if rol != 'profesor' %}checked{% endif %}>
+                <div class="rol-card">
+                    <span class="rol-icon">🎓</span>
+                    <div class="rol-name">Estudiante</div>
+                    <div class="rol-desc">Aprender y certificarme</div>
+                </div>
+            </label>
+            <label class="rol-option">
+                <input type="radio" name="rol" value="profesor"
+                       {% if rol == 'profesor' %}checked{% endif %}>
+                <div class="rol-card">
+                    <span class="rol-icon">👨‍🏫</span>
+                    <div class="rol-name">Profesor</div>
+                    <div class="rol-desc">Enseñar y gestionar cursos</div>
+                </div>
+            </label>
+        </div>
+
+        <label class="form-label-custom">{% trans "Usuario" %}</label>
+        <input type="text" name="username" value="{{ username|default:'' }}"
+               class="form-input {% if 'username' in errores_campos %}input-error{% endif %}"
+               required autofocus minlength="3"
+               placeholder="ej: maria_garcia">
+
+        <label class="form-label-custom">{% trans "Email" %}</label>
+        <input type="email" name="email" value="{{ email|default:'' }}"
+               class="form-input {% if 'email' in errores_campos %}input-error{% endif %}"
+               placeholder="tu@email.com">
+
+        <label class="form-label-custom">{% trans "Contraseña" %}</label>
+        <input type="password" name="password1"
+               class="form-input {% if 'password1' in errores_campos %}input-error{% endif %}"
+               required minlength="6" placeholder="mínimo 6 caracteres">
+
+        <label class="form-label-custom">Repetir contraseña</label>
+        <input type="password" name="password2"
+               class="form-input {% if 'password2' in errores_campos %}input-error{% endif %}"
+               required minlength="6">
+
+        <button type="submit" class="btn-submit">Crear cuenta →</button>
+    </form>
+
+    <p class="auth-footer">
+        ¿Ya tienes cuenta? <a href="{% url 'users:login' %}">Inicia sesión</a>
+    </p>
+</div>
+{% endblock %}

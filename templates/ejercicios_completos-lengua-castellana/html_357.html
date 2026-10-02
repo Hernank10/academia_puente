@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MorphoPlay · Escritura cursiva con lápiz</title>
+    <!-- Bootstrap 5 + Font Awesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(145deg, #f7f3ff 0%, #e8e0f5 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .card-morph {
+            border-radius: 2rem;
+            border: none;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.08), 0 8px 20px rgba(90, 40, 140, 0.10);
+            backdrop-filter: blur(2px);
+            background: rgba(255,255,255,0.7);
+        }
+        .game-header {
+            border-bottom: 2px dashed #c9b8e6;
+            padding-bottom: 0.75rem;
+        }
+        .badge-cat {
+            background: #6c4b9e;
+            color: white;
+            padding: 0.5rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+        }
+        .btn-morph {
+            background: #7c5fbf;
+            border: none;
+            color: white;
+            border-radius: 60px;
+            padding: 0.5rem 1.8rem;
+            font-weight: 600;
+            transition: 0.2s;
+            box-shadow: 0 6px 12px rgba(106, 60, 180, 0.25);
+        }
+        .btn-morph:hover {
+            background: #5e3d9e;
+            transform: scale(1.02);
+            color: white;
+        }
+        .btn-outline-morph {
+            border: 2px solid #7c5fbf;
+            color: #4d2e7a;
+            border-radius: 60px;
+            padding: 0.4rem 1.5rem;
+            font-weight: 600;
+            background: white;
+        }
+        .btn-outline-morph:hover {
+            background: #7c5fbf;
+            color: white;
+        }
+        .cursive-input {
+            font-family: 'Brush Script MT', 'Comic Sans MS', 'Snell Roundhand', cursive;
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            background: #fcf9ff;
+            border: 2px solid #d5c4f0;
+            border-radius: 30px;
+            padding: 0.4rem 1.2rem;
+        }
+        .cursive-input:focus {
+            border-color: #7c5fbf;
+            box-shadow: 0 0 0 4px rgba(124, 95, 191, 0.25);
+        }
+        .streak-box {
+            background: #f0e9fc;
+            border-radius: 60px;
+            padding: 0.4rem 1.2rem;
+            font-weight: 600;
+            color: #2c1a4a;
+        }
+        .game-wrapper {
+            min-height: 420px;
+        }
+        .list-group-item {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #ddd0f0;
+            padding: 0.7rem 0.2rem;
+        }
+        .list-group-item:last-child {
+            border: none;
+        }
+        .progress-bar-morph {
+            background: #7c5fbf;
+            height: 0.5rem;
+            border-radius: 40px;
+        }
+        .escritura-badge {
+            background: #ffd966;
+            color: #3d2a5c;
+            border-radius: 40px;
+            padding: 0.2rem 1rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0.3; transform: translateY(8px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .game-title {
+            font-weight: 700;
+            color: #2f1a50;
+        }
+        .respuesta-correcta {
+            background: #d4edda;
+            border-radius: 40px;
+            padding: 0.3rem 1.2rem;
+            color: #155724;
+            font-weight: 500;
+        }
+        /* --- Estilos para el canvas de escritura a mano --- */
+        #canvasContainer {
+            position: relative;
+            border-radius: 30px;
+            border: 3px solid #d5c4f0;
+            background: white;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.02);
+            touch-action: none;
+            cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="30" viewBox="0 0 24 30"><circle cx="12" cy="12" r="10" fill="rgba(124,95,191,0.3)" stroke="%237c5fbf" stroke-width="2"/><line x1="12" y1="22" x2="12" y2="30" stroke="%237c5fbf" stroke-width="3"/></svg>') 12 12, auto;
+        }
+        #canvasEscritura {
+            display: block;
+            width: 100%;
+            height: auto;
+            border-radius: 28px;
+            background: #fefcfd;
+            touch-action: none;
+        }
+        .canvas-toolbar {
+            background: #f3eefa;
+            border-radius: 60px;
+            padding: 0.5rem 1rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn-canvas {
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            border: 1px solid #c9b8e6;
+            background: white;
+            color: #4d2e7a;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .btn-canvas:hover {
+            background: #7c5fbf;
+            color: white;
+            border-color: #7c5fbf;
+        }
+        .btn-canvas.active {
+            background: #7c5fbf;
+            color: white;
+            border-color: #7c5fbf;
+        }
+        .pregunta-destacada {
+            background: #f0e9fc;
+            border-radius: 20px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+            border-left: 5px solid #7c5fbf;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4 py-md-5">
+        <!-- Título -->
+        <div class="text-center mb-4">
+            <h1 class="display-4 fw-bold" style="color: #2f1a50; letter-spacing: -0.5px;"><i class="fas fa-puzzle-piece me-3" style="color: #7c5fbf;"></i>MorphoPlay</h1>
+            <p class="lead fw-light" style="color: #433262;">30 juegos · morfología · <i class="fas fa-pen-fancy"></i> escritura a mano</p>
+            <div class="d-flex justify-content-center gap-3 flex-wrap">
+                <span class="badge-cat"><i class="fas fa-flag me-1"></i> 🇪🇸 1-10</span>
+                <span class="badge-cat"><i class="fas fa-flag me-1"></i> 🇬🇧 11-20</span>
+                <span class="badge-cat"><i class="fas fa-globe me-1"></i> 🌐 21-30</span>
+                <span class="badge-cat" style="background: #b48ad9;"><i class="fas fa-pen-fancy me-1"></i> ✍️ escritura</span>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <!-- Panel principal -->
+            <div class="col-lg-8">
+                <div class="card card-morph p-4 game-wrapper">
+                    <div class="d-flex justify-content-between align-items-start game-header">
+                        <div>
+                            <span class="badge bg-secondary bg-opacity-25 text-dark me-2" id="gameIndexDisplay">#1</span>
+                            <span class="badge" id="categoryBadge" style="background:#6c4b9e; color:white;">🇪🇸 Español</span>
+                            <span class="badge bg-warning bg-opacity-25 text-dark ms-2" id="escrituraBadge">✍️</span>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="streak-box"><i class="fas fa-fire text-warning me-1"></i> <span id="streakCount">0</span> racha</span>
+                            <span class="streak-box" style="background: #d5c4f0;"><i class="fas fa-star text-warning me-1"></i> <span id="scoreCount">0</span> pts</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-3">
+                        <h4 class="game-title" id="gameTitle">Cargando juego...</h4>
+                        <div class="pregunta-destacada mt-2" id="preguntaDestacada">
+                            <i class="fas fa-question-circle me-2" style="color:#7c5fbf;"></i>
+                            <span id="gameDescription">Instrucción del juego</span>
+                        </div>
+                    </div>
+
+                    <!-- Área de interacción -->
+                    <div class="mt-3" id="interactionArea">
+                        <!-- dinámico -->
+                    </div>
+
+                    <!-- Respuesta correcta (se muestra tras responder) -->
+                    <div id="respuestaCorrectaContainer" class="mt-3 text-center" style="display: none;">
+                        <div class="respuesta-correcta d-inline-block"><i class="fas fa-check-circle me-2"></i> Respuesta correcta: <span id="respuestaCorrectaTexto" style="font-weight:700;">---</span></div>
+                    </div>
+
+                    <!-- Controles -->
+                    <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top border-light">
+                        <button class="btn btn-outline-morph" id="prevGameBtn"><i class="fas fa-arrow-left me-1"></i> Anterior</button>
+                        <div>
+                            <span class="badge bg-light text-dark rounded-pill px-3 py-2" id="progressText">1 / 30</span>
+                        </div>
+                        <button class="btn btn-morph" id="nextGameBtn">Siguiente <i class="fas fa-arrow-right ms-1"></i></button>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px; background: #ddd0f0;">
+                        <div class="progress-bar progress-bar-morph" id="progressBar" style="width: 3.3%;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel lateral -->
+            <div class="col-lg-4">
+                <div class="card card-morph p-3" style="background: rgba(255,255,255,0.5);">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="fw-bold"><i class="fas fa-list-ul me-2" style="color:#7c5fbf;"></i> Juegos</h5>
+                        <span class="badge bg-primary bg-opacity-10 text-primary" id="completedCount">0/30</span>
+                    </div>
+                    <div class="list-group mt-2" id="gameList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- JS -->
+                    </div>
+                    <div class="mt-3 text-center">
+                        <button class="btn btn-sm btn-outline-secondary w-100" id="resetProgressBtn"><i class="fas fa-undo-alt me-1"></i> Reiniciar progreso</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center text-muted mt-4 small">
+            <i class="fas fa-pen-fancy me-1"></i> Juegos de escritura: dibuja a mano sobre el lienzo (ratón o lápiz táctil). Haz clic en <strong>"Comprobar escritura"</strong> para validar.
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // --------------------------------------------------------------
+            // DATOS: 30 juegos (morfología) 
+            // Se añade campo 'pregunta' para mostrar la pregunta en escritura
+            // --------------------------------------------------------------
+            const juegos = [
+                // 🇪🇸 1-10
+                { id: 1, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Prefijos nominales', desc: 'Elige el prefijo correcto para "___vida" (vida después de la muerte).', opciones: ['anti-', 'post-', 'pre-', 'pro-'], correcta: 'post-', escritura: false, pregunta: '' },
+                { id: 2, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Sufijos nominales', desc: '¿Qué sufijo forma un sustantivo a partir de "bello"?', opciones: ['-dad', '-eza', '-ura', '-ción'], correcta: '-eza', escritura: false, pregunta: '' },
+                { id: 3, cat: '🇪🇸 Español', tipo: 'escritura', titulo: '✍️ Diminutivos', desc: 'Escribe el diminutivo de "casa" (con -ita o -ecita).', correcta: 'casita', escritura: true, pregunta: '¿Cuál es el diminutivo de "casa"?' },
+                { id: 4, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Familias de palabras', desc: '¿Cuál NO pertenece a la familia de "mar"?', opciones: ['marino', 'maremoto', 'marea', 'martillo'], correcta: 'martillo', escritura: false, pregunta: '' },
+                { id: 5, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Sufijos verbales', desc: 'Verbo a partir de "moderno":', opciones: ['modernizar', 'modernear', 'modernar', 'modernizar'], correcta: 'modernizar', escritura: false, pregunta: '' },
+                { id: 6, cat: '🇪🇸 Español', tipo: 'escritura', titulo: '✍️ Adjetivos con -oso', desc: 'Escribe el adjetivo derivado de "cuidado" (con -oso).', correcta: 'cuidadoso', escritura: true, pregunta: 'Adjetivo de "cuidado" con sufijo -oso:' },
+                { id: 7, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Prefijos y sufijos', desc: '"inmoralidad" → prefijo in- y sufijo -dad. ¿Qué categoría es?', opciones: ['sustantivo', 'adjetivo', 'verbo', 'adverbio'], correcta: 'sustantivo', escritura: false, pregunta: '' },
+                { id: 8, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Familia léxica', desc: 'Elija la palabra que NO es de la familia de "pan":', opciones: ['panadero', 'empanada', 'panal', 'panera'], correcta: 'panal', escritura: false, pregunta: '' },
+                { id: 9, cat: '🇪🇸 Español', tipo: 'escritura', titulo: '✍️ Aumentativos', desc: 'Escribe el aumentativo de "perro" (con -azo).', correcta: 'perrazo', escritura: true, pregunta: 'Aumentativo de "perro" con -azo:' },
+                { id: 10, cat: '🇪🇸 Español', tipo: 'opcion', titulo: 'Sufijos diminutivos', desc: 'El sufijo "-illo" en "pajarillo" indica:', opciones: ['aumentativo', 'diminutivo', 'despectivo', 'afectivo'], correcta: 'diminutivo', escritura: false, pregunta: '' },
+                // 🇬🇧 11-20
+                { id: 11, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Prefijo UN-', desc: 'Significado de "unhappy":', opciones: ['muy feliz', 'no feliz', 'felizmente', 'felicidad'], correcta: 'no feliz', escritura: false, pregunta: '' },
+                { id: 12, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Prefijo RE-', desc: '"Rewrite" significa:', opciones: ['escribir mal', 'escribir de nuevo', 'escribir antes', 'escribir sobre'], correcta: 'escribir de nuevo', escritura: false, pregunta: '' },
+                { id: 13, cat: '🇬🇧 Inglés', tipo: 'escritura', titulo: '✍️ Sufijo -tion / -sion', desc: 'Escribe el sustantivo de "decide" (termina en -sion).', correcta: 'decision', escritura: true, pregunta: 'Sustantivo de "decide" (termina en -sion):' },
+                { id: 14, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Prefijo MIS-', desc: '"Misunderstand" es:', opciones: ['entender mal', 'entender bien', 'entender antes', 'entender después'], correcta: 'entender mal', escritura: false, pregunta: '' },
+                { id: 15, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Agentes -er/-or', desc: 'Persona que enseña (teacher) → sufijo:', opciones: ['-er', '-or', '-ist', '-ian'], correcta: '-er', escritura: false, pregunta: '' },
+                { id: 16, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Adjetivos -ful', desc: '"Careful" significa:', opciones: ['sin cuidado', 'cuidadoso', 'descuidado', 'cuidadosamente'], correcta: 'cuidadoso', escritura: false, pregunta: '' },
+                { id: 17, cat: '🇬🇧 Inglés', tipo: 'escritura', titulo: '✍️ Adjetivos -less', desc: 'Escribe el adjetivo "sin esperanza" (hope + less).', correcta: 'hopeless', escritura: true, pregunta: 'Adjetivo de "hope" + less (sin esperanza):' },
+                { id: 18, cat: '🇬🇧 Inglés', tipo: 'escritura', titulo: '✍️ Adverbios -ly', desc: 'Escribe el adverbio de "quick" (termina en -ly).', correcta: 'quickly', escritura: true, pregunta: 'Adverbio de "quick" (termina en -ly):' },
+                { id: 19, cat: '🇬🇧 Inglés', tipo: 'opcion', titulo: 'Sufijo -ous', desc: '"Dangerous" es:', opciones: ['peligro', 'peligroso', 'sin peligro', 'peligrosamente'], correcta: 'peligroso', escritura: false, pregunta: '' },
+                { id: 20, cat: '🇬🇧 Inglés', tipo: 'escritura', titulo: '✍️ Repaso -tion', desc: 'Escribe el sustantivo de "inform" (termina en -tion).', correcta: 'information', escritura: true, pregunta: 'Sustantivo de "inform" (termina en -tion):' },
+                // 🌐 21-30 bilingüe
+                { id: 21, cat: '🌐 Bilingüe', tipo: 'opcion', titulo: 'Cognados ES↔EN', desc: '"Family" en español es:', opciones: ['familia', 'familiar', 'famoso', 'falda'], correcta: 'familia', escritura: false, pregunta: '' },
+                { id: 22, cat: '🌐 Bilingüe', tipo: 'opcion', titulo: 'Sufijos paralelos', desc: '-ción en español → -tion en inglés. ¿"Nación" en inglés?', opciones: ['nation', 'nacion', 'nacional', 'national'], correcta: 'nation', escritura: false, pregunta: '' },
+                { id: 23, cat: '🌐 Bilingüe', tipo: 'opcion', titulo: 'Falsos amigos', desc: '"Embarazada" NO significa "embarrassed". ¿Qué significa?', opciones: ['avergonzada', 'embarazada', 'preñada', 'confundida'], correcta: 'preñada', escritura: false, pregunta: '' },
+                { id: 24, cat: '🌐 Bilingüe', tipo: 'escritura', titulo: '✍️ Raíces grecolatinas', desc: 'Escribe una palabra con raíz "geo" (tierra) — ej: geografía.', correcta: 'geografia', escritura: true, pregunta: 'Palabra con raíz "geo" (tierra):' },
+                { id: 25, cat: '🌐 Bilingüe', tipo: 'escritura', titulo: '✍️ Neologismos', desc: 'Escribe un neologismo con el sufijo "-ear" (ej: tuitear).', correcta: 'tuitear', escritura: true, pregunta: 'Neologismo con sufijo "-ear" (ej: tuitear):' },
+                { id: 26, cat: '🌐 Bilingüe', tipo: 'opcion', titulo: 'Cognados -tion', desc: '"Education" en español:', opciones: ['educación', 'educativo', 'educador', 'educado'], correcta: 'educación', escritura: false, pregunta: '' },
+                { id: 27, cat: '🌐 Bilingüe', tipo: 'escritura', titulo: '✍️ Sufijos -dad / -ty', desc: 'Escribe el sustantivo de "able" en español (termina en -dad).', correcta: 'abilidad', escritura: true, pregunta: 'Sustantivo de "able" en español (-dad):' },
+                { id: 28, cat: '🌐 Bilingüe', tipo: 'opcion', titulo: 'Raíces grecolatinas', desc: '"Teléfono" contiene "tele" (lejos) y "fono" (sonido). ¿Qué es?', opciones: ['sonido lejano', 'lejos sonido', 'sonido', 'lejos'], correcta: 'sonido lejano', escritura: false, pregunta: '' },
+                { id: 29, cat: '🌐 Bilingüe', tipo: 'escritura', titulo: '✍️ Gran Reto Final I', desc: 'Escribe "superhéroe" en inglés (super + hero).', correcta: 'superhero', escritura: true, pregunta: '"Superhéroe" en inglés (super + hero):' },
+                { id: 30, cat: '🌐 Bilingüe', tipo: 'escritura', titulo: '✍️ Gran Reto Final II', desc: 'Escribe el adjetivo de "morfología" (con -ico).', correcta: 'morfológico', escritura: true, pregunta: 'Adjetivo de "morfología" (-ico):' }
+            ];
+
+            // Estado
+            let currentIndex = 0;
+            let score = 0;
+            let streak = 0;
+            let completed = new Array(30).fill(false);
+
+            // DOM refs
+            const gameIndexDisplay = document.getElementById('gameIndexDisplay');
+            const categoryBadge = document.getElementById('categoryBadge');
+            const escrituraBadge = document.getElementById('escrituraBadge');
+            const gameTitle = document.getElementById('gameTitle');
+            const gameDescription = document.getElementById('gameDescription');
+            const interactionArea = document.getElementById('interactionArea');
+            const respuestaCorrectaContainer = document.getElementById('respuestaCorrectaContainer');
+            const respuestaCorrectaTexto = document.getElementById('respuestaCorrectaTexto');
+            const streakCount = document.getElementById('streakCount');
+            const scoreCount = document.getElementById('scoreCount');
+            const progressText = document.getElementById('progressText');
+            const progressBar = document.getElementById('progressBar');
+            const completedCount = document.getElementById('completedCount');
+            const gameList = document.getElementById('gameList');
+            const prevBtn = document.getElementById('prevGameBtn');
+            const nextBtn = document.getElementById('nextGameBtn');
+            const resetBtn = document.getElementById('resetProgressBtn');
+            const preguntaDestacada = document.getElementById('preguntaDestacada');
+            const preguntaSpan = document.getElementById('gameDescription');
+
+            // ----- CANVAS para escritura a mano -----
+            let canvas, ctx, isDrawing = false;
+            let lastX = 0,
+                lastY = 0;
+
+            function initCanvas() {
+                canvas = document.getElementById('canvasEscritura');
+                if (!canvas) return;
+                ctx = canvas.getContext('2d');
+                // Ajustar tamaño
+                resizeCanvas();
+                // eventos
+                canvas.addEventListener('mousedown', startDraw);
+                canvas.addEventListener('mousemove', draw);
+                canvas.addEventListener('mouseup', stopDraw);
+                canvas.addEventListener('mouseleave', stopDraw);
+                // táctil
+                canvas.addEventListener('touchstart', handleTouch(startDraw));
+                canvas.addEventListener('touchmove', handleTouch(draw));
+                canvas.addEventListener('touchend', stopDraw);
+                // Limpiar
+                document.getElementById('limpiarCanvasBtn')?.addEventListener('click', clearCanvas);
+                // Reconocer escritura (por ahora validación manual)
+                document.getElementById('comprobarEscrituraBtn')?.addEventListener('click', comprobarEscritura);
+            }
+
+            function resizeCanvas() {
+                if (!canvas) return;
+                const rect = canvas.parentElement.getBoundingClientRect();
+                const width = Math.min(rect.width - 4, 600);
+                canvas.width = width;
+                canvas.height = width * 0.5;
+                canvas.style.width = width + 'px';
+                canvas.style.height = (width * 0.5) + 'px';
+                // fondo blanco
+                if (ctx) {
+                    ctx.fillStyle = '#fefcfd';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.strokeStyle = '#4d2e7a';
+                    ctx.lineWidth = 3;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                }
+            }
+
+            function startDraw(e) {
+                if (!canvas) return;
+                isDrawing = true;
+                const pos = getPos(e);
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+
+            function draw(e) {
+                if (!isDrawing || !canvas) return;
+                const pos = getPos(e);
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+                lastX = pos.x;
+                lastY = pos.y;
+            }
+
+            function stopDraw() { isDrawing = false; }
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+                return {
+                    x: (clientX - rect.left) * (canvas.width / rect.width),
+                    y: (clientY - rect.top) * (canvas.height / rect.height)
+                };
+            }
+
+            function handleTouch(fn) {
+                return function(e) {
+                    e.preventDefault();
+                    const touch = e.touches[0];
+                    if (!touch) return;
+                    const mouseEvent = new MouseEvent(
+                        e.type === 'touchstart' ? 'mousedown' : e.type === 'touchmove' ? 'mousemove' : 'mouseup', {
+                            clientX: touch.clientX,
+                            clientY: touch.clientY
+                        }
+                    );
+                    canvas.dispatchEvent(mouseEvent);
+                };
+            }
+
+            function clearCanvas() {
+                if (!ctx || !canvas) return;
+                ctx.fillStyle = '#fefcfd';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.strokeStyle = '#4d2e7a';
+                ctx.lineWidth = 3;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+            }
+
+            // Para juegos de escritura: se usa el canvas + validación
+            function comprobarEscritura() {
+                // Tomamos el valor del campo de texto (por si el usuario escribe también)
+                const input = document.getElementById('escrituraInput');
+                let texto = input ? input.value.trim().toLowerCase() : '';
+                // Si el canvas tiene trazos, usamos el texto del input (o forzamos validación)
+                // Para este ejemplo, validamos contra el input.
+                const juego = juegos[currentIndex];
+                if (!juego || !juego.escritura) return;
+                const correcta = juego.correcta.toLowerCase();
+                const isCorrect = (texto === correcta);
+                // Mostrar resultado
+                if (isCorrect) {
+                    if (!completed[currentIndex]) {
+                        score += 15;
+                        streak += 1;
+                        completed[currentIndex] = true;
+                    }
+                    if (input) {
+                        input.style.borderColor = '#28a745';
+                        input.style.background = '#e6f9e6';
+                    }
+                } else {
+                    streak = 0;
+                    if (input) {
+                        input.style.borderColor = '#dc3545';
+                        input.style.background = '#fce4e4';
+                    }
+                }
+                respuestaCorrectaTexto.textContent = juego.correcta;
+                respuestaCorrectaContainer.style.display = 'block';
+                if (input) input.disabled = true;
+                document.getElementById('comprobarEscrituraBtn').disabled = true;
+                updateStats();
+            }
+
+            // --------------------------------------------------------------
+            // Render
+            // --------------------------------------------------------------
+            function renderGame(index) {
+                const juego = juegos[index];
+                if (!juego) return;
+
+                categoryBadge.textContent = juego.cat;
+                if (juego.escritura) {
+                    escrituraBadge.style.display = 'inline-block';
+                    escrituraBadge.textContent = '✍️ escritura';
+                } else {
+                    escrituraBadge.style.display = 'none';
+                }
+                gameTitle.textContent = juego.titulo;
+                // Mostrar pregunta en el área destacada
+                if (juego.escritura && juego.pregunta) {
+                    preguntaSpan.textContent = juego.pregunta;
+                } else {
+                    preguntaSpan.textContent = juego.desc;
+                }
+                respuestaCorrectaContainer.style.display = 'none';
+
+                let html = '';
+                if (juego.tipo === 'opcion') {
+                    html = `<div class="d-flex flex-wrap gap-3 justify-content-center">`;
+                    juego.opciones.forEach((opt) => {
+                        html += `<button class="btn btn-outline-morph opcion-btn" data-opt="${opt}" data-correct="${juego.correcta}">${opt}</button>`;
+                    });
+                    html += `</div>`;
+                } else if (juego.tipo === 'escritura') {
+                    html = `
+                        <div class="text-center">
+                            <div class="mb-2">
+                                <label class="fw-semibold">✍️ Escribe a mano en el lienzo (o usa el teclado):</label>
+                            </div>
+                            <div id="canvasContainer" class="mx-auto" style="max-width:600px;">
+                                <canvas id="canvasEscritura"></canvas>
+                            </div>
+                            <div class="canvas-toolbar mt-2">
+                                <button class="btn-canvas" id="limpiarCanvasBtn"><i class="fas fa-eraser"></i> Limpiar</button>
+                                <button class="btn-canvas" id="comprobarEscrituraBtn"><i class="fas fa-check"></i> Comprobar escritura</button>
+                            </div>
+                            <div class="mt-2">
+                                <input type="text" class="cursive-input w-75" id="escrituraInput" placeholder="O escribe aquí en cursiva..." autocomplete="off">
+                            </div>
+                            <div class="mt-2 text-muted small">Dibuja la palabra o escríbela en el campo. Luego pulsa "Comprobar".</div>
+                        </div>
+                    `;
+                }
+                interactionArea.innerHTML = html;
+
+                // Eventos para opciones
+                if (juego.tipo === 'opcion') {
+                    document.querySelectorAll('.opcion-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            const selected = this.dataset.opt;
+                            const correct = this.dataset.correct;
+                            const isCorrect = (selected === correct);
+                            document.querySelectorAll('.opcion-btn').forEach(b => b.disabled = true);
+                            if (isCorrect) {
+                                this.classList.add('btn-success');
+                                this.classList.remove('btn-outline-morph');
+                                if (!completed[index]) {
+                                    score += 10;
+                                    streak += 1;
+                                    completed[index] = true;
+                                }
+                            } else {
+                                this.classList.add('btn-danger');
+                                this.classList.remove('btn-outline-morph');
+                                streak = 0;
+                            }
+                            respuestaCorrectaTexto.textContent = correct;
+                            respuestaCorrectaContainer.style.display = 'block';
+                            document.querySelectorAll('.opcion-btn').forEach(b => {
+                                if (b.dataset.opt === correct) {
+                                    b.classList.add('border', 'border-success', 'bg-success', 'bg-opacity-25');
+                                }
+                            });
+                            updateStats();
+                        });
+                    });
+                } else if (juego.tipo === 'escritura') {
+                    // Inicializar canvas y eventos
+                    setTimeout(() => {
+                        initCanvas();
+                        // También input para escritura con teclado
+                        const input = document.getElementById('escrituraInput');
+                        if (input) {
+                            input.addEventListener('keypress', function(e) {
+                                if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    comprobarEscritura();
+                                }
+                            });
+                        }
+                        // Asignar comprobar al botón
+                        const comprobarBtn = document.getElementById('comprobarEscrituraBtn');
+                        if (comprobarBtn) {
+                            comprobarBtn.addEventListener('click', comprobarEscritura);
+                        }
+                    }, 50);
+                }
+
+                updateStats();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // --------------------------------------------------------------
+            // Lista y estadísticas
+            // --------------------------------------------------------------
+            function updateStats() {
+                streakCount.textContent = streak;
+                scoreCount.textContent = score;
+                const done = completed.filter(v => v).length;
+                completedCount.textContent = `${done}/30`;
+                const items = gameList.querySelectorAll('.list-group-item');
+                items.forEach((li, idx) => {
+                    if (completed[idx]) {
+                        li.classList.add('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+                        li.querySelector('.badge').innerHTML = '<i class="fas fa-check-circle text-success"></i> OK';
+                    } else {
+                        li.classList.remove('bg-success', 'bg-opacity-10', 'border-start', 'border-success', 'border-3');
+                        li.querySelector('.badge').textContent = `#${idx+1}`;
+                    }
+                });
+                const pct = Math.min(100, (done / 30) * 100);
+                progressBar.style.width = pct + '%';
+                progressText.textContent = `${currentIndex+1} / 30`;
+                gameIndexDisplay.textContent = `#${currentIndex+1}`;
+            }
+
+            function populateGameList() {
+                gameList.innerHTML = '';
+                juegos.forEach((j, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item d-flex justify-content-between align-items-center';
+                    li.style.cursor = 'pointer';
+                    const icono = j.escritura ? '✍️ ' : '';
+                    li.innerHTML = `<span>${icono} ${j.titulo.substring(0, 28)}</span><span class="badge bg-secondary bg-opacity-25 text-dark">#${idx+1}</span>`;
+                    li.addEventListener('click', function() {
+                        currentIndex = idx;
+                        renderGame(currentIndex);
+                    });
+                    gameList.appendChild(li);
+                });
+                updateStats();
+            }
+
+            function goTo(index) {
+                if (index < 0) index = 0;
+                if (index >= juegos.length) index = juegos.length - 1;
+                currentIndex = index;
+                renderGame(currentIndex);
+            }
+
+            prevBtn.addEventListener('click', function() { goTo(currentIndex - 1); });
+            nextBtn.addEventListener('click', function() { goTo(currentIndex + 1); });
+
+            resetBtn.addEventListener('click', function() {
+                if (confirm('¿Reiniciar todo el progreso?')) {
+                    completed = new Array(30).fill(false);
+                    score = 0;
+                    streak = 0;
+                    currentIndex = 0;
+                    renderGame(0);
+                    updateStats();
+                }
+            });
+
+            // Iniciar
+            populateGameList();
+            renderGame(0);
+        })();
+    </script>
+</body>
+</html>

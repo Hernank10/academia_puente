@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Enfoque comunicativo textual · concurso docente</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f1ebe0;
+            background-image: radial-gradient(circle at 10% 20%, rgba(250, 246, 238, 0.4) 0%, transparent 30%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #1a2e3a;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid #1F4E5F;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #1F4E5F;
+            letter-spacing: -0.02em;
+        }
+        .header h1 span {
+            background: #B45309;
+            color: #faf6ee;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #3d5a68;
+            background: rgba(31, 78, 95, 0.08);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #1F4E5F;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #faf6ee;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #e2dad0; }
+        .block-nav button.active {
+            background: #1F4E5F;
+            color: #faf6ee;
+            border-color: #1F4E5F;
+            box-shadow: 0 2px 6px rgba(31, 78, 95, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 440px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.04), 0 2px 6px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .card-front {
+            background: #faf6ee;
+            background-image: linear-gradient(145deg, #fdfaf5 0%, #f5efe6 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #B45309;
+            opacity: 0.25;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #7f6b58;
+            background: #e8dfd2;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #1F4E5F;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #2c4755;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #a3907c;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #d6cdbc;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #f5efe6;
+            background-image: linear-gradient(160deg, #faf6ee 0%, #eee7dc 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #B45309;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(31, 78, 95, 0.04);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #1F4E5F;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #1F4E5F;
+        }
+        .card-back .ejercicio {
+            background: #e8dfd2;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #2f404b;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #d6cdbc;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #1F4E5F;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #1F4E5F;
+            color: white;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #12343f; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #5C7A5C; }
+        .card-back .feedback-msg.incorrecto { color: #A8453A; }
+        .card-back .respuesta-correcta {
+            background: #1F4E5F;
+            color: #faf6ee;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #7f6b58;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #faf6ee;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #d6cdbc;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.02);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #1F4E5F;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #5f7785;
+        }
+        .quiz-pregunta {
+            background: white;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            border: 1px solid #ece3d6;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #f5efe6;
+            border: 1px solid #d6cdbc;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #1F4E5F;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #e2dad0; }
+        .quiz-opciones button.correct {
+            background: #5C7A5C;
+            border-color: #5C7A5C;
+            color: white;
+        }
+        .quiz-opciones button.incorrect {
+            background: #A8453A;
+            border-color: #A8453A;
+            color: white;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #e8dfd2;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #1F4E5F;
+            border: none;
+            color: #faf6ee;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #12343f; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #7f6b58;
+            border-top: 1px solid #d6cdbc;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+        .badge-ct {
+            background: #B45309;
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.1rem 0.6rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-left: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>📝 Enfoque comunicativo textual <span>100 técnicas</span></h1>
+        <div class="sub">concurso docente · lengua en contextos reales</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>enfoque comunicativo textual</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">100 técnicas · Escribe tu respuesta en cada tarjeta y verifica · Aprende el enfoque comunicativo</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS sobre Enfoque comunicativo textual
+    // Principios, estrategias, evaluación y diseño de materiales
+    // Cada tarjeta tiene ejercicio con respuesta verificable por el usuario
+    // ================================================================
+    const TECNICAS = [];
+
+    // Bloque 1: Fundamentos del enfoque comunicativo (25)
+    const b1 = [
+        { nombre: "Uso de textos auténticos", teoria: "Trabajar con materiales reales (cartas, noticias, anuncios).", ejemplo: "Usar un periódico escolar real.", ejercicio: "¿Qué tipo de material usa el enfoque comunicativo?", respuesta: "textos auténticos" },
+        { nombre: "Situaciones de comunicación reales", teoria: "Simular contextos donde se usa la lengua.", ejemplo: "Simular una entrevista de trabajo.", ejercicio: "¿Qué se simula en el enfoque comunicativo?", respuesta: "situaciones reales" },
+        { nombre: "Propósito comunicativo", teoria: "La lengua se usa con una intención (informar, persuadir, etc.).", ejemplo: "Escribir una carta para convencer.", ejercicio: "¿Qué define la intención del hablante?", respuesta: "propósito comunicativo" },
+        { nombre: "Destinatario", teoria: "El texto se ajusta a quién va dirigido.", ejemplo: "Un texto para niños usa lenguaje sencillo.", ejercicio: "¿Qué factor determina el registro?", respuesta: "destinatario" },
+        { nombre: "Contexto situacional", teoria: "El entorno influye en el uso de la lengua.", ejemplo: "Un discurso político es diferente a uno familiar.", ejercicio: "¿Qué influye en la elección del lenguaje?", respuesta: "contexto" },
+        { nombre: "Competencia comunicativa", teoria: "Capacidad de usar la lengua adecuadamente en cada situación.", ejemplo: "Saber qué decir, cómo y cuándo.", ejercicio: "¿Qué competencia integra saber hacer?", respuesta: "comunicativa" },
+        { nombre: "Competencia lingüística", teoria: "Conocimiento del sistema de la lengua (gramática, vocabulario).", ejemplo: "Saber conjugar verbos.", ejercicio: "¿Qué competencia es el saber gramatical?", respuesta: "lingüística" },
+        { nombre: "Competencia pragmática", teoria: "Saber usar la lengua en contexto.", ejemplo: "Saber pedir un favor cortésmente.", ejercicio: "¿Qué competencia es el uso social del lenguaje?", respuesta: "pragmática" },
+        { nombre: "Competencia sociolingüística", teoria: "Conocer las variantes y registros sociales.", ejemplo: "Usar 'usted' en contextos formales.", ejercicio: "¿Qué competencia maneja registros?", respuesta: "sociolingüística" },
+        { nombre: "Competencia estratégica", teoria: "Habilidad para resolver problemas de comunicación.", ejemplo: "Usar paráfrasis cuando no se recuerda una palabra.", ejercicio: "¿Qué competencia usa estrategias?", respuesta: "estratégica" },
+        { nombre: "Aprendizaje basado en tareas", teoria: "Aprender haciendo tareas comunicativas.", ejemplo: "Planificar un viaje en grupo.", ejercicio: "¿Qué enfoque usa tareas como eje?", respuesta: "basado en tareas" },
+        { nombre: "Tareas comunicativas", teoria: "Actividades que requieren usar la lengua para un fin.", ejemplo: "Hacer una encuesta y presentar resultados.", ejercicio: "¿Qué tipo de actividad es una tarea comunicativa?", respuesta: "actividad con propósito" },
+        { nombre: "Negociación de significado", teoria: "Los hablantes ajustan su mensaje para entenderse.", ejemplo: "Aclarar algo que no se entendió.", ejercicio: "¿Qué proceso ocurre cuando no se entiende?", respuesta: "negociación de significado" },
+        { nombre: "Interacción oral", teoria: "El diálogo y la conversación son centrales.", ejemplo: "Debatir en parejas.", ejercicio: "¿Qué tipo de comunicación es el diálogo?", respuesta: "interacción oral" },
+        { nombre: "Producción escrita", teoria: "Escribir textos con propósito comunicativo.", ejemplo: "Escribir una carta al director.", ejercicio: "¿Qué habilidad produce textos con intención?", respuesta: "producción escrita" },
+        { nombre: "Comprensión lectora funcional", teoria: "Leer para hacer algo con la información.", ejemplo: "Leer un menú para pedir comida.", ejercicio: "¿Qué tipo de lectura es para actuar?", respuesta: "funcional" },
+        { nombre: "Escucha activa", teoria: "Prestar atención y responder adecuadamente.", ejemplo: "Escuchar una noticia y comentarla.", ejercicio: "¿Qué habilidad implica escuchar con atención?", respuesta: "escucha activa" },
+        { nombre: "Enfoque centrado en el estudiante", teoria: "El alumno es el protagonista del aprendizaje.", ejemplo: "Proyectos elegidos por los estudiantes.", ejercicio: "¿Quién es el centro del proceso?", respuesta: "estudiante" },
+        { nombre: "Aprendizaje significativo", teoria: "Relacionar lo nuevo con lo que ya se sabe.", ejemplo: "Conectar un texto con experiencias propias.", ejercicio: "¿Qué tipo de aprendizaje conecta saberes?", respuesta: "significativo" },
+        { nombre: "Evaluación formativa", teoria: "Evaluar el proceso, no solo el producto final.", ejemplo: "Observar el progreso durante el proyecto.", ejercicio: "¿Qué tipo de evaluación es continua?", respuesta: "formativa" },
+        { nombre: "Autoevaluación", teoria: "El estudiante reflexiona sobre su propio aprendizaje.", ejemplo: "Preguntarse: ¿qué aprendí?", ejercicio: "¿Qué estrategia es la reflexión personal?", respuesta: "autoevaluación" },
+        { nombre: "Coevaluación", teoria: "Evaluar entre pares.", ejemplo: "Revisar el trabajo de un compañero.", ejercicio: "¿Qué evaluación es entre iguales?", respuesta: "coevaluación" },
+        { nombre: "Portafolio", teoria: "Recopilar evidencias del proceso de aprendizaje.", ejemplo: "Guardar borradores y versiones finales.", ejercicio: "¿Qué herramienta acumula trabajos?", respuesta: "portafolio" },
+        { nombre: "Proyecto de aula", teoria: "Trabajo a largo plazo con un producto final.", ejemplo: "Crear un periódico escolar.", ejercicio: "¿Qué estrategia integra varias habilidades?", respuesta: "proyecto de aula" },
+        { nombre: "Enfoque por competencias", teoria: "Desarrollar habilidades para la vida.", ejemplo: "Saber comunicarse en diferentes contextos.", ejercicio: "¿Qué enfoque busca saber hacer en la vida real?", respuesta: "por competencias" },
+    ];
+    b1.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "fundamentos", ...t }));
+
+    // Bloque 2: Estrategias didácticas (25)
+    const b2 = [
+        { nombre: "Simulación", teoria: "Representar situaciones reales.", ejemplo: "Simular un juicio en clase.", ejercicio: "¿Qué estrategia recrea situaciones?", respuesta: "simulación" },
+        { nombre: "Role-play", teoria: "Actuar un rol en una situación comunicativa.", ejemplo: "Hacer de cliente y vendedor.", ejercicio: "¿Qué técnica es 'juego de roles'?", respuesta: "role-play" },
+        { nombre: "Debate", teoria: "Discutir un tema argumentando posturas.", ejemplo: "Debatir sobre el medio ambiente.", ejercicio: "¿Qué estrategia fomenta la argumentación?", respuesta: "debate" },
+        { nombre: "Mesa redonda", teoria: "Conversación guiada sobre un tema.", ejemplo: "Discutir sobre la educación.", ejercicio: "¿Qué estrategia es una conversación formal?", respuesta: "mesa redonda" },
+        { nombre: "Taller de escritura", teoria: "Espacio para escribir y revisar textos.", ejemplo: "Taller de cuentos.", ejercicio: "¿Qué estrategia se enfoca en la producción?", respuesta: "taller de escritura" },
+        { nombre: "Lectura dramatizada", teoria: "Leer en voz alta con expresión.", ejemplo: "Leer una obra de teatro.", ejercicio: "¿Qué técnica usa la expresión oral?", respuesta: "lectura dramatizada" },
+        { nombre: "Producción de textos", teoria: "Crear textos con propósito comunicativo.", ejemplo: "Escribir una noticia.", ejercicio: "¿Qué habilidad produce textos con intención?", respuesta: "producción escrita" },
+        { nombre: "Análisis de textos", teoria: "Examinar la estructura y el propósito de un texto.", ejemplo: "Analizar un anuncio publicitario.", ejercicio: "¿Qué estrategia examina textos?", respuesta: "análisis textual" },
+        { nombre: "Comentario de texto", teoria: "Expresar opinión sobre un texto.", ejemplo: "Comentar un artículo de opinión.", ejercicio: "¿Qué estrategia da una opinión fundamentada?", respuesta: "comentario" },
+        { nombre: "Resumen", teoria: "Sintetizar las ideas principales.", ejemplo: "Resumir una noticia en 5 líneas.", ejercicio: "¿Qué técnica condensa información?", respuesta: "resumen" },
+        { nombre: "Toma de apuntes", teoria: "Registrar información relevante.", ejemplo: "Apuntar ideas clave de una conferencia.", ejercicio: "¿Qué habilidad registra información?", respuesta: "toma de apuntes" },
+        { nombre: "Mapa conceptual", teoria: "Organizar ideas gráficamente.", ejemplo: "Mapa de un tema.", ejercicio: "¿Qué organizador gráfico usa conceptos?", respuesta: "mapa conceptual" },
+        { nombre: "Cuadro sinóptico", teoria: "Organizar información en columnas.", ejemplo: "Comparar dos textos.", ejercicio: "¿Qué organización usa columnas?", respuesta: "cuadro sinóptico" },
+        { nombre: "Infografía", teoria: "Representar información visualmente.", ejemplo: "Hacer una infografía sobre el reciclaje.", ejercicio: "¿Qué recurso combina texto e imagen?", respuesta: "infografía" },
+        { nombre: "Presentación oral", teoria: "Exponer un tema ante un público.", ejemplo: "Exponer sobre un proyecto.", ejercicio: "¿Qué habilidad es hablar en público?", respuesta: "exposición oral" },
+        { nombre: "Entrevista", teoria: "Preguntar a alguien para obtener información.", ejemplo: "Entrevistar a un experto.", ejercicio: "¿Qué técnica usa preguntas para obtener información?", respuesta: "entrevista" },
+        { nombre: "Encuesta", teoria: "Recoger datos de un grupo.", ejemplo: "Encuestar sobre hábitos de lectura.", ejercicio: "¿Qué técnica recoge datos estadísticos?", respuesta: "encuesta" },
+        { nombre: "Corrección entre pares", teoria: "Revisar el trabajo de un compañero.", ejemplo: "Corregir la redacción de otro.", ejercicio: "¿Qué estrategia usa la revisión colaborativa?", respuesta: "corrección entre pares" },
+        { nombre: "Reescritura", teoria: "Mejorar un texto después de la corrección.", ejemplo: "Reescribir un cuento con nuevas ideas.", ejercicio: "¿Qué técnica mejora un texto?", respuesta: "reescritura" },
+        { nombre: "Uso de TIC", teoria: "Incorporar tecnología para comunicarse.", ejemplo: "Crear un blog.", ejercicio: "¿Qué herramientas digitales se usan?", respuesta: "TIC" },
+        { nombre: "Aprendizaje cooperativo", teoria: "Trabajar en grupos con roles definidos.", ejemplo: "Cada miembro tiene una tarea.", ejercicio: "¿Qué tipo de aprendizaje es en equipo?", respuesta: "cooperativo" },
+        { nombre: "Proyecto interdisciplinario", teoria: "Integrar varias áreas del conocimiento.", ejemplo: "Proyecto sobre el agua con ciencias y lenguaje.", ejercicio: "¿Qué estrategia integra disciplinas?", respuesta: "interdisciplinario" },
+        { nombre: "Salidas de campo", teoria: "Visitar lugares para aprender en contexto.", ejemplo: "Visitar una biblioteca.", ejercicio: "¿Qué estrategia usa el entorno real?", respuesta: "salida de campo" },
+        { nombre: "Uso de diccionario y enciclopedias", teoria: "Consultar fuentes para ampliar información.", ejemplo: "Buscar palabras en el diccionario.", ejercicio: "¿Qué herramienta amplía el vocabulario?", respuesta: "diccionario" },
+        { nombre: "Círculo de lectura", teoria: "Grupo que lee y comenta un texto.", ejemplo: "Club de lectura.", ejercicio: "¿Qué estrategia promueve la discusión grupal?", respuesta: "círculo de lectura" },
+    ];
+    b2.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "estrategias", ...t }));
+
+    // Bloque 3: Evaluación en el enfoque comunicativo (25)
+    const b3 = [
+        { nombre: "Evaluación de la competencia comunicativa", teoria: "Evaluar el uso de la lengua en contexto.", ejemplo: "Evaluar una entrevista simulada.", ejercicio: "¿Qué se evalúa en este enfoque?", respuesta: "competencia comunicativa" },
+        { nombre: "Evaluación de la producción escrita", teoria: "Evaluar textos con criterios de contenido y forma.", ejemplo: "Corregir una carta formal.", ejercicio: "¿Qué producto se evalúa en escritura?", respuesta: "textos escritos" },
+        { nombre: "Evaluación de la producción oral", teoria: "Evaluar la expresión oral en situaciones reales.", ejemplo: "Evaluar una presentación.", ejercicio: "¿Qué habilidad oral se evalúa?", respuesta: "expresión oral" },
+        { nombre: "Evaluación de la comprensión lectora", teoria: "Evaluar la capacidad de extraer información.", ejemplo: "Preguntas sobre un texto.", ejercicio: "¿Qué habilidad se evalúa con preguntas?", respuesta: "comprensión lectora" },
+        { nombre: "Evaluación de la escucha", teoria: "Evaluar la capacidad de entender lo que se oye.", ejemplo: "Preguntas sobre un audio.", ejercicio: "¿Qué habilidad auditiva se evalúa?", respuesta: "escucha" },
+        { nombre: "Rúbrica de comunicación", teoria: "Criterios para evaluar la competencia comunicativa.", ejemplo: "Fluidez, coherencia, adecuación.", ejercicio: "¿Qué herramienta usa criterios?", respuesta: "rúbrica" },
+        { nombre: "Lista de cotejo", teoria: "Verificar la presencia de elementos en un texto.", ejemplo: "¿Tiene introducción, desarrollo y conclusión?", ejercicio: "¿Qué herramienta es una lista de verificación?", respuesta: "lista de cotejo" },
+        { nombre: "Evaluación por tareas", teoria: "Evaluar el producto de una tarea comunicativa.", ejemplo: "Evaluar un periódico escolar.", ejercicio: "¿Qué se evalúa en una tarea comunicativa?", respuesta: "producto final" },
+        { nombre: "Evaluación del proceso", teoria: "Observar el progreso durante la tarea.", ejemplo: "Monitorear la planificación.", ejercicio: "¿Qué tipo de evaluación observa el proceso?", respuesta: "formativa" },
+        { nombre: "Autoevaluación comunicativa", teoria: "El estudiante evalúa su propia comunicación.", ejemplo: "¿Me expresé con claridad?", ejercicio: "¿Qué evaluación es reflexiva?", respuesta: "autoevaluación" },
+        { nombre: "Coevaluación comunicativa", teoria: "Evaluar la comunicación entre pares.", ejemplo: "Evaluar la exposición de un compañero.", ejercicio: "¿Qué evaluación es entre iguales?", respuesta: "coevaluación" },
+        { nombre: "Portafolio comunicativo", teoria: "Recopilar muestras de comunicación.", ejemplo: "Guardar escritos y grabaciones.", ejercicio: "¿Qué herramienta acumula evidencias?", respuesta: "portafolio" },
+        { nombre: "Evaluación de la adecuación", teoria: "Evaluar si el texto es apropiado para la situación.", ejemplo: "¿El registro es formal o informal?", ejercicio: "¿Qué criterio evalúa la pertinencia?", respuesta: "adecuación" },
+        { nombre: "Evaluación de la coherencia", teoria: "Evaluar si las ideas tienen sentido.", ejemplo: "¿Hay relación entre los párrafos?", ejercicio: "¿Qué criterio evalúa la unidad del texto?", respuesta: "coherencia" },
+        { nombre: "Evaluación de la cohesión", teoria: "Evaluar el uso de conectores y referentes.", ejemplo: "¿Se usan conectores adecuados?", ejercicio: "¿Qué criterio evalúa los enlaces?", respuesta: "cohesión" },
+        { nombre: "Evaluación de la corrección", teoria: "Evaluar la gramática y ortografía.", ejemplo: "¿Hay errores de concordancia?", ejercicio: "¿Qué criterio evalúa la norma?", respuesta: "corrección" },
+        { nombre: "Evaluación de la fluidez", teoria: "Evaluar la facilidad para expresarse.", ejemplo: "¿Habla con soltura?", ejercicio: "¿Qué criterio evalúa la naturalidad?", respuesta: "fluidez" },
+        { nombre: "Evaluación de la pronunciación", teoria: "Evaluar la claridad al hablar.", ejemplo: "¿Se entiende lo que dice?", ejercicio: "¿Qué criterio evalúa la claridad?", respuesta: "pronunciación" },
+        { nombre: "Evaluación de la entonación", teoria: "Evaluar el uso de la entonación.", ejemplo: "¿Usa entonación adecuada?", ejercicio: "¿Qué criterio evalúa el tono?", respuesta: "entonación" },
+        { nombre: "Evaluación de la interacción", teoria: "Evaluar la capacidad de dialogar.", ejemplo: "¿Responde adecuadamente?", ejercicio: "¿Qué criterio evalúa el diálogo?", respuesta: "interacción" },
+        { nombre: "Evaluación de la creatividad", teoria: "Evaluar la originalidad en la comunicación.", ejemplo: "¿El texto es creativo?", ejercicio: "¿Qué criterio valora la originalidad?", respuesta: "creatividad" },
+        { nombre: "Evaluación de la efectividad", teoria: "Evaluar si el texto logra su propósito.", ejemplo: "¿El anuncio convence?", ejercicio: "¿Qué criterio evalúa el logro del propósito?", respuesta: "efectividad" },
+        { nombre: "Evaluación de la autonomía", teoria: "Evaluar la capacidad de trabajar sin ayuda.", ejemplo: "¿Puede hacer la tarea solo?", ejercicio: "¿Qué criterio evalúa la independencia?", respuesta: "autonomía" },
+        { nombre: "Evaluación de la responsabilidad", teoria: "Evaluar la responsabilidad en el trabajo.", ejemplo: "¿Cumple con los plazos?", ejercicio: "¿Qué criterio evalúa el cumplimiento?", respuesta: "responsabilidad" },
+        { nombre: "Evaluación de la participación", teoria: "Evaluar la participación en actividades.", ejemplo: "¿Participa activamente?", ejercicio: "¿Qué criterio evalúa la implicación?", respuesta: "participación" },
+    ];
+    b3.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "evaluación", ...t }));
+
+    // Bloque 4: Diseño de materiales y proyectos (25)
+    const b4 = [
+        { nombre: "Diseño de material auténtico", teoria: "Crear materiales basados en la vida real.", ejemplo: "Diseñar un menú para un restaurante.", ejercicio: "¿Qué tipo de material es el periódico escolar?", respuesta: "auténtico" },
+        { nombre: "Secuencia didáctica", teoria: "Planificar sesiones con un objetivo comunicativo.", ejemplo: "Secuencia para escribir un cuento.", ejercicio: "¿Qué estructura organiza las sesiones?", respuesta: "secuencia didáctica" },
+        { nombre: "Proyecto comunicativo", teoria: "Proyecto con producto comunicativo final.", ejemplo: "Crear una campaña publicitaria.", ejercicio: "¿Qué tipo de proyecto tiene un producto comunicativo?", respuesta: "proyecto comunicativo" },
+        { nombre: "Unidad didáctica integrada", teoria: "Integrar varias habilidades comunicativas.", ejemplo: "Leer, escribir, hablar y escuchar.", ejercicio: "¿Qué unidad integra habilidades?", respuesta: "unidad didáctica" },
+        { nombre: "Taller de producción", teoria: "Espacio para escribir y revisar.", ejemplo: "Taller de redacción de noticias.", ejercicio: "¿Qué estrategia se enfoca en la producción?", respuesta: "taller" },
+        { nombre: "Centro de interés", teoria: "Partir de un tema que motive a los estudiantes.", ejemplo: "Trabajar sobre el deporte.", ejercicio: "¿Qué estrategia parte de los intereses?", respuesta: "centro de interés" },
+        { nombre: "Aprendizaje basado en problemas", teoria: "Resolver un problema comunicativo real.", ejemplo: "¿Cómo convencer a los padres de algo?", ejercicio: "¿Qué enfoque parte de un problema?", respuesta: "basado en problemas" },
+        { nombre: "Estudio de casos", teoria: "Analizar casos reales de comunicación.", ejemplo: "Analizar un discurso político.", ejercicio: "¿Qué estrategia usa casos reales?", respuesta: "estudio de casos" },
+        { nombre: "Gamificación", teoria: "Usar juegos para aprender.", ejemplo: "Juego de roles con puntuación.", ejercicio: "¿Qué estrategia usa juegos?", respuesta: "gamificación" },
+        { nombre: "Uso de medios digitales", teoria: "Incorporar herramientas digitales.", ejemplo: "Crear un blog, un podcast.", ejercicio: "¿Qué recursos digitales se usan?", respuesta: "medios digitales" },
+        { nombre: "Creación de contenido multimedia", teoria: "Producir videos, audios, presentaciones.", ejemplo: "Hacer un video promocional.", ejercicio: "¿Qué tipo de contenido es audiovisual?", respuesta: "multimedia" },
+        { nombre: "Redes sociales educativas", teoria: "Usar redes para comunicarse.", ejemplo: "Crear un grupo de discusión.", ejercicio: "¿Qué plataformas se usan para comunicarse?", respuesta: "redes sociales" },
+        { nombre: "Foro de discusión", teoria: "Espacio para intercambiar opiniones.", ejemplo: "Foro sobre un tema de actualidad.", ejercicio: "¿Qué herramienta promueve el intercambio?", respuesta: "foro" },
+        { nombre: "Blog educativo", teoria: "Publicar textos en un blog.", ejemplo: "Blog de reseñas literarias.", ejercicio: "¿Qué herramienta permite publicar?", respuesta: "blog" },
+        { nombre: "Podcast educativo", teoria: "Crear audios sobre un tema.", ejemplo: "Podcast sobre historia.", ejercicio: "¿Qué formato es audio?", respuesta: "podcast" },
+        { nombre: "Video educativo", teoria: "Crear videos explicativos.", ejemplo: "Video sobre el ciclo del agua.", ejercicio: "¿Qué formato es visual y auditivo?", respuesta: "video" },
+        { nombre: "Periódico escolar", teoria: "Publicar noticias del colegio.", ejemplo: "Periódico mensual.", ejercicio: "¿Qué producto es un periódico escolar?", respuesta: "publicación" },
+        { nombre: "Revista digital", teoria: "Publicar artículos en formato digital.", ejemplo: "Revista de literatura.", ejercicio: "¿Qué producto es digital?", respuesta: "revista digital" },
+        { nombre: "Campaña de concientización", teoria: "Crear mensajes para sensibilizar.", ejemplo: "Campaña sobre el reciclaje.", ejercicio: "¿Qué tipo de proyecto es persuasivo?", respuesta: "campaña" },
+        { nombre: "Feria de la comunicación", teoria: "Exposición de proyectos comunicativos.", ejemplo: "Mostrar periódicos, videos, carteles.", ejercicio: "¿Qué evento muestra proyectos?", respuesta: "feria" },
+        { nombre: "Taller de lectura y escritura", teoria: "Espacio para leer y escribir.", ejemplo: "Leer cuentos y escribir finales.", ejercicio: "¿Qué taller integra lectura y escritura?", respuesta: "taller literario" },
+        { nombre: "Club de lectura", teoria: "Grupo que lee y comenta.", ejemplo: "Leer una novela y discutirla.", ejercicio: "¿Qué espacio promueve la lectura?", respuesta: "club de lectura" },
+        { nombre: "Cineforo", teoria: "Ver y analizar una película.", ejemplo: "Ver una película y comentarla.", ejercicio: "¿Qué actividad combina cine y discusión?", respuesta: "cineforo" },
+        { nombre: "Teatro escolar", teoria: "Montar una obra de teatro.", ejemplo: "Representar una obra.", ejercicio: "¿Qué actividad usa la expresión dramática?", respuesta: "teatro" },
+        { nombre: "Exposición oral con apoyo visual", teoria: "Presentar con diapositivas.", ejemplo: "Exponer sobre un tema con PowerPoint.", ejercicio: "¿Qué recurso apoya la exposición oral?", respuesta: "apoyo visual" },
+    ];
+    b4.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "diseño", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Fundamentos', 'Estrategias didácticas', 'Evaluación', 'Diseño de materiales'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.teoria}</div>
+                            <div class="girar-indicador">↻ tocar para practicar</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#1F4E5F;margin-bottom:0.2rem;">📝 ${t.nombre}</div>
+                            <div class="ejemplo"><strong>Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#1F4E5F;color:white;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

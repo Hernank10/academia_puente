@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Historia de la Lengua Castellana | Cuaderno de 100 técnicas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --noche: #0a0a0c;
+            --espresso: #1c1713;
+            --pergamino: #ece3d5;
+            --pergamino-oscuro: #d4c9b5;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #ddb856;
+            --texto-oscuro: #2c241e;
+        }
+        body {
+            background: var(--noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-oscuro);
+            line-height: 1.55;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><filter id="grano"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grano)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.5;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .lms-app { display: flex; min-height: 100vh; position: relative; }
+        .sidebar-lux {
+            position: fixed;
+            top: 0;
+            left: -360px;
+            width: 360px;
+            height: 100vh;
+            background: #1a1512;
+            backdrop-filter: blur(6px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1100;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.2rem;
+            overflow-y: auto;
+            color: var(--pergamino);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar-lux.open { left: 0; }
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 2px;
+        }
+        .close-sidebar { background: none; border: none; color: var(--oro-pálido); font-size: 1.8rem; cursor: pointer; }
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d2620;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 6px;
+        }
+        .tech-index { list-style: none; }
+        .tech-index li {
+            margin-bottom: 0.7rem;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: 0.2s;
+        }
+        .tech-index li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .tech-index li:hover { border-left-color: var(--oro-antiguo); }
+        .main-lux {
+            flex: 1;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 20% 35%, rgba(160, 130, 80, 0.05) 1.5%, transparent 2%);
+            background-size: 35px 35px;
+        }
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a221d;
+            z-index: 1020;
+        }
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2da8f, var(--oro-antiguo));
+            transition: width 0.3s;
+        }
+        .hero-welcome {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--oro-antiguo);
+            background: rgba(245, 238, 225, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .hero-welcome h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 600;
+            color: var(--espresso);
+        }
+        .ornament-line {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 8px;
+            margin: 0.4rem 0;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1120;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .tech-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .tech-primary { flex: 3; min-width: 260px; }
+        .tech-aside {
+            flex: 1;
+            min-width: 230px;
+            background: #f4ede2;
+            padding: 1.5rem;
+            border-left: 3px solid var(--oro-antiguo);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        }
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.6rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .tech-title {
+            font-size: 1.9rem;
+            font-weight: 600;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .numero-gigante {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.1);
+            position: absolute;
+            right: 15px;
+            top: -15px;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'EB Garamond', serif;
+        }
+        .card { position: relative; margin-bottom: 2rem; }
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+        textarea {
+            width: 100%;
+            background: #fffef7;
+            border: 1px solid #cfc3ad;
+            padding: 0.9rem;
+            font-family: 'EB Garamond', serif;
+            margin-top: 0.6rem;
+            border-radius: 8px;
+        }
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: var(--oro-antiguo); color: var(--espresso); }
+        .btn-complete { background: var(--oro-antiguo); color: #1f1a16; border: none; }
+        .btn-show-answer { background: #2c2620; border-color: var(--oro-antiguo); margin-left: 0.5rem; }
+        .progress-unit { background: #cfc2ae; border-radius: 30px; height: 6px; margin: 0.7rem 0; }
+        .respuesta-correcta {
+            background: #e8ddcc;
+            border-left: 3px solid var(--oro-antiguo);
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .respuesta-correcta.visible { display: block; }
+        @media (max-width: 780px) {
+            .tech-layout { flex-direction: column; padding: 1rem; }
+            .hero-welcome h1 { font-size: 2rem; }
+            .sidebar-lux { width: 280px; left: -280px; }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggleBtn">≡</button>
+
+<div class="sidebar-lux" id="luxSidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice Histórico</span>
+        <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+    </div>
+    <input type="text" id="searchTech" class="search-box" placeholder="🔎 Buscar técnica (latín, evolución, medieval...)">
+    <ul class="tech-index" id="techIndexList"></ul>
+    <div style="margin-top: 2rem; text-align: center; opacity: 0.5;">⁂ § ⚜</div>
+</div>
+
+<div class="main-lux">
+    <div class="gold-progress"><div class="gold-fill" id="globalGoldFill"></div></div>
+    <div class="hero-welcome">
+        <div class="ornament-line">⁂ § ⚜</div>
+        <h1>Historia de la Lengua Castellana <span style="font-size: 1.2rem;">universitario · evolución del latín al español</span></h1>
+        <div class="stats-mini" id="statsPreview">Progreso: 0% · Técnicas completadas: 0/100</div>
+        <div class="ornament-line" style="font-size: 0.9rem;">⎯ del latín vulgar al español del siglo XXI ⎯</div>
+    </div>
+    <div id="dynamicTechView" class="tech-layout"></div>
+</div>
+
+<script>
+    // ========== DATOS COMPLETOS: 100 TÉCNICAS DE HISTORIA DE LA LENGUA ==========
+    const tecnicasHistoria = [
+        {id:1, nombre:"Latín vulgar: origen del castellano", teoria:"El latín vulgar era la variedad coloquial del latín hablada por soldados, colonos y clases populares del Imperio Romano. A diferencia del latín clásico, presentaba cambios fonéticos como la pérdida de declinaciones, uso de preposiciones y transformaciones léxicas. El latín vulgar llegó a la Península Ibérica con los romanos en el 218 a.C.", ejemplo:"Latín clásico 'FEMINA' > latín vulgar 'FEMINA' > español 'hembra'. 'OCULUS' > 'OCLU' > 'ojo'. 'FABULARE' > 'hablar'.", ejercicio:"Explica tres diferencias entre el latín clásico y el latín vulgar que influyeron en la formación del castellano.", respuesta:"1) Pérdida del sistema de declinaciones (uso de preposiciones). 2) Cambios fonéticos: 'F-' > 'h-' (FABULARE > hablar). 3) Diptongación de 'E' y 'O' breves tónicas (TERRA > tierra, PORTA > puerta)."},
+        {id:2, nombre:"Romanización de la Península Ibérica", teoria:"La romanización fue el proceso de asimilación cultural y lingüística de los pueblos prerromanos (íberos, celtas, tartesios) al Imperio Romano. Comenzó en el 218 a.C. durante la Segunda Guerra Púnica. El latín se impuso como lengua de administración, comercio y cultura. Las lenguas prerromanas dejaron un sustrato léxico.", ejemplo:"Palabras de origen prerromano: 'cerveza' (celta), 'izquierda' (vasco), 'barro' (íbero), 'pizarra', 'vega', 'perro'.", ejercicio:"Menciona al menos cinco palabras del español actual que provengan de lenguas prerromanas.", respuesta:"cerveza, izquierda, barro, pizarra, vega, perro, abeja, ardilla."},
+        {id:3, nombre:"Evolución fonética del latín al romance", teoria:"La evolución del latín al castellano siguió leyes fonéticas sistemáticas: pérdida de 'F-', diptongación de 'E' y 'O' breves tónicas, sonorización de consonantes sordas intervocálicas, caída de la 'e' final atona, evolución de grupos consonánticos (PL-, CL- > 'll').", ejemplo:"Tabla: FACTUM > hecho; LACTEM > leche; NOCTEM > noche; MULTUM > mucho; AUGUSTUM > agosto; CAELUM > cielo; SPECULUM > espejo.", ejercicio:"Aplica las leyes de evolución a: 'FOLIAM', 'PLORARE', 'CLAUDERE', 'OCULUM', 'HOMINEM', 'FEBREM'.", respuesta:"hoja, llorar, cerrar, ojo, hombre, fiebre."},
+        {id:4, nombre:"Pérdida del sistema de casos latino", teoria:"El latín clásico tenía un sistema de casos (nominativo, vocativo, acusativo, genitivo, dativo, ablativo). El latín vulgar simplificó este sistema usando preposiciones. El español heredó del acusativo la mayoría de los sustantivos, con pérdida de las desinencias.", ejemplo:"Latín 'ROSAM' > español 'rosa'. El genitivo se expresa con 'de': 'LIBER PETRI' > 'el libro de Pedro'. El dativo con 'a': 'DONUM MARCO DO' > 'doy un regalo a Marco'.", ejercicio:"¿Cómo expresa el español las funciones del genitivo y dativo latinos? Da ejemplos.", respuesta:"Genitivo (posesión): preposición 'de'. Dativo (destinatario): preposición 'a' y pronombres átonos (le, les). Ejemplo: 'LIBER PETRI' > 'el libro de Pedro'; 'DONUM MARCO DO' > 'doy un regalo a Marco'."},
+        {id:5, nombre:"Sustrato y superestrato lingüístico", teoria:"Sustrato: influencia de una lengua desplazada sobre la lengua que la reemplaza (prerromanas). Superestrato: influencia de una lengua invasora sobre la lengua conquistada (germánico, árabe).", ejemplo:"Sustrato: 'izquierda' (vasco), 'cerveza' (celta). Superestrato germánico: 'guerra', 'robar', 'jabón'. Superestrato árabe: 'aceite', 'azúcar', 'alcalde'.", ejercicio:"Distingue entre sustrato y superestrato. Da dos ejemplos de cada en español.", respuesta:"Sustrato: 'izquierda' (vasco), 'cerveza' (celta). Superestrato germánico: 'guerra', 'jabón'. Superestrato árabe: 'almohada', 'alcalde'."},
+        {id:6, nombre:"Invasiones germánicas: visigodos", teoria:"Los visigodos (siglos V-VIII) dejaron un superestrato léxico de unas 400 palabras en español, especialmente en guerra, vida cotidiana y sufijos. Adoptaron el latín como lengua administrativa, pero su lengua germánica influyó.", ejemplo:"Palabras de origen visigodo: 'guerra', 'robar', 'tapar', 'espía', 'yelmo', 'guardar', 'falda', 'ganso', 'sala', 'tropa', 'jabón'.", ejercicio:"Investiga cinco palabras de origen germánico en español y explica su origen (gótico).", respuesta:"1) guerra (*werra), 2) robar (*raubon), 3) jabón (*saipo), 4) falda (*falþan), 5) guardar (*wardon)."},
+        {id:7, nombre:"Sufijos de origen germánico", teoria:"El germánico (visigodo) aportó sufijos muy productivos en español: '-engo' (del gótico '-ing'), '-ez', '-oz', '-iz' (patronímicos), y el sufijo superlativo '-ísimo' (del gótico '-ists').", ejemplo:"Patronímicos: 'Fernández' (hijo de Fernando), 'López' (hijo de Lope), 'González' (hijo de Gonzalo). Superlativo: 'riquísimo', 'bellísimo'. Sufijo '-engo': 'realengo', 'abolengo'.", ejercicio:"Explica el origen de los apellidos terminados en '-ez'. Da tres ejemplos.", respuesta:"Son patronímicos visigodos que significan 'hijo de'. Ejemplos: Hernández (hijo de Hernando), Rodríguez (hijo de Rodrigo), Pérez (hijo de Pedro), Sánchez (hijo de Sancho)."},
+        {id:8, nombre:"Invasión musulmana y Al-Ándalus", teoria:"En el año 711, tropas musulmanas cruzaron el Estrecho de Gibraltar y derrotaron al reino visigodo. Al-Ándalus duró hasta 1492. El árabe influyó en el español con miles de palabras (arabismos), especialmente con prefijo 'al-' (artículo árabe).", ejemplo:"Arabismos con 'al-': 'almohada', 'alfombra', 'alcalde', 'alcohol', 'algoritmo', 'álgebra', 'almacén', 'albañil', 'albóndiga', 'alcázar'. Otros: 'aceite', 'azúcar', 'naranja', 'ojalá'.", ejercicio:"Enumera diez palabras españolas de origen árabe que comiencen con 'al-'.", respuesta:"almohada, alfombra, alcalde, alcohol, álgebra, algoritmo, almacén, albañil, albóndiga, alcázar."},
+        {id:9, nombre:"Mozárabes y jarchas", teoria:"Los mozárabes eran cristianos en territorio musulmán que conservaban su lengua romance (mozárabe). Las jarchas (siglos X-XI) son las composiciones líricas más antiguas en romance hispánico, escritas en caracteres árabes (aljamía).", ejemplo:"Jarcha mozárabe: 'Tant' amare, tant' amare, habib, tant' amare. Enfermaron welyos nidios e dolen tan male.'", ejercicio:"¿Por qué son importantes las jarchas para la historia del español?", respuesta:"Son los testimonios más antiguos de una lengua romance en la Península (mozárabe), anteriores a las Glosas Emilianenses. Muestran rasgos romances tempranos y son fundamentales para la historia de la lírica peninsular."},
+        {id:10, nombre:"Glosas Emilianenses y Silenses", teoria:"Las Glosas Emilianenses y Silenses son anotaciones marginales en latín, romance (navarro-aragonés o castellano primitivo) y vascuence en los siglos X-XI. Las glosas (c. 1060) contienen la primera frase extensa en romance hispánico.", ejemplo:"Glosa Emilianense: 'con o ajutorio de nuestro dueño dueno Christo, dueno salbatore, qual dueno get ena honore...'", ejercicio:"¿Qué fecha y lengua tienen las Glosas Emilianenses? ¿Por qué son importantes?", respuesta:"Hacia 1060, en un romance navarro-aragonés o castellano primitivo (además de vascuence y latín). Son importantes porque son el primer texto extenso en una lengua romance de la Península, anterior al Poema del Mío Cid."},
+        {id:11, nombre:"Origen del castellano en el condado de Castilla", teoria:"El castellano surgió en el Condado de Castilla (norte de Burgos, La Rioja, Cantabria), una zona fronteriza de repoblación heterogénea (cántabros, astures, vascos, mozárabes, francos). Desarrolló rasgos innovadores respecto al leonés y aragonés.", ejemplo:"Diferencias: latín FERRUM > castellano 'hierro', leonés 'ferro'. PLENUM > 'lleno' vs leonés 'cheno'.", ejercicio:"¿Qué factores contribuyeron al nacimiento del castellano?", respuesta:"Situación fronteriza, mezcla de repobladores, aislamiento inicial, expansión militar del reino de Castilla, y rasgos innovadores como diptongación, pérdida de 'F-', sonorización."},
+        {id:12, nombre:"Diferencias entre castellano, leonés y aragonés", teoria:"A partir del latín vulgar surgieron variedades: castellano (innovador), leonés (conservador) y aragonés (conservador en algunos rasgos).", ejemplo:"Latín FILIUM: castellano 'hijo', leonés 'fiyu', aragonés 'fillo'. CLAVEM: 'llave', 'llave', 'clau'. MULIEREM: 'mujer', 'muyer', 'muller'.", ejercicio:"Compara 'hablar', 'llave' y 'mujer' en las tres variedades.", respuesta:"hablar/falare/fablar; llave/llave/clau; mujer/muyer/muller."},
+        {id:13, nombre:"Alfonso X el Sabio y el castellano normativo", teoria:"Alfonso X (1252-1284) impulsó el castellano como lengua de cultura, ciencia y administración. Estableció la primera norma lingüística unificada, fijó la prosa y promovió la Escuela de Traductores de Toledo.", ejemplo:"Obras alfonsíes: 'Primera Crónica General', 'General Estoria', 'Libro del saber de astrología', 'Cantigas de Santa María' (en gallego-portugués).", ejercicio:"¿Cuál fue la contribución de Alfonso X al castellano?", respuesta:"Fijó la prosa literaria, unificó grafías y léxico, tradujo obras científicas, e hizo del castellano lengua oficial de la corte, sentando las bases para la estandarización."},
+        {id:14, nombre:"Escuela de Traductores de Toledo", teoria:"La Escuela de Traductores de Toledo (siglos XII-XIII) fue un centro de traducción de obras árabes, griegas y hebreas al latín y al romance castellano. Fue impulsada por el arzobispo Raimundo y luego por Alfonso X. Permitió la transmisión del conocimiento científico y filosófico a Europa.", ejemplo:"Se tradujeron obras de Astronomía (Ptolomeo), Medicina (Avicena), Filosofía (Aristóteles, Averroes), Matemáticas (Al-Juarismi).", ejercicio:"¿Qué importancia tuvo la Escuela de Traductores de Toledo para la lengua castellana?", respuesta:"Amplió el léxico científico y abstracto del castellano, incorporó numerosos cultismos, y consolidó el romance como lengua de cultura frente al latín."},
+        {id:15, nombre:"Gonzalo de Berceo y el mester de clerecía", teoria:"Gonzalo de Berceo (1196-1264) es el primer poeta castellano de nombre conocido. Cultivó el mester de clerecía (poesía culta, métrica regular, cuaderna vía). Escribió obras religiosas como 'Milagros de Nuestra Señora'.", ejemplo:"Estrofa de cuaderna vía: 'Yo, Gonzalo de Berceo, en el mi logar natal/ sienpre en esti sieglo vivo e en esti val/ quiero en este libre de los santos fablar/ e de las sus bondades que quiero retraer.'", ejercicio:"¿Qué caracteriza al mester de clerecía y a la obra de Berceo?", respuesta:"Mester de clerecía: poesía culta en cuaderna vía (estrofas de cuatro versos alejandrinos monorrimos), temas religiosos o didácticos, regularidad métrica. Berceo introdujo el lenguaje coloquial en la poesía culta y usó el romance con maestría."},
+        {id:16, nombre:"Cantar de Mio Cid", teoria:"El 'Cantar de Mio Cid' es el primer gran poema épico de la literatura española, compuesto hacia 1200. Escrito en castellano medieval, narra las hazañas de Rodrigo Díaz de Vivar, el Cid Campeador. Es una obra fundamental para el estudio del castellano primitivo.", ejemplo:"Verso del Cantar: 'De los sos ojos tan fuertemientre llorando, tornava la cabeça e  estavalos catando. Vio puertas abiertas e uços sin cañados, alcándaras vazías, sin pielles e sin mantos...'", ejercicio:"¿Por qué es importante el Cantar de Mio Cid para la historia del castellano?", respuesta:"Es el texto literario extenso más antiguo conservado en castellano. Refleja el estado de la lengua en el siglo XIII (fonética, morfosintaxis, léxico) y es clave para el estudio del castellano primitivo."},
+        {id:17, nombre:"Primera Crónica General", teoria:"La 'Primera Crónica General' (también 'Estoria de España') fue una obra historiográfica patrocinada por Alfonso X. Narra la historia de España desde los orígenes hasta su época. Es la primera gran obra en prosa histórica en castellano.", ejemplo:"'Toledanos e castellanos fueron siempre enfrentados...' (texto de muestra).", ejercicio:"¿Qué contribución hizo la Primera Crónica General a la prosa castellana?", respuesta:"Fijó un modelo de prosa historiográfica, unificó la lengua escrita, e incorporó numerosos términos cultos y neologismos, elevando el prestigio del castellano."},
+        {id:18, nombre:"General Estoria", teoria:"La 'General Estoria' fue una gran obra enciclopédica patrocinada por Alfonso X, que pretendía narrar la historia universal desde la creación del mundo hasta su época. Incluía traducciones de la Biblia, historiadores clásicos y árabes.", ejemplo:"Contenía historias bíblicas, mitológicas y geográficas. Solo se conservan partes.", ejercicio:"¿En qué se diferencia la General Estoria de la Primera Crónica General?", respuesta:"La General Estoria es una historia universal, mientras que la Primera Crónica General es una historia de España. Ambas fueron proyectos alfonsíes para consolidar el castellano como lengua de cultura."},
+        {id:19, nombre:"El castellano en el siglo XIV: Juan Ruiz, Arcipreste de Hita", teoria:"El 'Libro de buen amor' (1330-1343) de Juan Ruiz, Arcipreste de Hita, es una obra maestra del mester de clerecía. Mezcla lo culto y lo popular, el latín y el romance, la sátira y la devoción. Refleja la vitalidad del castellano en el siglo XIV.", ejemplo:"'En el nombre de Dios y de Santa María, / si quiero començar este libro de buen amor / e de las maneras que los omnes se en amar / más de Dios han sabor...'", ejercicio:"¿Qué innovaciones lingüísticas presenta el Libro de buen amor?", respuesta:"Uso de refranes, lenguaje coloquial, mezcla de registros, amplio vocabulario, juegos de palabras, y muestra de la variación lingüística de la época."},
+        {id:20, nombre:"Gramática de Nebrija (1492)", teoria:"Antonio de Nebrija publicó la 'Gramática de la lengua castellana' en 1492, la primera gramática de una lengua romance moderna. Su objetivo era fijar el idioma para la expansión imperial ('la lengua fue siempre compañera del imperio').", ejemplo:"Nebrija dijo: 'La lengua fue siempre compañera del imperio; y de tal manera lo siguió, que juntamente comenzaron, crecieron y florecieron, y después junta fue la caída de entrambos.'", ejercicio:"¿Por qué es importante la Gramática de Nebrija?", respuesta:"Primera gramática de una lengua romance, sistematizó el castellano, unificó la norma, y coincidió con el descubrimiento de América y la unificación de España."},
+        {id:21, nombre:"El Quijote y la consolidación del español", teoria:"El 'Quijote' (1605, 1615) de Miguel de Cervantes consolidó el castellano como lengua literaria de prestigio europeo. Refleja la variedad lingüística de la época y ha sido fuente de innumerables giros y expresiones.", ejemplo:"'En un lugar de la Mancha, de cuyo nombre no quiero acordarme, no ha mucho tiempo que vivía un hidalgo de los de lanza en astillero, adarga antigua, rocín flaco y galgo corredor.'", ejercicio:"¿Qué aportó el Quijote a la lengua española?", respuesta:"Consolidó el castellano como lengua literaria universal, fijó giros y expresiones, reflejó la variación dialectal, e influyó en la narrativa europea."},
+        {id:22, nombre:"Fundación de la Real Academia Española (1713)", teoria:"La RAE fue fundada en 1713 con el lema 'Limpia, fija y da esplendor'. Publicó el 'Diccionario de Autoridades' (1726-1739), la primera Gramática académica (1771) y la Ortografía (1741). Su objetivo era normativizar el idioma.", ejemplo:"Lema de la RAE: 'Limpia, fija y da esplendor'.", ejercicio:"¿Cuál es la función de la RAE?", respuesta:"Velar por la unidad, corrección y evolución del idioma español, publicando diccionarios, gramáticas y ortografías normativas, y trabajando con las academias americanas (ASALE)."},
+        {id:23, nombre:"El español en América: llegada y evolución", teoria:"El español llegó a América en 1492 con el primer viaje de Colón. Los misioneros evangelizaron en castellano y se produjo un sustrato de lenguas indígenas (náhuatl, quechua, guaraní, taíno). El español americano se diversificó según la época de colonización y el origen de los colonos.", ejemplo:"Indigenismos: 'chocolate', 'tomate', 'cacique', 'hamaca', 'papa', 'cóndor', 'llama', 'canoa', 'huracán'.", ejercicio:"Menciona cinco indigenismos del español americano y su lengua de origen.", respuesta:"chocolate (náhuatl), tomate (náhuatl), papa (quechua), hamaca (taíno), canoa (taíno), cóndor (quechua), aguacate (náhuatl)."},
+        {id:24, nombre:"Dialectos del español en América", teoria:"El español americano se diversificó en dialectos: mexicano, caribeño, andino, rioplatense, chileno, centroamericano. Cada uno tiene rasgos fonéticos, morfosintácticos y léxicos distintivos.", ejemplo:"Rioplatense: voseo ('vos tenés'), yeísmo rehilado ('yo' como 'sho'), léxico italiano. Mexicano: 'ustedeo', entonación nasal, indigenismos del náhuatl.", ejercicio:"¿Qué es el voseo y dónde se usa?", respuesta:"El voseo es el uso de 'vos' en lugar de 'tú', con conjugaciones propias (vos tenés, comés, vivís). Se usa en Argentina, Uruguay, Paraguay, Centroamérica y zonas de Colombia, Venezuela y Ecuador."},
+        {id:25, nombre:"Anglicismos en el español actual", teoria:"El inglés ha influido en el español moderno, especialmente en tecnología, economía, cultura popular y deportes. Algunos anglicismos se adaptan ('fútbol', 'champú'), otros no ('software', 'marketing', 'email').", ejemplo:"Anglicismos: 'internet', 'software', 'marketing', 'email', 'chat', 'smartphone', 'online', 'feedback', 'clic', 'pódcast'.", ejercicio:"Da tres ejemplos de anglicismos adaptados y tres no adaptados.", respuesta:"Adaptados: 'fútbol', 'champú', 'pulóver'. No adaptados: 'software', 'marketing', 'email'."},
+        {id:26, nombre:"El español en el mundo hoy", teoria:"El español es la segunda lengua materna del mundo (c. 500 millones de hablantes) y la cuarta en total. Es oficial en 21 países. El crecimiento en EE. UU. y la demanda educativa fortalecen su presencia global.", ejemplo:"Número de hispanohablantes: México (~130M), Colombia (~50M), España (~47M), Argentina (~45M), EE. UU. (~40M).", ejercicio:"¿En qué continentes se habla español oficialmente?", respuesta:"Europa (España), América (18 países: México, Argentina, Colombia, etc.), África (Guinea Ecuatorial, Sahara Occidental), Oceanía (Isla de Pascua - Chile)."},
+        {id:27, nombre:"El judeoespañol o ladino", teoria:"El judeoespañol es la lengua romance de los judíos expulsados de España en 1492, que conservaron durante siglos en el Imperio Otomano, el norte de África y los Balcanes. Conserva rasgos arcaicos del español del siglo XV.", ejemplo:"Ejemplo: 'El Djudeo-espanyol es la lingua favlada por los djudios sefaradim de orijin espanyola. Mantuvo muchos arkaismos.'", ejercicio:"¿Qué rasgos arcaicos conserva el judeoespañol?", respuesta:"Conserva la pronunciación de 'h' aspirada (faz de 'hazer'), 'x' (dixo), 'j' (mujer), el futuro de subjuntivo (cuando viniere), y léxico antiguo (merçed por gracias)."},
+        {id:28, nombre:"El español en Filipinas", teoria:"El español fue lengua oficial de Filipinas durante la colonización española (1565-1898). Su uso decayó en el siglo XX, pero dejó un sustrato léxico en tagalo y otras lenguas filipinas. Hoy es hablado por una minoría.", ejemplo:"Palabras filipinas de origen español: 'mesa', 'silla', 'coche', 'escuela', 'juez', 'kutsara' (cuchara), 'tinidor' (tenedor), 'banyo' (baño).", ejercicio:"¿Qué influencia lingüística dejó el español en Filipinas?", respuesta:"Préstamos léxicos en tagalo y otras lenguas (más de 5,000 palabras), sistema de numeración, nombres personales, toponimia, y algunas estructuras gramaticales."},
+        {id:29, nombre:"El español en Guinea Ecuatorial", teoria:"Guinea Ecuatorial es el único país africano donde el español es lengua oficial (desde 1844). El español ecuatoguineano tiene influencia de lenguas bantúes (fang, bubi) y del portugués criollo.", ejemplo:"Ejemplos: 'Bubi', 'fang' (lenguas), 'malabo' (capital), léxico de la selva y costumbres locales.", ejercicio:"¿Cómo llegó el español a Guinea Ecuatorial?", respuesta:"Fue colonia española hasta 1968. El español se impuso en administración y educación, pero convive con lenguas autóctonas. La variedad ecuatoguineana tiene rasgos distintivos en fonética y léxico."},
+        {id:30, nombre:"El español en el Sahara Occidental", teoria:"El Sahara Occidental fue colonia española hasta 1975. El español se mantiene como lengua de uso en la administración de los campamentos de refugiados en Tinduf (Argelia) y entre la población saharaui.", ejemplo:"Los saharauis suelen hablar español además de hassaniya (árabe) y francés.", ejercicio:"¿Por qué se habla español en el Sahara Occidental?", respuesta:"Por la colonización española (1884-1975). Tras la retirada española, la lengua se mantuvo por el contacto con cooperantes y en los campamentos de refugiados."},
+        {id:31, nombre:"Influencia del francés en el español", teoria:"El francés influyó en el español especialmente en los siglos XVIII y XIX durante la Ilustración y el afrancesamiento cultural. Aportó muchos galicismos, especialmente en moda, gastronomía, arte y política.", ejemplo:"Galicismos: 'hotel', 'chalet', 'bulevar', 'restaurante', 'menú', 'brunete', 'bidé', 'garaje', 'chofer', 'champán', 'chaqueta'.", ejercicio:"Enumera cinco galicismos del español y su equivalente en francés.", respuesta:"hotel (hôtel), restaurante (restaurant), menú (menu), garaje (garage), chofer (chauffeur)."},
+        {id:32, nombre:"Influencia del italiano en el español", teoria:"El italiano influyó en el español del Renacimiento y el Barroco, especialmente en música, arte, arquitectura y literatura. También en gastronomía (pizza, pasta) y en términos musicales.", ejemplo:"Italianismos: 'soneto', 'madrigal', 'piano', 'violín', 'balcón', 'diseño', 'fachada', 'manierismo', 'pizza', 'pasta', 'espagueti', 'capricho', 'novela', 'aventura'.", ejercicio:"¿Qué áreas del léxico español recibieron más influencia del italiano?", respuesta:"Música (allegro, adagio, sonata, soprano), arquitectura (fresco, bóveda, logia), literatura (soneto, madrigal), gastronomía (pizza, pasta, lasaña)."},
+        {id:33, nombre:"El español en el cine y la televisión", teoria:"El cine y la televisión han difundido el español globalmente y han homogeneizado algunas variedades, aunque también han visibilizado acentos locales (mexicano, rioplatense, español peninsular, colombiano).", ejemplo:"Series globales en español: 'La Casa de Papel' (España), 'Narcos' (Colombia), 'El Marginal' (Argentina), 'Casa de las Flores' (México).", ejercicio:"¿Cómo han influido los medios audiovisuales en la percepción del español?", respuesta:"Han creado un 'español neutro' de doblaje, han difundido variedades dialectales, y han aumentado el interés por aprender español. También han generado estereotipos lingüísticos."},
+        {id:34, nombre:"El español en internet", teoria:"El español es la tercera lengua más usada en internet después del inglés y el chino. Es la segunda en redes sociales (Facebook, Twitter, Instagram). El lenguaje digital ha introducido neologismos y abreviaturas.", ejemplo:"Términos digitales: 'emojis', 'tuitear', 'trolear', 'hashtag', 'trending topic', 'posta', 'navegador', 'enlace', 'clic'.", ejercicio:"¿Qué importancia tiene el español en internet y cómo lo está cambiando?", respuesta:"Gran difusión global, pero también influencia del inglés (anglicismos). El español crea neologismos y adapta términos tecnológicos. Las redes fomentan el uso coloquial y la economía del lenguaje."},
+        {id:35, nombre:"Políticas lingüísticas en el mundo hispano", teoria:"Las políticas lingüísticas buscan regular el uso de lenguas: planificación del corpus (normas), del estatus (oficialidad) y de la adquisición (educación). En América, muchos países protegen lenguas indígenas (Bolivia, Perú, Paraguay).", ejemplo:"Ejemplo: Paraguay es oficialmente bilingüe español-guaraní. Bolivia reconoce 36 lenguas oficiales. España tiene cooficialidad regional.", ejercicio:"Compara las políticas lingüísticas de España y un país latinoamericano.", respuesta:"España: cooficialidad de lenguas regionales con español. Paraguay: bilingüismo generalizado guaraní-español. Bolivia: plurilingüismo con 36 lenguas oficiales. Las políticas buscan proteger lenguas minoritarias y garantizar derechos lingüísticos."},
+        {id:36, nombre:"Futuro del español: desafíos y oportunidades", teoria:"El español enfrenta desafíos: fragmentación, influencia del inglés, descenso de natalidad en España. Oportunidades: crecimiento en América Latina, demanda de estudio, digitalización, presencia en organismos internacionales.", ejemplo:"Estimaciones: para 2050, EE. UU. será el segundo país hispanohablante del mundo. El español mantendrá su posición como lengua global.", ejercicio:"¿Cuál es el futuro del español como lengua global?", respuesta:"Crecimiento moderado en número de hablantes, pero disminución de porcentaje mundial. Factores positivos: demanda educativa, crecimiento en América Latina, comunidad hispana en EE. UU., globalización cultural. Factores negativos: fragmentación, anglicismos."},
+        {id:37, nombre:"El español y las nuevas tecnologías", teoria:"Las nuevas tecnologías han acelerado la creación de neologismos, la difusión de anglicismos y la simplificación ortográfica en contextos informales. También han permitido la creación de corpus y herramientas de análisis.", ejemplo:"Corpus (CREA, CORPES), aplicaciones de aprendizaje (Duolingo), asistentes de voz en español, correctores ortográficos.", ejercicio:"¿Cómo están afectando las nuevas tecnologías al español?", respuesta:"Introducen anglicismos (clic, tuit), acortamientos, relajación ortográfica (x por por, pq). También facilitan la documentación y la difusión del idioma."},
+        {id:38, nombre:"La RAE y la norma panhispánica", teoria:"La RAE trabaja en coordinación con las 22 academias de la lengua española (ASALE) para establecer una norma panhispánica que reconozca la diversidad del español sin jerarquizar variedades. La 'Ortografía de 2010' y el 'Diccionario panhispánico de dudas' son ejemplos.", ejemplo:"Se aceptan 'solo' sin tilde, se unifica la denominación de los países, se incluyen americanismos.", ejercicio:"¿Qué es la norma panhispánica?", respuesta:"Es el conjunto de criterios normativos consensuados por todas las academias, que respetan la unidad del español y la diversidad geográfica, sin imponer una variedad como superior."},
+        {id:39, nombre:"El español como lengua de ciencia y técnica", teoria:"El español ha sido tradicionalmente una lengua de cultura, pero en ciencia y técnica compite con el inglés. Sin embargo, tiene una rica tradición científica (desde la Escuela de Traductores de Toledo hasta la actualidad). Se promueve la creación de neologismos hispanos.", ejemplo:"Neologismos científicos: 'tórax', 'neuron', 'genoma', 'espectrómetro', 'nanotecnología'.", ejercicio:"¿Qué obstáculos enfrenta el español en la comunicación científica?", respuesta:"Predominio del inglés en publicaciones, falta de neologismos hispanos, menor difusión de revistas en español, y presión para publicar en inglés en ciencia internacional."},
+        {id:40, nombre:"El español en organismos internacionales", teoria:"El español es lengua oficial de la ONU, UNESCO, OEA, Unión Europea, Unión Africana, entre otros. Su uso diplomático promueve la traducción e interpretación, y la creación de terminología especializada.", ejemplo:"La ONU tiene servicios de interpretación y traducción al español. La Unión Europea publica legislación en español.", ejercicio:"¿Por qué es importante para el español ser lengua oficial en organismos internacionales?", respuesta:"Le otorga prestigio, asegura su presencia en la diplomacia, promueve la producción de documentos normativos en español, y crea empleo para traductores e intérpretes."},
+        {id:41, nombre:"Léxico del español: herencias y préstamos", teoria:"El léxico español es una mezcla de herencia latina, préstamos del árabe, lenguas amerindias, italianismos, galicismos, anglicismos, y germanismos. También hay palabras patrimoniales y cultismos.", ejemplo:"Patrimoniales: 'puerta' < PORTAM. Cultismos: 'portal' < PORTALEM. Arabismos: 'aceite'. Indigenismos: 'chocolate'.", ejercicio:"Clasifica las siguientes palabras según su origen: 'ventana', 'alcohol', 'patata', 'almirante', 'tuit'.", respuesta:"ventana (latín), alcohol (árabe), patata (indigenismo taíno), almirante (árabe), tuit (anglicismo)."},
+        {id:42, nombre:"Formación de palabras en español", teoria:"El español forma palabras por derivación (prefijos, sufijos), composición (palabras compuestas), parasíntesis, acortamiento (VIP, profe), siglas (RAE, ONU) y préstamos.", ejemplo:"Derivación: 'flor' + '-ero' = florero. Composición: 'saca' + 'corchos' = sacacorchos. Acortamiento: 'bici', 'peli'. Siglas: 'UNESCO'.", ejercicio:"Analiza la formación de 'telebancarrota', 'hidroeléctrica', 'paracaídas'.", respuesta:"Telebancarrota: prefijo tele- + bancarrota. Hidroeléctrica: composición de hidro- (agua) + eléctrica. Paracaídas: verbo parar + caídas (plural)."},
+        {id:43, nombre:"Semántica histórica: cambios de significado", teoria:"Las palabras cambian de significado: ampliación (ratón: animal → dispositivo), restricción (carne: alimento → carne animal), metáfora (pantalla), metonimia (pluma: instrumento → escritor), elevación (ministerio), degeneración (villano).", ejemplo:"'Villano': antes 'habitante de una villa', ahora 'malvado'. 'Tonto': antes 'persona ingenua', ahora 'de poca inteligencia'.", ejercicio:"Explica el cambio semántico de 'cortesía' (de 'corte' a 'educación') y 'cáncer' (cangrejo → enfermedad).", respuesta:"'Cortesía': originalmente comportamiento propio de la corte; por extensión, educación refinada. 'Cáncer': por la forma de cangrejo que toman los tumores; metáfora."},
+        {id:44, nombre:"Toponimia hispánica", teoria:"La toponimia (nombres de lugar) refleja las lenguas que se hablaron en la Península: prerromanas (Compostela), latinas (Valencia), árabes (Guadalajara), germánicas (Godos), vascas (Jaca).", ejemplo:"Topónimos latinos: 'León', 'Segovia'. Árabes: 'Almería', 'Madrid' (del árabe 'Mayrit'). Prerromanos: 'Écija', 'Cádiz'.", ejercicio:"Analiza el origen de 'Guadalajara', 'Barcelona', 'Salamanca', 'Granada'.", respuesta:"Guadalajara (árabe 'wādī al-ḥijāra', río de piedras). Barcelona (íbero o cartaginés). Salamanca (prerromano). Granada (árabe 'Granada', posiblemente del latín 'granatum')."},
+        {id:45, nombre:"Antroponimia hispánica", teoria:"La antroponimia estudia los nombres personales. En español abundan los nombres de origen latino (María, Jesús, Juan), germánico (Rodrigo, Fernando, Gonzalo), árabe (Fátima, Omar), y hebreo (David, José).", ejemplo:"Nombres latinos: 'Marcos', 'Julián'. Germánicos: 'Fernando' (paz + atrevido), 'Rodrigo' (fama + poder). Árabes: 'Fátima', 'Carmen' (del Monte Carmelo).", ejercicio:"Explica el origen del nombre 'Jesús' (hebreo), 'Alfonso' (germánico) y 'Guadalupe' (árabe?).", respuesta:"Jesús (hebreo Yehoshúa, 'Yahvé salva'). Alfonso (germánico 'Adalfuns', noble y dispuesto). Guadalupe (árabe 'wādī al-lūb', río de los lobos)."},
+        {id:46, nombre:"Las glosas como fuente histórica", teoria:"Las glosas (anotaciones marginales) son esenciales para conocer la evolución del latín al romance. Proporcionan información sobre fonética, léxico y sintaxis del período de transición.", ejemplo:"Glosas Emilianenses, Silenses, de Reichenau, de Kassel.", ejercicio:"¿Qué tipo de información proporcionan las glosas a los historiadores de la lengua?", respuesta:"Muestran la pronunciación real, el vocabulario coloquial, la morfosintaxis del romance temprano, y la coexistencia de latín y romance."},
+        {id:47, nombre:"Literatura medieval y lengua", teoria:"Los textos literarios medievales (Cantar de Mio Cid, Berceo, Arcipreste) son testimonios valiosos del castellano en sus primeras etapas. Reflejan variación dialectal y evolución.", ejemplo:"El Cid usa el castellano con rasgos laicos, Berceo tiene cultismos, el Arcipreste mezcla registros.", ejercicio:"¿Qué textos literarios medievales son más importantes para el estudio del castellano primitivo?", respuesta:"Glosas Emilianenses (primeros testimonios escritos), Cantar de Mio Cid (primer gran poema épico), Berceo (mester de clerecía), Alfonso X (prosa científica e histórica), Juan Ruiz (Llibro de buen amor)."},
+        {id:48, nombre:"La imprenta y la normalización del español", teoria:"La imprenta (c. 1440) permitió la difusión de obras en romance y la fijación gráfica. Los primeros libros impresos en español (1492, Gramática de Nebrija) ayudaron a estandarizar la lengua.", ejemplo:"La imprenta promovió la ortografía uniforme, fijó las formas gramaticales y difundió la norma castellana.", ejercicio:"¿Cómo influyó la imprenta en la unificación del español?", respuesta:"Fijó la ortografía y las formas gramaticales, permitió la difusión masiva de textos normativos, y redujo la variación dialectal en la escritura."},
+        {id:49, nombre:"El español en el Siglo de Oro (Lope, Quevedo, Góngora)", teoria:"El Siglo de Oro (XVI-XVII) fue un período de esplendor literario y consolidación idiomática. Autores como Lope de Vega, Quevedo y Góngora enriquecieron el léxico y exploraron los límites del idioma.", ejemplo:"Góngora: cultismo y hipérbaton ('cultesano'. Lope: naturalidad. Quevedo: sátira y juegos de palabras.", ejercicio:"¿Qué autores del Siglo de Oro contribuyeron más a la fijación del idioma?", respuesta:"Cervantes por el Quijote, Lope por su obra dramática, Quevedo por su prosa satírica y Góngora por la experimentación poética."},
+        {id:50, nombre:"El español en el siglo XVIII: Ilustración y academias", teoria:"El siglo XVIII trajo el racionalismo, las academias y la normativización. La RAE publicó el Diccionario de Autoridades (1726-1739), la Gramática (1771) y la Ortografía (1741).", ejemplo:"Se discutió la lengua como instrumento científico, se crearon las primeras gramáticas didácticas.", ejercicio:"¿Cuál fue el papel de la Ilustración en la lengua española?", respuesta:"Promovió la claridad, la precisión y la utilidad del idioma; impulsó la creación de la RAE y la publicación de obras normativas; combatió la oscuridad barroca."},
+        {id:51, nombre:"El español en el siglo XIX: Romanticismo y Realismo", teoria:"El siglo XIX trajo el Romanticismo (Bécquer, Espronceda) y el Realismo (Galdós, Clarín, Pardo Bazán). La lengua se populariza en la prensa y la novela por entregas.", ejemplo:"La proza de Galdós refleja el habla coloquial madrileña de la época (voseo, laísmo, dequeísmo?).", ejercicio:"¿Qué influencia tuvieron la prensa y la novela folletinesca en la difusión del español?", respuesta:"Ampliaron el público lector, difundieron la lengua escrita y coloquial, y ayudaron a la fijación de la norma."},
+        {id:52, nombre:"El español en el siglo XX: Vanguardias y Generación del 98", teoria:"La Generación del 98 (Unamuno, Azorín, Baroja) reflexionó sobre la identidad lingüística española. Las vanguardias (Ultraísmo, Creacionismo) innovaron en el lenguaje poético.", ejemplo:"Unamuno: lenguaje filosófico; Lorca: lenguaje poético popular; Alberti: experimental.", ejercicio:"¿Cómo influyó la Generación del 98 en la conciencia lingüística hispánica?", respuesta:"Reivindicaron el paisaje y la lengua de Castilla, discutieron el casticismo, y abrieron el idioma a nuevas influencias."},
+        {id:53, nombre:"El español en la actualidad: americanismos y europeísmos", teoria:"Hoy el español se enriquece con americanismos (latinohablantes) y europeísmos (influencia inglesa y francesa). Las academas trabajan en un diccionario panhispánico.", ejemplo:"Americanismos: 'choclo', 'carpincho', 'papa', 'chévere'. Europeísmos: 'tuit', 'cacharro', 'guay'.", ejercicio:"¿Qué son los 'americanismos' y cómo han influido en el español global?", respuesta:"Palabras originadas en América que se han difundido a otras variedades (ej. 'chocolate', 'tomate', 'papa', 'cóndor'). Enriquece el léxico común."},
+        {id:54, nombre:"El español en el cine de América Latina", teoria:"El cine latinoamericano (México, Argentina, Chile, Colombia, Perú) ha difundido acentos y léxico regionales al mundo hispano y global.", ejemplo:"El cine de Almodóvar (España) y los de Iñárritu, Cuarón, Del Toro (México) han internacionalizado el español.", ejercicio:"¿Qué variedad del español se usa normalmente en el doblaje para Latinoamérica?", respuesta:"El 'español neutro' (artificioso, sin regionalismos marcados) usado en México, que evita el voseo y modismos locales."},
+        {id:55, nombre:"El español en los premios nobel", teoria:"Once escritores en español han recibido el Premio Nobel de Literatura: José Echegaray, Jacinto Benavente, Gabriela Mistral, Juan Ramón Jiménez, Miguel Ángel Asturias, Pablo Neruda, Vicente Aleixandre, Gabriel García Márquez, Camilo José Cela, Mario Vargas Llosa y Octavio Paz.", ejemplo:"La obra de los nobel ha contribuido a la difusión y prestigio del español.", ejercicio:"¿Qué impacto ha tenido el Nobel en la difusión del español?", respuesta:"Visibilidad internacional, atracción de lectores hacia la literatura hispana, y reconocimiento a la calidad artística del idioma."},
+        {id:56, nombre:"El español como segunda lengua en el mundo", teoria:"El español es el segundo idioma más estudiado en el mundo después del inglés. Hay más de 20 millones de estudiantes de español como lengua extranjera.", ejemplo:"El Instituto Cervantes ofrece cursos en sus centros y en línea. El examen DELE acredita el nivel.", ejercicio:"¿Por qué el español es la segunda lengua más estudiada?", respuesta:"Por su importancia demográfica, cultural y económica; presencia en Estados Unidos; demanda en sectores comerciales y turísticos."},
+        {id:57, nombre:"El español en el sistema educativo", teoria:"En España e Hispanoamérica, el español es la lengua vehicular de la enseñanza. En Estados Unidos, el español es la lengua extranjera más ofrecida en las escuelas.", ejemplo:"Los programas de inmersión dual (español-inglés) son populares en EE. UU.", ejercicio:"¿Qué retos enfrenta la enseñanza del español en contextos bilingües con lenguas indígenas?", respuesta:"Falta de recursos, formación docente, estigmatización de lenguas indígenas, y necesidad de políticas interculturales."},
+        {id:58, nombre:"La lingüística histórica española", teoria:"La lingüística histórica estudia la evolución del español desde sus orígenes. Métodos: comparativo, interno, reconstrucción, y documentación de textos antiguos.", ejemplo:"El trabajo de Ramón Menéndez Pidal fue fundamental (Orígenes del español).", ejercicio:"¿Quiénes han sido los principales hispanistas en el estudio de la historia del español?", respuesta:"Ramón Menéndez Pidal, Rafael Lapesa, Emilio Alarcos Llorach, Amado Alonso, Yakov Malkiel, entre otros."},
+        {id:59, nombre:"El Diccionario de la Real Academia", teoria:"El Diccionario de la lengua española (DRAE) es el diccionario normativo de referencia. La 23ª edición (2014) incluye más de 93,000 entradas y americanismos.", ejemplo:"En línea: https://dle.rae.es", ejercicio:"¿Cómo se actualiza el diccionario de la RAE?", respuesta:"Mediante el trabajo de las academias, el análisis de corpus (CREA, CORPES), y las aportaciones de los usuarios."},
+        {id:60, nombre:"Corpus del español: CREA y CORPES", teoria:"CREA (Corpus de Referencia del Español Actual) abarca 1975-2004. CORPES (Corpus del Español del Siglo XXI) se actualiza anualmente. Permiten estudios cuantitativos y cualitativos.", ejemplo:"Búsqueda de frecuencias, colocaciones, ejemplos de uso real.", ejercicio:"¿Para qué sirven los corpus lingüísticos en la investigación histórica?", respuesta:"Estudiar cambios diacrónicos, frecuencias de uso, variación geográfica, y documentar el léxico en contextos reales."},
+        {id:61, nombre:"El debate sobre el 'español neutro'", teoria:"El 'español neutro' es una variedad artificial usada en doblajes, sin rasgos dialectales muy marcados, basada principalmente en el español mexicano y caribeño con algunas adaptaciones.", ejemplo:"En el doblaje, se evitan modismos regionales ('coche', 'carro', 'auto') y se usan formas generales.", ejercicio:"¿Qué ventajas e inconvenientes tiene el 'español neutro'?", respuesta:"Ventaja: comprensible para todos los hispanohablantes. Inconveniente: artificial, no representa la riqueza dialectal, y puede eliminar matices culturales."},
+        {id:62, nombre:"El español de las redes sociales", teoria:"Las redes sociales han generado un registro escrito cercano a la oralidad: abreviaturas, omisión de tildes, emoticonos, y usos novedosos de la puntuación.", ejemplo:"'x' por 'por', 'pq' por 'porque', 'tmb' por 'también', 'jajaja', 'XD'.", ejercicio:"¿Cómo está cambiando el español en los chats y redes sociales?", respuesta:"Economía lingüística, pérdida de tildes, abreviaturas, uso de anglicismos, y mayor informalidad."},
+        {id:63, nombre:"El español en la publicidad", teoria:"La publicidad usa un español creativo, con juegos de palabras, extranjerismos, y apelación directa al consumidor. A menudo crea neologismos y eslóganes.", ejemplo:"'¿Tienes hambre? ¡Come Mahou!' 'Ponle el acento español' (para fomentar el uso del español).", ejercicio:"¿Qué rasgos lingüísticos se explotan en la publicidad para persuadir?", respuesta:"Imperativos, preguntas retóricas, exclamaciones, rima, aliteración, metáforas, hipérboles, y uso de la segunda persona."},
+        {id:64, nombre:"El español en la música popular", teoria:"La música en español (reggaetón, salsa, pop, rock, balada) ha difundido modismos y pronunciaciones de diversas regiones. La globalización musical promueve una koiné hispana.", ejemplo:"Reggaetón: jerga puertorriqueña y coloquialismos; salsa: frases callejeras; rock: a veces contracultura.", ejercicio:"¿Cómo influye la música en la difusión de variedades del español?", respuesta:"Visibiliza acentos y léxico regionales, los populariza internacionalmente, y favorece la aparición de un español juvenil supranacional."},
+        {id:65, nombre:"El español en el deporte", teoria:"El español es ampliamente usado en el deporte (fútbol, tenis, baloncesto). Muchos términos deportivos son anglicismos adaptados o préstamos.", ejemplo:"Gol, fútbol, fútbol sala, baloncesto, tenis, remate, córner, penalti, voley.", ejercicio:"¿Por qué el español tiene muchos anglicismos en el deporte?", respuesta:"Por la influencia británica y estadounidense en la creación y difusión de deportes modernos."},
+        {id:66, nombre:"El español en la gastronomía", teoria:"La gastronomía hispana ha aportado numerosas palabras a otras lenguas: 'paella', 'tapas', 'sangría', 'tortilla', 'guacamole', 'enchilada', 'empanada', 'quesadilla', 'mole'.",
+        ejemplo:"Estos términos se han incorporado al inglés y otras lenguas.", ejercicio:"¿Qué palabras hispanas relacionadas con la comida se usan internacionalmente?", respuesta:"paella, tapas, sangría, tortilla, guacamole, enchilada, empanada, quesadilla, mole, churro, horchata."},
+        {id:67, nombre:"El español en la moda", teoria:"El español de la moda toma préstamos del italiano, francés e inglés, pero también ha exportado términos como 'corbata', 'chaqueta', 'mantilla', 'sombrero', 'poncho'.", ejemplo:"Corbata (del italiano cravatta), chaqueta (del francés jaquette), poncho (del quechua punchu).", ejercicio:"¿Qué voces hispanas relacionadas con la vestimenta se usan en otras lenguas?", respuesta:"poncho, sombrero, mantilla, pañuelo, poncho, guayabera, alpargata."},
+        {id:68, nombre:"El español y la inteligencia artificial", teoria:"La IA ha impulsado el desarrollo de asistentes de voz en español, traductores automáticos, correctores gramaticales y chatbots. Esto genera grandes corpus digitales.", ejemplo:"Siri, Alexa y Google Assistant tienen versiones en español. DeepL y Google Translate mejoran continuamente.", ejercicio:"¿Qué retos enfrenta el procesamiento del lenguaje natural para el español?", respuesta:"Variedad dialectal, entonación, ambigüedad, y creación de modelos para géneros específicos (medicina, derecho)."},
+        {id:69, nombre:"El español en la literatura hispanoamericana", teoria:"La literatura hispanoamericana del siglo XX (Borges, García Márquez, Cortázar, Vargas Llosa, Fuentes, Rulfo, etc.) ha sido crucial para la proyección mundial del español.", ejemplo:"El 'boom' latinoamericano (1960-70) llevó el español a lectores globales.", ejercicio:"¿Qué autores hispanoamericanos han influido más en el prestigio del español?", respuesta:"Jorge Luis Borges, Gabriel García Márquez, Julio Cortázar, Mario Vargas Llosa, Carlos Fuentes, Juan Rulfo, Octavio Paz, Pablo Neruda."},
+        {id:70, nombre:"El español y la traducción literaria", teoria:"La traducción de obras hispanas a otros idiomas difunde el español. Al revés, la traducción al español de obras extranjeras enriquece su léxico y sintaxis.", ejemplo:"Cien años de soledad ha sido traducido a más de 40 idiomas. El Quijote, a más de 50.", ejercicio:"¿Cuál es el papel de la traducción en la difusión del español?", respuesta:"Amplía la audiencia de la literatura hispana, promueve el aprendizaje del español, e introduce recursos estilísticos de otras lenguas."},
+        {id:71, nombre:"El español en la religión", teoria:"El español es lengua litúrgica en muchas diócesis de todo el mundo. Traducciones de la Biblia al español (Reina-Valera, Biblia de Jerusalén, etc.) han influido en el lenguaje religioso.", ejemplo:"Vosotros, Padre Nuestro, 'El Señor es mi pastor'.", ejercicio:"¿Cómo ha influido la Biblia en el español?", respuesta:"Ha fijado giros (No todo el monte es orégano), frases (Quien a hierro mata...), y ha enriquecido el léxico religioso."},
+        {id:72, nombre:"El español en el derecho", teoria:"El español jurídico es un tecnolecto con latinismos, formalidad, y construcciones pasivas. La redacción clara está ganando terreno.", ejemplo:"Habeas corpus, 'a quo', 'ad quem', 'in dubio pro reo', 'uti possidetis'.", ejercicio:"¿Qué características tiene el lenguaje jurídico español?", respuesta:"Arcaísmos, latinismos, pasivas, nominalizaciones, oraciones largas, y precisión terminológica."},
+        {id:73, nombre:"El español en la medicina", teoria:"El lenguaje médico español usa tecnicismos de origen grecolatino, neologismos adaptados y anglicismos. La comunicación con pacientes debe adaptarse.", ejemplo:"Enfermedades: 'hipertensión', 'taquicardia', 'neumonía', 'apendicitis'. Tratamientos: 'aspirina', 'antibiótico', 'analgésico'.", ejercicio:"¿Qué dificultades plantea el tecnicismo médico para la comunicación con pacientes?", respuesta:"Falta de comprensión, necesidad de traducción a lenguaje coloquial, y riesgo de malentendidos."},
+        {id:74, nombre:"El español en la economía y las finanzas", teoria:"El lenguaje económico y financiero recibe anglicismos ('marketing', 'outsourcing', 'startup', 'stock', 'swap'), pero también acuña términos propios ('oferta', 'demanda', 'inflación', 'recesión').",
+        ejemplo:"Balanza de pagos, Producto Interior Bruto (PIB), deuda pública, mercado de valores.", ejercicio:"¿Por qué abundan los anglicismos en economía y finanzas?", respuesta:"Por la dominación de los mercados anglosajones, la influencia de organismos internacionales, y la falta de tradición hispana en algunos conceptos."},
+        {id:75, nombre:"El español en la política", teoria:"El discurso político usa un lenguaje que busca persuadir: nominalizaciones, eufemismos, metáforas, slogans, y palabras comodín ('cambio', 'futuro', 'pueblo', 'democracia').", ejemplo:"'Vamos a construir una sociedad mejor', 'luchar contra la corrupción', 'defender la libertad'.", ejercicio:"¿Qué recursos lingüísticos son frecuentes en el discurso político español?", respuesta:"Eufemismos, metáforas, repeticiones, contraste nosotros/ellos, promesas abstractas, y formas verbales en futuro o presente."},
+        {id:76, nombre:"El español en el periodismo", teoria:"El lenguaje periodístico tiene rasgos propios: titulares con elipsis, metáforas, lenguaje dinámico, pero también sufre de anglicismos (reportaje, entrevista, crónica, editorial).", ejemplo:"Ejemplo de titular: 'El Gobierno anuncia subidas de impuestos' (omite artículos).", ejercicio:"¿Qué diferencias hay entre el español periodístico de la prensa escrita y el de la televisión?", respuesta:"La prensa escrita es más elaborada, con oraciones complejas; la televisión es más coloquial, con oraciones cortas y mayor uso de la deixis."},
+        {id:77, nombre:"El español en la radio", teoria:"La radio usa un registro oral planificado, con repeticiones, preguntas retóricas, y marcadores discursivos ('bueno', 'entonces', 'ahora'), buscando cercanía con el oyente.", ejemplo:"Los locutores modulan la entonación para crear expectación o transmitir emociones.", ejercicio:"¿Cómo se diferencia el lenguaje radiofónico del televisivo?", respuesta:"En la radio, solo hay voz; por tanto, es más descriptivo, con más repeticiones y énfasis, mientras que la televisión puede apoyarse en imágenes."},
+        {id:78, nombre:"El español en el cómic y el manga", teoria:"El lenguaje del cómic incluye onomatopeyas, exclamaciones y diálogos condensados. Los mangas traducidos al español adaptan las expresiones niponas.", ejemplo:"Onomatopeyas: ¡Bang!, ¡Zas!, ¡Boom!, ¡Ay!, ¡Jajaja!.", ejercicio:"¿Qué características lingüísticas tienen los cómics hispanos?", respuesta:"Coloquialismo, brevedad, exclamaciones, juegos de palabras, lenguaje de la calle, y muchos extranjerismos."},
+        {id:79, nombre:"El español en la animación", teoria:"Las series y películas de animación ayudan a difundir el español entre los niños y jóvenes. El doblaje a menudo usa un lenguaje neutro y educativo.", ejemplo:"Pokémon, Los Simpsons, Bob Esponja, Peppa Pig tienen versiones en español.", ejercicio:"¿Cómo se adapta el lenguaje en las producciones infantiles?", respuesta:"Se evitan palabras malsonantes, se usan diminutivos, y se simplifica la sintaxis. A veces se introducen neologismos."},
+        {id:80, nombre:"El español en la literatura infantil", teoria:"La literatura infantil emplea un lenguaje más sencillo, con repeticiones, ritmo, rimas, y un vocabulario controlado, para facilitar la comprensión.", ejemplo:"Los clásicos: 'El principito', 'Platero y yo' (adaptado), 'Fábulas de Samaniego'.", ejercicio:"¿Qué recursos lingüísticos se usan en los libros infantiles?", respuesta:"Diminutivos, onomatopeyas, diálogos, ilustraciones integradas, y frases cortas."},
+        {id:81, nombre:"El español en el turismo", teoria:"El sector turístico hispano ha generado un lenguaje específico (folletos, guías, promociones) con hipérboles y extranjerismos.", ejemplo:"'Paradisiaco', 'único', 'mágico', 'relájate', 'excursiones', 'todo incluido', 'check-in'.", ejercicio:"¿Qué características tiene el lenguaje turístico promocional?", respuesta:"Adjetivos valorativos, imperativos, segunda persona, superlativos, y frases cortas."},
+        {id:82, nombre:"El español en la diplomacia", teoria:"El lenguaje diplomático es preciso, cortés, y evita conflictos mediante eufemismos y construcciones impersonales (se conviene, se sugiere, se recomienda).", ejemplo:"'El gobierno expresa su preocupación', 'se insta a las partes', 'acoger favorablemente'.", ejercicio:"¿Qué rasgos definen el español diplomático?", respuesta:"Nominalizaciones, voz pasiva, cortesía formal, eufemismos, y léxico preciso."},
+        {id:83, nombre:"El español en la ciencia ficción", teoria:"La ciencia ficción crea neologismos, extranjerismos, y términos ficticios (en español e inventados).", ejemplo:"Naves espaciales, robots, extraterrestres, 'teletransporte', 'criogenización', 'androide'.",
+        ejercicio:"¿Qué recursos lingüísticos se utilizan para inventar términos en la ciencia ficción?", respuesta:"Composición de palabras (nano + tecnología), préstamos, y sufijos inventados."},
+        {id:84, nombre:"El español en las novelas de aventuras", teoria:"Las novelas de aventuras usan un lenguaje dinámico, con abundantes verbos de acción y descripciones exóticas, a menudo con arcaísmos o extranjerismos.", ejemplo:"'Isla del tesoro' (R. L. Stevenson) en español, 'La vuelta al mundo en ochenta días' (traducción).", ejercicio:"¿Cómo se enriquece el léxico con las novelas de aventuras?", respuesta:"Se incorporan términos náuticos, geográficos, de supervivencia, y culturales de otras regiones."},
+        {id:85, nombre:"El español en las traducciones de la literatura clásica", teoria:"Traducir al español la literatura griega, latina, sánscrita y persa ha enriquecido el idioma con cultismos y calcos.", ejemplo:"De la Odisea: 'en los brazos de Morfeo', 'cavar su propia tumba'.", ejercicio:"¿Qué aportaron las traducciones de Homero y Virgilio al español?", respuesta:"Metáforas, giros, epítetos, y un léxico elevado para la épica."},
+        {id:86, nombre:"El español en el teatro", teoria:"El teatro español (Lope de Vega, Calderón, Lorca, Buero Vallejo) ha reflejado la lengua oral de cada época. Los diálogos capturan coloquialismos y variación sociolingüística.", ejemplo:"Lorca: poesía y lenguaje rural; Buero Vallejo: lenguaje más realista.", ejercicio:"¿Qué importancia tiene el teatro para el estudio del español coloquial histórico?", respuesta:"Proporciona diálogos que imitan la conversación cotidiana, con muletillas, interrupciones, y variación de registros."},
+        {id:87, nombre:"El español en la poesía", teoria:"La poesía explora los límites del idioma a través de la métrica, rima, imágenes, y libertades sintácticas (hipérbaton, elipsis).", ejemplo:"Bécquer: rimas asonantes, lenguaje sugerente; Neruda: imágenes cargadas de sensualidad; Lorca: metáforas surrealistas.", ejercicio:"¿Cómo la poesía ha contribuido a la evolución del español?", respuesta:"Introduciendo neologismos, figuras retóricas, nuevas combinaciones de palabras, y modelos de expresión lírica."},
+        {id:88, nombre:"El español en la canción popular", teoria:"Las letras de canciones populares (copla, tango, bolero, son, reggaetón) reflejan el habla callejera y afectiva. A menudo simplifican la sintaxis y repiten estribillos.",
+        ejemplo:"El tango argentino (Gardel) usa lunfardo; el reggaetón puertorriqueño, jerga juvenil.", ejercicio:"¿Qué contribución han hecho las canciones populares a la difusión del español?", respuesta:"Globalización de modismos, ritmos, y emociones; facilitan el aprendizaje del idioma."},
+        {id:89, nombre:"El español en los refranes y dichos", teoria:"Los refranes son oraciones breves de origen anónimo que transmiten sabiduría popular. Constituyen un registro del léxico y la gramática arcaizante.", ejemplo:"'A quien madruga, Dios le ayuda', 'No dejes para mañana lo que puedas hacer hoy', 'Más vale pájaro en mano que ciento volando'.", ejercicio:"¿Qué importancia tienen los refranes para el estudio del español?", respuesta:"Reflejan la cultura, la mentalidad y el léxico de épocas pasadas; ayudan a entender la etimología y la sintaxis medieval."},
+        {id:90, nombre:"El español en los trabalenguas", teoria:"Los trabalenguas explotan la fonética y la sonoridad del español. Son útiles para la educación del habla y la logopedia.", ejemplo:"'Tres tristes tigres comen trigo en un trigal', 'El cielo está enladrillado, quién lo desenladrillará...'", ejercicio:"¿Qué fenómenos fonéticos se trabajan con los trabalenguas?", respuesta:"Grupos consonánticos (tr, br, pr), oposición de líquidas (l/r), y repetición de sílabas."},
+        {id:91, nombre:"El español en las rimas infantiles", teoria:"Las rimas y canciones infantiles tienen un lenguaje sencillo, rítmico y repetitivo, que facilita la adquisición del lenguaje en niños.", ejemplo:"'Estaba la pájara pinta sentada en un verde limón', 'Arroz con leche, me quiero casar...'", ejercicio:"¿Qué papel juegan las rimas en la enseñanza del español a niños?", respuesta:"Desarrollan la conciencia fonológica, amplían vocabulario, y enseñan estructuras gramaticales básicas."},
+        {id:92, nombre:"El español en la publicidad exterior", teoria:"Carteles, vallas, y anuncios en exteriores usan un lenguaje muy impactante, con frases cortas, imperativos, y recursos tipográficos (mayúsculas, colores).", ejemplo:"'¡Coca-Cola!', 'Disfruta', 'Limpieza garantizada', 'Apúntate ya'.", ejercicio:"¿Por qué la publicidad exterior tiende a ser tan elíptica?", respuesta:"Porque se lee rápidamente, debe captar la atención en segundos, por lo que se usan frases breves y palabras clave."},
+        {id:93, nombre:"El español en el comercio electrónico", teoria:"Las tiendas online utilizan un lenguaje que mezcla la persuasión tradicional con términos digitales (carrito, checkout, cupón descuento, envío).", ejemplo:"'Añadir al carrito', 'Finalizar compra', 'Envío gratuito', 'Pago seguro'.", ejercicio:"¿Qué anglicismos son habituales en el comercio electrónico en español?", respuesta:"'shopping cart' (carrito), 'checkout', 'payment gateway', 'reviews', 'ratings'."},
+        {id:94, nombre:"El español en las redes sociales de empresas", teoria:"Las empresas usan un español cercano y desenfadado en redes, con emoticonos, preguntas, y concursos. A menudo responden en tono amable y personalizado.", ejemplo:"'¡Hola! ¿En qué podemos ayudarte?', '¡Gracias por confiar en nosotros!'", ejercicio:"¿Qué estrategias lingüísticas usan las marcas para humanizarse en redes?", respuesta:"Uso de la primera persona ('nosotros'), respuestas con nombre, emoticonos, y humor."},
+        {id:95, nombre:"El español en los debates políticos televisados", teoria:"Los debates políticos usan un lenguaje que combina la retórica con el enfrentamiento verbal: preguntas capciosas, interrupciones, ironía, y eslóganes.", ejemplo:"'Usted no ha cumplido sus promesas', 'eso es falso', 'los datos demuestran lo contrario'.", ejercicio:"¿Qué recursos del lenguaje oral son clave en los debates políticos?", respuesta:"Apelaciones directas, preguntas retóricas, metáforas, comparaciones descalificadoras, y repetición de mensajes."},
+        {id:96, nombre:"El español en las redes sociales de citas", teoria:"Los perfiles de citas usan un lenguaje breve, con adjetivos valorativos (divertido, sincero, viajero) y emojis. La cortesía y la primera impresión son cruciales.", ejemplo:"'Me gusta la playa, el cine y salir con amigos. Busco una persona sincera...'", ejercicio:"¿Cómo influye la brevedad del lenguaje en las aplicaciones de citas?", respuesta:"Selección de palabras clave, uso de frases hechas, y se evita la ambigüedad para no ahuyentar a posibles parejas."},
+        {id:97, nombre:"El español en la literatura juvenil actual", teoria:"La literatura juvenil emplea un español ágil, con diálogos dinámicos, vocabulario contemporáneo, y temas cercanos a los adolescentes (amistad, amor, redes sociales).", ejemplo:"Autores como Blue Jeans, Laura Gallego, Javier Ruescas.", ejercicio:"¿Qué diferencias hay entre el lenguaje de la literatura juvenil y el de la adulta?", respuesta:"Mayor coloquialismo, frases más cortas, menos figuras retóricas complejas, y mayor uso de extranjerismos."},
+        {id:98, nombre:"El español en las series de habla hispana", teoria:"Las series hispanas de plataformas (La Casa de Papel, Elite, Narcos, Luis Miguel) han popularizado acentos y expresiones regionales en todo el mundo.", ejemplo:"'La Casa de Papel' difundió expresiones como '¡Bella ciao!', 'Profesor', 'Río'.", ejercicio:"¿Cómo influyen las series en la percepción de las variedades del español?", respuesta:"Visibilizan dialectos (colombiano, mexicano, español peninsular, argentino) y crean estereotipos lingüísticos."},
+        {id:99, nombre:"El español en los videojuegos", teoria:"Los videojuegos con localización al español usan un lenguaje adaptado a la audiencia juvenil, con anglicismos técnicos (gameplay, spawn, loot) y traducción de diálogos.", ejemplo:"'Misión cumplida', 'salud', 'recarga', 'dispara', 'sigilo', 'juego en línea'.", ejercicio:"¿Qué retos enfrenta la localización de videojuegos al español?", respuesta:"Adaptar juegos de palabras, modismos, y referencias culturales manteniendo la jugabilidad."},
+        {id:100, nombre:"El español en el metaverso", teoria:"El metaverso, aún en desarrollo, requerirá una normalización del español para la interacción virtual. Se crearán nuevos términos y adaptaciones.", ejemplo:"Realidad virtual (RV), realidad aumentada (RA), avatar, mundo virtual.", ejercicio:"¿Qué desafíos lingüísticos plantea el metaverso para el español?", respuesta:"Creación de neologismos para nuevas experiencias, traducción de interfaces, y prevención de la fragmentación dialectal en entornos virtuales."}
+    ];
+
+    let tecnicas = tecnicasHistoria.map(t => ({ ...t, completada: false, respuestaUsuario: "" }));
+    let currentTechIdx = 0;
+
+    // localStorage
+    function guardarProgreso() {
+        let data = tecnicas.map(t => ({ completada: t.completada, respuestaUsuario: t.respuestaUsuario || "" }));
+        localStorage.setItem("historia_lengua_progreso", JSON.stringify(data));
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function cargarProgreso() {
+        let saved = localStorage.getItem("historia_lengua_progreso");
+        if (saved) {
+            let data = JSON.parse(saved);
+            for (let i = 0; i < tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuestaUsuario = data[i].respuestaUsuario || "";
+                }
+            }
+        }
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function actualizarEstadisticas() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = Math.round((completadas / 100) * 100);
+        const statsDiv = document.getElementById("statsPreview");
+        if (statsDiv) statsDiv.innerHTML = `Progreso: ${porcentaje}% · Técnicas completadas: ${completadas}/100 · ⚜ historia`;
+        const goldFill = document.getElementById("globalGoldFill");
+        if (goldFill) goldFill.style.width = porcentaje + "%";
+    }
+
+    function actualizarBarraOro() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let pct = (completadas / 100) * 100;
+        document.getElementById("globalGoldFill").style.width = pct + "%";
+    }
+
+    function renderIndiceLateral() {
+        const busqueda = document.getElementById("searchTech")?.value.toLowerCase() || "";
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda) || (t.teoria && t.teoria.toLowerCase().includes(busqueda)));
+        const listaUl = document.getElementById("techIndexList");
+        if (!listaUl) return;
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.innerHTML = `${tech.nombre.substring(0, 52)}${tech.nombre.length > 52 ? "…" : ""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentTechIdx = tech.id - 1;
+                renderVistaTecnica();
+                if (window.innerWidth <= 800) document.getElementById("luxSidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+
+    function renderVistaTecnica() {
+        const t = tecnicas[currentTechIdx];
+        const container = document.getElementById("dynamicTechView");
+        if (!container) return;
+        const letraInicial = t.nombre.charAt(0);
+        container.innerHTML = `
+            <div class="tech-primary">
+                <div class="numero-gigante">${t.id}</div>
+                <div class="tech-title"><span class="capitular">${letraInicial}</span>${t.nombre.substring(1)}</div>
+                <div class="card"><h3>📜 Teoría histórica</h3><p>${t.teoria}</p></div>
+                <div class="card"><h3>❧ Ejemplo histórico</h3><p>${t.ejemplo}</p></div>
+                <div class="card"><h3>✍️ Ejercicio de análisis</h3><p>${t.ejercicio}</p>
+                    <textarea id="respuestaTextAreaLux" rows="4" placeholder="Escribe aquí tu respuesta...">${t.respuestaUsuario || ""}</textarea>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-nav btn-show-answer" id="btnMostrarRespuesta">📖 Ver respuesta correcta</button>
+                    </div>
+                    <div id="respuestaCorrectaPanel" class="respuesta-correcta">
+                        <strong>✓ Respuesta modelo:</strong><br>${t.respuesta}
+                    </div>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="btnAnterior">← anterior</button>
+                    <button class="btn-nav btn-complete" id="btnCompletar">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="btnSiguiente">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-aside">
+                <div><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(tc=>tc.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:30px;"></div></div>
+                <p>${tecnicas.filter(tc=>tc.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color:#cfc3ad;">
+                <p><strong>📖 Periodo histórico</strong><br>${t.nombre.split(':')[0]}</p>
+                <p><strong>🎨 Línea del tiempo</strong><br>Latín → Romance → Castellano → Español moderno</p>
+                <div class="ornament-line" style="font-size:1.2rem;">⁂ § ⚜</div>
+                <p style="margin-top:1rem; font-size:0.8rem;">“La lengua es la patria del espíritu” — Miguel de Unamuno</p>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextAreaLux");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentTechIdx].respuestaUsuario = e.target.value;
+                guardarProgreso();
+            });
+        }
+        const btnRespuesta = document.getElementById("btnMostrarRespuesta");
+        const panelRespuesta = document.getElementById("respuestaCorrectaPanel");
+        if (btnRespuesta && panelRespuesta) {
+            btnRespuesta.addEventListener("click", () => {
+                panelRespuesta.classList.toggle("visible");
+            });
+        }
+        document.getElementById("btnAnterior")?.addEventListener("click", () => {
+            if (currentTechIdx > 0) { currentTechIdx--; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnSiguiente")?.addEventListener("click", () => {
+            if (currentTechIdx < 99) { currentTechIdx++; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnCompletar")?.addEventListener("click", () => {
+            tecnicas[currentTechIdx].completada = !tecnicas[currentTechIdx].completada;
+            guardarProgreso();
+            renderVistaTecnica();
+            renderIndiceLateral();
+        });
+    }
+
+    const menuBtn = document.getElementById("menuToggleBtn");
+    const sidebar = document.getElementById("luxSidebar");
+    const closeBtn = document.getElementById("closeSidebarBtn");
+    menuBtn?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeBtn?.addEventListener("click", () => sidebar.classList.remove("open"));
+    const searchInput = document.getElementById("searchTech");
+    searchInput?.addEventListener("input", () => renderIndiceLateral());
+
+    function inicializar() {
+        cargarProgreso();
+        renderVistaTecnica();
+        window.addEventListener("beforeunload", () => guardarProgreso());
+    }
+    inicializar();
+</script>
+</body>
+</html>

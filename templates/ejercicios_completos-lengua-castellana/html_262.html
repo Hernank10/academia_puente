@@ -1,0 +1,1775 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Parónimos y Sinónimos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">parónimos y sinónimos · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Palabras: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe dos oraciones que muestren la diferencia entre las palabras:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Absolver vs Absorber: El juez lo absolvió. / La esponja absorbe el agua.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE MATIZ E INTENSIDAD DE PARÓNIMOS Y SINÓNIMOS
+        //  Diferencia de significado, uso y grado de intensidad
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'paronimos_A_B', label: 'Parónimos (A-B)' },
+            { id: 'paronimos_C_D', label: 'Parónimos (C-D)' },
+            { id: 'paronimos_E_H', label: 'Parónimos (E-H)' },
+            { id: 'paronimos_I_P', label: 'Parónimos (I-P)' },
+            { id: 'paronimos_Q_Z', label: 'Parónimos (Q-Z)' },
+            { id: 'sinonimos_intensidad', label: 'Sinónimos de Intensidad' },
+            { id: 'sinonimos_matos', label: 'Sinónimos de Matiz' },
+            { id: 'sinonimos_contexto', label: 'Sinónimos según Contexto' },
+            { id: 'sinonimos_registro', label: 'Sinónimos de Registro' },
+            { id: 'usos_redaccion', label: 'Usos en Redacción' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: PARÓNIMOS (A-B) (1–10)
+        // ============================================================
+        const b1 = [
+            ['Absolver vs Absorber', 'absolver (perdonar) / absorber (atraer)',
+                'Absolver significa "perdonar o declarar libre de culpa". Absorber significa "atraer o incorporar un líquido o sustancia".',
+                'El juez absolvió al acusado. / La esponja absorbe el agua.',
+                'absolver (perdonar) / absorber (atraer)',
+                '¿Qué verbo significa "perdonar"?', ['Absolver', 'Absorber', 'Absolver', 'Absorver'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre absolver y absorber.'
+            ],
+            ['Abrasar vs Abrazar', 'abrasar (quemar) / abrazar (estrechar)',
+                'Abrasar significa "quemar o consumir por el fuego". Abrazar significa "estrechar entre los brazos".',
+                'El sol abrasa el desierto. / Abraza a tu madre.',
+                'abrasar (quemar) / abrazar (estrechar)',
+                '¿Qué verbo significa "estrechar entre los brazos"?', ['Abrazar', 'Abrasar', 'Abrazar', 'Abrasir'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre abrasar y abrazar.'
+            ],
+            ['Aprehender vs Aprender', 'aprehender (capturar) / aprender (adquirir conocimiento)',
+                'Aprehender significa "capturar o detener". Aprender significa "adquirir conocimiento o habilidad".',
+                'La policía aprehendió al ladrón. / Estoy aprendiendo español.',
+                'aprehender (capturar) / aprender (adquirir conocimiento)',
+                '¿Qué verbo significa "capturar"?', ['Aprehender', 'Aprender', 'Aprehender', 'Aprendir'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre aprehender y aprender.'
+            ],
+            ['Asumir vs Adsumir', 'asumir (aceptar) / adsumir (asumir - arcaico)',
+                'Asumir significa "aceptar una responsabilidad o cargo". Adsumir es una forma arcaica de asumir, en desuso.',
+                'Asumió la presidencia. (correcto) / Adsumió la presidencia. (arcaico, incorrecto)',
+                'asumir (aceptar) / adsumir (arcaico)',
+                '¿Qué forma es la correcta para "aceptar una responsabilidad"?', ['Asumir', 'Adsumir', 'Asumir',
+                    'Adsumir'
+                ], 0, 'Escribe una oración con "asumir" correctamente.'
+            ],
+            ['Apertura vs Abertura', 'apertura (acción de abrir) / abertura (hueco)',
+                'Apertura es "la acción de abrir o el inicio de algo". Abertura es "un hueco o rendija".',
+                'La apertura del evento fue emotiva. / Hay una abertura en la pared.',
+                'apertura (acción) / abertura (hueco)',
+                '¿Qué palabra significa "hueco o rendija"?', ['Abertura', 'Apertura', 'Abertura', 'Apertura'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre apertura y abertura.'
+            ],
+            ['Baca vs Vaca', 'baca (portaequipajes) / vaca (animal)',
+                'Baca es el portaequipajes de un vehículo. Vaca es el animal mamífero.',
+                'Puso las maletas en la baca. / La vaca pastaba en el campo.',
+                'baca (portaequipajes) / vaca (animal)',
+                '¿Qué palabra significa "portaequipajes"?', ['Baca', 'Vaca', 'Baca', 'Vaca'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre baca y vaca.'
+            ],
+            ['Bello vs Vello', 'bello (hermoso) / vello (pelo)',
+                'Bello es un adjetivo que significa "hermoso". Vello es el pelo fino del cuerpo.',
+                'El paisaje es bello. / Se depiló el vello de las piernas.',
+                'bello (hermoso) / vello (pelo)',
+                '¿Qué palabra significa "hermoso"?', ['Bello', 'Vello', 'Bello', 'Vello'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre bello y vello.'
+            ],
+            ['Botar vs Votar', 'botar (tirar) / votar (elegir)',
+                'Botar significa "tirar o arrojar". Votar significa "emitir un voto en una elección".',
+                'Bota la basura. / Voy a votar en las elecciones.',
+                'botar (tirar) / votar (elegir)',
+                '¿Qué verbo significa "emitir un voto"?', ['Votar', 'Botar', 'Votar', 'Botar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre botar y votar.'
+            ],
+            ['Bozal vs Vos', 'bozal (mordaza) / vos (pronombre)',
+                'Bozal es un instrumento que se pone en el hocico de los animales. Vos es un pronombre de segunda persona del singular.',
+                'El perro lleva un bozal. / Vos sos mi amigo (voseo).',
+                'bozal (mordaza) / vos (pronombre)',
+                '¿Qué palabra es un pronombre?', ['Vos', 'Bozal', 'Vos', 'Bozal'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre bozal y vos.'
+            ],
+            ['Bracear vs Braza', 'bracear (mover los brazos) / braza (medida)',
+                'Bracear significa "mover los brazos". Braza es una unidad de medida (1,67 m) o un estilo de natación.',
+                'El nadador braceaba con fuerza. / La piscina mide 25 brazas.',
+                'bracear (mover brazos) / braza (medida)',
+                '¿Qué palabra significa "unidad de medida"?', ['Braza', 'Bracear', 'Braza', 'Bracear'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre bracear y braza.'
+            ]
+        ];
+        b1.forEach(d => addLesson('paronimos_A_B', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: PARÓNIMOS (C-D) (11–20)
+        // ============================================================
+        const b2 = [
+            ['Caza vs Casa', 'caza (cacería) / casa (vivienda)',
+                'Caza es la acción de cazar o la presa. Casa es el lugar donde se vive.',
+                'La caza está prohibida en esta zona. / Mi casa es grande.',
+                'caza (cacería) / casa (vivienda)',
+                '¿Qué palabra significa "vivienda"?', ['Casa', 'Caza', 'Casa', 'Caza'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre caza y casa.'
+            ],
+            ['Cavidad vs Cabidad', 'cavidad (hueco) / cabidad (capacidad - arcaico)',
+                'Cavidad es un hueco o espacio vacío. Cabidad es una forma arcaica de "capacidad", en desuso.',
+                'Hay una cavidad en el diente. (correcto) / Cabidad (arcaico, incorrecto)',
+                'cavidad (hueco) / cabidad (arcaico)',
+                '¿Qué palabra significa "hueco"?', ['Cavidad', 'Cabidad', 'Cavidad', 'Cabidad'],
+                0, 'Escribe una oración con "cavidad" correctamente.'
+            ],
+            ['Ceder vs Seder', 'ceder (entregar) / seder (ser suave)',
+                'Ceder significa "entregar o renunciar". Seder es un verbo poco usado que significa "ser suave".',
+                'Cedió su asiento al anciano. / La seda siede al tacto. (poco usado)',
+                'ceder (entregar) / seder (ser suave)',
+                '¿Qué verbo significa "entregar"?', ['Ceder', 'Seder', 'Ceder', 'Seder'],
+                0, 'Escribe una oración con "ceder" correctamente.'
+            ],
+            ['Cerrar vs Serrar', 'cerrar (tapar) / serrar (cortar con sierra)',
+                'Cerrar significa "tapar o clausurar". Serrar significa "cortar con una sierra".',
+                'Cierra la puerta. / Serró la madera con la sierra.',
+                'cerrar (tapar) / serrar (cortar)',
+                '¿Qué verbo significa "cortar con sierra"?', ['Serrar', 'Cerrar', 'Serrar', 'Cerrar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre cerrar y serrar.'
+            ],
+            ['Cosar vs Cocer', 'cosar (coser - incorrecto) / cocer (cocinar)',
+                'Cosar es una forma incorrecta de "coser" (unir con hilo). Cocer significa "cocinar".',
+                'Coser (correcto) la ropa. / Cocer la carne.',
+                'coser (unir con hilo) / cocer (cocinar)',
+                '¿Qué verbo significa "cocinar"?', ['Cocer', 'Coser', 'Cocer', 'Cosar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre coser y cocer.'
+            ],
+            ['Debajo vs De bajo', 'debajo (preposición) / de bajo (adjetivo + preposición)',
+                'Debajo es una preposición que indica posición inferior. "De bajo" es la preposición "de" + el adjetivo "bajo".',
+                'El gato está debajo de la mesa. / El hombre de bajo estatura.',
+                'debajo (preposición) / de bajo (de + bajo)',
+                '¿Qué forma es una preposición?', ['Debajo', 'De bajo', 'Debajo', 'De bajo'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre debajo y de bajo.'
+            ],
+            ['Demás vs De más', 'demás (los otros) / de más (exceso)',
+                'Demás es un pronombre que significa "los otros". "De más" significa "excesivo o adicional".',
+                'Los demás llegaron tarde. / Esto es de más, no hace falta.',
+                'demás (los otros) / de más (exceso)',
+                '¿Qué forma significa "los otros"?', ['Demás', 'De más', 'Demás', 'De más'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre demás y de más.'
+            ],
+            ['Desecho vs Desecho', 'desecho (residuo) / desecho (verbo desechar)',
+                'Desecho es un sustantivo que significa "residuo". Desecho es la primera persona del presente de indicativo del verbo "desechar".',
+                'El desecho es tóxico. / Desecho la basura cada día.',
+                'desecho (residuo) / desecho (verbo)',
+                '¿Qué forma es un sustantivo?', ['Desecho', 'Desecho', 'Desecho', 'Desecho'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre desecho y desecho.'
+            ],
+            ['Diferencia vs Diferencia', 'diferencia (sustantivo) / diferencia (verbo)',
+                'Diferencia es un sustantivo que significa "distancia o desigualdad". Diferencia es la tercera persona del presente de indicativo del verbo "diferenciar".',
+                'Hay una diferencia de edad. / El color diferencia los objetos.',
+                'diferencia (sustantivo) / diferencia (verbo)',
+                '¿Qué forma es un verbo?', ['Diferencia', 'Diferencia', 'Diferencia', 'Diferencia'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre diferencia y diferencia.'
+            ],
+            ['Docena vs Docena', 'docena (conjunto de 12) / docena (verbo)',
+                'Docena es un sustantivo que significa "conjunto de 12 unidades". Docena es la tercera persona del presente de indicativo del verbo "docenar" (poco usado).',
+                'Compré una docena de huevos. / El panadero docena el pan. (poco usado)',
+                'docena (12) / docena (verbo)',
+                '¿Qué forma significa "conjunto de 12"?', ['Docena', 'Docena', 'Docena', 'Docena'],
+                0, 'Escribe una oración con "docena" correctamente.'
+            ]
+        ];
+        b2.forEach(d => addLesson('paronimos_C_D', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: PARÓNIMOS (E-H) (21–30)
+        // ============================================================
+        const b3 = [
+            ['Echar vs Hechar', 'echar (tirar) / hechar (incorrecto)',
+                'Echar significa "tirar, arrojar o expulsar". Hechar es una forma incorrecta; la forma correcta es "echar".',
+                'Echa la basura. / Hechar (incorrecto)',
+                'echar (tirar) / hechar (incorrecto)',
+                '¿Qué forma es la correcta para "tirar"?', ['Echar', 'Hecher', 'Echar', 'Hechar'],
+                0, 'Escribe una oración con "echar" correctamente.'
+            ],
+            ['Emitir vs Emitir', 'emitir (expulsar) / emitir (transmitir)',
+                'Emitir puede significar "expulsar" (olor) o "transmitir" (programa).',
+                'La flor emite un aroma. / El canal emite noticias.',
+                'emitir (expulsar) / emitir (transmitir)',
+                '¿Qué verbo significa "transmitir"?', ['Emitir', 'Emitir', 'Emitir', 'Emitir'],
+                0, 'Escribe dos oraciones con diferentes usos de "emitir".'
+            ],
+            ['Emigrar vs Inmigrar', 'emigrar (salir de un país) / inmigrar (entrar a un país)',
+                'Emigrar es "salir de un país para establecerse en otro". Inmigrar es "entrar a un país para establecerse".',
+                'Emigró de su país. / Inmigró a España.',
+                'emigrar (salir) / inmigrar (entrar)',
+                '¿Qué verbo significa "entrar a un país"?', ['Inmigrar', 'Emigrar', 'Inmigrar', 'Emigrar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre emigrar e inmigrar.'
+            ],
+            ['Espiar vs Espear', 'espiar (observar) / espear (incorrecto)',
+                'Espiar significa "observar en secreto". Espear es una forma incorrecta; la forma correcta es "espiar".',
+                'El detective espiaba al sospechoso. / Espear (incorrecto)',
+                'espiar (observar) / espear (incorrecto)',
+                '¿Qué forma es la correcta para "observar en secreto"?', ['Espiar', 'Espear', 'Espiar', 'Espear'],
+                0, 'Escribe una oración con "espiar" correctamente.'
+            ],
+            ['Estático vs Estático', 'estático (sin movimiento) / estático (electricidad)',
+                'Estático (sin tilde) significa "sin movimiento". Estático (con tilde) se refiere a la electricidad estática.',
+                'El cuerpo se mantuvo estático. / La electricidad estática provocó una chispa.',
+                'estático (sin movimiento) / estático (electricidad)',
+                '¿Qué forma se refiere a la electricidad?', ['Estático', 'Estático', 'Estático', 'Estático'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre estático y estático.'
+            ],
+            ['Exitar vs Excitar', 'exitar (incorrecto) / excitar (estimular)',
+                'Exitar es una forma incorrecta; la forma correcta es "excitar", que significa "estimular o provocar emoción".',
+                'Excitar (correcto) al público. / Exitar (incorrecto)',
+                'excitar (estimular) / exitar (incorrecto)',
+                '¿Qué forma es la correcta para "estimular"?', ['Excitar', 'Exitar', 'Excitar', 'Exitar'],
+                0, 'Escribe una oración con "excitar" correctamente.'
+            ],
+            ['Expatriar vs Expatriar', 'expatriar (desterrar) / expatriar (emigrar)',
+                'Expatriar significa "desterrar o hacer que alguien abandone su país". También se usa como "emigrar".',
+                'El gobierno expatrió a los disidentes. / Muchos expatriaron durante la guerra.',
+                'expatriar (desterrar) / expatriar (emigrar)',
+                '¿Qué verbo significa "desterrar"?', ['Expatriar', 'Expatriar', 'Expatriar', 'Expatriar'],
+                0, 'Escribe dos oraciones con diferentes usos de "expatriar".'
+            ],
+            ['Fregar vs Fregar', 'fregar (limpiar) / fregar (restregar)',
+                'Fregar puede significar "limpiar" (fregar el suelo) o "restregar" (fregar la ropa).',
+                'Friego el suelo. / Friego la ropa sucia.',
+                'fregar (limpiar) / fregar (restregar)',
+                '¿Qué verbo significa "limpiar"?', ['Fregar', 'Fregar', 'Fregar', 'Fregar'],
+                0, 'Escribe dos oraciones con diferentes usos de "fregar".'
+            ],
+            ['Gravar vs Grabar', 'gravar (imponer un impuesto) / grabar (registrar)',
+                'Gravar significa "imponer un impuesto o carga". Grabar significa "registrar sonido o imagen".',
+                'El gobierno gravó el tabaco. / Grabé la conferencia.',
+                'gravar (imponer impuesto) / grabar (registrar)',
+                '¿Qué verbo significa "imponer un impuesto"?', ['Gravar', 'Grabar', 'Gravar', 'Grabar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre gravar y grabar.'
+            ],
+            ['Haber vs A ver', 'haber (auxiliar) / a ver (preposición + verbo)',
+                'Haber es un verbo auxiliar. "A ver" es la preposición "a" + el verbo "ver" (vamos a ver).',
+                'Ha llegado. / A ver si viene.',
+                'haber (auxiliar) / a ver (vamos a ver)',
+                '¿Qué forma es un verbo auxiliar?', ['Haber', 'A ver', 'Haber', 'A ver'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre haber y a ver.'
+            ]
+        ];
+        b3.forEach(d => addLesson('paronimos_E_H', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: PARÓNIMOS (I-P) (31–40)
+        // ============================================================
+        const b4 = [
+            ['Influir vs Influir', 'influir (ejercer influencia) / influir (incorrecto)',
+                'Influir significa "ejercer influencia sobre alguien". No existe "inflir".',
+                'Sus consejos influyen en mí. / Influir (correcto)',
+                'influir (ejercer influencia) / influir (incorrecto)',
+                '¿Qué forma es la correcta para "ejercer influencia"?', ['Influir', 'Inflir', 'Influir', 'Inflir'],
+                0, 'Escribe una oración con "influir" correctamente.'
+            ],
+            ['Inyectar vs Inyectar', 'inyectar (introducir líquido) / inyectar (incorrecto)',
+                'Inyectar significa "introducir un líquido con una jeringa". La forma correcta es "inyectar".',
+                'El médico inyecta la vacuna. / Inyectar (correcto)',
+                'inyectar (introducir líquido) / inyectar (correcto)',
+                '¿Qué verbo significa "introducir un líquido"?', ['Inyectar', 'Inyectar', 'Inyectar', 'Inyectar'],
+                0, 'Escribe una oración con "inyectar" correctamente.'
+            ],
+            ['Irradiar vs Irradiar', 'irradiar (emitir rayos) / irradiar (difundir)',
+                'Irradiar puede significar "emitir rayos" o "difundir influencia".',
+                'El sol irradia calor. / El líder irradia confianza.',
+                'irradiar (emitir) / irradiar (difundir)',
+                '¿Qué verbo significa "emitir rayos"?', ['Irradiar', 'Irradiar', 'Irradiar', 'Irradiar'],
+                0, 'Escribe dos oraciones con diferentes usos de "irradiar".'
+            ],
+            ['Juntar vs Juntar', 'juntar (unir) / juntar (reunir)',
+                'Juntar puede significar "unir" o "reunir en un lugar".',
+                'Junta las piezas. / Junta a todos los amigos.',
+                'juntar (unir) / juntar (reunir)',
+                '¿Qué verbo significa "unir"?', ['Juntar', 'Juntar', 'Juntar', 'Juntar'],
+                0, 'Escribe dos oraciones con diferentes usos de "juntar".'
+            ],
+            ['Llegar vs Llegar', 'llegar (alcanzar un lugar) / llegar (alcanzar un estado)',
+                'Llegar puede significar "alcanzar un lugar" o "alcanzar un estado o situación".',
+                'Llegamos a casa. / Llegó a ser presidente.',
+                'llegar (alcanzar lugar) / llegar (alcanzar estado)',
+                '¿Qué verbo significa "alcanzar un lugar"?', ['Llegar', 'Llegar', 'Llegar', 'Llegar'],
+                0, 'Escribe dos oraciones con diferentes usos de "llegar".'
+            ],
+            ['Masa vs Masa', 'masa (materia) / masa (conjunto)',
+                'Masa puede significar "materia" o "conjunto de personas".',
+                'La masa del planeta. / La masa de trabajadores.',
+                'masa (materia) / masa (conjunto)',
+                '¿Qué palabra significa "materia"?', ['Masa', 'Masa', 'Masa', 'Masa'],
+                0, 'Escribe dos oraciones con diferentes usos de "masa".'
+            ],
+            ['Moler vs Molar', 'moler (triturar) / molar (diente)',
+                'Moler significa "triturar" (moler el café). Molar es un diente.',
+                'Muele el café. / Me duele la muela (molar).',
+                'moler (triturar) / molar (diente)',
+                '¿Qué verbo significa "triturar"?', ['Moler', 'Molar', 'Moler', 'Molar'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre moler y molar.'
+            ],
+            ['Nacer vs Nacer', 'nacer (venir al mundo) / nacer (originarse)',
+                'Nacer puede significar "venir al mundo" o "originarse".',
+                'El bebé nació ayer. / El río nace en la montaña.',
+                'nacer (venir al mundo) / nacer (originarse)',
+                '¿Qué verbo significa "venir al mundo"?', ['Nacer', 'Nacer', 'Nacer', 'Nacer'],
+                0, 'Escribe dos oraciones con diferentes usos de "nacer".'
+            ],
+            ['Ojear vs Hojear', 'ojear (mirar) / hojear (pasar páginas)',
+                'Ojear significa "mirar superficialmente". Hojear significa "pasar las hojas de un libro".',
+                'Ojeó el periódico. / Hojeó el libro.',
+                'ojear (mirar) / hojear (pasar páginas)',
+                '¿Qué verbo significa "pasar las hojas de un libro"?', ['Hojear', 'Ojear', 'Hojear', 'Ojear'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre ojear y hojear.'
+            ],
+            ['Privado vs Privado', 'privado (privado) / privado (verbo privar)',
+                'Privado es un adjetivo que significa "particular". Privado es el participio del verbo "privar".',
+                'Es un club privado. / Se ha privado de comer.',
+                'privado (particular) / privado (participio)',
+                '¿Qué forma es un adjetivo?', ['Privado', 'Privado', 'Privado', 'Privado'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre privado y privado.'
+            ]
+        ];
+        b4.forEach(d => addLesson('paronimos_I_P', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: PARÓNIMOS (Q-Z) (41–50)
+        // ============================================================
+        const b5 = [
+            ['Revelar vs Rebolar', 'revelar (descubrir) / rebolar (incorrecto)',
+                'Revelar significa "descubrir o mostrar". Rebolar no existe; la forma correcta es "revelar".',
+                'Reveló el secreto. / Rebolar (incorrecto)',
+                'revelar (descubrir) / rebolar (incorrecto)',
+                '¿Qué forma es la correcta para "descubrir"?', ['Revelar', 'Rebolar', 'Revelar', 'Rebolar'],
+                0, 'Escribe una oración con "revelar" correctamente.'
+            ],
+            ['Saber vs Sabor', 'saber (conocer) / sabor (gusto)',
+                'Saber es un verbo que significa "conocer". Sabor es un sustantivo que significa "gusto".',
+                'Sé la respuesta. / El sabor es dulce.',
+                'saber (conocer) / sabor (gusto)',
+                '¿Qué palabra significa "gusto"?', ['Sabor', 'Saber', 'Sabor', 'Saber'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre saber y sabor.'
+            ],
+            ['Salvaje vs Salvaje', 'salvaje (animal) / salvaje (persona)',
+                'Salvaje puede referirse a un animal o a una persona no civilizada.',
+                'El león es un animal salvaje. / Los salvajes atacaron.',
+                'salvaje (animal) / salvaje (persona)',
+                '¿Qué palabra puede referirse a un animal?', ['Salvaje', 'Salvaje', 'Salvaje', 'Salvaje'],
+                0, 'Escribe dos oraciones con diferentes usos de "salvaje".'
+            ],
+            ['Tasa vs Taza', 'tasa (impuesto) / taza (recipiente)',
+                'Tasa es un impuesto o valoración. Taza es un recipiente para beber.',
+                'La tasa de interés subió. / Sirvió el té en una taza.',
+                'tasa (impuesto) / taza (recipiente)',
+                '¿Qué palabra significa "recipiente"?', ['Taza', 'Tasa', 'Taza', 'Tasa'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre tasa y taza.'
+            ],
+            ['Tubo vs Tuvo', 'tubo (conducto) / tuvo (verbo tener)',
+                'Tubo es un objeto cilíndrico hueco. Tuvo es la tercera persona del pretérito perfecto simple de "tener".',
+                'El tubo está roto. / Tuvo un accidente.',
+                'tubo (conducto) / tuvo (verbo tener)',
+                '¿Qué palabra es una forma del verbo "tener"?', ['Tuvo', 'Tubo', 'Tuvo', 'Tubo'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre tubo y tuvo.'
+            ],
+            ['Usar vs Usar', 'usar (utilizar) / usar (vestir)',
+                'Usar puede significar "utilizar" o "vestir".',
+                'Uso el ordenador. / Usa un vestido rojo.',
+                'usar (utilizar) / usar (vestir)',
+                '¿Qué verbo significa "utilizar"?', ['Usar', 'Usar', 'Usar', 'Usar'],
+                0, 'Escribe dos oraciones con diferentes usos de "usar".'
+            ],
+            ['Vagar vs Vagabundear', 'vagar (errar) / vagabundear (andar sin rumbo)',
+                'Vagar significa "errar sin rumbo". Vagabundear es "andar de un lado a otro sin ocupación".',
+                'Vagaba por el bosque. / Vagabundeaba por la ciudad.',
+                'vagar (errar) / vagabundear (andar sin rumbo)',
+                '¿Qué verbo significa "errar sin rumbo"?', ['Vagar', 'Vagabundear', 'Vagar', 'Vagabundear'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre vagar y vagabundear.'
+            ],
+            ['Valer vs Valer', 'valer (tener valor) / valer (proteger)',
+                'Valer puede significar "tener valor" o "servir" en expresiones como "vale".',
+                'Este libro vale mucho. / Vale, lo haré.',
+                'valer (tener valor) / valer (servir)',
+                '¿Qué verbo significa "tener valor"?', ['Valer', 'Valer', 'Valer', 'Valer'],
+                0, 'Escribe dos oraciones con diferentes usos de "valer".'
+            ],
+            ['Yacer vs Hacer', 'yacer (estar echado) / hacer (realizar)',
+                'Yacer significa "estar echado o reposar". Hacer significa "realizar una acción".',
+                'Yace en el cementerio. / Hago la tarea.',
+                'yacer (estar echado) / hacer (realizar)',
+                '¿Qué verbo significa "estar echado"?', ['Yacer', 'Hacer', 'Yacer', 'Hacer'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre yacer y hacer.'
+            ],
+            ['Zumo vs Sumo', 'zumo (jugo) / sumo (máximo)',
+                'Zumo es el jugo de frutas. Sumo es un adjetivo que significa "máximo" o "mayor".',
+                'Me gusta el zumo de naranja. / Es el sumo sacerdote.',
+                'zumo (jugo) / sumo (máximo)',
+                '¿Qué palabra significa "jugo"?', ['Zumo', 'Sumo', 'Zumo', 'Sumo'],
+                0, 'Escribe dos oraciones que muestren la diferencia entre zumo y sumo.'
+            ]
+        ];
+        b5.forEach(d => addLesson('paronimos_Q_Z', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: SINÓNIMOS DE INTENSIDAD (51–60)
+        // ============================================================
+        const b6 = [
+            ['Alegría: contento, feliz, eufórico', 'contento (moderado) / feliz (alto) / eufórico (muy alto)',
+                'Contento es alegría moderada; feliz es alegría profunda; eufórico es alegría extrema.',
+                'Estoy contento con la noticia. / Soy feliz contigo. / Estaba eufórico por el triunfo.',
+                'contento (moderado) / feliz (alto) / eufórico (muy alto)',
+                '¿Qué palabra expresa alegría extrema?', ['Eufórico', 'Feliz', 'Contento', 'Alborozado'],
+                0, 'Escribe tres oraciones con contento, feliz y eufórico.'
+            ],
+            ['Enojo: molesto, enfadado, furioso', 'molesto (leve) / enfadado (moderado) / furioso (intenso)',
+                'Molesto es enojo leve; enfadado es enojo moderado; furioso es enojo intenso.',
+                'Estoy molesto por el ruido. / Estoy enfadado con él. / Está furioso por la noticia.',
+                'molesto (leve) / enfadado (moderado) / furioso (intenso)',
+                '¿Qué palabra expresa enojo intenso?', ['Furioso', 'Enfadado', 'Molesto', 'Indignado'],
+                0, 'Escribe tres oraciones con molesto, enfadado y furioso.'
+            ],
+            ['Tristeza: apenado, triste, desolado', 'apenado (leve) / triste (moderado) / desolado (intenso)',
+                'Apenado es tristeza leve; triste es tristeza moderada; desolado es tristeza intensa.',
+                'Estoy apenado por su partida. / Estoy triste por la noticia. / Está desolado por la pérdida.',
+                'apenado (leve) / triste (moderado) / desolado (intenso)',
+                '¿Qué palabra expresa tristeza intensa?', ['Desolado', 'Triste', 'Apenado', 'Afligido'],
+                0, 'Escribe tres oraciones con apenado, triste y desolado.'
+            ],
+            ['Miedo: temeroso, asustado, aterrado', 'temeroso (leve) / asustado (moderado) / aterrado (intenso)',
+                'Temeroso es miedo leve; asustado es miedo moderado; aterrado es miedo intenso.',
+                'Está temeroso de hablar. / Está asustado por el ruido. / Está aterrado por la amenaza.',
+                'temeroso (leve) / asustado (moderado) / aterrado (intenso)',
+                '¿Qué palabra expresa miedo intenso?', ['Aterrado', 'Asustado', 'Temeroso', 'Horrorizado'],
+                0, 'Escribe tres oraciones con temeroso, asustado y aterrado.'
+            ],
+            ['Calor: cálido, caliente, ardiente', 'cálido (moderado) / caliente (alto) / ardiente (muy alto)',
+                'Cálido es temperatura agradable; caliente es temperatura alta; ardiente es temperatura muy alta.',
+                'El clima es cálido. / El café está caliente. / El fuego está ardiente.',
+                'cálido (moderado) / caliente (alto) / ardiente (muy alto)',
+                '¿Qué palabra expresa temperatura muy alta?', ['Ardiente', 'Caliente', 'Cálido', 'Abrazador'],
+                0, 'Escribe tres oraciones con cálido, caliente y ardiente.'
+            ],
+            ['Frío: fresco, frío, helado', 'fresco (leve) / frío (moderado) / helado (intenso)',
+                'Fresco es frío leve; frío es frío moderado; helado es frío intenso.',
+                'El viento está fresco. / El agua está fría. / El hielo está helado.',
+                'fresco (leve) / frío (moderado) / helado (intenso)',
+                '¿Qué palabra expresa frío intenso?', ['Helado', 'Frío', 'Fresco', 'Gélido'],
+                0, 'Escribe tres oraciones con fresco, frío y helado.'
+            ],
+            ['Grande: grande, enorme, gigantesco', 'grande (moderado) / enorme (alto) / gigantesco (muy alto)',
+                'Grande es tamaño moderado; enorme es tamaño grande; gigantesco es tamaño muy grande.',
+                'Una casa grande. / Un edificio enorme. / Una montaña gigantesca.',
+                'grande (moderado) / enorme (alto) / gigantesco (muy alto)',
+                '¿Qué palabra expresa tamaño muy grande?', ['Gigantesco', 'Enorme', 'Grande', 'Colosal'],
+                0, 'Escribe tres oraciones con grande, enorme y gigantesco.'
+            ],
+            ['Pequeño: pequeño, diminuto, minúsculo', 'pequeño (moderado) / diminuto (alto) / minúsculo (muy alto)',
+                'Pequeño es tamaño moderado; diminuto es tamaño pequeño; minúsculo es tamaño muy pequeño.',
+                'Una habitación pequeña. / Un insecto diminuto. / Una letra minúscula.',
+                'pequeño (moderado) / diminuto (alto) / minúsculo (muy alto)',
+                '¿Qué palabra expresa tamaño muy pequeño?', ['Minúsculo', 'Diminuto', 'Pequeño', 'Microscópico'],
+                0, 'Escribe tres oraciones con pequeño, diminuto y minúsculo.'
+            ],
+            ['Rápido: rápido, veloz, vertiginoso', 'rápido (moderado) / veloz (alto) / vertiginoso (muy alto)',
+                'Rápido es velocidad moderada; veloz es velocidad alta; vertiginoso es velocidad muy alta.',
+                'Un coche rápido. / Un caballo veloz. / Una caída vertiginosa.',
+                'rápido (moderado) / veloz (alto) / vertiginoso (muy alto)',
+                '¿Qué palabra expresa velocidad muy alta?', ['Vertiginoso', 'Veloz', 'Rápido', 'Acelerado'],
+                0, 'Escribe tres oraciones con rápido, veloz y vertiginoso.'
+            ],
+            ['Lento: lento, pausado, lentísimo', 'lento (moderado) / pausado (alto) / lentísimo (muy alto)',
+                'Lento es velocidad moderada; pausado es velocidad lenta; lentísimo es velocidad muy lenta.',
+                'Un ritmo lento. / Un paso pausado. / Un movimiento lentísimo.',
+                'lento (moderado) / pausado (alto) / lentísimo (muy alto)',
+                '¿Qué palabra expresa velocidad muy lenta?', ['Lentísimo', 'Pausado', 'Lento', 'Tardo'],
+                0, 'Escribe tres oraciones con lento, pausado y lentísimo.'
+            ]
+        ];
+        b6.forEach(d => addLesson('sinonimos_intensidad', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: SINÓNIMOS DE MATIZ (61–70)
+        // ============================================================
+        const b7 = [
+            ['Mirar vs Observar vs Contemplar', 'mirar (acción simple) / observar (con atención) / contemplar (con admiración)',
+                'Mirar es la acción básica; observar es mirar con atención; contemplar es mirar con admiración o deleite.',
+                'Miró el paisaje. / Observó los detalles. / Contempló la puesta de sol.',
+                'mirar (simple) / observar (atención) / contemplar (admiración)',
+                '¿Qué verbo implica admiración?', ['Contemplar', 'Observar', 'Mirar', 'Visualizar'],
+                0, 'Escribe tres oraciones con mirar, observar y contemplar.'
+            ],
+            ['Hablar vs Conversar vs Charlar', 'hablar (comunicar) / conversar (dialogar) / charlar (hablar informalmente)',
+                'Hablar es comunicar; conversar es mantener un diálogo; charlar es una conversación informal.',
+                'Habla español. / Conversaron sobre política. / Charlaron en el café.',
+                'hablar (comunicar) / conversar (dialogar) / charlar (informal)',
+                '¿Qué verbo implica una conversación informal?', ['Charlar', 'Conversar', 'Hablar', 'Discutir'],
+                0, 'Escribe tres oraciones con hablar, conversar y charlar.'
+            ],
+            ['Caminar vs Andar vs Pasear', 'caminar (andar a pie) / andar (caminar) / pasear (caminar por placer)',
+                'Caminar es el acto de andar; andar es sinónimo de caminar; pasear es caminar por placer o recreo.',
+                'Camina dos kilómetros. / Anda rápido. / Pasea por el parque.',
+                'caminar (acto) / andar (caminar) / pasear (placer)',
+                '¿Qué verbo implica caminar por placer?', ['Pasear', 'Caminar', 'Andar', 'Deambular'],
+                0, 'Escribe tres oraciones con caminar, andar y pasear.'
+            ],
+            ['Comer vs Ingerir vs Degustar', 'comer (alimentarse) / ingerir (introducir) / degustar (probar con deleite)',
+                'Comer es alimentarse; ingerir es introducir alimento en el cuerpo; degustar es probar con placer.',
+                'Come fruta. / Ingiere medicinas. / Degusta el vino.',
+                'comer (alimentarse) / ingerir (introducir) / degustar (probar con deleite)',
+                '¿Qué verbo implica probar con placer?', ['Degustar', 'Comer', 'Ingerir', 'Saborear'],
+                0, 'Escribe tres oraciones con comer, ingerir y degustar.'
+            ],
+            ['Escuchar vs Oír vs Atender', 'escuchar (prestar atención) / oír (percibir) / atender (prestar atención)',
+                'Escuchar es prestar atención; oír es percibir sonidos; atender es prestar atención o servir.',
+                'Escucha música. / Oye un ruido. / Atiende al cliente.',
+                'escuchar (atención) / oír (percibir) / atender (servir)',
+                '¿Qué verbo significa "percibir sonidos"?', ['Oír', 'Escuchar', 'Atender', 'Escuchar'],
+                0, 'Escribe tres oraciones con escuchar, oír y atender.'
+            ],
+            ['Pensar vs Reflexionar vs Meditar', 'pensar (formar ideas) / reflexionar (pensar con profundidad) / meditar (pensar en calma)',
+                'Pensar es formar ideas; reflexionar es pensar con profundidad; meditar es pensar en calma y concentración.',
+                'Pienso en ti. / Reflexiona sobre el problema. / Medita en el jardín.',
+                'pensar (ideas) / reflexionar (profundidad) / meditar (calma)',
+                '¿Qué verbo implica pensar con calma?', ['Meditar', 'Reflexionar', 'Pensar', 'Considerar'],
+                0, 'Escribe tres oraciones con pensar, reflexionar y meditar.'
+            ],
+            ['Aprender vs Estudiar vs Memorizar', 'aprender (adquirir conocimiento) / estudiar (dedicarse) / memorizar (guardar en la memoria)',
+                'Aprender es adquirir conocimiento; estudiar es dedicarse al aprendizaje; memorizar es guardar en la memoria.',
+                'Aprende español. / Estudia medicina. / Memoriza los datos.',
+                'aprender (adquirir) / estudiar (dedicarse) / memorizar (memoria)',
+                '¿Qué verbo implica guardar en la memoria?', ['Memorizar', 'Aprender', 'Estudiar', 'Repasar'],
+                0, 'Escribe tres oraciones con aprender, estudiar y memorizar.'
+            ],
+            ['Escribir vs Redactar vs Trazar', 'escribir (plasmar) / redactar (componer un texto) / trazar (dibujar)',
+                'Escribir es plasmar palabras; redactar es componer un texto; trazar es dibujar o delinear.',
+                'Escribe una carta. / Redacta un informe. / Traza un círculo.',
+                'escribir (plasmar) / redactar (componer) / trazar (dibujar)',
+                '¿Qué verbo implica dibujar?', ['Trazar', 'Escribir', 'Redactar', 'Garabatear'],
+                0, 'Escribe tres oraciones con escribir, redactar y trazar.'
+            ],
+            ['Leer vs Ojea vs Repasar', 'leer (descifrar) / ojear (mirar superficialmente) / repasar (revisar)',
+                'Leer es descifrar un texto; ojear es mirar superficialmente; repasar es revisar.',
+                'Lee el libro. / Ojea el periódico. / Repasa el tema.',
+                'leer (descifrar) / ojear (superficial) / repasar (revisar)',
+                '¿Qué verbo implica mirar superficialmente?', ['Ojear', 'Leer', 'Repasar', 'Examinar'],
+                0, 'Escribe tres oraciones con leer, ojear y repasar.'
+            ],
+            ['Dormir vs Descansar vs Reposar', 'dormir (estar en sueño) / descansar (relajarse) / reposar (estar quieto)',
+                'Dormir es estar en sueño; descansar es relajarse; reposar es estar quieto.',
+                'Duerme ocho horas. / Descansa en el sofá. / Reposa en la cama.',
+                'dormir (sueño) / descansar (relajarse) / reposar (estar quieto)',
+                '¿Qué verbo implica estar en sueño?', ['Dormir', 'Descansar', 'Reposar', 'Siesta'],
+                0, 'Escribe tres oraciones con dormir, descansar y reposar.'
+            ]
+        ];
+        b7.forEach(d => addLesson('sinonimos_matos', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: SINÓNIMOS SEGÚN CONTEXTO (71–80)
+        // ============================================================
+        const b8 = [
+            ['Bonito, Hermoso, Precioso', 'bonito (agradable) / hermoso (belleza elevada) / precioso (muy valioso)',
+                'Bonito es agradable a la vista; hermoso es belleza elevada; precioso es muy valioso o bello.',
+                'Un paisaje bonito. / Una mujer hermosa. / Un anillo precioso.',
+                'bonito (agradable) / hermoso (belleza) / precioso (valioso)',
+                '¿Qué adjetivo implica valor?', ['Precioso', 'Hermoso', 'Bonito', 'Guapo'],
+                0, 'Escribe tres oraciones con bonito, hermoso y precioso.'
+            ],
+            ['Inteligente, Listo, Sabio', 'inteligente (capacidad) / listo (astuto) / sabio (conocimiento)',
+                'Inteligente es tener capacidad mental; listo es astuto o rápido; sabio es tener mucho conocimiento.',
+                'Es un estudiante inteligente. / Es muy listo para los negocios. / Es un sabio anciano.',
+                'inteligente (capacidad) / listo (astuto) / sabio (conocimiento)',
+                '¿Qué adjetivo implica conocimiento?', ['Sabio', 'Inteligente', 'Listo', 'Agudo'],
+                0, 'Escribe tres oraciones con inteligente, listo y sabio.'
+            ],
+            ['Fuerte, Robusto, Fornido', 'fuerte (fuerza) / robusto (corpulento) / fornido (musculoso)',
+                'Fuerte es tener fuerza; robusto es corpulento; fornido es musculoso.',
+                'Es un hombre fuerte. / Un árbol robusto. / Un atleta fornido.',
+                'fuerte (fuerza) / robusto (corpulento) / fornido (musculoso)',
+                '¿Qué adjetivo implica musculatura?', ['Fornido', 'Fuerte', 'Robusto', 'Vigoroso'],
+                0, 'Escribe tres oraciones con fuerte, robusto y fornido.'
+            ],
+            ['Delgado, Flaco, Esbelto', 'delgado (poco grueso) / flaco (muy delgado) / esbelto (elegantemente delgado)',
+                'Delgado es poco grueso; flaco es muy delgado; esbelto es delgado con elegancia.',
+                'Un chico delgado. / Un animal flaco. / Una modelo esbelta.',
+                'delgado (poco grueso) / flaco (muy delgado) / esbelto (elegante)',
+                '¿Qué adjetivo implica elegancia?', ['Esbelto', 'Delgado', 'Flaco', 'Eslabón'],
+                0, 'Escribe tres oraciones con delgado, flaco y esbelto.'
+            ],
+            ['Joven, Juvenil, Mozo', 'joven (edad) / juvenil (propio de jóvenes) / mozo (joven, trabajador)',
+                'Joven es de poca edad; juvenil es propio de jóvenes; mozo es joven, a menudo trabajador.',
+                'Un hombre joven. / Una actitud juvenil. / Un mozo de cuadra.',
+                'joven (edad) / juvenil (propio) / mozo (trabajador)',
+                '¿Qué adjetivo implica ser propio de jóvenes?', ['Juvenil', 'Joven', 'Mozo', 'Jovial'],
+                0, 'Escribe tres oraciones con joven, juvenil y mozo.'
+            ],
+            ['Viejo, Anciano, Avejentado', 'viejo (edad) / anciano (muy viejo) / avejentado (que aparenta más edad)',
+                'Viejo es de mucha edad; anciano es muy viejo; avejentado es que aparenta más edad de la que tiene.',
+                'Un coche viejo. / Un anciano sabio. / Un hombre avejentado.',
+                'viejo (edad) / anciano (muy viejo) / avejentado (apariencia)',
+                '¿Qué adjetivo implica apariencia de más edad?', ['Avejentado', 'Anciano', 'Viejo', 'Decrépito'],
+                0, 'Escribe tres oraciones con viejo, anciano y avejentado.'
+            ],
+            ['Limpio, Puro, Inmaculado', 'limpio (sin suciedad) / puro (sin impurezas) / inmaculado (perfectamente limpio)',
+                'Limpio es sin suciedad; puro es sin impurezas; inmaculado es perfectamente limpio.',
+                'La ropa está limpia. / El agua es pura. / El vestido es inmaculado.',
+                'limpio (sin suciedad) / puro (sin impurezas) / inmaculado (perfecto)',
+                '¿Qué adjetivo implica pureza perfecta?', ['Inmaculado', 'Puro', 'Limpio', 'Pulcro'],
+                0, 'Escribe tres oraciones con limpio, puro y inmaculado.'
+            ],
+            ['Sucio, Mugriento, Cochino', 'sucio (con suciedad) / mugriento (muy sucio) / cochino (sucio, guarro)',
+                'Sucio es con suciedad; mugriento es muy sucio; cochino es sucio, coloquialmente.',
+                'La ropa está sucia. / El suelo está mugriento. / El cerdo es cochino (guarro).',
+                'sucio (suciedad) / mugriento (muy sucio) / cochino (coloquial)',
+                '¿Qué adjetivo es coloquial para sucio?', ['Cochino', 'Sucio', 'Mugriento', 'Cerdoso'],
+                0, 'Escribe tres oraciones con sucio, mugriento y cochino.'
+            ],
+            ['Feliz, Contento, Dichoso', 'feliz (alegría profunda) / contento (alegría moderada) / dichoso (muy feliz)',
+                'Feliz es alegría profunda; contento es alegría moderada; dichoso es muy feliz, afortunado.',
+                'Soy feliz contigo. / Estoy contento con el resultado. / Es un hombre dichoso.',
+                'feliz (profunda) / contento (moderada) / dichoso (muy feliz)',
+                '¿Qué adjetivo implica ser muy feliz?', ['Dichoso', 'Feliz', 'Contento', 'Alborozado'],
+                0, 'Escribe tres oraciones con feliz, contento y dichoso.'
+            ],
+            ['Triste, Afligido, Desconsolado', 'triste (moderado) / afligido (con pena) / desconsolado (sin consuelo)',
+                'Triste es tener tristeza; afligido es tener pena; desconsolado es sin consuelo.',
+                'Está triste por su partida. / Está afligido por la noticia. / Está desconsolado por la pérdida.',
+                'triste (moderado) / afligido (pena) / desconsolado (sin consuelo)',
+                '¿Qué adjetivo implica estar sin consuelo?', ['Desconsolado', 'Afligido', 'Triste', 'Apenado'],
+                0, 'Escribe tres oraciones con triste, afligido y desconsolado.'
+            ]
+        ];
+        b8.forEach(d => addLesson('sinonimos_contexto', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: SINÓNIMOS DE REGISTRO (81–90)
+        // ============================================================
+        const b9 = [
+            ['Casa, Hogar, Domicilio', 'casa (coloquial) / hogar (emocional) / domicilio (formal)',
+                'Casa es el lugar donde se vive; hogar tiene un valor emocional; domicilio es el término formal.',
+                'Vivo en una casa grande. / El hogar es donde está el corazón. / Su domicilio es en Madrid.',
+                'casa (coloquial) / hogar (emocional) / domicilio (formal)',
+                '¿Qué palabra tiene un valor emocional?', ['Hogar', 'Casa', 'Domicilio', 'Vivienda'],
+                0, 'Escribe tres oraciones con casa, hogar y domicilio.'
+            ],
+            ['Coche, Automóvil, Vehículo', 'coche (coloquial) / automóvil (técnico) / vehículo (genérico)',
+                'Coche es el término común; automóvil es más técnico; vehículo es genérico.',
+                'Tengo un coche nuevo. / El automóvil es eléctrico. / El vehículo está aparcado.',
+                'coche (común) / automóvil (técnico) / vehículo (genérico)',
+                '¿Qué palabra es más técnica?', ['Automóvil', 'Coche', 'Vehículo', 'Carro'],
+                0, 'Escribe tres oraciones con coche, automóvil y vehículo.'
+            ],
+            ['Comida, Alimento, Nutrimento', 'comida (cotidiano) / alimento (sustancia) / nutrimento (formal)',
+                'Comida es el término cotidiano; alimento es sustancia nutritiva; nutrimento es más formal.',
+                'La comida está deliciosa. / El alimento es esencial. / El nutrimento es necesario.',
+                'comida (cotidiano) / alimento (sustancia) / nutrimento (formal)',
+                '¿Qué palabra es más formal?', ['Nutrimento', 'Comida', 'Alimento', 'Vianda'],
+                0, 'Escribe tres oraciones con comida, alimento y nutrimento.'
+            ],
+            ['Amigo, Compañero, Colega', 'amigo (afectivo) / compañero (compañía) / colega (profesional)',
+                'Amigo es relación afectiva; compañero es de acompañamiento; colega es profesional.',
+                'Es mi mejor amigo. / Es mi compañero de clase. / Es mi colega de trabajo.',
+                'amigo (afectivo) / compañero (compañía) / colega (profesional)',
+                '¿Qué palabra implica relación profesional?', ['Colega', 'Amigo', 'Compañero', 'Confidente'],
+                0, 'Escribe tres oraciones con amigo, compañero y colega.'
+            ],
+            ['Trabajo, Empleo, Ocupación', 'trabajo (actividad) / empleo (puesto) / ocupación (actividad)',
+                'Trabajo es la actividad; empleo es el puesto; ocupación es la actividad que se realiza.',
+                'Mi trabajo es interesante. / Tengo un buen empleo. / Su ocupación es la enseñanza.',
+                'trabajo (actividad) / empleo (puesto) / ocupación (actividad)',
+                '¿Qué palabra implica un puesto?', ['Empleo', 'Trabajo', 'Ocupación', 'Labor'],
+                0, 'Escribe tres oraciones con trabajo, empleo y ocupación.'
+            ],
+            ['Estudiar, Aprender, Formarse', 'estudiar (dedicarse) / aprender (adquirir) / formarse (capacitarse)',
+                'Estudiar es dedicarse al estudio; aprender es adquirir conocimiento; formarse es capacitarse profesionalmente.',
+                'Estudia medicina. / Aprende rápido. / Se forma como profesional.',
+                'estudiar (dedicarse) / aprender (adquirir) / formarse (capacitarse)',
+                '¿Qué verbo implica capacitarse profesionalmente?', ['Formarse', 'Estudiar', 'Aprender', 'Instruirse'],
+                0, 'Escribe tres oraciones con estudiar, aprender y formarse.'
+            ],
+            ['Dinero, Capital, Fondos', 'dinero (cotidiano) / capital (económico) / fondos (financiero)',
+                'Dinero es el término cotidiano; capital es el término económico; fondos es el término financiero.',
+                'Necesito dinero. / El capital es importante. / Los fondos son limitados.',
+                'dinero (cotidiano) / capital (económico) / fondos (financiero)',
+                '¿Qué palabra es más financiera?', ['Fondos', 'Dinero', 'Capital', 'Moneda'],
+                0, 'Escribe tres oraciones con dinero, capital y fondos.'
+            ],
+            ['Político, Gobernante, Estadista', 'político (genérico) / gobernante (que gobierna) / estadista (político de prestigio)',
+                'Político es el término genérico; gobernante es quien gobierna; estadista es político de prestigio.',
+                'Es un político conocido. / El gobernante tomó medidas. / Es un gran estadista.',
+                'político (genérico) / gobernante (gobierna) / estadista (prestigio)',
+                '¿Qué palabra implica prestigio político?', ['Estadista', 'Político', 'Gobernante', 'Mandatario'],
+                0, 'Escribe tres oraciones con político, gobernante y estadista.'
+            ],
+            ['Muerte, Fallecimiento, Óbito', 'muerte (general) / fallecimiento (formal) / óbito (muy formal)',
+                'Muerte es el término general; fallecimiento es más formal; óbito es muy formal o administrativo.',
+                'La muerte es inevitable. / El fallecimiento del presidente. / El óbito fue registrado.',
+                'muerte (general) / fallecimiento (formal) / óbito (muy formal)',
+                '¿Qué palabra es muy formal?', ['Óbito', 'Muerte', 'Fallecimiento', 'Defunción'],
+                0, 'Escribe tres oraciones con muerte, fallecimiento y óbito.'
+            ],
+            ['Enfermedad, Dolencia, Afección', 'enfermedad (general) / dolencia (leve) / afección (técnica)',
+                'Enfermedad es el término general; dolencia es afección leve; afección es término técnico-médico.',
+                'La enfermedad es grave. / Tiene una dolencia leve. / La afección pulmonar.',
+                'enfermedad (general) / dolencia (leve) / afección (técnica)',
+                '¿Qué palabra es más técnica?', ['Afección', 'Enfermedad', 'Dolencia', 'Quebranto'],
+                0, 'Escribe tres oraciones con enfermedad, dolencia y afección.'
+            ]
+        ];
+        b9.forEach(d => addLesson('sinonimos_registro', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: USOS EN REDACCIÓN (91–100)
+        // ============================================================
+        const b10 = [
+            ['Precisión léxica', 'Elegir la palabra exacta según el matiz',
+                'En la redacción, es importante elegir la palabra que exprese con precisión el matiz deseado, evitando ambigüedades.',
+                'Usar "feliz" en lugar de "contento" cuando se quiere expresar alegría profunda.',
+                'Precisión en la elección de palabras',
+                '¿Qué ayuda la precisión léxica en la redacción?', ['Evita ambigüedades', 'Creatividad', 'Complejidad',
+                    'Subjetividad'
+                ], 0, 'Escribe una oración donde uses "feliz" con precisión.'
+            ],
+            ['Variedad léxica', 'Usar sinónimos para evitar repeticiones',
+                'Usar sinónimos evita la repetición y enriquece el texto, siempre que se mantenga la precisión.',
+                'En lugar de repetir "casa", usar "hogar" o "vivienda".',
+                'Variedad léxica',
+                '¿Qué evita la variedad léxica?', ['Repeticiones', 'Claridad', 'Precisión', 'Concisión'],
+                0, 'Reescribe una frase usando sinónimos para evitar repeticiones.'
+            ],
+            ['Intensidad en la redacción', 'Elegir la palabra con la intensidad adecuada',
+                'Seleccionar la palabra que exprese el grado de intensidad deseado es clave para transmitir el mensaje correcto.',
+                'Usar "eufórico" en lugar de "contento" si se quiere expresar alegría extrema.',
+                'Intensidad en la elección de palabras',
+                '¿Qué permite elegir la palabra con la intensidad adecuada?', ['Transmitir el mensaje correcto',
+                    'Confundir', 'Aburrir', 'Complejidad'
+                ], 0, 'Escribe una oración usando "aterrado" en lugar de "asustado".'
+            ],
+            ['Registro en la redacción', 'Usar el registro adecuado según el contexto',
+                'El registro (formal, coloquial, técnico) determina la elección de palabras en la redacción.',
+                'Usar "domicilio" en un texto formal y "casa" en uno coloquial.',
+                'Registro en la redacción',
+                '¿Qué determina el registro en la redacción?', ['El contexto', 'La creatividad', 'La longitud',
+                    'La subjetividad'
+                ], 0, 'Escribe una misma idea en registro formal y coloquial.'
+            ],
+            ['Parónimos en la redacción', 'Evitar confusiones entre parónimos',
+                'Es importante no confundir parónimos (palabras que suenan similar pero tienen significado distinto) en la redacción.',
+                'No confundir "absolver" con "absorber".',
+                'Parónimos en la redacción',
+                '¿Qué hay que evitar con los parónimos?', ['Confusiones', 'Variedad', 'Precisión', 'Claridad'],
+                0, 'Escribe una oración con "absolver" y otra con "absorber".'
+            ],
+            ['Sinónimos en la redacción académica', 'Usar sinónimos precisos en textos académicos',
+                'En la redacción académica, los sinónimos deben ser precisos y evitar ambigüedades.',
+                'Usar "fallecimiento" en lugar de "muerte" en un texto formal.',
+                'Sinónimos académicos',
+                '¿Qué se busca en la redacción académica con los sinónimos?', ['Precisión', 'Variedad', 'Creatividad',
+                    'Subjetividad'
+                ], 0, 'Escribe una frase académica usando "fallecimiento".'
+            ],
+            ['Sinónimos en la redacción publicitaria', 'Usar sinónimos persuasivos en publicidad',
+                'En publicidad, los sinónimos se eligen por su poder persuasivo y atractivo.',
+                'Usar "precioso" en lugar de "bonito" para un producto.',
+                'Sinónimos publicitarios',
+                '¿Qué se busca en publicidad con los sinónimos?', ['Persuasión', 'Precisión', 'Variedad', 'Claridad'],
+                0, 'Escribe un eslogan publicitario usando "precioso".'
+            ],
+            ['Sinónimos en la redacción literaria', 'Usar sinónimos con valor estético en literatura',
+                'En literatura, los sinónimos se eligen por su valor estético, ritmo y musicalidad.',
+                'Usar "contemplar" en lugar de "mirar" en un texto poético.',
+                'Sinónimos literarios',
+                '¿Qué se busca en literatura con los sinónimos?', ['Valor estético', 'Precisión', 'Variedad',
+                    'Claridad'
+                ], 0, 'Escribe un verso usando "contemplar".'
+            ],
+            ['Sinónimos en la redacción periodística', 'Usar sinónimos claros en periodismo',
+                'En periodismo, los sinónimos deben ser claros y precisos para no confundir al lector.',
+                'Usar "falleció" en lugar de "murió" en una noticia.',
+                'Sinónimos periodísticos',
+                '¿Qué se busca en periodismo con los sinónimos?', ['Claridad', 'Persuasión', 'Creatividad',
+                    'Subjetividad'
+                ], 0, 'Escribe una noticia usando "falleció".'
+            ],
+            ['Revisión general: matiz e intensidad', 'Resumen de parónimos y sinónimos',
+                'Los parónimos son palabras de sonido similar pero significado distinto; los sinónimos son palabras de significado similar pero con diferentes matices e intensidad.',
+                'Parónimos: absolver/absorber. Sinónimos: feliz/contento/eufórico.',
+                'Resumen de parónimos y sinónimos',
+                '¿Qué son los parónimos?', ['Palabras de sonido similar pero significado distinto',
+                    'Palabras de significado similar', 'Palabras opuestas', 'Palabras sin relación'
+                ], 0, 'Escribe un texto que incluya un par de parónimos y una escala de sinónimos.'
+            ]
+        ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Palabras: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Matiz e Intensidad');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Parónimos/Sinónimos cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

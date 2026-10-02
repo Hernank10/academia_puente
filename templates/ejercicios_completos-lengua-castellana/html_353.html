@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>MARS MISSION 100 · 100 Técnicas · 100 Flashcards · Entrenamiento para Astronautas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:opsz,wght@14..32,300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+        body {
+            background: linear-gradient(135deg, #0a0f1e 0%, #0f172a 100%);
+            font-family: 'Inter', sans-serif;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        h1, h2, h3, h4, .title-space {
+            font-family: 'Orbitron', monospace;
+            letter-spacing: 1px;
+        }
+        .hero-space {
+            background: linear-gradient(135deg, #0b1120 0%, #1a2a4a 100%);
+            border-bottom: 3px solid #fbbf24;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-space::before {
+            content: "🚀🛸🌍⭐";
+            font-size: 100px;
+            opacity: 0.08;
+            position: absolute;
+            bottom: 0;
+            right: 20px;
+            pointer-events: none;
+        }
+        .card-flash {
+            background: rgba(30, 41, 59, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #fbbf2433;
+            border-radius: 32px;
+            transition: all 0.3s ease;
+            box-shadow: 0 20px 35px -10px rgba(0,0,0,0.5);
+        }
+        .card-flash:hover {
+            transform: translateY(-3px);
+            border-color: #fbbf24;
+            box-shadow: 0 25px 40px -12px rgba(251,191,36,0.2);
+        }
+        .badge-mars {
+            background: #fbbf2420;
+            color: #fbbf24;
+            border-radius: 60px;
+            padding: 6px 16px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            border-left: 3px solid #fbbf24;
+        }
+        .btn-space {
+            background: #fbbf24;
+            border: none;
+            color: #0f172a;
+            font-weight: bold;
+            border-radius: 40px;
+            padding: 8px 20px;
+            transition: 0.2s;
+        }
+        .btn-space:hover {
+            background: #ffd966;
+            transform: scale(1.02);
+            box-shadow: 0 0 15px #fbbf2477;
+        }
+        .btn-outline-space {
+            background: transparent;
+            border: 1px solid #fbbf24;
+            color: #fbbf24;
+            border-radius: 40px;
+        }
+        .btn-outline-space:hover {
+            background: #fbbf2422;
+        }
+        .progress-bar-space {
+            background: #fbbf24;
+            box-shadow: 0 0 8px #fbbf24;
+        }
+        .syntax-panel {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 12px;
+            font-size: 0.75rem;
+            border-left: 4px solid #fbbf24;
+        }
+        .word-exercise {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        .word-card {
+            background: #fbbf24;
+            color: #0f172a;
+            font-weight: bold;
+            padding: 8px 16px;
+            margin: 5px;
+            display: inline-block;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .word-card:hover {
+            transform: scale(1.05);
+            background: #ffd966;
+        }
+        footer {
+            background: #0f172acc;
+            backdrop-filter: blur(5px);
+        }
+        .dashboard-stat {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 15px;
+            text-align: center;
+        }
+        .tech-item {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .tech-item:hover {
+            background: #2d3a5e;
+            transform: translateX(5px);
+        }
+        .active-card {
+            border: 2px solid #fbbf24;
+            box-shadow: 0 0 20px rgba(251,191,36,0.3);
+        }
+        .flashcard-number {
+            font-size: 0.8rem;
+            background: #fbbf2420;
+            border-radius: 20px;
+            padding: 4px 12px;
+        }
+        @media (max-width: 768px) {
+            .word-card { padding: 6px 12px; font-size: 0.8rem; }
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #fbbf24; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="hero-space py-4">
+    <div class="container text-center">
+        <i class="fas fa-rocket fa-3x mb-2" style="color: #fbbf24;"></i>
+        <h1 class="display-5 fw-bold title-space">MARS MISSION 100</h1>
+        <p class="lead">100 Técnicas · 100 Flashcards · Entrenamiento de Comunicación para Astronautas</p>
+        <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <span class="badge-mars"><i class="fas fa-brain"></i> Lectura crítica</span>
+            <span class="badge-mars"><i class="fas fa-pen-fancy"></i> Escritura técnica</span>
+            <span class="badge-mars"><i class="fas fa-chart-line"></i> Análisis sintáctico</span>
+            <span class="badge-mars"><i class="fas fa-database"></i> Progreso local</span>
+            <span class="badge-mars"><i class="fas fa-layer-group"></i> 100 Flashcards</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <!-- Dashboard -->
+    <div class="row g-3 mb-4" id="dashboardStats">
+        <div class="col-md-3 col-6">
+            <div class="dashboard-stat">
+                <i class="fas fa-check-circle fa-2x text-success"></i>
+                <h3 id="completedCount">0</h3>
+                <small>Técnicas completadas</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="dashboard-stat">
+                <i class="fas fa-book-open fa-2x text-warning"></i>
+                <h3>100</h3>
+                <small>Total técnicas</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="dashboard-stat">
+                <i class="fas fa-tachometer-alt fa-2x text-info"></i>
+                <div class="progress mt-2" style="height: 8px;">
+                    <div id="progressBar" class="progress-bar progress-bar-space" role="progressbar" style="width: 0%"></div>
+                </div>
+                <small id="progressPercent">0% completado</small>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="dashboard-stat">
+                <i class="fas fa-file-alt fa-2x text-primary"></i>
+                <h3 id="exampleCount">0</h3>
+                <small>Ejemplos propios</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Columna izquierda: Flashcard actual -->
+        <div class="col-lg-7">
+            <div class="card-flash p-4" id="flashcardContainer">
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <h3 class="title-space"><i class="fas fa-robot"></i> Flashcard <span id="currentTechId">1</span>/100</h3>
+                    <div>
+                        <button class="btn btn-outline-space btn-sm" id="prevBtn"><i class="fas fa-arrow-left"></i> Anterior</button>
+                        <button class="btn btn-outline-space btn-sm ms-2" id="nextBtn">Siguiente <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <div id="flashContent"></div>
+                <div class="mt-3 d-flex gap-2 justify-content-end flex-wrap">
+                    <button class="btn btn-space" id="markCompleteBtn"><i class="fas fa-check"></i> Marcar completada</button>
+                    <button class="btn btn-outline-space" id="exportExamplesBtn"><i class="fas fa-download"></i> Exportar bitácora</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Columna derecha: Lista de 100 técnicas -->
+        <div class="col-lg-5">
+            <div class="card-flash p-3">
+                <div class="d-flex gap-2 mb-3">
+                    <input type="text" class="form-control bg-dark text-white border-0" id="searchInput" placeholder="Buscar técnica (título ES/EN)...">
+                    <button class="btn btn-space" id="searchBtn"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="mb-2 text-center">
+                    <span class="flashcard-number"><i class="fas fa-list"></i> Lista completa: 100 técnicas</span>
+                </div>
+                <div id="techList" style="max-height: 500px; overflow-y: auto;">
+                    <!-- lista dinámica -->
+                </div>
+                <div class="mt-2 text-center">
+                    <button class="btn btn-sm btn-outline-space" id="resetProgressBtn"><i class="fas fa-sync-alt"></i> Reiniciar progreso</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="text-center py-3 mt-4">
+    <p><i class="fas fa-microphone-alt"></i> 100 técnicas · 100 flashcards · Datos guardados localmente en IndexedDB · Entrenamiento para misiones a Marte</p>
+</footer>
+
+<script>
+    // ============================== GENERACIÓN DE 100 TÉCNICAS ÚNICAS ==============================
+    const temasEspaciales = [
+        "redacción de informes de navegación", "comunicación por radio con Tierra", "registro de incidencias técnicas",
+        "lectura crítica de protocolos de emergencia", "argumentación para cambios de trayectoria",
+        "descripción de fenómenos astronómicos", "análisis de datos de sensores", "escritura de bitácora de vuelo",
+        "inferencia en telemetría", "detección de falacias en comunicaciones", "cohesión en reportes multidisciplinarios",
+        "parafraseo de órdenes de control", "resumen de experimentos", "citas de manuales técnicos espaciales",
+        "elaboración de hipótesis científicas", "contraargumentación para planes alternativos", "protocolos EVA",
+        "gestión de recursos a bordo", "comunicación con centros de control", "registro de incidentes médicos",
+        "descripción de experimentos en microgravedad", "análisis de meteorología espacial", "coordinación de tripulación",
+        "reporte de anomalías estructurales", "planificación de maniobras orbitales"
+    ];
+
+    function generarTecnicasCompletas() {
+        let tecnicas = [];
+        for (let i = 0; i < 100; i++) {
+            let tema = temasEspaciales[i % temasEspaciales.length];
+            let categoria = i % 4;
+            let variante = Math.floor(i / 4) + 1;
+            
+            let tituloEs = "", tituloEn = "", explicacionEs = "", explicacionEn = "", ejemploEs = "", ejemploEn = "";
+            
+            if (categoria === 0) {
+                tituloEs = `FC-${i+1}: Lectura crítica - ${tema} (v${variante})`;
+                tituloEn = `FC-${i+1}: Critical reading - ${tema} (v${variante})`;
+                explicacionEs = `En la nave a Marte, leer críticamente ${tema} permite identificar suposiciones ocultas, verificar fuentes y tomar decisiones informadas. Esta técnica es esencial para evitar errores durante la misión.`;
+                explicacionEn = `On a Mars spacecraft, critically reading ${tema} allows identifying hidden assumptions, verifying sources, and making informed decisions. This technique is essential to avoid errors during the mission.`;
+                ejemploEs = `Al revisar el protocolo de despresurización #${variante}, la astronauta detectó una omisión crítica: no se especificaba el tiempo máximo de respuesta. Reportó el hallazgo al comandante, evitando un posible incidente.`;
+                ejemploEn = `When reviewing depressurization protocol #${variante}, the astronaut detected a critical omission: maximum response time was not specified. She reported the finding to the commander, preventing a possible incident.`;
+            } 
+            else if (categoria === 1) {
+                tituloEs = `FC-${i+1}: Comunicación escrita - ${tema}`;
+                tituloEn = `FC-${i+1}: Written communication - ${tema}`;
+                explicacionEs = `La claridad en ${tema} es vital durante la misión. Usa oraciones cortas (máximo 15 palabras), evita pronombres ambiguos y estructura la información en orden de prioridad operativa.`;
+                explicacionEn = `Clarity in ${tema} is vital during the mission. Use short sentences (max 15 words), avoid ambiguous pronouns, and structure information in operational priority order.`;
+                ejemploEs = `❌ Incorrecto: "El panel de la izquierda presenta una anomalía que debería ser revisada." ✅ Correcto: "Panel solar 3 (módulo izquierdo): eficiencia -15%. Revisar antes de EVA del jueves."`;
+                ejemploEn = `❌ Incorrect: "The panel on the left has an anomaly that should be checked." ✅ Correct: "Solar panel 3 (left module): efficiency -15%. Check before Thursday's EVA."`;
+            }
+            else if (categoria === 2) {
+                tituloEs = `FC-${i+1}: Inferencia en datos - ${tema}`;
+                tituloEn = `FC-${i+1}: Data inference - ${tema}`;
+                explicacionEs = `Para ${tema}, conecta lecturas anómalas con posibles causas: fluctuaciones de temperatura, radiación cósmica, consumo energético o mal funcionamiento de sensores. Documenta cada inferencia.`;
+                explicacionEn = `For ${tema}, connect anomalous readings with possible causes: temperature fluctuations, cosmic radiation, energy consumption, or sensor malfunction. Document each inference.`;
+                ejemploEs = `Dato observado: Consumo de oxígeno aumentó 5% sin cambios en actividad física. Inferencia: Posible fuga microscópica o sensor necesita recalibración. Acción: Verificar sellos del módulo y ejecutar autodiagnóstico.`;
+                ejemploEn = `Observed data: Oxygen consumption increased 5% with no changes in physical activity. Inference: Possible microscopic leak or sensor needs recalibration. Action: Check module seals and run self-diagnostic.`;
+            }
+            else {
+                tituloEs = `FC-${i+1}: Argumentación - ${tema}`;
+                tituloEn = `FC-${i+1}: Argumentation - ${tema}`;
+                explicacionEs = `Modelo Toulmin aplicado a ${tema}: Tesis (acción propuesta), Evidencia (datos), Garantía (principio técnico), Respaldo (normativa) y Refutación (escenarios contrarios).`;
+                explicacionEn = `Toulmin model applied to ${tema}: Claim (proposed action), Evidence (data), Warrant (technical principle), Backing (regulations), and Rebuttal (counter-scenarios).`;
+                ejemploEs = `Tesis: "Retrasar EVA 24 horas por tormenta solar." Evidencia: "Flujo de protones aumentó 300%." Garantía: "Exposición excede límite seguro." Refutación: "La ventana de aterrizaje se reduce." Respuesta: "Ajustamos órbita de espera 12 horas."`;
+                ejemploEn = `Claim: "Delay EVA 24 hours due to solar storm." Evidence: "Proton flux increased 300%." Warrant: "Exposure exceeds safe limit." Rebuttal: "Landing window narrows." Response: "Adjust waiting orbit by 12 hours."`;
+            }
+            
+            tecnicas.push({ 
+                id: i, 
+                tituloEs, tituloEn, 
+                explicacionEs, explicacionEn, 
+                ejemploEs, ejemploEn,
+                categoria
+            });
+        }
+        return tecnicas;
+    }
+
+    // ============================== INDEXEDDB ==============================
+    let db = null;
+    let tecnicasGlobal = generarTecnicasCompletas();
+    let currentIndex = 0;
+
+    function abrirBaseDatos() {
+        return new Promise((resolve, reject) => {
+            const request = indexedDB.open("MisionMarte100DB", 2);
+            request.onerror = () => reject(request.error);
+            request.onsuccess = () => {
+                db = request.result;
+                resolve(db);
+            };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                if (!db.objectStoreNames.contains("progreso")) {
+                    db.createObjectStore("progreso", { keyPath: "id" });
+                }
+                if (!db.objectStoreNames.contains("ejemplos")) {
+                    db.createObjectStore("ejemplos", { keyPath: "idTecnica" });
+                }
+            };
+        });
+    }
+
+    async function guardarProgreso(completadas) {
+        const tx = db.transaction("progreso", "readwrite");
+        const store = tx.objectStore("progreso");
+        await store.put({ id: "completadas", value: completadas });
+    }
+
+    async function cargarProgreso() {
+        const tx = db.transaction("progreso", "readonly");
+        const store = tx.objectStore("progreso");
+        const res = await store.get("completadas");
+        return res ? res.value : [];
+    }
+
+    async function guardarEjemplo(idTecnica, ejemploEs, ejemploEn) {
+        const tx = db.transaction("ejemplos", "readwrite");
+        const store = tx.objectStore("ejemplos");
+        await store.put({ idTecnica: idTecnica, ejemploEs, ejemploEn });
+    }
+
+    async function cargarEjemplos() {
+        const tx = db.transaction("ejemplos", "readonly");
+        const store = tx.objectStore("ejemplos");
+        const all = await store.getAll();
+        const map = new Map();
+        all.forEach(item => map.set(item.idTecnica, { es: item.ejemploEs, en: item.ejemploEn }));
+        return map;
+    }
+
+    async function resetearProgreso() {
+        await guardarProgreso([]);
+        const tx = db.transaction("ejemplos", "readwrite");
+        const store = tx.objectStore("ejemplos");
+        await store.clear();
+        await actualizarDashboard();
+        await renderTechList();
+        await renderFlashcard();
+    }
+
+    // ============================== ANÁLISIS SINTÁCTICO ==============================
+    function analizarSintaxis(texto) {
+        if (!texto.trim()) return { palabras: 0, oraciones: 0, largas: 0, media: 0, leg: "N/A" };
+        let palabras = texto.toLowerCase().match(/\b\w+\b/g) || [];
+        let oraciones = texto.split(/[.!?]+/).filter(s => s.trim().length > 0);
+        let largas = palabras.filter(p => p.length > 6).length;
+        let media = (palabras.length / (oraciones.length || 1)).toFixed(1);
+        let leg = media > 20 ? "Muy complejo" : media > 15 ? "Complejo" : media > 10 ? "Aceptable" : "Muy claro";
+        return { palabras: palabras.length, oraciones: oraciones.length, largas, media, leg };
+    }
+
+    // ============================== EJERCICIO ORDENAR PALABRAS ==============================
+    let fraseCorrectaActual = "";
+
+    function iniciarEjercicio(frase) {
+        let palabras = frase.match(/\b\w+\b/g) || [];
+        if (palabras.length < 2) return null;
+        let desorden = [...palabras];
+        for (let i = desorden.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [desorden[i], desorden[j]] = [desorden[j], desorden[i]];
+        }
+        fraseCorrectaActual = frase;
+        return desorden;
+    }
+
+    function verificarOrden(respuesta) {
+        let normalizar = (s) => s.toLowerCase().replace(/[^\w\s]/g, '').trim();
+        let respPalabras = normalizar(respuesta).split(/\s+/);
+        let origPalabras = normalizar(fraseCorrectaActual).split(/\s+/);
+        return JSON.stringify(respPalabras) === JSON.stringify(origPalabras);
+    }
+
+    // ============================== RENDER FLASHCARD ==============================
+    async function renderFlashcard() {
+        let tec = tecnicasGlobal[currentIndex];
+        let completadas = await cargarProgreso();
+        let ejemplosMap = await cargarEjemplos();
+        let ejemploPersonal = ejemplosMap.get(currentIndex);
+        let isCompleted = completadas.includes(currentIndex);
+        
+        document.getElementById("currentTechId").innerHTML = `${currentIndex+1}`;
+        
+        let html = `
+            <div class="mb-3 d-flex justify-content-between align-items-center">
+                <span class="badge-mars">${isCompleted ? '✅ Completada' : '🌍 No completada'}</span>
+                <span class="flashcard-number"><i class="fas fa-hashtag"></i> Flashcard ${currentIndex+1}/100</span>
+            </div>
+            <h4 class="title-space text-warning">🇪🇸 ${tec.tituloEs}</h4>
+            <h5 class="text-info mb-3">🇺🇸 ${tec.tituloEn}</h5>
+            
+            <div class="syntax-panel mb-3">
+                <strong><i class="fas fa-chart-line"></i> Análisis sintáctico del ejemplo:</strong><br>
+                <span id="syntaxDisplay"></span>
+            </div>
+            
+            <button class="btn btn-outline-space btn-sm mb-3" id="toggleTheoryBtn"><i class="fas fa-eye"></i> Ver teoría completa</button>
+            <div id="theoryPanel" style="display:none;" class="mt-2 p-3 bg-dark rounded mb-3">
+                <p><strong>📘 Explicación:</strong> ${tec.explicacionEs}</p>
+                <p><strong>💡 Ejemplo:</strong> ${tec.ejemploEs}</p>
+                <hr class="border-secondary">
+                <p><strong>📘 Explanation:</strong> ${tec.explicacionEn}</p>
+                <p><strong>💡 Example:</strong> ${tec.ejemploEn}</p>
+            </div>
+            
+            <div class="word-exercise mt-3">
+                <h6><i class="fas fa-puzzle-piece"></i> 🎯 Ejercicio: Ordena las palabras</h6>
+                <div id="palabrasContainer" class="mb-2"></div>
+                <input type="text" id="respuestaOrden" class="form-control bg-dark text-white mt-2" placeholder="Escribe la frase ordenada...">
+                <button id="verificarBtn" class="btn btn-space btn-sm mt-2">Verificar orden</button>
+                <div id="feedbackEj" class="mt-2"></div>
+            </div>
+            
+            <div class="mt-3">
+                <h6><i class="fas fa-pen-nib"></i> 📝 Mi ejemplo personal (bitácora):</h6>
+                <textarea id="miEjemploEs" class="form-control bg-dark text-white mb-2" rows="2" placeholder="Escribe tu propio ejemplo aplicando esta técnica...">${ejemploPersonal?.es || ''}</textarea>
+                <textarea id="miEjemploEn" class="form-control bg-dark text-white mb-2" rows="2" placeholder="Write your own example applying this technique...">${ejemploPersonal?.en || ''}</textarea>
+                <button id="guardarEjemploBtn" class="btn btn-outline-space btn-sm w-100">💾 Guardar en mi bitácora</button>
+            </div>
+        `;
+        
+        document.getElementById("flashContent").innerHTML = html;
+        
+        // Análisis sintáctico
+        let analisis = analizarSintaxis(tec.ejemploEs);
+        document.getElementById("syntaxDisplay").innerHTML = `📊 Palabras: ${analisis.palabras} | Oraciones: ${analisis.oraciones} | Palabras >6 letras: ${analisis.largas} | Longitud media: ${analisis.media} | Legibilidad: ${analisis.leg}`;
+        
+        // Ejercicio
+        let desorden = iniciarEjercicio(tec.ejemploEs);
+        if (desorden && desorden.length > 1) {
+            let container = document.getElementById("palabrasContainer");
+            container.innerHTML = desorden.map(p => `<span class="word-card">${p}</span>`).join(' ');
+        } else {
+            document.getElementById("palabrasContainer").innerHTML = '<p class="text-muted">Frase muy corta para ejercitar.</p>';
+        }
+        
+        // Eventos
+        document.getElementById("toggleTheoryBtn").onclick = () => {
+            let panel = document.getElementById("theoryPanel");
+            panel.style.display = panel.style.display === "none" ? "block" : "none";
+        };
+        
+        document.getElementById("verificarBtn").onclick = () => {
+            let respuesta = document.getElementById("respuestaOrden").value;
+            let correcto = verificarOrden(respuesta);
+            let fb = document.getElementById("feedbackEj");
+            if (correcto) {
+                fb.innerHTML = '<span class="text-success">✅ ¡Excelente! Has ordenado correctamente el mensaje. Misión adelante.</span>';
+            } else {
+                fb.innerHTML = `<span class="text-danger">❌ Incorrecto. El mensaje correcto era: "${fraseCorrectaActual}"</span>`;
+            }
+        };
+        
+        document.getElementById("guardarEjemploBtn").onclick = async () => {
+            let es = document.getElementById("miEjemploEs").value;
+            let en = document.getElementById("miEjemploEn").value;
+            if (es.trim() || en.trim()) {
+                await guardarEjemplo(currentIndex, es, en);
+                await actualizarDashboard();
+                alert("✅ Ejemplo guardado en tu bitácora personal");
+            } else {
+                alert("✍️ Escribe al menos un ejemplo (español o inglés)");
+            }
+        };
+    }
+
+    async function marcarCompletada() {
+        let completadas = await cargarProgreso();
+        if (!completadas.includes(currentIndex)) {
+            completadas.push(currentIndex);
+            await guardarProgreso(completadas);
+            await actualizarDashboard();
+            await renderTechList();
+            await renderFlashcard();
+        }
+    }
+
+    async function actualizarDashboard() {
+        let completadas = await cargarProgreso();
+        let ejemplosMap = await cargarEjemplos();
+        document.getElementById("completedCount").innerText = completadas.length;
+        let porcentaje = (completadas.length / 100) * 100;
+        document.getElementById("progressBar").style.width = `${porcentaje}%`;
+        document.getElementById("progressPercent").innerHTML = `${Math.round(porcentaje)}% completado`;
+        document.getElementById("exampleCount").innerText = ejemplosMap.size;
+    }
+
+    async function renderTechList(filtro = "") {
+        let completadas = await cargarProgreso();
+        let filtradas = tecnicasGlobal.filter(t => !filtro || t.tituloEs.toLowerCase().includes(filtro) || t.tituloEn.toLowerCase().includes(filtro));
+        let html = filtradas.map(t => `
+            <div class="tech-item" data-id="${t.id}">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <i class="fas ${completadas.includes(t.id) ? 'fa-check-circle text-success' : 'fa-circle text-secondary'} me-2"></i>
+                        <strong>#${t.id+1}</strong> ${t.tituloEs.substring(0, 55)}${t.tituloEs.length > 55 ? '...' : ''}
+                    </div>
+                    <i class="fas fa-chevron-right text-warning"></i>
+                </div>
+            </div>
+        `).join('');
+        document.getElementById("techList").innerHTML = html || '<p class="text-center">No se encontraron técnicas</p>';
+        document.querySelectorAll(".tech-item").forEach(el => {
+            el.addEventListener("click", () => {
+                currentIndex = parseInt(el.dataset.id);
+                renderFlashcard();
+            });
+        });
+    }
+
+    async function exportarBitacora() {
+        let ejemplosMap = await cargarEjemplos();
+        let completadas = await cargarProgreso();
+        let texto = "🚀 BITÁCORA DEL ASTRONAUTA - MISIÓN A MARTE 🚀\n";
+        texto += "=".repeat(60) + "\n";
+        texto += `Fecha de exportación: ${new Date().toLocaleString()}\n`;
+        texto += `Técnicas completadas: ${completadas.length}/100 (${Math.round((completadas.length/100)*100)}%)\n`;
+        texto += `Ejemplos registrados: ${ejemplosMap.size}\n`;
+        texto += "=".repeat(60) + "\n\n";
+        
+        for (let [id, ej] of ejemplosMap.entries()) {
+            let tec = tecnicasGlobal[id];
+            texto += `📖 FLASHCARD ${id+1}: ${tec.tituloEs}\n`;
+            texto += `─".repeat(40)}\n`;
+            texto += `📝 Mi ejemplo en español:\n${ej.es || "(No escrito)"}\n\n`;
+            texto += `✍️ My example in English:\n${ej.en || "(Not written)"}\n\n`;
+            texto += "-".repeat(50) + "\n\n";
+        }
+        
+        let blob = new Blob([texto], { type: "text/plain" });
+        let a = document.createElement("a");
+        a.href = URL.createObjectURL(blob);
+        a.download = `bitacora_marte_${new Date().toISOString().slice(0,19).replace(/:/g, '-')}.txt`;
+        a.click();
+        URL.revokeObjectURL(a.href);
+        alert("✅ Bitácora exportada exitosamente");
+    }
+
+    async function init() {
+        await abrirBaseDatos();
+        await actualizarDashboard();
+        await renderTechList();
+        await renderFlashcard();
+        
+        document.getElementById("nextBtn").onclick = () => { currentIndex = (currentIndex + 1) % 100; renderFlashcard(); };
+        document.getElementById("prevBtn").onclick = () => { currentIndex = (currentIndex - 1 + 100) % 100; renderFlashcard(); };
+        document.getElementById("markCompleteBtn").onclick = marcarCompletada;
+        document.getElementById("exportExamplesBtn").onclick = exportarBitacora;
+        document.getElementById("searchBtn").onclick = () => { renderTechList(document.getElementById("searchInput").value.toLowerCase()); };
+        document.getElementById("resetProgressBtn").onclick = async () => { if(confirm("⚠️ ¿Reiniciar todo el progreso? Esta acción no se puede deshacer.")) await resetearProgreso(); };
+        document.getElementById("searchInput").addEventListener("keyup", (e) => { if(e.key === "Enter") renderTechList(e.target.value.toLowerCase()); });
+    }
+    
+    init();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

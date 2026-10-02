@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📝 Flota Ensayística · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">📝 FLOTA ENSAYÍSTICA<small>100 TÉCNICAS · ENSAYO</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="clasicos" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Clásicos <span class="badge-personaje bg-dorado">Fundadores</span></a>
+        <a class="nav-link" data-section="ilustracion" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Ilustración <span class="badge-personaje bg-azul">Crítica</span></a>
+        <a class="nav-link" data-section="romanticos" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Románticos <span class="badge-personaje bg-verde">Personal</span></a>
+        <a class="nav-link" data-section="modernos" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Modernos <span class="badge-personaje bg-purpura">Literario</span></a>
+        <a class="nav-link" data-section="contemporaneos" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Contemporáneos <span class="badge-personaje bg-rojo">Actual</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">📝</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">El arte de pensar</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> El arte del ensayo</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un período del ensayo:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Clásicos</strong> – Fundadores: Montaigne, Bacon, Pascal, Locke, Hume.</li>
+                    <li><strong style="color:var(--neon-azul);">Ilustración</strong> – Ensayo crítico: Voltaire, Rousseau, Kant, Diderot, Johnson.</li>
+                    <li><strong style="color:var(--neon-verde);">Románticos</strong> – Ensayo personal: Emerson, Thoreau, Carlyle, Hazlitt, Lamb.</li>
+                    <li><strong style="color:var(--neon-purpura);">Modernos</strong> – Ensayo literario: Woolf, Orwell, Borges, Chesterton, Camus.</li>
+                    <li><strong style="color:var(--neon-rojo);">Contemporáneos</strong> – Ensayo actual: Didion, Hitchens, Sontag, Eco, Vargas Llosa.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-clasicos" class="section-content" style="display:none;"></div>
+        <div id="section-ilustracion" class="section-content" style="display:none;"></div>
+        <div id="section-romanticos" class="section-content" style="display:none;"></div>
+        <div id="section-modernos" class="section-content" style="display:none;"></div>
+        <div id="section-contemporaneos" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    clasicos: {
+        nombre: "Clásicos", color: "dorado", icono: "bi-robot",
+        especialidad: "Fundadores del ensayo: Montaigne, Bacon, Pascal, Locke, Hume",
+        tecnicas: [
+            { titulo: "El ensayo como diálogo con uno mismo", teoria: "El ensayo es un género de introspección, donde el autor dialoga consigo mismo para comprenderse.", ejemplo: "Montaigne escribía ensayos para conocerse mejor, y su 'Yo' era el centro de toda su obra.", ejercicio: "Escribe un ensayo breve sobre un conflicto interno.", reto: "Escribe un ensayo donde te preguntes '¿Quién soy?'" },
+            { titulo: "El ensayo como ejercicio de escepticismo", teoria: "El ensayo cuestiona todo, incluso las certezas más sólidas, para buscar una verdad provisional.", ejemplo: "El escepticismo de Montaigne es radical: '¿Qué sé yo?' es su pregunta fundamental.", ejercicio: "Escribe un ensayo cuestionando una creencia que tengas.", reto: "Escribe un ensayo que termine con una pregunta abierta." },
+            { titulo: "El ensayo como viaje de la mente", teoria: "El ensayo es un viaje intelectual que parte de una idea y la desarrolla hasta llegar a una conclusión.", ejemplo: "La metáfora de Locke del entendimiento como 'tabla rasa' es un viaje de la mente.", ejercicio: "Escribe un ensayo que comience con una idea y la desarrolle.", reto: "Escribe un ensayo que sea un viaje desde el principio hasta el final." },
+            { titulo: "El ensayo como aforismo", teoria: "El ensayo puede condensarse en aforismos, pequeñas verdades que iluminan la experiencia.", ejemplo: "Los aforismos de Pascal en sus 'Pensamientos' son una forma concentrada de ensayo.", ejercicio: "Escribe 5 aforismos sobre un tema.", reto: "Escribe un ensayo compuesto solo de aforismos." },
+            { titulo: "El ensayo como crítica de la razón", teoria: "El ensayo examina los límites de la razón humana y la capacidad de conocer.", ejemplo: "Hume cuestiona la causalidad y la inducción, mostrando los límites de la razón.", ejercicio: "Escribe un ensayo sobre los límites del conocimiento.", reto: "Escribe un ensayo sobre la naturaleza de la verdad." },
+            { titulo: "El ensayo como diálogo con los autores", teoria: "El ensayo se nutre de la lectura y el diálogo con los grandes autores del pasado.", ejemplo: "Montaigne dialoga con Séneca, Plutarco y los clásicos en sus ensayos.", ejercicio: "Escribe un ensayo sobre un libro que te haya marcado.", reto: "Escribe un ensayo donde dialogues con un autor clásico." },
+            { titulo: "El ensayo como observación de la naturaleza humana", teoria: "El ensayo observa y analiza la naturaleza humana, sus pasiones, virtudes y defectos.", ejemplo: "La observación de la vanidad humana en los ensayos de Montaigne es lúcida y profunda.", ejercicio: "Escribe un ensayo sobre una pasión humana (amor, odio, envidia).", reto: "Escribe un ensayo sobre la vanidad." },
+            { titulo: "El ensayo como experimento mental", teoria: "El ensayo es un laboratorio donde se prueban ideas, se exploran hipótesis y se juega con posibilidades.", ejemplo: "El experimento mental de Locke sobre el entendimiento es un ejemplo clásico.", ejercicio: "Escribe un ensayo que sea un experimento mental.", reto: "Escribe un ensayo sobre una hipótesis que quieras probar." },
+            { titulo: "El ensayo como ejercicio de honestidad", teoria: "El ensayo exige honestidad intelectual, la disposición a seguir el argumento dondequiera que lleve.", ejemplo: "Montaigne es honesto sobre sus defectos, sus miedos y sus contradicciones.", ejercicio: "Escribe un ensayo sobre un defecto que tengas.", reto: "Escribe un ensayo donde seas completamente honesto contigo mismo." },
+            { titulo: "El ensayo como búsqueda de la verdad", teoria: "El ensayo es una búsqueda activa de la verdad, que no se da por satisfecha con respuestas fáciles.", ejercicio: "Escribe un ensayo sobre una verdad que hayas descubierto por ti mismo.", reto: "Escribe un ensayo sobre la búsqueda de la verdad." },
+            { titulo: "El ensayo como arte de la digresión", teoria: "El ensayo se permite divagar, tomar caminos laterales, explorar ideas secundarias.", ejemplo: "Montaigne es el maestro de la digresión; sus ensayos se ramifican en todas direcciones.", ejercicio: "Escribe un ensayo que comience con un tema y se desvíe.", reto: "Escribe un ensayo donde la digresión sea el centro." },
+            { titulo: "El ensayo como cultivo de la duda", teoria: "El ensayo cultiva la duda como método, no como parálisis, sino como camino hacia un conocimiento más profundo.", ejercicio: "Escribe un ensayo sobre la duda metódica.", reto: "Escribe un ensayo que termine con una duda en lugar de una certeza." },
+            { titulo: "El ensayo como reflexión sobre la muerte", teoria: "El ensayo aborda la muerte como tema central, como horizonte de la existencia.", ejemplo: "La reflexión de Montaigne sobre la muerte en 'De la filosofía, aprender a morir' es un ejemplo.", ejercicio: "Escribe un ensayo sobre la muerte.", reto: "Escribe un ensayo que transforme el miedo a la muerte." },
+            { titulo: "El ensayo como análisis de la costumbre", teoria: "El ensayo examina el poder de la costumbre sobre la vida humana y la dificultad de liberarse de ella.", ejemplo: "El ensayo de Montaigne 'De la costumbre' es un análisis de su poder.", ejercicio: "Escribe un ensayo sobre el poder de la costumbre.", reto: "Escribe un ensayo sobre cómo romper una costumbre." },
+            { titulo: "El ensayo como exploración de la identidad", teoria: "El ensayo se pregunta quién es el autor, y la respuesta es siempre provisional y en proceso.", ejemplo: "La identidad de Montaigne es un 'yo' en constante evolución, un flujo de experiencia.", ejercicio: "Escribe un ensayo sobre tu identidad.", reto: "Escribe un ensayo sobre cómo ha cambiado tu identidad." },
+            { titulo: "El ensayo como crítica de la educación", teoria: "El ensayo reflexiona sobre la educación, sus métodos, sus fines, sus limitaciones.", ejercicio: "Escribe un ensayo sobre la educación que has recibido.", reto: "Escribe un ensayo sobre cómo debería ser la educación." },
+            { titulo: "El ensayo como reflexión sobre el poder", teoria: "El ensayo analiza el poder político y social, sus abusos y sus límites.", ejemplo: "Los 'Ensayos' de Bacon sobre el poder son un ejemplo.", ejercicio: "Escribe un ensayo sobre el poder.", reto: "Escribe un ensayo sobre cómo se ejerce el poder." },
+            { titulo: "El ensayo como meditación sobre el tiempo", teoria: "El ensayo reflexiona sobre el tiempo, su fugacidad, su memoria, su significado.", ejercicio: "Escribe un ensayo sobre el tiempo.", reto: "Escribe un ensayo sobre el tiempo perdido." },
+            { titulo: "El ensayo como ejercicio de escritura", teoria: "El ensayo es también un ejercicio de escritura, un entrenamiento en la claridad, la precisión y la elegancia.", ejercicio: "Escribe un ensayo cuidando especialmente el estilo.", reto: "Escribe un ensayo que sea un modelo de estilo." },
+            { titulo: "El ensayo como legado intelectual", teoria: "El ensayo es un legado que el autor deja a la posteridad, un testimonio de su pensamiento.", ejercicio: "Escribe un ensayo sobre lo que te gustaría dejar como legado.", reto: "Escribe un ensayo que sea tu legado intelectual." }
+        ]
+    },
+    ilustracion: {
+        nombre: "Ilustración", color: "azul", icono: "bi-robot",
+        especialidad: "El ensayo crítico: Voltaire, Rousseau, Kant, Diderot, Johnson",
+        tecnicas: [
+            { titulo: "El ensayo como crítica social", teoria: "El ensayo ilustrado es una herramienta de crítica social, que denuncia las injusticias y la ignorancia.", ejemplo: "Los 'Cuentos filosóficos' de Voltaire son ensayos en forma de narración crítica.", ejercicio: "Escribe un ensayo crítico sobre una injusticia social.", reto: "Escribe un ensayo que denuncie la ignorancia." },
+            { titulo: "El ensayo como defensa de la libertad", teoria: "El ensayo ilustrado defiende la libertad de pensamiento, de expresión y de prensa.", ejemplo: "El 'Tratado sobre la tolerancia' de Voltaire es un ensayo en defensa de la libertad religiosa.", ejercicio: "Escribe un ensayo sobre la libertad de expresión.", reto: "Escribe un ensayo sobre un límite a la libertad que te parezca injusto." },
+            { titulo: "El ensayo como reflexión sobre la educación", teoria: "El ensayo ilustrado reflexiona sobre la educación como herramienta de transformación social.", ejemplo: "El 'Emilio' de Rousseau es un ensayo sobre la educación natural.", ejercicio: "Escribe un ensayo sobre la educación que debería recibir un niño.", reto: "Escribe un ensayo sobre la educación en el siglo XXI." },
+            { titulo: "El ensayo como análisis de la política", teoria: "El ensayo ilustrado analiza el poder político y propone reformas basadas en la razón.", ejemplo: "El 'Contrato social' de Rousseau es un ensayo sobre la legitimidad del poder político.", ejercicio: "Escribe un ensayo sobre el poder político.", reto: "Escribe un ensayo sobre un modelo de gobierno ideal." },
+            { titulo: "El ensayo como crítica de la religión", teoria: "El ensayo ilustrado critica la religión dogmática y defiende la tolerancia religiosa.", ejemplo: "El 'Tratado sobre la tolerancia' de Voltaire es un ensayo contra el fanatismo religioso.", ejercicio: "Escribe un ensayo sobre la tolerancia religiosa.", reto: "Escribe un ensayo sobre el fanatismo." },
+            { titulo: "El ensayo como investigación de la verdad", teoria: "El ensayo ilustrado busca la verdad a través de la razón y la evidencia, no de la autoridad.", ejemplo: "El método de Kant en la 'Crítica de la razón pura' es una investigación sobre la verdad.", ejercicio: "Escribe un ensayo sobre la naturaleza de la verdad.", reto: "Escribe un ensayo sobre el método científico." },
+            { titulo: "El ensayo como diálogo con el lector", teoria: "El ensayo ilustrado se dirige al lector como un interlocutor racional, buscando persuadir por la razón.", ejemplo: "Los 'Escritos políticos' de Diderot son diálogos con el lector.", ejercicio: "Escribe un ensayo como si te dirigieras a un amigo.", reto: "Escribe un ensayo que sea un diálogo con el lector." },
+            { titulo: "El ensayo como reflexión sobre la historia", teoria: "El ensayo ilustrado reflexiona sobre la historia como progreso de la razón y la libertad.", ejemplo: "Las reflexiones de Voltaire sobre la historia son un ejemplo.", ejercicio: "Escribe un ensayo sobre el progreso en la historia.", reto: "Escribe un ensayo sobre un momento histórico que te parezca clave." },
+            { titulo: "El ensayo como crítica del poder", teoria: "El ensayo ilustrado denuncia los abusos del poder y defiende los derechos del individuo.", ejercicio: "Escribe un ensayo sobre el abuso de poder.", reto: "Escribe un ensayo sobre los derechos humanos." },
+            { titulo: "El ensayo como reflexión sobre la felicidad", teoria: "El ensayo ilustrado reflexiona sobre la felicidad como fin de la vida humana.", ejemplo: "El 'Emilio' de Rousseau reflexiona sobre la felicidad natural.", ejercicio: "Escribe un ensayo sobre la felicidad.", reto: "Escribe un ensayo sobre la búsqueda de la felicidad." },
+            { titulo: "El ensayo como análisis de la moral", teoria: "El ensayo ilustrado analiza la moral como una construcción social basada en la razón.", ejercicio: "Escribe un ensayo sobre la moral.", reto: "Escribe un ensayo sobre la relación entre moral y razón." },
+            { titulo: "El ensayo como defensa de la mujer", teoria: "El ensayo ilustrado defiende los derechos de la mujer y critica su situación social.", ejemplo: "La 'Declaración de los derechos de la mujer y la ciudadana' de Olympe de Gouges es un ensayo ilustrado.", ejercicio: "Escribe un ensayo sobre los derechos de la mujer.", reto: "Escribe un ensayo sobre la igualdad de género." },
+            { titulo: "El ensayo como crítica de la esclavitud", teoria: "El ensayo ilustrado critica la esclavitud como una violación de los derechos humanos.", ejemplo: "Los escritos de Diderot contra la esclavitud son un ejemplo.", ejercicio: "Escribe un ensayo contra la esclavitud.", reto: "Escribe un ensayo sobre la libertad." },
+            { titulo: "El ensayo como reflexión sobre el lenguaje", teoria: "El ensayo ilustrado reflexiona sobre el lenguaje como instrumento de pensamiento y comunicación.", ejercicio: "Escribe un ensayo sobre la importancia del lenguaje.", reto: "Escribe un ensayo sobre el poder de las palabras." },
+            { titulo: "El ensayo como análisis de la sociedad", teoria: "El ensayo ilustrado analiza la sociedad en su conjunto, sus instituciones y sus contradicciones.", ejemplo: "El 'Discurso sobre el origen de la desigualdad' de Rousseau es un análisis de la sociedad.", ejercicio: "Escribe un ensayo sobre la sociedad actual.", reto: "Escribe un ensayo sobre la desigualdad social." },
+            { titulo: "El ensayo como búsqueda de la justicia", teoria: "El ensayo ilustrado busca la justicia como fundamento del orden social.", ejercicio: "Escribe un ensayo sobre la justicia.", reto: "Escribe un ensayo sobre la relación entre justicia y ley." },
+            { titulo: "El ensayo como reflexión sobre el arte", teoria: "El ensayo ilustrado reflexiona sobre el arte y su papel en la sociedad.", ejercicio: "Escribe un ensayo sobre el arte.", reto: "Escribe un ensayo sobre el papel del arte en la sociedad." },
+            { titulo: "El ensayo como crítica de la superstición", teoria: "El ensayo ilustrado critica la superstición y defiende la razón como guía de la vida.", ejercicio: "Escribe un ensayo sobre la superstición.", reto: "Escribe un ensayo sobre la razón." },
+            { titulo: "El ensayo como reflexión sobre el trabajo", teoria: "El ensayo ilustrado reflexiona sobre el trabajo como actividad humana fundamental.", ejercicio: "Escribe un ensayo sobre el trabajo.", reto: "Escribe un ensayo sobre el sentido del trabajo." },
+            { titulo: "El ensayo como legado de la Ilustración", teoria: "El ensayo ilustrado es el legado de la Ilustración: la defensa de la razón, la libertad y el progreso.", ejercicio: "Escribe un ensayo sobre el legado de la Ilustración.", reto: "Escribe un ensayo sobre la importancia de la Ilustración en el siglo XXI." }
+        ]
+    },
+    romanticos: {
+        nombre: "Románticos", color: "verde", icono: "bi-robot",
+        especialidad: "El ensayo personal: Emerson, Thoreau, Carlyle, Hazlitt, Lamb",
+        tecnicas: [
+            { titulo: "El ensayo como confesión personal", teoria: "El ensayo romántico es una confesión del autor sobre su vida interior, sus emociones y sus creencias.", ejemplo: "El 'Diario' de Emerson es una confesión personal que se convierte en ensayo.", ejercicio: "Escribe un ensayo que sea una confesión personal.", reto: "Escribe un ensayo sobre un secreto que hayas guardado." },
+            { titulo: "El ensayo como exploración del yo", teoria: "El ensayo romántico explora el yo como un misterio, una profundidad inagotable.", ejemplo: "La exploración del yo en los ensayos de Emerson es una búsqueda espiritual.", ejercicio: "Escribe un ensayo sobre tu yo interior.", reto: "Escribe un ensayo sobre las capas de tu identidad." },
+            { titulo: "El ensayo como defensa de la naturaleza", teoria: "El ensayo romántico defiende la naturaleza frente a la civilización y la tecnología.", ejemplo: "El 'Walden' de Thoreau es un ensayo en defensa de la vida natural.", ejercicio: "Escribe un ensayo sobre la importancia de la naturaleza.", reto: "Escribe un ensayo sobre la relación del hombre con la naturaleza." },
+            { titulo: "El ensayo como crítica de la sociedad industrial", teoria: "El ensayo romántico critica la sociedad industrial y su impacto en la vida humana.", ejemplo: "La crítica de Carlyle a la 'era de la máquina' es un ejemplo.", ejercicio: "Escribe un ensayo sobre la sociedad industrial.", reto: "Escribe un ensayo sobre el futuro de la sociedad industrial." },
+            { titulo: "El ensayo como búsqueda de la autenticidad", teoria: "El ensayo romántico busca la autenticidad, la vida vivida de acuerdo con los propios valores.", ejemplo: "La búsqueda de la autenticidad en los ensayos de Thoreau es un ejemplo.", ejercicio: "Escribe un ensayo sobre la autenticidad.", reto: "Escribe un ensayo sobre cómo ser auténtico en la sociedad actual." },
+            { titulo: "El ensayo como reflexión sobre la soledad", teoria: "El ensayo romántico reflexiona sobre la soledad como espacio de libertad y autoconocimiento.", ejemplo: "La soledad de Thoreau en Walden es un ejemplo.", ejercicio: "Escribe un ensayo sobre la soledad.", reto: "Escribe un ensayo sobre la diferencia entre soledad y aislamiento." },
+            { titulo: "El ensayo como elogio de la sencillez", teoria: "El ensayo romántico elogia la sencillez frente a la complejidad y el exceso.", ejemplo: "La sencillez de la vida en Walden es un elogio.", ejercicio: "Escribe un ensayo sobre la sencillez.", reto: "Escribe un ensayo sobre la vida sencilla." },
+            { titulo: "El ensayo como crítica del materialismo", teoria: "El ensayo romántico critica el materialismo y la acumulación de riquezas.", ejemplo: "La crítica de Thoreau a la 'vida de la comodidad' es un ejemplo.", ejercicio: "Escribe un ensayo sobre el materialismo.", reto: "Escribe un ensayo sobre la relación del hombre con el dinero." },
+            { titulo: "El ensayo como reflexión sobre la lectura", teoria: "El ensayo romántico reflexiona sobre la lectura como experiencia transformadora.", ejemplo: "Los ensayos de Hazlitt sobre la lectura son un ejemplo.", ejercicio: "Escribe un ensayo sobre un libro que te haya transformado.", reto: "Escribe un ensayo sobre la importancia de leer." },
+            { titulo: "El ensayo como crítica del gusto", teoria: "El ensayo romántico reflexiona sobre el gusto y la sensibilidad artística.", ejercicio: "Escribe un ensayo sobre el gusto personal.", reto: "Escribe un ensayo sobre el buen gusto." },
+            { titulo: "El ensayo como exploración de la memoria", teoria: "El ensayo romántico explora la memoria y la infancia como fuente de identidad.", ejemplo: "Los ensayos de Lamb sobre la infancia son un ejemplo.", ejercicio: "Escribe un ensayo sobre un recuerdo de la infancia.", reto: "Escribe un ensayo sobre la memoria." },
+            { titulo: "El ensayo como reflexión sobre la amistad", teoria: "El ensayo romántico reflexiona sobre la amistad como valor fundamental.", ejemplo: "Los ensayos de Emerson sobre la amistad son un ejemplo.", ejercicio: "Escribe un ensayo sobre la amistad.", reto: "Escribe un ensayo sobre la importancia de la amistad." },
+            { titulo: "El ensayo como crítica de la educación formal", teoria: "El ensayo romántico critica la educación formal y defiende el aprendizaje autodidacta.", ejemplo: "La crítica de Thoreau a la educación formal es un ejemplo.", ejercicio: "Escribe un ensayo sobre la educación que has recibido.", reto: "Escribe un ensayo sobre cómo se debería aprender." },
+            { titulo: "El ensayo como defensa de la imaginación", teoria: "El ensayo romántico defiende la imaginación como fuente de conocimiento y creatividad.", ejemplo: "La defensa de la imaginación en los ensayos de Coleridge es un ejemplo.", ejercicio: "Escribe un ensayo sobre la imaginación.", reto: "Escribe un ensayo sobre el papel de la imaginación en la vida." },
+            { titulo: "El ensayo como reflexión sobre el destino", teoria: "El ensayo romántico reflexiona sobre el destino y la libertad humana.", ejercicio: "Escribe un ensayo sobre el destino.", reto: "Escribe un ensayo sobre la libertad humana." },
+            { titulo: "El ensayo como crítica de la hipocresía", teoria: "El ensayo romántico critica la hipocresía social y la falta de autenticidad.", ejercicio: "Escribe un ensayo sobre la hipocresía.", reto: "Escribe un ensayo sobre la autenticidad." },
+            { titulo: "El ensayo como reflexión sobre la belleza", teoria: "El ensayo romántico reflexiona sobre la belleza como valor absoluto.", ejercicio: "Escribe un ensayo sobre la belleza.", reto: "Escribe un ensayo sobre la relación entre belleza y verdad." },
+            { titulo: "El ensayo como crítica de la modernidad", teoria: "El ensayo romántico critica la modernidad y sus efectos en el alma humana.", ejercicio: "Escribe un ensayo sobre la modernidad.", reto: "Escribe un ensayo sobre el impacto de la tecnología en la vida humana." },
+            { titulo: "El ensayo como defensa del individuo", teoria: "El ensayo romántico defiende al individuo frente a la masa y la sociedad.", ejemplo: "La defensa del individuo en los ensayos de Emerson es un ejemplo.", ejercicio: "Escribe un ensayo sobre la importancia del individuo.", reto: "Escribe un ensayo sobre la relación entre individuo y sociedad." },
+            { titulo: "El ensayo como legado del Romanticismo", teoria: "El ensayo romántico es el legado del Romanticismo: la defensa de la subjetividad, la naturaleza y la libertad.", ejercicio: "Escribe un ensayo sobre el legado del Romanticismo.", reto: "Escribe un ensayo sobre la importancia del Romanticismo en el siglo XXI." }
+        ]
+    },
+    modernos: {
+        nombre: "Modernos", color: "purpura", icono: "bi-robot",
+        especialidad: "El ensayo literario: Woolf, Orwell, Borges, Chesterton, Camus",
+        tecnicas: [
+            { titulo: "El ensayo como arte de la prosa", teoria: "El ensayo moderno cuida la prosa como una obra de arte en sí misma, con su propio ritmo y belleza.", ejemplo: "La prosa de Virginia Woolf en 'Una habitación propia' es un ejemplo de arte ensayístico.", ejercicio: "Escribe un ensayo donde la prosa sea cuidada.", reto: "Escribe un ensayo que sea una obra de arte literaria." },
+            { titulo: "El ensayo como crítica literaria", teoria: "El ensayo moderno es una forma de crítica literaria que ilumina la obra y su contexto.", ejemplo: "Los ensayos de Borges sobre literatura son una forma de crítica literaria que reinventa el género.", ejercicio: "Escribe un ensayo sobre un libro que hayas leído.", reto: "Escribe un ensayo sobre un autor que admires." },
+            { titulo: "El ensayo como reflexión sobre el lenguaje", teoria: "El ensayo moderno reflexiona sobre el lenguaje como medio de pensamiento y expresión.", ejemplo: "La reflexión de Orwell sobre el lenguaje político en 'Política y lengua inglesa' es un ejemplo.", ejercicio: "Escribe un ensayo sobre el lenguaje.", reto: "Escribe un ensayo sobre el poder del lenguaje." },
+            { titulo: "El ensayo como exploración de la realidad", teoria: "El ensayo moderno explora la realidad desde múltiples perspectivas, sin pretender agotarla.", ejemplo: "La exploración de la realidad en los ensayos de Borges es un juego de espejos y laberintos.", ejercicio: "Escribe un ensayo sobre la realidad.", reto: "Escribe un ensayo sobre la relatividad de la realidad." },
+            { titulo: "El ensayo como género híbrido", teoria: "El ensayo moderno mezcla géneros: narrativa, poesía, reflexión filosófica, autobiografía.", ejemplo: "Los ensayos de Chesterton son una mezcla de narración, humor y reflexión.", ejercicio: "Escribe un ensayo que mezcle géneros.", reto: "Escribe un ensayo que sea a la vez narrativo y reflexivo." },
+            { titulo: "El ensayo como ejercicio de ironía", teoria: "El ensayo moderno usa la ironía como herramienta de análisis y crítica.", ejemplo: "La ironía de Chesterton es su sello de identidad.", ejercicio: "Escribe un ensayo con ironía.", reto: "Escribe un ensayo donde la ironía sea el centro del estilo." },
+            { titulo: "El ensayo como reflexión sobre el poder", teoria: "El ensayo moderno reflexiona sobre el poder político y social en todas sus formas.", ejemplo: "La reflexión de Orwell sobre el poder en '1984' es un ensayo sobre el totalitarismo.", ejercicio: "Escribe un ensayo sobre el poder.", reto: "Escribe un ensayo sobre el totalitarismo." },
+            { titulo: "El ensayo como exploración del absurdo", teoria: "El ensayo moderno explora el absurdo de la existencia humana y la necesidad de crear sentido.", ejemplo: "La exploración del absurdo en los ensayos de Camus es un ejemplo.", ejercicio: "Escribe un ensayo sobre el absurdo.", reto: "Escribe un ensayo sobre la búsqueda de sentido en el absurdo." },
+            { titulo: "El ensayo como reflexión sobre la muerte", teoria: "El ensayo moderno reflexiona sobre la muerte como horizonte de la existencia.", ejercicio: "Escribe un ensayo sobre la muerte.", reto: "Escribe un ensayo sobre la vida y la muerte." },
+            { titulo: "El ensayo como crítica de la cultura", teoria: "El ensayo moderno critica la cultura y sus valores, buscando una autenticidad perdida.", ejercicio: "Escribe un ensayo sobre la cultura actual.", reto: "Escribe un ensayo sobre la cultura y el individuo." },
+            { titulo: "El ensayo como reflexión sobre el arte", teoria: "El ensayo moderno reflexiona sobre el arte y su papel en la vida humana.", ejemplo: "Los ensayos de Virginia Woolf sobre el arte son un ejemplo.", ejercicio: "Escribe un ensayo sobre el arte.", reto: "Escribe un ensayo sobre el papel del arte en la vida moderna." },
+            { titulo: "El ensayo como exploración de la memoria", teoria: "El ensayo moderno explora la memoria y el tiempo como temas centrales.", ejercicio: "Escribe un ensayo sobre la memoria.", reto: "Escribe un ensayo sobre el tiempo y la memoria." },
+            { titulo: "El ensayo como ejercicio de estilo", teoria: "El ensayo moderno es un ejercicio de estilo, una búsqueda de la forma perfecta para cada contenido.", ejemplo: "El estilo de Borges es un ejemplo de ejercicio de estilo.", ejercicio: "Escribe un ensayo cuidado el estilo.", reto: "Escribe un ensayo que sea un ejercicio de estilo." },
+            { titulo: "El ensayo como diálogo con los clásicos", teoria: "El ensayo moderno dialoga con los clásicos, reinterpretándolos y actualizándolos.", ejemplo: "El diálogo de Borges con los clásicos es un ejemplo.", ejercicio: "Escribe un ensayo sobre un autor clásico.", reto: "Escribe un ensayo donde dialogues con un clásico." },
+            { titulo: "El ensayo como reflexión sobre el tiempo", teoria: "El ensayo moderno reflexiona sobre el tiempo y su impacto en la vida humana.", ejercicio: "Escribe un ensayo sobre el tiempo.", reto: "Escribe un ensayo sobre el tiempo perdido." },
+            { titulo: "El ensayo como crítica del nacionalismo", teoria: "El ensayo moderno critica el nacionalismo y defiende el cosmopolitismo.", ejemplo: "La crítica de Orwell al nacionalismo es un ejemplo.", ejercicio: "Escribe un ensayo sobre el nacionalismo.", reto: "Escribe un ensayo sobre el cosmopolitismo." },
+            { titulo: "El ensayo como defensa de la libertad", teoria: "El ensayo moderno defiende la libertad de pensamiento y de expresión.", ejemplo: "La defensa de la libertad en los ensayos de Orwell es un ejemplo.", ejercicio: "Escribe un ensayo sobre la libertad de expresión.", reto: "Escribe un ensayo sobre un límite a la libertad." },
+            { titulo: "El ensayo como reflexión sobre la identidad", teoria: "El ensayo moderno reflexiona sobre la identidad personal y colectiva.", ejercicio: "Escribe un ensayo sobre la identidad.", reto: "Escribe un ensayo sobre la identidad en el siglo XXI." },
+            { titulo: "El ensayo como crítica de la tecnología", teoria: "El ensayo moderno critica la tecnología y su impacto en la vida humana.", ejercicio: "Escribe un ensayo sobre la tecnología.", reto: "Escribe un ensayo sobre el futuro de la tecnología." },
+            { titulo: "El ensayo como legado del modernismo", teoria: "El ensayo moderno es el legado del modernismo: la experimentación, la reflexión y la búsqueda de nuevas formas.", ejercicio: "Escribe un ensayo sobre el legado del modernismo.", reto: "Escribe un ensayo sobre la importancia del modernismo en la literatura." }
+        ]
+    },
+    contemporaneos: {
+        nombre: "Contemporáneos", color: "rojo", icono: "bi-robot",
+        especialidad: "El ensayo actual: Didion, Hitchens, Sontag, Eco, Vargas Llosa",
+        tecnicas: [
+            { titulo: "El ensayo como crónica personal", teoria: "El ensayo contemporáneo es una crónica personal que mezcla la reflexión con la experiencia vivida.", ejemplo: "Los ensayos de Joan Didion son una crónica de su vida y su tiempo.", ejercicio: "Escribe un ensayo que sea una crónica personal.", reto: "Escribe un ensayo sobre un momento de tu vida." },
+            { titulo: "El ensayo como análisis de la cultura", teoria: "El ensayo contemporáneo analiza la cultura popular, el cine, la música, la televisión.", ejemplo: "Los ensayos de Susan Sontag sobre el cine son un ejemplo.", ejercicio: "Escribe un ensayo sobre una película o serie.", reto: "Escribe un ensayo sobre la cultura popular." },
+            { titulo: "El ensayo como crítica política", teoria: "El ensayo contemporáneo es una crítica política aguda y comprometida.", ejemplo: "La crítica de Hitchens a la religión y la política es un ejemplo.", ejercicio: "Escribe un ensayo sobre un tema político actual.", reto: "Escribe un ensayo sobre el poder y la política." },
+            { titulo: "El ensayo como reflexión sobre el conocimiento", teoria: "El ensayo contemporáneo reflexiona sobre el conocimiento y la información en la era digital.", ejemplo: "Las reflexiones de Umberto Eco sobre el conocimiento son un ejemplo.", ejercicio: "Escribe un ensayo sobre el conocimiento en la era digital.", reto: "Escribe un ensayo sobre la información y el conocimiento." },
+            { titulo: "El ensayo como defensa de la literatura", teoria: "El ensayo contemporáneo defiende la literatura como valor fundamental de la cultura.", ejemplo: "Los ensayos de Vargas Llosa sobre literatura son un ejemplo.", ejercicio: "Escribe un ensayo sobre la importancia de la literatura.", reto: "Escribe un ensayo sobre el futuro de la literatura." },
+            { titulo: "El ensayo como reflexión sobre el periodismo", teoria: "El ensayo contemporáneo reflexiona sobre el periodismo y su papel en la sociedad.", ejemplo: "Los ensayos de Christopher Hitchens sobre el periodismo son un ejemplo.", ejercicio: "Escribe un ensayo sobre el periodismo.", reto: "Escribe un ensayo sobre la relación entre periodismo y verdad." },
+            { titulo: "El ensayo como análisis de la identidad", teoria: "El ensayo contemporáneo analiza la identidad en el siglo XXI: género, raza, clase, nacionalidad.", ejercicio: "Escribe un ensayo sobre la identidad en el siglo XXI.", reto: "Escribe un ensayo sobre la identidad y la globalización." },
+            { titulo: "El ensayo como reflexión sobre el feminismo", teoria: "El ensayo contemporáneo reflexiona sobre el feminismo y los derechos de la mujer.", ejemplo: "Los ensayos de Susan Sontag sobre el feminismo son un ejemplo.", ejercicio: "Escribe un ensayo sobre el feminismo.", reto: "Escribe un ensayo sobre la igualdad de género." },
+            { titulo: "El ensayo como crítica del capitalismo", teoria: "El ensayo contemporáneo critica el capitalismo y sus efectos en la sociedad.", ejercicio: "Escribe un ensayo sobre el capitalismo.", reto: "Escribe un ensayo sobre el futuro del capitalismo." },
+            { titulo: "El ensayo como defensa del medio ambiente", teoria: "El ensayo contemporáneo defiende el medio ambiente y denuncia la crisis ecológica.", ejercicio: "Escribe un ensayo sobre el medio ambiente.", reto: "Escribe un ensayo sobre la crisis ecológica." },
+            { titulo: "El ensayo como reflexión sobre la tecnología", teoria: "El ensayo contemporáneo reflexiona sobre la tecnología y su impacto en la vida humana.", ejercicio: "Escribe un ensayo sobre la tecnología en el siglo XXI.", reto: "Escribe un ensayo sobre el futuro de la tecnología." },
+            { titulo: "El ensayo como análisis de la posverdad", teoria: "El ensayo contemporáneo analiza la posverdad y la manipulación de la información.", ejercicio: "Escribe un ensayo sobre la posverdad.", reto: "Escribe un ensayo sobre la verdad en la era digital." },
+            { titulo: "El ensayo como reflexión sobre el diálogo", teoria: "El ensayo contemporáneo reflexiona sobre el diálogo y la conversación como valores.", ejercicio: "Escribe un ensayo sobre el diálogo.", reto: "Escribe un ensayo sobre la importancia de la conversación." },
+            { titulo: "El ensayo como crítica del populismo", teoria: "El ensayo contemporáneo critica el populismo y sus efectos en la democracia.", ejercicio: "Escribe un ensayo sobre el populismo.", reto: "Escribe un ensayo sobre la democracia." },
+            { titulo: "El ensayo como defensa de la memoria histórica", teoria: "El ensayo contemporáneo defiende la memoria histórica y denuncia el olvido.", ejercicio: "Escribe un ensayo sobre la memoria histórica.", reto: "Escribe un ensayo sobre el olvido." },
+            { titulo: "El ensayo como reflexión sobre la ciudad", teoria: "El ensayo contemporáneo reflexiona sobre la ciudad y la vida urbana.", ejercicio: "Escribe un ensayo sobre la ciudad.", reto: "Escribe un ensayo sobre la vida urbana." },
+            { titulo: "El ensayo como análisis de la globalización", teoria: "El ensayo contemporáneo analiza la globalización y sus efectos en la cultura y la sociedad.", ejercicio: "Escribe un ensayo sobre la globalización.", reto: "Escribe un ensayo sobre el futuro de la globalización." },
+            { titulo: "El ensayo como reflexión sobre la lectura", teoria: "El ensayo contemporáneo reflexiona sobre la lectura en la era digital.", ejemplo: "Las reflexiones de Umberto Eco sobre la lectura son un ejemplo.", ejercicio: "Escribe un ensayo sobre la lectura en el siglo XXI.", reto: "Escribe un ensayo sobre el futuro de la lectura." },
+            { titulo: "El ensayo como crítica de la religión", teoria: "El ensayo contemporáneo critica la religión y defiende el laicismo.", ejemplo: "La crítica de Hitchens a la religión es un ejemplo.", ejercicio: "Escribe un ensayo sobre la religión.", reto: "Escribe un ensayo sobre el laicismo." },
+            { titulo: "El ensayo como legado del pensamiento contemporáneo", teoria: "El ensayo contemporáneo es el legado del pensamiento actual: la diversidad, la complejidad, la incertidumbre.", ejercicio: "Escribe un ensayo sobre el pensamiento contemporáneo.", reto: "Escribe un ensayo sobre el futuro del ensayo." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['clasicos','ilustracion','romanticos','modernos','contemporaneos'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_ensayistica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

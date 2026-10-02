@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏛️ Flota Philosophia · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .frase-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .frase-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🏛️ FLOTA PHILOSOPHIA<small>100 TÉCNICAS · FILOSOFÍA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="conocimiento" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Conocimiento <span class="badge-personaje bg-dorado">Epistemología</span></a>
+        <a class="nav-link" data-section="ser" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Ser <span class="badge-personaje bg-azul">Ontología</span></a>
+        <a class="nav-link" data-section="etica" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Ética <span class="badge-personaje bg-verde">Moral</span></a>
+        <a class="nav-link" data-section="logica" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Lógica <span class="badge-personaje bg-purpura">Razón</span></a>
+        <a class="nav-link" data-section="politica" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Política <span class="badge-personaje bg-rojo">Sociedad</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🏛️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Filosofía universal</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Filosofía universal</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la filosofía:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Conocimiento</strong> – Epistemología: cómo conocemos, qué es la verdad, el método.</li>
+                    <li><strong style="color:var(--neon-azul);">Ser</strong> – Ontología: la realidad, la existencia, el ser y el devenir.</li>
+                    <li><strong style="color:var(--neon-verde);">Ética</strong> – Moral: el bien, el mal, la virtud, la felicidad, el deber.</li>
+                    <li><strong style="color:var(--neon-purpura);">Lógica</strong> – Razón: el pensamiento, la argumentación, la dialéctica.</li>
+                    <li><strong style="color:var(--neon-rojo);">Política</strong> – Sociedad: el poder, la justicia, el estado, la libertad.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-conocimiento" class="section-content" style="display:none;"></div>
+        <div id="section-ser" class="section-content" style="display:none;"></div>
+        <div id="section-etica" class="section-content" style="display:none;"></div>
+        <div id="section-logica" class="section-content" style="display:none;"></div>
+        <div id="section-politica" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    conocimiento: {
+        nombre: "Conocimiento", color: "dorado", icono: "bi-robot",
+        especialidad: "Epistemología: cómo conocemos, qué es la verdad, el método",
+        tecnicas: [
+            { titulo: "El conocimiento como justificación", teoria: "El conocimiento no es solo creencia, sino creencia verdadera justificada. La justificación distingue la opinión del saber.", frase: "Creencia verdadera justificada", ejemplo: "Platón: 'El conocimiento es opinión verdadera acompañada de razón.'", ejercicio: "Analiza una creencia que tengas y pregúntate si está justificada.", reto: "Escribe un texto sobre la diferencia entre saber y creer." },
+            { titulo: "El escepticismo y la duda", teoria: "La duda metódica cuestiona todas las creencias para encontrar un fundamento indudable del conocimiento.", frase: "Duda metódica", ejemplo: "Descartes: 'Pienso, luego existo.'", ejercicio: "Practica la duda metódica con una creencia que tengas.", reto: "Escribe un texto sobre la importancia de la duda." },
+            { titulo: "La razón como fuente de conocimiento", teoria: "La razón es la facultad que nos permite conocer la realidad a través de principios lógicos y universales.", frase: "La razón como fuente", ejemplo: "Kant: 'La razón es la facultad de los principios.'", ejercicio: "Reflexiona sobre un conocimiento que hayas adquirido por razón.", reto: "Escribe un texto sobre el poder de la razón." },
+            { titulo: "La experiencia como fuente de conocimiento", teoria: "La experiencia sensible es la base de todo conocimiento. No hay nada en la mente que no haya estado antes en los sentidos.", frase: "Nada en la mente sin los sentidos", ejemplo: "Locke: 'No hay nada en el entendimiento que no haya estado antes en los sentidos.'", ejercicio: "Reflexiona sobre un conocimiento que hayas adquirido por experiencia.", reto: "Escribe un texto sobre el conocimiento empírico." },
+            { titulo: "La verdad como correspondencia", teoria: "La verdad es la correspondencia entre lo que pensamos y la realidad. Una proposición es verdadera si describe adecuadamente la realidad.", frase: "Verdad como correspondencia", ejemplo: "Aristóteles: 'Decir del ser que es y del no ser que no es, eso es la verdad.'", ejercicio: "Analiza una proposición y pregúntate si corresponde a la realidad.", reto: "Escribe un texto sobre la naturaleza de la verdad." },
+            { titulo: "La verdad como coherencia", teoria: "La verdad es la coherencia de un conjunto de proposiciones entre sí. La verdad es un sistema de creencias consistentes.", frase: "Verdad como coherencia", ejemplo: "Hegel: 'La verdad es el todo.'", ejercicio: "Analiza la coherencia de un sistema de creencias.", reto: "Escribe un texto sobre la verdad como coherencia." },
+            { titulo: "El método científico", teoria: "El método científico es el camino para alcanzar conocimiento objetivo a través de observación, hipótesis y experimentación.", frase: "El método científico", ejemplo: "Popper: 'La ciencia avanza por ensayo y error.'", ejercicio: "Diseña un pequeño experimento para probar una hipótesis.", reto: "Escribe un texto sobre el método científico." },
+            { titulo: "La intuición como conocimiento", teoria: "La intuición es un conocimiento inmediato, sin razonamiento discursivo. Es una forma de captar la verdad directamente.", frase: "La intuición como conocimiento", ejemplo: "Bergson: 'La intuición es la simpatía por la que nos transportamos al interior de un objeto.'", ejercicio: "Reflexiona sobre una intuición que hayas tenido.", reto: "Escribe un texto sobre la intuición." },
+            { titulo: "El a priori y el a posteriori", teoria: "El conocimiento a priori es independiente de la experiencia, mientras que el a posteriori depende de ella.", frase: "A priori / A posteriori", ejemplo: "Kant: 'Todo conocimiento comienza con la experiencia, pero no todo procede de ella.'", ejercicio: "Clasifica un conocimiento como a priori o a posteriori.", reto: "Escribe un texto sobre la distinción entre a priori y a posteriori." },
+            { titulo: "El escepticismo radical", teoria: "El escepticismo radical cuestiona la posibilidad de cualquier conocimiento, incluso el de la existencia del mundo externo.", frase: "Escepticismo radical", ejemplo: "Pirrón: 'No sé nada, ni siquiera sé si sé.'", ejercicio: "Reflexiona sobre la posibilidad de conocer algo con certeza.", reto: "Escribe un texto sobre el escepticismo." },
+            { titulo: "La teoría del conocimiento en Platón", teoria: "Platón distingue entre el mundo sensible (opinión) y el mundo inteligible (conocimiento). El conocimiento es el recuerdo de las ideas.", frase: "El mundo de las ideas", ejemplo: "Platón: 'El conocimiento es reminiscencia.'", ejercicio: "Reflexiona sobre la diferencia entre opinión y conocimiento.", reto: "Escribe un texto sobre la teoría del conocimiento de Platón." },
+            { titulo: "La teoría del conocimiento en Aristóteles", teoria: "Aristóteles sostiene que el conocimiento comienza con la experiencia sensible y se eleva a lo universal a través de la inducción.", frase: "La inducción", ejemplo: "Aristóteles: 'Nada hay en el entendimiento que no haya pasado antes por los sentidos.'", ejercicio: "Reflexiona sobre el proceso de inducción.", reto: "Escribe un texto sobre la teoría del conocimiento de Aristóteles." },
+            { titulo: "El empirismo radical", teoria: "El empirismo radical sostiene que todo conocimiento proviene de la experiencia, y que la razón solo organiza datos sensibles.", frase: "Empirismo radical", ejemplo: "Hume: 'Todos los contenidos de la mente provienen de la experiencia.'", ejercicio: "Reflexiona sobre un conocimiento que provenga de la experiencia.", reto: "Escribe un texto sobre el empirismo." },
+            { titulo: "El racionalismo", teoria: "El racionalismo sostiene que la razón es la principal fuente de conocimiento, y que existen ideas innatas.", frase: "Ideas innatas", ejemplo: "Descartes: 'Las ideas innatas son aquellas que están en el entendimiento desde el nacimiento.'", ejercicio: "Reflexiona sobre la existencia de ideas innatas.", reto: "Escribe un texto sobre el racionalismo." },
+            { titulo: "El constructivismo epistemológico", teoria: "El constructivismo sostiene que el conocimiento no se descubre, sino que se construye activamente por el sujeto.", frase: "El conocimiento se construye", ejemplo: "Piaget: 'El conocimiento no es una copia de la realidad, sino una construcción activa.'", ejercicio: "Reflexiona sobre cómo has construido un conocimiento.", reto: "Escribe un texto sobre el constructivismo." },
+            { titulo: "La teoría del conocimiento en Kant", teoria: "Kant distingue entre fenómeno (la realidad tal como aparece) y noúmeno (la realidad tal como es en sí misma). Solo conocemos el fenómeno.", frase: "Fenómeno y noúmeno", ejemplo: "Kant: 'El entendimiento no recibe sus leyes de la naturaleza, sino que se las prescribe a ella.'", ejercicio: "Reflexiona sobre la diferencia entre fenómeno y noúmeno.", reto: "Escribe un texto sobre la epistemología de Kant." },
+            { titulo: "El pragmatismo y la verdad", teoria: "El pragmatismo sostiene que la verdad es lo que funciona, lo que tiene consecuencias prácticas útiles.", frase: "La verdad es lo que funciona", ejemplo: "James: 'La verdad es lo que funciona en la práctica.'", ejercicio: "Reflexiona sobre una creencia que funcione en la práctica.", reto: "Escribe un texto sobre el pragmatismo." },
+            { titulo: "El relativismo del conocimiento", teoria: "El relativismo sostiene que el conocimiento es relativo a la cultura, la época o la perspectiva del sujeto.", frase: "Conocimiento relativo", ejemplo: "Nietzsche: 'No hay hechos, solo interpretaciones.'", ejercicio: "Reflexiona sobre cómo el contexto influye en el conocimiento.", reto: "Escribe un texto sobre el relativismo." },
+            { titulo: "La episteme como saber fundado", teoria: "La episteme es el saber verdadero y fundamentado, en oposición a la mera opinión (doxa).", frase: "Episteme vs doxa", ejemplo: "Platón: 'La episteme es el saber fundado, la doxa es la mera opinión.'", ejercicio: "Reflexiona sobre la diferencia entre saber y opinión.", reto: "Escribe un texto sobre la episteme." },
+            { titulo: "El conocimiento práctico (phronesis)", teoria: "La phronesis es el conocimiento práctico, la sabiduría para actuar correctamente en situaciones concretas.", frase: "Phronesis", ejemplo: "Aristóteles: 'La phronesis es la sabiduría práctica, la capacidad de deliberar bien.'", ejercicio: "Reflexiona sobre una decisión práctica que hayas tomado.", reto: "Escribe un texto sobre la sabiduría práctica." },
+            { titulo: "El conocimiento como liberación", teoria: "El conocimiento no solo informa, sino que libera, nos hace más libres al comprender mejor la realidad.", frase: "El conocimiento libera", ejemplo: "Bacon: 'El conocimiento es poder.'", ejercicio: "Reflexiona sobre cómo el conocimiento te ha liberado.", reto: "Escribe un texto sobre el conocimiento como liberación." }
+        ]
+    },
+    ser: {
+        nombre: "Ser", color: "azul", icono: "bi-robot",
+        especialidad: "Ontología: la realidad, la existencia, el ser y el devenir",
+        tecnicas: [
+            { titulo: "El ser como fundamento", teoria: "El ser es lo que hace que las cosas sean lo que son. La pregunta por el ser es la pregunta fundamental de la filosofía.", frase: "La pregunta por el ser", ejemplo: "Heidegger: 'La pregunta por el ser es la pregunta fundamental de la filosofía.'", ejercicio: "Reflexiona sobre lo que significa 'ser'.", reto: "Escribe un texto sobre el ser." },
+            { titulo: "La existencia como ser en el mundo", teoria: "La existencia humana es un 'ser en el mundo', no un sujeto aislado, sino un ser que está siempre en relación con el mundo.", frase: "Ser-en-el-mundo", ejemplo: "Heidegger: 'El Dasein es ser-en-el-mundo.'", ejercicio: "Reflexiona sobre tu ser-en-el-mundo.", reto: "Escribe un texto sobre el ser-en-el-mundo." },
+            { titulo: "El ser y el devenir", teoria: "El ser es lo que permanece, el devenir es el cambio constante. La filosofía antigua discute si la realidad es ser o devenir.", frase: "Ser y devenir", ejemplo: "Parménides: 'El ser es y el no-ser no es.' Heráclito: 'Todo fluye.'", ejercicio: "Reflexiona sobre la relación entre ser y devenir.", reto: "Escribe un texto sobre ser y devenir." },
+            { titulo: "La nada como problema filosófico", teoria: "La nada es la ausencia de ser. El problema de la nada es central en la ontología existencial.", frase: "La nada", ejemplo: "Sartre: 'La nada es la posibilidad del ser.'", ejercicio: "Reflexiona sobre la idea de la nada.", reto: "Escribe un texto sobre la nada." },
+            { titulo: "El ser como acto y potencia", teoria: "El ser se distingue entre acto (lo que es actualmente) y potencia (lo que puede llegar a ser).", frase: "Acto y potencia", ejemplo: "Aristóteles: 'La potencia es la capacidad de ser, el acto es la realización.'", ejercicio: "Reflexiona sobre el paso de la potencia al acto.", reto: "Escribe un texto sobre acto y potencia." },
+            { titulo: "La esencia y la existencia", teoria: "La esencia es lo que hace que algo sea lo que es; la existencia es el hecho de ser. En Dios, esencia y existencia coinciden.", frase: "Esencia y existencia", ejemplo: "Tomás de Aquino: 'En Dios, esencia y existencia son idénticas.'", ejercicio: "Reflexiona sobre la diferencia entre esencia y existencia.", reto: "Escribe un texto sobre esencia y existencia." },
+            { titulo: "El ser como fundamento de la realidad", teoria: "El ser es el fundamento de toda realidad. Todo lo que es, participa del ser.", frase: "El ser como fundamento", ejemplo: "Tomás de Aquino: 'El ser es el acto de todos los actos.'", ejercicio: "Reflexiona sobre el ser como fundamento.", reto: "Escribe un texto sobre el ser como fundamento." },
+            { titulo: "La materia y la forma", teoria: "La realidad está compuesta de materia (lo que cambia) y forma (lo que da estructura). La forma es la esencia de la cosa.", frase: "Materia y forma", ejemplo: "Aristóteles: 'La forma es la esencia, la materia es el soporte.'", ejercicio: "Reflexiona sobre la materia y la forma de un objeto.", reto: "Escribe un texto sobre materia y forma." },
+            { titulo: "El ser como sustancia", teoria: "La sustancia es aquello que existe por sí mismo, sin necesidad de otro. Dios es la sustancia suprema.", frase: "La sustancia", ejemplo: "Spinoza: 'Sustancia es aquello que existe en sí y se concibe por sí.'", ejercicio: "Reflexiona sobre la idea de sustancia.", reto: "Escribe un texto sobre la sustancia." },
+            { titulo: "El ser como sujeto", teoria: "El ser humano es sujeto, es decir, conciencia que se relaciona consigo misma y con el mundo.", frase: "El ser como sujeto", ejemplo: "Descartes: 'Yo soy una cosa que piensa.'", ejercicio: "Reflexiona sobre el ser como sujeto.", reto: "Escribe un texto sobre el sujeto." },
+            { titulo: "El ser como otro", teoria: "El ser humano se constituye en relación con el otro. El otro es condición de posibilidad de la subjetividad.", frase: "El ser como otro", ejemplo: "Lévinas: 'El rostro del otro me interpela y me constituye.'", ejercicio: "Reflexiona sobre tu relación con el otro.", reto: "Escribe un texto sobre el otro." },
+            { titulo: "El ser como voluntad", teoria: "La realidad fundamental es la voluntad, un impulso ciego que se manifiesta en todo lo que existe.", frase: "La voluntad como ser", ejemplo: "Schopenhauer: 'La voluntad es la cosa en sí, el ser en su esencia.'", ejercicio: "Reflexiona sobre la voluntad como impulso.", reto: "Escribe un texto sobre la voluntad." },
+            { titulo: "El ser como lenguaje", teoria: "El ser se manifiesta en el lenguaje. El lenguaje es la casa del ser.", frase: "El lenguaje como casa del ser", exemplo: "Heidegger: 'El lenguaje es la casa del ser.'", ejercicio: "Reflexiona sobre cómo el lenguaje revela el ser.", reto: "Escribe un texto sobre el lenguaje y el ser." },
+            { titulo: "El ser como nada", teoria: "El ser humano es una nada que se proyecta hacia el futuro, un ser que no es sino su propia posibilidad.", frase: "El ser como nada", ejemplo: "Sartre: 'El hombre es una nada que se hace ser.'", ejercicio: "Reflexiona sobre el ser como nada.", reto: "Escribe un texto sobre el ser como nada." },
+            { titulo: "El ser como tiempo", teoria: "El ser humano es tiempo, un ser que se proyecta hacia el futuro y que se constituye en el tiempo.", frase: "El ser como tiempo", ejemplo: "Heidegger: 'La temporalidad es el sentido del ser del Dasein.'", ejercicio: "Reflexiona sobre el ser como tiempo.", reto: "Escribe un texto sobre el tiempo y el ser." },
+            { titulo: "El ser como espíritu", teoria: "El ser es espíritu, es decir, autoconciencia que se realiza en la historia.", frase: "El ser como espíritu", ejemplo: "Hegel: 'El espíritu es la autoconciencia de lo absoluto.'", ejercicio: "Reflexiona sobre el ser como espíritu.", reto: "Escribe un texto sobre el espíritu." },
+            { titulo: "El ser como cuerpo", teoria: "El ser humano es cuerpo, un ser que se experimenta a sí mismo como organismo viviente.", frase: "El ser como cuerpo", ejemplo: "Marcel: 'Yo soy mi cuerpo.'", ejercicio: "Reflexiona sobre el ser como cuerpo.", reto: "Escribe un texto sobre el cuerpo." },
+            { titulo: "El ser como relación", teoria: "El ser humano es relación, un ser que se constituye en la interacción con los demás.", frase: "El ser como relación", ejemplo: "Buber: 'El hombre se hace yo en la relación con el tú.'", ejercicio: "Reflexiona sobre el ser como relación.", reto: "Escribe un texto sobre la relación." },
+            { titulo: "El ser como libertad", teoria: "El ser humano es libertad, un ser que se elige a sí mismo y se proyecta hacia el futuro.", frase: "El ser como libertad", ejemplo: "Sartre: 'El hombre está condenado a ser libre.'", ejercicio: "Reflexiona sobre el ser como libertad.", reto: "Escribe un texto sobre la libertad." },
+            { titulo: "El ser como finitud", teoria: "El ser humano es finito, limitado por la muerte y la temporalidad. La finitud es condición de la existencia.", frase: "El ser como finitud", ejemplo: "Heidegger: 'El ser-para-la-muerte es la condición de la autenticidad.'", ejercicio: "Reflexiona sobre la finitud del ser.", reto: "Escribe un texto sobre la finitud." }
+        ]
+    },
+    etica: {
+        nombre: "Ética", color: "verde", icono: "bi-robot",
+        especialidad: "Moral: el bien, el mal, la virtud, la felicidad, el deber",
+        tecnicas: [
+            { titulo: "El bien como fin de la acción", teoria: "El bien es aquello que todos los seres desean. El bien es el fin último de la acción humana.", frase: "El bien como fin", ejemplo: "Aristóteles: 'El bien es aquello a lo que todas las cosas tienden.'", ejercicio: "Reflexiona sobre lo que consideras el bien.", reto: "Escribe un texto sobre el bien." },
+            { titulo: "La ética de la virtud", teoria: "La virtud es un hábito que nos permite actuar bien. Las virtudes son el camino hacia la felicidad.", frase: "La ética de la virtud", ejemplo: "Aristóteles: 'La virtud es el término medio entre dos extremos.'", ejercicio: "Reflexiona sobre una virtud que quieras cultivar.", reto: "Escribe un texto sobre la virtud." },
+            { titulo: "La ética del deber (deontología)", teoria: "El deber es la obligación de actuar según la ley moral. La moral no depende de las consecuencias, sino de la intención.", frase: "El deber como principio", ejemplo: "Kant: 'Actúa de tal manera que la máxima de tu acción pueda convertirse en ley universal.'", ejercicio: "Reflexiona sobre un deber moral.", reto: "Escribe un texto sobre el deber." },
+            { titulo: "La ética utilitarista", teoria: "El bien es la máxima felicidad para el mayor número de personas. La utilidad es el criterio de la moral.", frase: "La mayor felicidad", ejemplo: "Bentham: 'La mayor felicidad para el mayor número.'", ejercicio: "Reflexiona sobre una decisión desde la perspectiva utilitarista.", reto: "Escribe un texto sobre el utilitarismo." },
+            { titulo: "La ética del cuidado", teoria: "El cuidado es la base de la moral. La ética del cuidado valora las relaciones y la responsabilidad hacia los demás.", frase: "La ética del cuidado", ejemplo: "Gilligan: 'La voz del cuidado es una voz moral diferente.'", ejercicio: "Reflexiona sobre un acto de cuidado.", reto: "Escribe un texto sobre el cuidado." },
+            { titulo: "La ética de la alteridad", teoria: "El otro es el fundamento de la ética. La responsabilidad hacia el otro es la base de la moral.", frase: "La alteridad como fundamento", ejemplo: "Lévinas: 'El rostro del otro me interpela éticamente.'", ejercicio: "Reflexiona sobre tu responsabilidad hacia el otro.", reto: "Escribe un texto sobre la alteridad." },
+            { titulo: "La ética del amor", teoria: "El amor es la base de la moral. Amar al prójimo como a uno mismo es el mandato ético fundamental.", frase: "El amor como principio", ejemplo: "Jesús: 'Amarás al prójimo como a ti mismo.'", ejercicio: "Reflexiona sobre el amor como principio ético.", reto: "Escribe un texto sobre el amor y la ética." },
+            { titulo: "La ética de la justicia", teoria: "La justicia es la virtud que da a cada uno lo que le corresponde. La justicia es la base de la convivencia social.", frase: "La justicia como virtud", ejemplo: "Platón: 'La justicia es dar a cada uno lo que le corresponde.'", ejercicio: "Reflexiona sobre la justicia.", reto: "Escribe un texto sobre la justicia." },
+            { titulo: "La ética del diálogo", teoria: "El diálogo es el método para llegar a acuerdos morales. La ética se construye en la comunicación.", frase: "La ética del diálogo", ejemplo: "Habermas: 'La ética del discurso busca acuerdos racionales.'", ejercicio: "Reflexiona sobre un diálogo ético.", reto: "Escribe un texto sobre el diálogo ético." },
+            { titulo: "La ética de la responsabilidad", teoria: "La responsabilidad es la respuesta a las demandas del otro. Ser responsable es responder por los propios actos.", frase: "La responsabilidad", ejemplo: "Weber: 'La ética de la responsabilidad valora las consecuencias de los actos.'", ejercicio: "Reflexiona sobre un acto de responsabilidad.", reto: "Escribe un texto sobre la responsabilidad." },
+            { titulo: "La ética de la libertad", teoria: "La libertad es el fundamento de la moral. Solo hay moral donde hay libertad y elección.", frase: "La libertad como fundamento", ejemplo: "Sartre: 'El hombre está condenado a ser libre.'", ejercicio: "Reflexiona sobre la libertad como fundamento moral.", reto: "Escribe un texto sobre la libertad y la ética." },
+            { titulo: "La ética del deseo", teoria: "El deseo es el motor de la acción humana. La ética del deseo busca la realización de los deseos auténticos.", frase: "El deseo como motor", ejemplo: "Spinoza: 'El deseo es la esencia del hombre.'", ejercicio: "Reflexiona sobre tus deseos auténticos.", reto: "Escribe un texto sobre el deseo y la ética." },
+            { titulo: "La ética de la compasión", teoria: "La compasión es la capacidad de sentir el sufrimiento del otro. La compasión es la base de la solidaridad.", frase: "La compasión", ejemplo: "Schopenhauer: 'La compasión es el fundamento de la moral.'", ejercicio: "Reflexiona sobre un acto de compasión.", reto: "Escribe un texto sobre la compasión." },
+            { titulo: "La ética de la felicidad (eudaimonia)", teoria: "La felicidad es el fin último de la vida humana. La ética es el camino hacia la felicidad.", frase: "La eudaimonia", ejemplo: "Aristóteles: 'La felicidad es el fin de la acción humana.'", ejercicio: "Reflexiona sobre tu propia felicidad.", reto: "Escribe un texto sobre la felicidad y la ética." },
+            { titulo: "La ética del placer (hedonismo)", teoria: "El placer es el bien supremo. La ética hedonista busca maximizar el placer y minimizar el dolor.", frase: "El placer como bien", ejemplo: "Epicuro: 'El placer es el principio y el fin de la vida feliz.'", ejercicio: "Reflexiona sobre el placer y el dolor.", reto: "Escribe un texto sobre el hedonismo." },
+            { titulo: "La ética del deber y la felicidad", teoria: "El deber y la felicidad no siempre coinciden. La ética kantiana prioriza el deber sobre la felicidad.", frase: "Deber vs felicidad", ejemplo: "Kant: 'El deber es la necesidad de la acción por respeto a la ley.'", ejercicio: "Reflexiona sobre un conflicto entre deber y felicidad.", reto: "Escribe un texto sobre el conflicto entre deber y felicidad." },
+            { titulo: "La ética de la excelencia", teoria: "La excelencia (areté) es la virtud que nos hace destacar. La ética busca la excelencia en todas las áreas de la vida.", frase: "La excelencia", ejemplo: "Platón: 'La areté es la excelencia del alma.'", ejercicio: "Reflexiona sobre cómo alcanzar la excelencia.", reto: "Escribe un texto sobre la excelencia." },
+            { titulo: "La ética de la moderación", teoria: "La moderación es la virtud que evita los excesos. La ética de la moderación busca el equilibrio y la armonía.", frase: "La moderación", ejemplo: "Sócrates: 'La moderación es la base de la virtud.'", ejercicio: "Reflexiona sobre un exceso en tu vida.", reto: "Escribe un texto sobre la moderación." },
+            { titulo: "La ética de la solidaridad", teoria: "La solidaridad es la virtud que nos une a los demás en la lucha por un mundo más justo.", frase: "La solidaridad", ejemplo: "Marx: 'La solidaridad es la base de la lucha de clases.'", ejercicio: "Reflexiona sobre un acto de solidaridad.", reto: "Escribe un texto sobre la solidaridad." },
+            { titulo: "La ética de la paz", teoria: "La paz es el valor supremo de la convivencia humana. La ética de la paz busca la resolución no violenta de los conflictos.", frase: "La paz como valor", ejemplo: "Gandhi: 'No hay camino para la paz, la paz es el camino.'", ejercicio: "Reflexiona sobre la paz como valor.", reto: "Escribe un texto sobre la paz." },
+            { titulo: "La ética como arte de vivir", teoria: "La ética no es solo un conjunto de reglas, sino un arte de vivir que nos permite alcanzar la plenitud.", frase: "La ética como arte de vivir", ejemplo: "Foucault: 'La ética es el cuidado de sí.'", ejercicio: "Reflexiona sobre la ética como arte de vivir.", reto: "Escribe un texto sobre la ética como arte de vivir." }
+        ]
+    },
+    logica: {
+        nombre: "Lógica", color: "purpura", icono: "bi-robot",
+        especialidad: "Razón: el pensamiento, la argumentación, la dialéctica",
+        tecnicas: [
+            { titulo: "El silogismo", teoria: "El silogismo es un razonamiento deductivo que consta de dos premisas y una conclusión.", frase: "El silogismo", ejemplo: "Aristóteles: 'Todos los hombres son mortales. Sócrates es hombre. Luego Sócrates es mortal.'", ejercicio: "Construye un silogismo válido.", reto: "Escribe un texto sobre el silogismo." },
+            { titulo: "La inducción", teoria: "La inducción es el razonamiento que va de lo particular a lo general. Las generalizaciones se basan en casos particulares.", frase: "La inducción", ejemplo: "Hume: 'La inducción es el fundamento de todo conocimiento empírico.'", ejercicio: "Realiza una inducción a partir de 5 casos particulares.", reto: "Escribe un texto sobre la inducción." },
+            { titulo: "La deducción", teoria: "La deducción es el razonamiento que va de lo general a lo particular. La deducción parte de principios universales.", frase: "La deducción", ejemplo: "Descartes: 'La deducción es el paso de lo simple a lo compuesto.'", ejercicio: "Realiza una deducción a partir de una premisa general.", reto: "Escribe un texto sobre la deducción." },
+            { titulo: "La falacia ad hominem", teoria: "La falacia ad hominem consiste en atacar a la persona en lugar de sus argumentos. Es un error de razonamiento.", frase: "Ad hominem", ejemplo: "En un debate, no debes atacar a la persona, sino refutar sus argumentos.", ejercicio: "Identifica una falacia ad hominem.", reto: "Escribe un texto sobre las falacias." },
+            { titulo: "La falacia de la falsa dicotomía", teoria: "La falsa dicotomía presenta solo dos opciones cuando en realidad hay más. Es una simplificación excesiva.", frase: "Falsa dicotomía", ejemplo: "O estás conmigo o contra mí, cuando hay posiciones intermedias.", ejercicio: "Identifica una falsa dicotomía.", reto: "Escribe un texto sobre las falsas dicotomías." },
+            { titulo: "La analogía", teoria: "La analogía es un razonamiento que compara dos cosas para concluir que son similares en algún aspecto.", frase: "La analogía", ejemplo: "Platón: 'La sociedad es como un barco, el gobernante es el timonel.'", ejercicio: "Construye una analogía válida.", reto: "Escribe un texto sobre la analogía." },
+            { titulo: "La dialéctica", teoria: "La dialéctica es el método de razonamiento que avanza a través de la contraposición de tesis y antítesis.", frase: "La dialéctica", ejemplo: "Hegel: 'La dialéctica es el movimiento del pensamiento.'", ejercicio: "Aplica la dialéctica a un tema.", reto: "Escribe un texto sobre la dialéctica." },
+            { titulo: "El método socrático (mayéutica)", teoria: "La mayéutica es el método socrático de hacer preguntas para llegar a la verdad a través del diálogo.", frase: "La mayéutica", ejemplo: "Sócrates: 'La mayéutica es el arte de dar a luz las ideas.'", ejercicio: "Practica la mayéutica con alguien.", reto: "Escribe un texto sobre la mayéutica." },
+            { titulo: "La refutación", teoria: "La refutación es el arte de demostrar la falsedad de un argumento mediante contra-ejemplos y razones.", frase: "La refutación", ejemplo: "Aristóteles: 'La refutación es la demostración de la falsedad de un argumento.'", ejercicio: "Refuta un argumento que hayas escuchado.", reto: "Escribe un texto sobre la refutación." },
+            { titulo: "El argumento", teoria: "El argumento es un conjunto de razones que apoyan una conclusión. Un buen argumento es válido y sólido.", frase: "El argumento", ejemplo: "Un argumento válido es aquel en el que la conclusión se sigue de las premisas.", ejercicio: "Construye un argumento válido.", reto: "Escribe un texto sobre el argumento." },
+            { titulo: "La paradoja", teoria: "La paradoja es una afirmación que parece contradecirse a sí misma, pero que encierra una verdad profunda.", frase: "La paradoja", ejemplo: "La paradoja del mentiroso: 'Esta frase es falsa.'", ejercicio: "Analiza una paradoja.", reto: "Escribe un texto sobre la paradoja." },
+            { titulo: "El concepto", teoria: "El concepto es la representación mental de una idea. Los conceptos son las unidades básicas del pensamiento.", frase: "El concepto", ejemplo: "Kant: 'Los conceptos son reglas que unifican la multiplicidad de la intuición.'", ejercicio: "Analiza un concepto.", reto: "Escribe un texto sobre el concepto." },
+            { titulo: "El juicio", teoria: "El juicio es la operación mental que une conceptos para formar proposiciones verdaderas o falsas.", frase: "El juicio", ejemplo: "Kant: 'El juicio es la facultad de pensar lo particular bajo lo general.'", ejercicio: "Formula un juicio verdadero.", reto: "Escribe un texto sobre el juicio." },
+            { titulo: "El razonamiento hipotético", teoria: "El razonamiento hipotético parte de una hipótesis y extrae conclusiones que se derivan de ella.", frase: "El razonamiento hipotético", ejemplo: "Si llueve, la calle se moja. Está lloviendo. La calle está mojada.", ejercicio: "Construye un razonamiento hipotético.", reto: "Escribe un texto sobre el razonamiento hipotético." },
+            { titulo: "El principio de no contradicción", teoria: "El principio de no contradicción afirma que algo no puede ser y no ser al mismo tiempo y en el mismo sentido.", frase: "Principio de no contradicción", ejemplo: "Aristóteles: 'Es imposible que una cosa sea y no sea al mismo tiempo.'", ejercicio: "Reflexiona sobre el principio de no contradicción.", reto: "Escribe un texto sobre la no contradicción." },
+            { titulo: "El principio de identidad", teoria: "El principio de identidad afirma que cada cosa es idéntica a sí misma (A es A).", frase: "Principio de identidad", ejemplo: "Parménides: 'El ser es y el no-ser no es.'", ejercicio: "Reflexiona sobre el principio de identidad.", reto: "Escribe un texto sobre la identidad." },
+            { titulo: "El principio del tercero excluido", teoria: "El principio del tercero excluido afirma que entre una proposición y su negación no hay término medio.", frase: "Tercero excluido", ejemplo: "Una proposición o es verdadera o es falsa, no hay una tercera posibilidad.", ejercicio: "Reflexiona sobre el tercero excluido.", reto: "Escribe un texto sobre el tercero excluido." },
+            { titulo: "La lógica formal", teoria: "La lógica formal estudia la estructura del razonamiento, independientemente del contenido.", frase: "La lógica formal", ejemplo: "La lógica de proposiciones estudia las relaciones entre enunciados.", ejercicio: "Analiza un razonamiento formal.", reto: "Escribe un texto sobre la lógica formal." },
+            { titulo: "La lógica informal", teoria: "La lógica informal estudia el razonamiento en el lenguaje natural y en la vida cotidiana.", frase: "La lógica informal", ejemplo: "La argumentación en un debate político es una aplicación de la lógica informal.", ejercicio: "Analiza un argumento cotidiano.", reto: "Escribe un texto sobre la lógica informal." },
+            { titulo: "La lógica de la investigación", teoria: "La lógica de la investigación estudia los métodos para obtener conocimiento y validar hipótesis.", frase: "La lógica de la investigación", ejemplo: "El método científico es una aplicación de la lógica de la investigación.", ejercicio: "Diseña una investigación lógica.", reto: "Escribe un texto sobre la lógica de la investigación." },
+            { titulo: "La lógica como arte de pensar", teoria: "La lógica es el arte de pensar correctamente, de ordenar las ideas y de argumentar con claridad.", frase: "El arte de pensar", ejemplo: "Kant: 'La lógica es la ciencia de las reglas del entendimiento en general.'", ejercicio: "Reflexiona sobre el arte de pensar.", reto: "Escribe un texto sobre la lógica como arte." }
+        ]
+    },
+    politica: {
+        nombre: "Política", color: "rojo", icono: "bi-robot",
+        especialidad: "Sociedad: el poder, la justicia, el estado, la libertad",
+        tecnicas: [
+            { titulo: "La justicia como virtud política", teoria: "La justicia es la virtud que da a cada uno lo que le corresponde. La justicia es el fundamento del estado.", frase: "La justicia como fundamento", ejemplo: "Platón: 'La justicia es la armonía de las partes del alma y de la ciudad.'", ejercicio: "Reflexiona sobre la justicia en tu sociedad.", reto: "Escribe un texto sobre la justicia." },
+            { titulo: "El estado como comunidad política", teoria: "El estado es la comunidad política que organiza la convivencia y garantiza el bien común.", frase: "El estado como comunidad", ejemplo: "Aristóteles: 'El hombre es un animal político que solo puede realizarse en la polis.'", ejercicio: "Reflexiona sobre el estado en tu sociedad.", reto: "Escribe un texto sobre el estado." },
+            { titulo: "La democracia como sistema político", teoria: "La democracia es el gobierno del pueblo, donde el poder reside en la voluntad de la mayoría.", frase: "La democracia", ejemplo: "Pericles: 'La democracia es el gobierno de la mayoría.'", ejercicio: "Reflexiona sobre la democracia.", reto: "Escribe un texto sobre la democracia." },
+            { titulo: "La tiranía como corrupción del poder", teoria: "La tiranía es el gobierno de uno solo que oprime a los demás y actúa en su propio interés.", frase: "La tiranía", ejemplo: "Platón: 'La tiranía es el gobierno del tirano que actúa contra el bien común.'", ejercicio: "Reflexiona sobre la tiranía.", reto: "Escribe un texto sobre la tiranía." },
+            { titulo: "La libertad como valor político", teoria: "La libertad es la capacidad de actuar según la propia voluntad, dentro de los límites de la ley.", frase: "La libertad", ejemplo: "Mill: 'La libertad es el derecho de hacer todo lo que no perjudique a los demás.'", ejercicio: "Reflexiona sobre la libertad.", reto: "Escribe un texto sobre la libertad." },
+            { titulo: "La igualdad como valor político", teoria: "La igualdad es la condición de todos los ciudadanos ante la ley. La igualdad es la base de la democracia.", frase: "La igualdad", ejemplo: "Rousseau: 'La igualdad es la condición fundamental de la democracia.'", ejercicio: "Reflexiona sobre la igualdad.", reto: "Escribe un texto sobre la igualdad." },
+            { titulo: "El contrato social", teoria: "El contrato social es el acuerdo por el cual los individuos renuncian a su libertad natural para crear una sociedad civil.", frase: "El contrato social", ejemplo: "Rousseau: 'El contrato social es el acuerdo que funda la sociedad política.'", ejercicio: "Reflexiona sobre el contrato social.", reto: "Escribe un texto sobre el contrato social." },
+            { titulo: "La soberanía popular", teoria: "La soberanía reside en el pueblo, que es el titular del poder político y lo delega en sus representantes.", frase: "La soberanía popular", ejemplo: "Rousseau: 'La soberanía reside en el pueblo y es inalienable.'", ejercicio: "Reflexiona sobre la soberanía popular.", reto: "Escribe un texto sobre la soberanía." },
+            { titulo: "El poder como relación", teoria: "El poder es una relación entre individuos y grupos, que se ejerce en todos los ámbitos de la vida social.", frase: "El poder como relación", ejemplo: "Foucault: 'El poder no es una sustancia, sino una relación de fuerzas.'", ejercicio: "Reflexiona sobre el poder en tu vida.", reto: "Escribe un texto sobre el poder." },
+            { titulo: "La división de poderes", teoria: "La división de poderes es el principio por el cual el poder se divide en legislativo, ejecutivo y judicial.", frase: "La división de poderes", ejemplo: "Montesquieu: 'El poder debe detener al poder.'", ejercicio: "Reflexiona sobre la división de poderes.", reto: "Escribe un texto sobre la división de poderes." },
+            { titulo: "El estado de derecho", teoria: "El estado de derecho es aquel en el que los gobernantes y los gobernados están sujetos a la ley.", frase: "El estado de derecho", ejemplo: "Kant: 'El estado de derecho es la condición de la libertad.'", ejercicio: "Reflexiona sobre el estado de derecho.", reto: "Escribe un texto sobre el estado de derecho." },
+            { titulo: "La revolución como cambio político", teoria: "La revolución es el cambio radical del orden político, a menudo a través de la fuerza.", frase: "La revolución", ejemplo: "Marx: 'Las revoluciones son las locomotoras de la historia.'", ejercicio: "Reflexiona sobre la revolución.", reto: "Escribe un texto sobre la revolución." },
+            { titulo: "La resistencia al poder", teoria: "La resistencia al poder es el derecho y el deber de los ciudadanos a oponerse a la opresión.", frase: "La resistencia", ejemplo: "Thoreau: 'La desobediencia civil es el deber del ciudadano frente a la injusticia.'", ejercicio: "Reflexiona sobre la resistencia.", reto: "Escribe un texto sobre la resistencia." },
+            { titulo: "El bien común como fin del estado", teoria: "El bien común es el fin último del estado. El estado debe garantizar el bienestar de todos los ciudadanos.", frase: "El bien común", ejemplo: "Tomás de Aquino: 'El bien común es el fin de la comunidad política.'", ejercicio: "Reflexiona sobre el bien común.", reto: "Escribe un texto sobre el bien común." },
+            { titulo: "La ciudadanía como participación", teoria: "La ciudadanía no es solo un estatus, sino una participación activa en la vida política de la comunidad.", frase: "La ciudadanía activa", ejemplo: "Aristóteles: 'El ciudadano es aquel que participa en el gobierno.'", ejercicio: "Reflexiona sobre tu participación ciudadana.", reto: "Escribe un texto sobre la ciudadanía." },
+            { titulo: "La utopía como proyecto político", teoria: "La utopía es un proyecto de sociedad ideal que inspira la acción política y la transformación social.", frase: "La utopía", ejemplo: "More: 'Utopía es la isla de la felicidad perfecta.'", ejercicio: "Reflexiona sobre una utopía.", reto: "Escribe un texto sobre la utopía." },
+            { titulo: "La democracia deliberativa", teoria: "La democracia deliberativa se basa en el diálogo y la deliberación como forma de tomar decisiones colectivas.", frase: "La democracia deliberativa", ejemplo: "Habermas: 'La democracia deliberativa se basa en el poder del mejor argumento.'", ejercicio: "Reflexiona sobre la deliberación.", reto: "Escribe un texto sobre la democracia deliberativa." },
+            { titulo: "La justicia social", teoria: "La justicia social es la distribución equitativa de los bienes y las oportunidades en la sociedad.", frase: "La justicia social", ejemplo: "Rawls: 'La justicia es la equidad en la distribución de los bienes sociales.'", ejercicio: "Reflexiona sobre la justicia social.", reto: "Escribe un texto sobre la justicia social." },
+            { titulo: "El nacionalismo como ideología", teoria: "El nacionalismo es la ideología que defiende la soberanía y la identidad de una nación.", frase: "El nacionalismo", ejemplo: "Herder: 'El nacionalismo es la expresión de la identidad cultural de un pueblo.'", ejercicio: "Reflexiona sobre el nacionalismo.", reto: "Escribe un texto sobre el nacionalismo." },
+            { titulo: "El cosmopolitismo como horizonte", teoria: "El cosmopolitismo es la idea de una comunidad política global que trasciende las fronteras nacionales.", frase: "El cosmopolitismo", ejemplo: "Kant: 'El cosmopolitismo es la condición de la paz perpetua.'", ejercicio: "Reflexiona sobre el cosmopolitismo.", reto: "Escribe un texto sobre el cosmopolitismo." },
+            { titulo: "La política como arte de lo posible", teoria: "La política es el arte de lo posible, de construir acuerdos y de gestionar los conflictos en la sociedad.", frase: "El arte de lo posible", ejemplo: "Bismarck: 'La política es el arte de lo posible.'", ejercicio: "Reflexiona sobre el arte de la política.", reto: "Escribe un texto sobre la política como arte." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['conocimiento','ser','etica','logica','politica'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="frase-clave">
+                        <span>${t.frase}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_philosophia_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .dash-title { font-size: 2rem; font-weight: 700; color: #f1c40f; margin-bottom: 0.5rem; }
+    .dash-sub { color: #8b949e; margin-bottom: 2rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem; margin-bottom: 2rem; }
+    .stat-card { background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+        padding: 1.25rem; text-align: center; }
+    .stat-num { font-size: 2rem; font-weight: 800; color: #f1c40f; line-height: 1; }
+    .stat-label { font-size: 0.75rem; color: #8b949e; text-transform: uppercase;
+        letter-spacing: 1px; margin-top: 0.5rem; }
+    .section-h2 { font-size: 1.4rem; color: #e6edf3; margin-top: 2rem; margin-bottom: 1rem;
+        border-bottom: 1px solid #30363d; padding-bottom: 0.5rem; }
+    .card-curso { background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+        padding: 1.25rem; margin-bottom: 1rem; }
+    .card-curso h3 { color: #e6edf3; margin: 0 0 0.5rem; font-size: 1.1rem; }
+    .card-curso p { color: #8b949e; font-size: 0.9rem; margin: 0.25rem 0; }
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 10px;
+        font-size: 0.75rem; font-weight: 600; background: #21262d; color: #58a6ff;
+        margin-right: 0.3rem; }
+    .tabla { width: 100%; border-collapse: collapse; }
+    .tabla th { text-align: left; padding: 0.75rem; color: #8b949e; font-size: 0.8rem;
+        text-transform: uppercase; border-bottom: 2px solid #30363d; }
+    .tabla td { padding: 0.75rem; border-bottom: 1px solid #21262d; color: #c9d1d9; }
+    .btn-primary-custom { display: inline-block; padding: 0.5rem 1.2rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0d1117;
+        font-weight: 700; border-radius: 8px; text-decoration: none; font-size: 0.9rem; }
+    .empty-state { background: #161b22; border: 1px dashed #30363d; border-radius: 10px;
+        padding: 2rem; text-align: center; color: #8b949e; }
+</style>
+
+<div class="dash-title">👨‍🏫 Panel del Profesor</div>
+<p class="dash-sub">
+    Bienvenido, <strong>{{ user.get_full_name|default:user.username }}</strong>
+    · {{ perfil.get_estado_academico_display }}
+</p>
+
+<!-- ═══ Stats ═══ -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_cursos }}</div>
+        <div class="stat-label">📚 Cursos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_estudiantes }}</div>
+        <div class="stat-label">👥 Estudiantes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_lecciones_completadas }}</div>
+        <div class="stat-label">✅ Lecciones completadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_certificados }}</div>
+        <div class="stat-label">🎓 Certificados emitidos</div>
+    </div>
+</div>
+
+<!-- ═══ Mis cursos ═══ -->
+<h2 class="section-h2">📚 Mis cursos</h2>
+
+{% if cursos %}
+    {% for c in cursos %}
+        <div class="card-curso">
+            <h3>{{ c.titulo }}</h3>
+            <p>{{ c.materia.nombre }} · {{ c.get_idioma_display }} · Nivel {{ c.nivel }}</p>
+            <p>
+                <span class="badge">📖 {{ c.total_lecciones }} lecciones</span>
+                <span class="badge">👥 {{ c.total_inscritos }} inscritos</span>
+            </p>
+            <div style="margin-top: 0.75rem;">
+                <a href="/admin/courses/curso/{{ c.id }}/change/" class="btn-primary-custom">
+                    ⚙️ Editar
+                </a>
+            </div>
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>📖 Aún no has creado ningún curso.</p>
+        <p>Puedes crear cursos desde el panel de administración.</p>
+        <a href="/admin/courses/curso/add/" class="btn-primary-custom" style="margin-top: 1rem;">
+            ➕ Crear curso
+        </a>
+    </div>
+{% endif %}
+
+<!-- ═══ Últimos inscritos ═══ -->
+{% if ultimos_inscritos %}
+    <h2 class="section-h2">👥 Últimos estudiantes inscritos</h2>
+    <div style="background: #161b22; border: 1px solid #30363d; border-radius: 10px;
+                overflow: hidden;">
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>{% trans "Curso" %}</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ins in ultimos_inscritos %}
+                    <tr>
+                        <td>
+                            <strong>{{ ins.estudiante.username }}</strong>
+                            {% if ins.estudiante.get_full_name %}
+                                <br><small style="color:#8b949e;">{{ ins.estudiante.get_full_name }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ ins.curso.titulo|truncatechars:50 }}</td>
+                        <td style="color:#8b949e; font-size:0.9rem;">
+                            {{ ins.fecha_inscripcion|date:"d M Y, H:i" }}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}
+
+<!-- ═══ Enlaces útiles ═══ -->
+<h2 class="section-h2">🔗 Enlaces útiles</h2>
+<div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <a href="/admin/" class="btn-primary-custom">⚙️ Admin</a>
+    <a href="{% url 'courses:recursos_lista' %}" class="btn-primary-custom">🎮 Recursos</a>
+    <a href="{% url 'users:perfil' %}" class="btn-primary-custom">👤 Mi perfil</a>
+</div>
+
+{% endblock %}

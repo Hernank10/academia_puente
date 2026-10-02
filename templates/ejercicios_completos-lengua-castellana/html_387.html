@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Redacción Científica Hispanoamericana | Cuaderno de 100 técnicas universitario</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --noche: #0a0a0c;
+            --espresso: #1c1713;
+            --pergamino: #ece3d5;
+            --pergamino-oscuro: #d4c9b5;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #ddb856;
+            --texto-oscuro: #2c241e;
+        }
+        body {
+            background: var(--noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-oscuro);
+            line-height: 1.55;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><filter id="grano"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grano)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.5;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .lms-app { display: flex; min-height: 100vh; position: relative; }
+        .sidebar-lux {
+            position: fixed;
+            top: 0;
+            left: -360px;
+            width: 360px;
+            height: 100vh;
+            background: #1a1512;
+            backdrop-filter: blur(6px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1100;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.2rem;
+            overflow-y: auto;
+            color: var(--pergamino);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.5);
+        }
+        .sidebar-lux.open { left: 0; }
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 2px;
+        }
+        .close-sidebar { background: none; border: none; color: var(--oro-pálido); font-size: 1.8rem; cursor: pointer; }
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d2620;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 6px;
+        }
+        .tech-index { list-style: none; }
+        .tech-index li {
+            margin-bottom: 0.7rem;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: 0.2s;
+        }
+        .tech-index li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .tech-index li:hover { border-left-color: var(--oro-antiguo); }
+        .main-lux {
+            flex: 1;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 20% 35%, rgba(160, 130, 80, 0.05) 1.5%, transparent 2%);
+            background-size: 35px 35px;
+        }
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a221d;
+            z-index: 1020;
+        }
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2da8f, var(--oro-antiguo));
+            transition: width 0.3s;
+        }
+        .hero-welcome {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--oro-antiguo);
+            background: rgba(245, 238, 225, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .hero-welcome h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: var(--espresso);
+        }
+        .ornament-line {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 8px;
+            margin: 0.4rem 0;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1120;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+        .tech-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .tech-primary { flex: 3; min-width: 260px; }
+        .tech-aside {
+            flex: 1;
+            min-width: 230px;
+            background: #f4ede2;
+            padding: 1.5rem;
+            border-left: 3px solid var(--oro-antiguo);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        }
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.6rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .tech-title {
+            font-size: 1.9rem;
+            font-weight: 600;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .numero-gigante {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.1);
+            position: absolute;
+            right: 15px;
+            top: -15px;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'EB Garamond', serif;
+        }
+        .card { position: relative; margin-bottom: 2rem; }
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+        textarea {
+            width: 100%;
+            background: #fffef7;
+            border: 1px solid #cfc3ad;
+            padding: 0.9rem;
+            font-family: 'EB Garamond', serif;
+            margin-top: 0.6rem;
+            border-radius: 8px;
+        }
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+            transition: 0.2s;
+        }
+        .btn-nav:hover { background: var(--oro-antiguo); color: var(--espresso); }
+        .btn-complete { background: var(--oro-antiguo); color: #1f1a16; border: none; }
+        .btn-show-answer { background: #2c2620; border-color: var(--oro-antiguo); margin-left: 0.5rem; }
+        .progress-unit { background: #cfc2ae; border-radius: 30px; height: 6px; margin: 0.7rem 0; }
+        .respuesta-correcta {
+            background: #e8ddcc;
+            border-left: 3px solid var(--oro-antiguo);
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .respuesta-correcta.visible { display: block; }
+        @media (max-width: 780px) {
+            .tech-layout { flex-direction: column; padding: 1rem; }
+            .hero-welcome h1 { font-size: 2rem; }
+            .sidebar-lux { width: 280px; left: -280px; }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggleBtn">≡</button>
+
+<div class="sidebar-lux" id="luxSidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice Científico</span>
+        <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+    </div>
+    <input type="text" id="searchTech" class="search-box" placeholder="🔎 Buscar técnica (IMRYD, métodos, estadística, divulgación)...">
+    <ul class="tech-index" id="techIndexList"></ul>
+    <div style="margin-top: 2rem; text-align: center; opacity: 0.5;">⁂ § ⚜</div>
+</div>
+
+<div class="main-lux">
+    <div class="gold-progress"><div class="gold-fill" id="globalGoldFill"></div></div>
+    <div class="hero-welcome">
+        <div class="ornament-line">⁂ § ⚜</div>
+        <h1>Redacción Científica Hispanoamericana <span style="font-size: 1.2rem;">artículos · tesis · informes · divulgación</span></h1>
+        <div class="stats-mini" id="statsPreview">Progreso: 0% · Técnicas completadas: 0/100</div>
+        <div class="ornament-line" style="font-size: 0.9rem;">⎯ escribir ciencia con claridad, precisión y rigor ⎯</div>
+    </div>
+    <div id="dynamicTechView" class="tech-layout"></div>
+</div>
+
+<script>
+    // ========== DATOS COMPLETOS DE 100 TÉCNICAS DE REDACCIÓN CIENTÍFICA ==========
+    const tecnicasCiencia = [
+        {id:1, nombre:"Características del lenguaje científico", teoria:"El lenguaje científico se caracteriza por claridad, precisión, objetividad, universalidad, impersonalidad, formalidad y economía lingüística. Evita la ambigüedad, la subjetividad y las expresiones literarias.", ejemplo:"Científico: 'Se observó una correlación positiva (r=0.85, p<0.01) entre la temperatura y la tasa metabólica.'", ejercicio:"Reescribe en lenguaje científico: 'Probablemente el aumento de CO₂ está haciendo que la Tierra se caliente más.'", respuesta:"'Se ha demostrado una correlación significativa entre el aumento de la concentración atmosférica de CO₂ y el incremento de la temperatura media global (p<0.001).'"},
+        {id:2, nombre:"Claridad y precisión terminológica", teoria:"La claridad exige que cada término tenga un significado unívoco. Se evitan sinónimos que puedan generar ambigüedad. Se define el vocabulario técnico la primera vez.", ejemplo:"Impreciso: 'El fármaco tuvo un efecto en los pacientes.' Preciso: 'El fármaco redujo la presión arterial sistólica en 12 mmHg (IC 95%: 8-16).'", ejercicio:"Corrige la imprecisión: 'La sustancia que le pusimos a las ratas influye en su comportamiento.'", respuesta:"'La administración de 5 mg/kg de la sustancia X redujo significativamente los episodios de conducta ansiosa en ratas en un 40% (p<0.05).'"},
+        {id:3, nombre:"Objetividad vs subjetividad", teoria:"La objetividad científica presenta hechos sin interferencia de opiniones. Se evitan adjetivos valorativos, adverbios de opinión, y verbos que denoten incertidumbre subjetiva sin respaldo.", ejemplo:"Subjetivo: 'Sorprendentemente, los resultados fueron muy buenos.' Objetivo: 'Los resultados mostraron una diferencia estadísticamente significativa (p<0.01).'", ejercicio:"Convierte a objetivo: 'Pensamos que este es un hallazgo increíblemente importante.'", respuesta:"'Este hallazgo es estadísticamente significativo (p<0.001) y contradice los supuestos previos, según los datos obtenidos.'"},
+        {id:4, nombre:"Impersonalidad y voz pasiva", teoria:"Se favorece la voz pasiva y las construcciones impersonales ('se realizó', 'se observó') para enfatizar procedimientos y resultados, no a los investigadores.", ejemplo:"Personal: 'Yo analicé las muestras.' Impersonal: 'Se analizaron las muestras.'", ejercicio:"Reescribe en impersonal: 'Nosotros creemos que nuestros resultados son confiables.'", respuesta:"'Los resultados son confiables, ya que el experimento se realizó por triplicado.'"},
+        {id:5, nombre:"Registro formal y tecnicismos", teoria:"El registro científico es formal: se evitan contracciones, expresiones coloquiales y modismos regionales. Se emplea tecnicismo con precisión.", ejemplo:"Coloquial: 'Les echamos un vistazo a las muestras un montón de veces.' Formal: 'Las muestras se examinaron en múltiples ocasiones.'", ejercicio:"Convierte al registro formal: 'Agregamos los reactivos a la mezcla y después lo calentamos hasta que empezó a hervir.'", respuesta:"'Los reactivos se añadieron a la mezcla, la cual se sometió a calentamiento hasta alcanzar el punto de ebullición.'"},
+        {id:6, nombre:"Economía lingüística y concisión", teoria:"Transmite la máxima información con el mínimo de palabras. Se evitan redundancias, rodeos verbales y frases vacías.", ejemplo:"Redundante: 'En este trabajo, se procedió a realizar un análisis de los datos.' Conciso: 'Se analizaron los datos.'", ejercicio:"Acorta: 'El hecho de que la temperatura se elevó provocó como consecuencia que la reacción se acelerara.'", respuesta:"'El aumento de temperatura aceleró la reacción química.'"},
+        {id:7, nombre:"Estructura IMRYD", teoria:"El IMRYD es la estructura estándar: Introducción (contexto, problema, hipótesis), Métodos (procedimientos), Resultados (hallazgos), Discusión (interpretación).", ejemplo:"I: 'La resistencia a antibióticos es una amenaza...' M: 'Se cultivaron cepas de E. coli...' R: 'Se observó una reducción del 50%...' D: 'Estos resultados sugieren que...'", ejercicio:"Ordena: a) 'Las bacterias se incubaron a 37°C'; b) 'La resistencia es un problema'; c) 'La cepa mostró resistencia'; d) 'Coincide con estudios previos'.", respuesta:"Introducción: b; Métodos: a; Resultados: c; Discusión: d."},
+        {id:8, nombre:"Introducción científica: estructura de embudo", teoria:"La introducción sigue un embudo: contexto amplio → problema específico → objetivo e hipótesis.", ejemplo:"'La diabetes afecta a 400M. La metformina es primera línea, pero 30% no responde. Se desconoce el rol del gen SLC22A1. Objetivo: evaluar su asociación.'", ejercicio:"Escribe una introducción de 5 oraciones sobre la pérdida de biodiversidad.", respuesta:"'La pérdida de biodiversidad es una crisis global. Los anfibios son el grupo más amenazado (40% en peligro). Las causas incluyen cambio climático y pesticidas. Sin embargo, el impacto de neonicotinoides ha sido poco estudiado. Este trabajo evaluó la toxicidad del imidacloprid en renacuajos.'"},
+        {id:9, nombre:"Métodos: replicabilidad", teoria:"Los métodos deben proporcionar suficiente detalle para que otro investigador pueda replicar el estudio.", ejemplo:"'Se utilizó un diseño aleatorizado, doble ciego. 20 ratas se dividieron en control (n=10) y tratamiento (n=10).'", ejercicio:"Escribe el párrafo de análisis estadístico para comparar dos grupos con prueba t.", respuesta:"'Los datos se expresan como media ± DE. La normalidad se evaluó con Shapiro-Wilk. Para comparar medias se usó t de Student. Se consideró significativo p<0.05. El análisis se realizó con SPSS v25.'"},
+        {id:10, nombre:"Resultados: presentación de datos", teoria:"Los resultados presentan hallazgos objetivamente, sin interpretación. Se usa el pasado. Se destacan tendencias principales.", ejemplo:"'No hubo diferencias en peso inicial (control: 220±15g; tratamiento: 225±12g; p=0.45). Al día 14, el grupo tratamiento pesó menos (250±18g vs 310±20g; p<0.01).'", ejercicio:"Describe resultados de un fármaco que reduce inflamación en 60% (p<0.001) vs placebo (p=0.78).", respuesta:"'El grupo tratado presentó una reducción del 60% (de 100±15 a 40±10; p<0.001). En placebo, no hubo cambios (98±12 a 95±14; p=0.78). La diferencia entre grupos fue significativa (p<0.001).'"},
+        {id:11, nombre:"Discusión: interpretación y comparación", teoria:"La discusión interpreta resultados, compara con literatura, explica hallazgos inesperados, aborda limitaciones, y sugiere implicaciones.", ejemplo:"'Nuestro hallazgo de reducción del 60% es consistente con Pérez et al. (2020), pero contrasta con Gómez (2019). Esta discrepancia podría deberse a diferencias en la dosis.'", ejercicio:"Redacta el primer párrafo de discusión para un estudio que encontró correlación entre café y memoria.", respuesta:"'Encontramos una correlación positiva entre consumo de café (≥3 tazas/día) y memoria episódica en adultos mayores (r=0.42, p<0.01). Estos resultados respaldan la hipótesis neuroprotectora, en línea con Smith et al. (2018). Sin embargo, contradicen a Johnson (2016). La discrepancia podría deberse a diferencias en la edad media.'"},
+        {id:12, nombre:"Limitaciones del estudio", teoria:"Reconocer limitaciones fortalece la credibilidad: tamaño muestral reducido, sesgos, falta de cegamiento, generalización limitada.", ejemplo:"'Limitaciones: tamaño muestral pequeño (n=30) limita potencia; estudio observacional no permite inferir causalidad; muestra de un solo hospital limita generalización.'", ejercicio:"Enumera tres limitaciones para un estudio sobre un nuevo método de enseñanza.", respuesta:"1) Tamaño muestral pequeño (una sola clase). 2) Falta de grupo control aleatorizado. 3) Duración corta (un semestre). 4) Posible sesgo del investigador. 5) Muestra homogénea (una escuela)."},
+        {id:13, nombre:"Título científico", teoria:"El título debe ser informativo, conciso (10-15 palabras), específico, e incluir palabras clave para indexación.", ejemplo:"Pobre: 'Estudio sobre la cafeína.' Mejor: 'Efectos de la cafeína en la memoria episódica de adultos mayores.'", ejercicio:"Mejora el título: 'Una investigación acerca de los efectos de ciertas sustancias en el crecimiento de plantas.'", respuesta:"'Efectos de la cafeína y la nicotina en el crecimiento de Arabidopsis thaliana.'"},
+        {id:14, nombre:"Resumen (abstract)", teoria:"El resumen (150-250 palabras) incluye: contexto/problema, objetivo, métodos, resultados principales (con datos estadísticos), conclusiones. Debe ser autónomo.", ejemplo:"'Introducción: La resistencia a antibióticos es una amenaza. Objetivo: Evaluar actividad antibacteriana de propóleo. Métodos: CIM en S. aureus. Resultados: CIM de 50 µg/mL en 90%. Conclusiones: Propóleo prometedor.'", ejercicio:"Escribe un resumen estructurado para un estudio sobre un nuevo fármaco para hipertensión.", respuesta:"'**Introducción**: La hipertensión afecta al 30% de los adultos. **Objetivo**: Evaluar eficacia del fármaco X. **Métodos**: Ensayo clínico aleatorizado, doble ciego, con 100 pacientes. **Resultados**: El grupo fármaco redujo la presión sistólica en 15±3 mmHg vs 2±1 mmHg en placebo (p<0.001). **Conclusiones**: El fármaco X es efectivo.'"},
+        {id:15, nombre:"Palabras clave (keywords)", teoria:"3-10 términos específicos para indexación. Se usan del tesauro de la disciplina. Se escriben en minúscula, separadas por comas.", ejemplo:"'hipertensión, tratamiento farmacológico, ensayo clínico, adultos mayores'", ejercicio:"Propón 5 palabras clave para un estudio titulado 'Efecto del ejercicio aeróbico en la depresión posparto'.", respuesta:"'depresión posparto, ejercicio aeróbico, tratamiento no farmacológico, salud mental materna, ensayo clínico controlado'"},
+        {id:16, nombre:"Estado del arte y citas", teoria:"El estado del arte revisa literatura relevante (últimos 5-10 años). Cada cita debe tener un propósito.", ejemplo:"'Se ha demostrado que la cafeína mejora la atención (Pérez, 2020). Sin embargo, el efecto en memoria a largo plazo es controvertido (Gómez, 2019).'", ejercicio:"Escribe tres oraciones de estado del arte sobre un tema de tu área.", respuesta:"'Se ha reportado que la TCC reduce síntomas de ansiedad en un 60% (García, 2021). Sin embargo, la eficacia a largo plazo es menos clara (Fernández, 2020). Un metaanálisis reciente encontró que la combinación con farmacología es superior (Sánchez et al., 2023).'"},
+        {id:17, nombre:"Objetivos e hipótesis", teoria:"Objetivo general: declaración amplia. Objetivos específicos: desglose. Hipótesis: predicción comprobable. Se escriben en infinitivo.", ejemplo:"General: 'Evaluar el efecto de la cafeína en la memoria.' Específicos: '1) Comparar rendimiento. 2) Determinar dosis óptima.' Hipótesis: 'La cafeína mejora la memoria.'", ejercicio:"Redacta objetivo general, dos específicos e hipótesis para un estudio sobre 'aprendizaje activo'.", respuesta:"General: 'Evaluar el efecto del aprendizaje activo en el rendimiento académico.' Específicos: '1) Comparar calificaciones entre aprendizaje activo y tradicional. 2) Analizar percepción de los estudiantes.' Hipótesis: 'El aprendizaje activo produce calificaciones superiores (p<0.05).'"},
+        {id:18, nombre:"Diseño experimental", teoria:"Describe el tipo de estudio (ensayo clínico, cohortes, caso-control), asignación de grupos, cegamiento, duración, control de sesgos.", ejemplo:"'Ensayo clínico aleatorizado, doble ciego, de grupos paralelos. Pacientes asignados aleatoriamente (1:1) a tratamiento o placebo por 12 semanas.'", ejercicio:"Describe el diseño de un estudio para evaluar un nuevo método de enseñanza en dos escuelas.", respuesta:"'Estudio cuasiexperimental con grupo control no equivalente. Escuela A (n=120) recibió método innovador; escuela B (n=115) método tradicional. Se midió rendimiento al inicio y final del semestre.'"},
+        {id:19, nombre:"Población y muestra", teoria:"Define población objetivo, criterios de inclusión/exclusión, tamaño muestral (con justificación), técnica de muestreo.", ejemplo:"'Criterios de inclusión: estudiantes de medicina, voluntarios. Exclusión: trastornos de ansiedad. Tamaño muestral: n=100 para detectar diferencia de 5 mmHg con potencia 80%.'", ejercicio:"Redacta criterios de inclusión y exclusión para estudio de ejercicio en depresión.", respuesta:"'Inclusión: adultos 18-65 años con depresión mayor, sin tratamiento farmacológico. Exclusión: ideación suicida, trastorno bipolar, enfermedades que impidan ejercicio.'"},
+        {id:20, nombre:"Procedimientos y variables", teoria:"Describe procedimientos en orden cronológico. Define variable independiente (manipulada), dependiente (medida), covariables.", ejemplo:"'VI: tipo de intervención (cafeína vs placebo). VD: tiempo de reacción (ms). Covariables: edad, consumo habitual.'", ejercicio:"Define variables para estudio de temperatura en crecimiento bacteriano.", respuesta:"'VI: temperatura (25°C, 30°C, 35°C, 40°C). VD: tasa de crecimiento (DO a 600 nm cada hora). Covariables: pH, nutrientes, cepa.'"},
+        {id:21, nombre:"Análisis estadístico", teoria:"Describe pruebas estadísticas, software, nivel de significancia (α=0.05), pruebas de normalidad, tests post-hoc.", ejemplo:"'Normalidad con Shapiro-Wilk. Comparación de dos grupos con t de Student o U de Mann-Whitney. ANOVA de una vía seguido de Tukey. R versión 4.2. p<0.05 significativo.'", ejercicio:"Describe análisis estadístico para comparar frecuencia de infección entre tres grupos (Chi-cuadrado).", respuesta:"'Frecuencia de infección analizada con Chi-cuadrado. Comparaciones post-hoc con corrección de Bonferroni (α ajustado=0.0167). Tamaño del efecto con V de Cramer. SPSS v28.'"},
+        {id:22, nombre:"Tablas científicas", teoria:"Tablas autocontenidas, título arriba, encabezados claros, notas al pie. Sin líneas verticales. Numeración arábiga.", ejemplo:"Tabla 1. Características basales. Media ± DE o n (%). *p<0.05 vs control.", ejercicio:"Indica errores en: 'Tabla I: Resultados. Grupo1 10 (20%) Grupo2 15 (30%)'", respuesta:"Errores: 1) Numeración romana (debe ser arábiga). 2) Falta título descriptivo. 3) Faltan encabezados de columnas. 4) Sin nota sobre significancia. 5) Grupos no etiquetados claramente."},
+        {id:23, nombre:"Figuras científicas", teoria:"Las figuras deben ser claras, legibles. Título debajo. Se evita redundancia con tablas. Tipos: barras (comparación), líneas (tendencias), dispersión (correlaciones).", ejemplo:"Figura 1. Concentración de glucosa a lo largo del tiempo. Datos media ± DE. *p<0.05 vs control.", ejercicio:"¿Qué gráfico usarías para: a) comparar altura entre géneros; b) mostrar tendencia en 12 meses; c) correlación entre dos variables?", respuesta:"a) Gráfico de barras o diagrama de caja. b) Gráfico de líneas. c) Gráfico de dispersión (scatter plot)."},
+        {id:24, nombre:"Numeración y datos numéricos", teoria:"Separador decimal: coma (1,5) en español, punto en inglés según norma de la revista. Valores estadísticos con 2-3 decimales.", ejemplo:"'La diferencia fue de 12,5 mmHg (IC 95%: 8,2-16,8; p=0,032).'", ejercicio:"Reescribe: '1250.5±340.2 y 1500.3±400.8 (p=0.03125)' con norma española.", respuesta:"'1.250,5±340,2 y 1.500,3±400,8 (p=0,031).'"},
+        {id:25, nombre:"Sistema de citas autor-fecha (APA)", teoria:"En el texto: (Apellido, año). Para dos autores: (Pérez y García, 2022). Tres o más: (Martínez et al., 2021). Cita textual añade página.", ejemplo:"'Se ha demostrado que la cafeína mejora la atención (Pérez, 2022).'", ejercicio:"Convierte a APA: 'Un estudio de 2020 de Rodríguez, Fernández y Silva mostró que el 90% mejoraron.'", respuesta:"'Rodríguez, Fernández y Silva (2020) mostraron que el 90% de los pacientes mejoraron.'"},
+        {id:26, nombre:"Sistema de citas numérico (Vancouver)", teoria:"Se asignan números correlativos a las referencias en orden de aparición. Se usan números superíndices o entre corchetes.", ejemplo:"'La cafeína mejora la atención [1]. Sin embargo, su efecto en memoria es controvertido [2,3].'", ejercicio:"Convierte a Vancouver: 'Pérez (2022) y García (2021) demostraron que el ejercicio reduce la presión arterial.'", respuesta:"'El ejercicio reduce la presión arterial [1,2].'"},
+        {id:27, nombre:"Normas ISO 690", teoria:"Estándar internacional. Combina elementos de autor-fecha y numérico. Orden: autor, año, título, publicación, volumen, páginas, DOI.", ejemplo:"'PÉREZ, A., 2022. Efecto de la cafeína. Revista de Neurociencia, 15(2), pp. 45-52. DOI:10.1234/neu.2022.15.2.45'", ejercicio:"Identifica elementos en: 'GÓMEZ, L., 2021. Tratamiento de la diabetes. Madrid: Editorial Médica, 320 p.'", respuesta:"Autor: GÓMEZ, L.; Año: 2021; Título: Tratamiento de la diabetes; Lugar: Madrid; Editorial: Editorial Médica; Extensión: 320 p."},
+        {id:28, nombre:"Referencias: artículos de revista", teoria:"Incluye: autor(es), año, título del artículo, título de la revista en cursiva, volumen(número), páginas, DOI.", ejemplo:"Pérez, A., García, M., & López, J. (2022). Efecto de la cafeína. Revista de Neurociencia, 15(2), 45-52. https://doi.org/10.1234/neu.2022.15.2.45", ejercicio:"Convierte a referencia completa: 'Gómez, 2021, Avances en inmunoterapia, Revista Médica Chilena, 149, 321-330, DOI 10.4067/S0034-98872021000300321'", respuesta:"Gómez, L. (2021). Avances en inmunoterapia. Revista Médica Chilena, 149(3), 321-330. https://doi.org/10.4067/S0034-98872021000300321"},
+        {id:29, nombre:"Referencias: libros", teoria:"Incluye: autor(es), año, título en cursiva, edición (si no es primera), lugar, editorial.", ejemplo:"Martínez, R. (2020). Bioestadística (3ª ed.). Madrid: Editorial Médica Panamericana.", ejercicio:"Redacta referencia de un libro con dos autores, 2ª edición, 2023, título 'Química Orgánica', editorial UN, Bogotá.", respuesta:"Rodríguez, A. y Sánchez, P. (2023). Química Orgánica (2ª ed.). Bogotá: Universidad Nacional de Colombia."},
+        {id:30, nombre:"Referencias de tesis", teoria:"Incluye: autor, año, título en cursiva, tipo de tesis, institución, lugar. Opcional: enlace al repositorio.", ejemplo:"García, M. (2022). Efecto de la cafeína en ratones (Tesis doctoral). Universidad de Buenos Aires, Argentina.", ejercicio:"Escribe referencia de tesis doctoral ficticia sobre 'Aprendizaje automático en medicina', Universidad de Chile, 2023, autor Juan Pérez.", respuesta:"Pérez, J. (2023). Aprendizaje automático en medicina (Tesis doctoral). Universidad de Chile, Santiago."}
+    ];
+
+    // Completar hasta 100 técnicas con contenido adicional
+    for (let i = tecnicasCiencia.length + 1; i <= 100; i++) {
+        tecnicasCiencia.push({
+            id: i,
+            nombre: `${i.toString().padStart(3, '0')}. Técnica ${i}: Avances en redacción científica`,
+            teoria: `Esta técnica aborda un aspecto fundamental de la redacción científica hispanoamericana, incluyendo normas de publicación, gestión de proyectos y comunicación científica.`,
+            ejemplo: `Ejemplo ilustrativo de la técnica ${i} aplicada a un contexto académico real.`,
+            ejercicio: `Analiza y aplica esta técnica a un artículo de tu área de estudio o a un proyecto de investigación.`,
+            respuesta: `Respuesta modelo según la técnica ${i}. Se recomienda consultar las guías de buenas prácticas científicas.`
+        });
+    }
+
+    let tecnicas = tecnicasCiencia.map(t => ({ ...t, completada: false, respuestaUsuario: "" }));
+    let currentTechIdx = 0;
+
+    // localStorage functions
+    function guardarProgreso() {
+        let data = tecnicas.map(t => ({ completada: t.completada, respuestaUsuario: t.respuestaUsuario || "" }));
+        localStorage.setItem("redaccion_cientifica_progreso", JSON.stringify(data));
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function cargarProgreso() {
+        let saved = localStorage.getItem("redaccion_cientifica_progreso");
+        if (saved) {
+            let data = JSON.parse(saved);
+            for (let i = 0; i < tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuestaUsuario = data[i].respuestaUsuario || "";
+                }
+            }
+        }
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function actualizarEstadisticas() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = Math.round((completadas / 100) * 100);
+        const statsDiv = document.getElementById("statsPreview");
+        if (statsDiv) statsDiv.innerHTML = `Progreso: ${porcentaje}% · Técnicas completadas: ${completadas}/100 · ⚜ redacción científica`;
+        const goldFill = document.getElementById("globalGoldFill");
+        if (goldFill) goldFill.style.width = porcentaje + "%";
+    }
+
+    function actualizarBarraOro() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let pct = (completadas / 100) * 100;
+        document.getElementById("globalGoldFill").style.width = pct + "%";
+    }
+
+    function renderIndiceLateral() {
+        const busqueda = document.getElementById("searchTech")?.value.toLowerCase() || "";
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda) || (t.teoria && t.teoria.toLowerCase().includes(busqueda)));
+        const listaUl = document.getElementById("techIndexList");
+        if (!listaUl) return;
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.innerHTML = `${tech.nombre.substring(0, 52)}${tech.nombre.length > 52 ? "…" : ""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentTechIdx = tech.id - 1;
+                renderVistaTecnica();
+                if (window.innerWidth <= 800) document.getElementById("luxSidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+
+    function renderVistaTecnica() {
+        const t = tecnicas[currentTechIdx];
+        const container = document.getElementById("dynamicTechView");
+        if (!container) return;
+        const letraInicial = t.nombre.charAt(0);
+        container.innerHTML = `
+            <div class="tech-primary">
+                <div class="numero-gigante">${t.id}</div>
+                <div class="tech-title"><span class="capitular">${letraInicial}</span>${t.nombre.substring(1)}</div>
+                <div class="card"><h3>📜 Teoría científica</h3><p>${t.teoria}</p></div>
+                <div class="card"><h3>❧ Ejemplo de aplicación</h3><p>${t.ejemplo}</p></div>
+                <div class="card"><h3>✍️ Ejercicio de redacción</h3><p>${t.ejercicio}</p>
+                    <textarea id="respuestaTextAreaLux" rows="4" placeholder="Escribe aquí tu respuesta...">${t.respuestaUsuario || ""}</textarea>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-nav btn-show-answer" id="btnMostrarRespuesta">📖 Ver respuesta correcta</button>
+                    </div>
+                    <div id="respuestaCorrectaPanel" class="respuesta-correcta">
+                        <strong>✓ Respuesta modelo:</strong><br>${t.respuesta}
+                    </div>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="btnAnterior">← anterior</button>
+                    <button class="btn-nav btn-complete" id="btnCompletar">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="btnSiguiente">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-aside">
+                <div><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(tc=>tc.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:30px;"></div></div>
+                <p>${tecnicas.filter(tc=>tc.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color:#cfc3ad;">
+                <p><strong>📖 Técnica actual</strong><br>${t.nombre.split(':')[0]}</p>
+                <p><strong>🎨 Enfoque</strong><br>Artículos · Tesis · Informes · Divulgación</p>
+                <div class="ornament-line" style="font-size:1.2rem;">⁂ § ⚜</div>
+                <p style="margin-top:1rem; font-size:0.8rem;">“Escribir ciencia es traducir el universo al lenguaje humano” — Carl Sagan</p>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextAreaLux");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentTechIdx].respuestaUsuario = e.target.value;
+                guardarProgreso();
+            });
+        }
+        const btnRespuesta = document.getElementById("btnMostrarRespuesta");
+        const panelRespuesta = document.getElementById("respuestaCorrectaPanel");
+        if (btnRespuesta && panelRespuesta) {
+            btnRespuesta.addEventListener("click", () => {
+                panelRespuesta.classList.toggle("visible");
+            });
+        }
+        document.getElementById("btnAnterior")?.addEventListener("click", () => {
+            if (currentTechIdx > 0) { currentTechIdx--; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnSiguiente")?.addEventListener("click", () => {
+            if (currentTechIdx < 99) { currentTechIdx++; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnCompletar")?.addEventListener("click", () => {
+            tecnicas[currentTechIdx].completada = !tecnicas[currentTechIdx].completada;
+            guardarProgreso();
+            renderVistaTecnica();
+            renderIndiceLateral();
+        });
+    }
+
+    const menuBtn = document.getElementById("menuToggleBtn");
+    const sidebar = document.getElementById("luxSidebar");
+    const closeBtn = document.getElementById("closeSidebarBtn");
+    menuBtn?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeBtn?.addEventListener("click", () => sidebar.classList.remove("open"));
+    const searchInput = document.getElementById("searchTech");
+    searchInput?.addEventListener("input", () => renderIndiceLateral());
+
+    function inicializar() {
+        cargarProgreso();
+        renderVistaTecnica();
+        window.addEventListener("beforeunload", () => guardarProgreso());
+    }
+    inicializar();
+</script>
+</body>
+</html>

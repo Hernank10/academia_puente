@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>100 técnicas de raíces del castellano | Flashcards + Progreso</title>
+    <!-- Google Fonts: Outfit (display) + Inter (cuerpo) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(145deg, #0a1a2e 0%, #071422 100%);
+            font-family: 'Inter', sans-serif;
+            color: #eef4ff;
+            padding: 1.5rem;
+            min-height: 100vh;
+        }
+        .app-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .progress-header {
+            margin-bottom: 2rem;
+            background: rgba(10, 25, 45, 0.6);
+            backdrop-filter: blur(4px);
+            border-radius: 2rem;
+            padding: 1rem 1.5rem;
+            border: 1px solid rgba(255, 195, 75, 0.2);
+        }
+        .title-badge {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 1.8rem;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #FFD966, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .stats {
+            font-size: 0.9rem;
+            background: #0e2a3a;
+            padding: 0.3rem 0.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+        }
+        .progress-grid {
+            display: grid;
+            grid-template-columns: repeat(20, 1fr);
+            gap: 6px;
+            margin-top: 0.8rem;
+        }
+        .progress-cell {
+            aspect-ratio: 1 / 1;
+            background-color: #1e2f3f;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid #2a3c4e;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .progress-cell.completed {
+            background-color: #FFB347;
+            border-color: #FFD966;
+            box-shadow: 0 0 8px rgba(255, 180, 71, 0.6);
+        }
+        .progress-cell:hover {
+            background-color: #3a5a6e;
+            transform: scale(1.02);
+        }
+        .flashcard-container {
+            perspective: 1500px;
+            margin: 1.5rem 0 2rem;
+        }
+        .flashcard {
+            background: transparent;
+            width: 100%;
+            min-height: 460px;
+            cursor: pointer;
+            transition: transform 0.6s ease;
+            transform-style: preserve-3d;
+            border-radius: 2rem;
+        }
+        .flashcard.flipped {
+            transform: rotateY(180deg);
+        }
+        .card-front, .card-back {
+            position: relative;
+            width: 100%;
+            min-height: 460px;
+            backface-visibility: hidden;
+            border-radius: 2rem;
+            padding: 2rem;
+            background: rgba(18, 28, 40, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 195, 75, 0.4);
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s;
+        }
+        .card-front {
+            transform: rotateY(0deg);
+        }
+        .card-back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .categoria-tag {
+            display: inline-block;
+            background: #FFB34720;
+            color: #FFD966;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            letter-spacing: 0.5px;
+            margin-bottom: 1rem;
+            border-left: 3px solid #FFB347;
+        }
+        .tec-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #FFE0A3;
+        }
+        .concept-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin: 1rem 0;
+            background: #0b1825;
+            padding: 1rem;
+            border-radius: 1rem;
+            border-left: 4px solid #FFB347;
+        }
+        .example-block {
+            background: #102433;
+            padding: 1rem;
+            border-radius: 1rem;
+            margin: 1rem 0;
+            font-family: 'Outfit', monospace;
+            font-weight: 500;
+        }
+        .nota {
+            font-size: 0.9rem;
+            color: #bdd4ff;
+            font-style: italic;
+        }
+        .exercise-area {
+            background: #071a28;
+            border-radius: 1.2rem;
+            padding: 1.2rem;
+            margin: 1rem 0;
+        }
+        .exercise-prompt {
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+            color: #FFD966;
+        }
+        input {
+            width: 100%;
+            padding: 0.9rem;
+            border-radius: 1rem;
+            border: none;
+            background: #0f1e2c;
+            color: white;
+            font-family: 'Inter', monospace;
+            font-size: 1rem;
+            margin: 0.5rem 0;
+            outline: none;
+            border: 1px solid #2c4b66;
+            transition: all 0.2s;
+        }
+        input:focus {
+            border-color: #FFB347;
+            box-shadow: 0 0 0 2px rgba(255, 180, 71, 0.3);
+        }
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+        button {
+            background: #2c4f6e;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            padding: 0.6rem 1.2rem;
+            border-radius: 3rem;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.85rem;
+        }
+        button.primary {
+            background: #FFB347;
+            color: #0b1f2c;
+            box-shadow: 0 4px 10px rgba(255, 179, 71, 0.3);
+        }
+        button.primary:hover {
+            background: #FFA01E;
+            transform: scale(0.98);
+        }
+        button.secondary {
+            background: #1f3a48;
+            border: 1px solid #FFB34760;
+        }
+        button.secondary:hover {
+            background: #2a4b60;
+        }
+        .feedback {
+            margin-top: 1rem;
+            font-weight: 500;
+            padding: 0.5rem;
+            border-radius: 2rem;
+            text-align: center;
+        }
+        .feedback.correct {
+            background: #2e7d5e30;
+            color: #a6ffcf;
+        }
+        .feedback.wrong {
+            background: #a13e3e30;
+            color: #ffbcbc;
+        }
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .counter {
+            font-size: 1rem;
+            background: #071826;
+            padding: 0.5rem 1rem;
+            border-radius: 3rem;
+        }
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.75rem;
+            opacity: 0.7;
+        }
+        @media (max-width: 680px) {
+            .progress-grid { gap: 4px; }
+            .card-front, .card-back { padding: 1.2rem; }
+            .tec-title { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <div class="progress-header">
+        <div class="title-badge">
+            <h1>🌱 100 técnicas de raíces del castellano · Léxico y familias</h1>
+            <div class="stats" id="completedStats">0 / 100 completadas</div>
+        </div>
+        <div class="progress-grid" id="progressGrid"></div>
+        <div style="font-size: 12px; margin-top: 8px; text-align: right;">✨ raíz léxica → familia de palabras | haz clic en celda para saltar</div>
+    </div>
+
+    <div class="flashcard-container">
+        <div class="flashcard" id="flashcard">
+            <div class="card-front">
+                <div class="categoria-tag" id="frontCategoria">Raíz / familia léxica</div>
+                <div class="tec-title" id="frontTitle">Técnica #<span id="tecIdFront">0</span></div>
+                <div class="concept-text" id="frontConcept">Concepto de la raíz...</div>
+                <div class="example-block">
+                    ✏️ <strong>Ejemplo de familia léxica:</strong><br>
+                    <span id="frontExample">—</span>
+                    <div class="nota" id="frontNota">📘 Nota etimológica</div>
+                </div>
+                <div style="margin-top: 1rem; text-align: center; font-size: 0.8rem; opacity:0.6;">🔄 haz clic en la tarjeta para voltear</div>
+            </div>
+            <div class="card-back">
+                <div>
+                    <div class="categoria-tag" id="backCategoria">Ejercicio sobre la raíz</div>
+                    <div class="exercise-prompt" id="exercisePrompt">📝 Ejercicio:</div>
+                    <div id="exerciseText" style="margin-bottom: 1rem; font-weight: 400;">...</div>
+                    <input type="text" id="userAnswer" placeholder="Escribe tu respuesta aquí..." autocomplete="off">
+                    <div class="btn-group">
+                        <button id="checkBtn" class="primary">✅ Verificar</button>
+                        <button id="revealAnswerBtn" class="secondary">🔎 Mostrar respuesta</button>
+                        <button id="markCompleteBtn" class="secondary">⭐ Marcar como completada</button>
+                    </div>
+                    <div id="feedbackMsg" class="feedback"></div>
+                    <div id="correctAnswerDisplay" style="font-size: 0.85rem; margin-top: 10px; background: #092236; padding: 8px; border-radius: 16px; display: none;">
+                        <strong>✅ Respuesta correcta:</strong> <span id="correctAnswerSpan"></span>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; font-size: 0.7rem; text-align: center;">✨ Si respondes bien, se completa automáticamente</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="nav-controls">
+        <button id="prevBtn" class="secondary">◀ Anterior</button>
+        <div class="counter">Técnica <span id="currentIdxDisplay">1</span> / 100</div>
+        <button id="nextBtn" class="secondary">Siguiente ▶</button>
+        <button id="flipBtn" class="primary">🔄 Voltear tarjeta</button>
+        <button id="resetProgressBtn" class="secondary" style="background:#632e2e;">⟳ Reiniciar progreso</button>
+    </div>
+    <footer>📚 100 raíces del español: familias léxicas, derivación, composición | Progreso guardado localmente</footer>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 100 TÉCNICAS SOBRE RAÍCES (MORFOLOGÍA LÉXICA) DEL CASTELLANO
+    // Cada técnica presenta una raíz (latina, griega o patrimonial),
+    // su significado, familia de palabras, ejercicio y respuesta.
+    // --------------------------------------------------------------
+    const TECNICAS = [];
+
+    function addTecnica(id, raiz, significado, familiaEjemplos, notaEtimologica, ejercicio, respuesta) {
+        TECNICAS.push({
+            id,
+            categoria: `Raíz: ${raiz}`,
+            concepto: `La raíz **${raiz}** significa "${significado}". Es el lexema base que comparten todas las palabras de una misma familia léxica.`,
+            ejemplo: `Familia léxica: ${familiaEjemplos}`,
+            nota: notaEtimologica,
+            ejercicio: ejercicio,
+            respuesta: respuesta
+        });
+    }
+
+    // ========== 100 RAÍCES (latina, griega, patrimonial) con ejercicios prácticos ==========
+    // 1-30: raíces latinas fundamentales
+    addTecnica(1, "AM-", "amar", "amar, amable, amistad, amante, enamorar", "Del latín 'amare'.", "Escribe un adjetivo derivado de esta raíz que signifique 'que puede ser amado'.", "amable");
+    addTecnica(2, "CANT-", "cantar", "cantar, canción, cantante, cantarín, canturrear", "Latín 'cantare'.", "Palabra que designa a la persona que canta profesionalmente.", "cantante");
+    addTecnica(3, "FACT-/FECT-", "hacer", "fácil, difícil, efecto, afecto, perfecto, factible", "Del verbo latino 'facere'.", "Palabra que significa 'que se puede hacer'.", "factible");
+    addTecnica(4, "SCRIP-/SCRIPT-", "escribir", "escribir, escrito, escritor, manuscrito, inscripción", "Latín 'scribere'.", "Lugar donde se guardan o leen libros manuscritos antiguos.", "scriptorium (o biblioteca) - se acepta 'escritorio', pero mejor 'scriptorium'.");
+    addTecnica(5, "DICT-", "decir", "decir, dictado, diccionario, dictador, bendecir", "Latín 'dicere'.", "Libro que recoge las palabras de una lengua.", "diccionario");
+    addTecnica(6, "VID-/VIS-", "ver", "ver, visión, visible, televisión, evidencia", "Latín 'videre'.", "Que puede ser visto.", "visible");
+    addTecnica(7, "AUD-", "oír", "oír, audición, auditorio, audible, audio", "Latín 'audire'.", "Lugar donde se reúne un público para escuchar.", "auditorio");
+    addTecnica(8, "VEN-", "venir", "venir, venida, convenir, inventar (in+venire), aventura", "Latín 'venire'.", "Palabra que significa 'llegar juntos' (reunión).", "convenir (o reunión, pero 'convención')");
+    addTecnica(9, "TEN-/TIN-", "tener", "tener, mantener, contener, retener, tenaz", "Latín 'tenere'.", "Que mantiene firme, que no se suelta.", "tenaz");
+    addTecnica(10, "PON-/POSIT-", "poner, colocar", "poner, posición, composición, depósito, oponer", "Latín 'ponere'.", "Acto de poner algo sobre otra cosa.", "superposición");
+    addTecnica(11, "RUPT-", "romper", "romper, ruptura, irrupción, corrupción, interrupción", "Latín 'rumpere'.", "Acción de romper o quebrantamiento.", "ruptura");
+    addTecnica(12, "MIT-/MIS-", "enviar", "enviar, misión, remitir, cometer, admitir", "Latín 'mittere'.", "Persona que es enviada con un encargo.", "emisario");
+    addTecnica(13, "DUC-/DUCT-", "llevar, conducir", "conducir, introducir, ducto, ductor, educar", "Latín 'ducere'.", "Que conduce electricidad.", "conductor");
+    addTecnica(14, "FER-", "llevar, soportar", "oferta (oferre), transferir, preferir, referir, fértil", "Latín 'ferre'.", "Que produce frutos abundantemente.", "fértil");
+    addTecnica(15, "GEST-/GER-", "llevar, producir", "gestión, gestor, digerir (dis+gerere), sugerir", "Latín 'gerere'.", "Persona que administra o lleva un negocio.", "gestor");
+    addTecnica(16, "LOC-", "lugar", "lugar, local, ubicación, localidad, colocar", "Latín 'locus'.", "Relativo a un lugar determinado.", "local");
+    addTecnica(17, "NOM-", "nombre", "nombre, nombrar, denominar, renombre, nominal", "Latín 'nomen'.", "Lista de nombres de personas.", "nómina");
+    addTecnica(18, "LUC-/LUM-", "luz", "luz, lucir, luminoso, iluminar, lucero", "Latín 'lux, lucis'.", "Que da luz o resplandor.", "luminoso");
+    addTecnica(19, "NAT-", "nacer", "nacer, natal, nativo, naturaleza, renacer", "Latín 'nasci'.", "Lugar donde se ha nacido.", "nativo (o natal)");
+    addTecnica(20, "VOC-", "voz, llamar", "voz, vocal, vocación, invocar, convocar", "Latín 'vox, vocis'.", "Llamamiento interior hacia una profesión.", "vocación");
+    addTecnica(21, "CORP-", "cuerpo", "cuerpo, corporal, corpulento, incorporar, corpus", "Latín 'corpus'.", "Que tiene mucho cuerpo o volumen.", "corpulento");
+    addTecnica(22, "CAP-", "cabeza, tomar", "cabeza, capital, capitán, capítulo, capturar", "Latín 'caput' (cabeza) y 'capere' (coger).", "Ciudad principal de un país.", "capital");
+    addTecnica(23, "PED-", "pie", "pie, pedal, pedestal, peatón, expedir (ex+ped)", "Latín 'pes, pedis'.", "Persona que anda a pie.", "peatón");
+    addTecnica(24, "MAN-", "mano", "mano, manual, maniobra, manuscrito, emancipar", "Latín 'manus'.", "Hecho a mano.", "manual");
+    addTecnica(25, "FLOR-", "flor", "flor, florido, florecer, flora, floristería", "Latín 'flos, floris'.", "Establecimiento donde venden flores.", "floristería");
+    addTecnica(26, "AQU-", "agua", "agua, acuático, acueducto, acuífero, aguacero", "Latín 'aqua'.", "Conducto para llevar agua.", "acueducto");
+    addTecnica(27, "TERR-", "tierra", "tierra, terreno, terrícola, subterráneo, terraza", "Latín 'terra'.", "Habitante de la Tierra.", "terrícola");
+    addTecnica(28, "MOR-", "muerte", "muerte, mortal, mortífero, inmortal, mortaja", "Latín 'mors, mortis'.", "Que no puede morir.", "inmortal");
+    addTecnica(29, "VIV-", "vida", "vida, vivo, vivienda, revivir, vivaz", "Latín 'vivere'.", "Que tiene mucha vitalidad.", "vivaz");
+    addTecnica(30, "SAL-", "salud, salvar", "salud, salvar, salvación, salubridad, salario", "Latín 'salus, salutis'.", "Que es beneficioso para la salud.", "saludable");
+
+    // 31-60: raíces griegas fundamentales
+    addTecnica(31, "BIOS", "vida", "biología, biografía, anfibio, simbiosis, biopsia", "Griego 'bíos'.", "Estudio de los seres vivos.", "biología");
+    addTecnica(32, "LOGOS", "estudio, palabra", "biología, geología, diálogo, logotipo, monólogo", "Griego 'lógos'.", "Ciencia que estudia la Tierra.", "geología");
+    addTecnica(33, "GRAPH", "escribir", "grafía, gráfico, telégrafo, geografía, autógrafo", "Griego 'graphé'.", "Firma de la propia mano.", "autógrafo");
+    addTecnica(34, "PHON", "sonido, voz", "teléfono, fonética, micrófono, cacofonía, fonógrafo", "Griego 'phoné'.", "Aparato que transmite sonido a distancia.", "teléfono");
+    addTecnica(35, "THERM", "calor", "termómetro, térmico, termostato, termal, hipotermia", "Griego 'thermos'.", "Instrumento para medir la temperatura.", "termómetro");
+    addTecnica(36, "CHRON", "tiempo", "cronología, crónico, cronómetro, sincronía, anacrónico", "Griego 'chrónos'.", "Reloj de gran precisión.", "cronómetro");
+    addTecnica(37, "MORPH", "forma", "morfología, amorfo, metamorfosis, morfema, antropomorfo", "Griego 'morphé'.", "Sin forma definida.", "amorfo");
+    addTecnica(38, "POLIS", "ciudad", "política, metrópoli, acrópolis, policía (la ciudadana), cosmopolita", "Griego 'pólis'.", "Persona que ha viajado por muchas ciudades.", "cosmopolita");
+    addTecnica(39, "DEMOS", "pueblo", "democracia, demografía, epidemia, demagogo, endémico", "Griego 'dêmos'.", "Gobierno del pueblo.", "democracia");
+    addTecnica(40, "ARCHÉ", "gobierno, principio", "monarquía, anarquía, oligarquía, arcaico, arquetipo", "Griego 'arkhé'.", "Falta de gobierno o autoridad.", "anarquía");
+    addTecnica(41, "PATHOS", "sentimiento, enfermedad", "empatía, simpatía, apatía, patología, psicópata", "Griego 'páthos'.", "Falta de sentimiento o indiferencia.", "apatía");
+    addTecnica(42, "ANTHROPOS", "ser humano", "antropología, filantropía, misántropo, antropomorfo, androide", "Griego 'ánthropos'.", "Amor al ser humano.", "filantropía");
+    addTecnica(43, "AUTOS", "uno mismo", "autobiografía, autónomo, automóvil, autógrafo, autodidacta", "Griego 'autós'.", "Que se mueve por sí mismo (vehículo).", "automóvil");
+    addTecnica(44, "HETEROS", "otro, diferente", "heterogéneo, heterosexual, heterodoxo, heterónimo", "Griego 'héteros'.", "Compuesto por elementos distintos.", "heterogéneo");
+    addTecnica(45, "HYDROS", "agua", "hidroeléctrica, hidrógeno, hidroterapia, hidrantes, deshidratar", "Griego 'hýdōr'.", "Energía generada por el agua.", "hidroeléctrica");
+    addTecnica(46, "PYR", "fuego", "pirómano, pirámide (forma de fuego), pirita, pirotecnia", "Griego 'pyr'.", "Persona con obsesión patológica por el fuego.", "pirómano");
+    addTecnica(47, "MEGAS", "grande", "megáfono, megalópolis, megalito, megaterio, megabyte", "Griego 'mégas'.", "Ciudad enorme, de gran extensión.", "megalópolis");
+    addTecnica(48, "MIKROS", "pequeño", "microscopio, microondas, microorganismo, microchip, micrófono", "Griego 'mikrós'.", "Instrumento para ver objetos muy pequeños.", "microscopio");
+    addTecnica(49, "TECHNE", "arte, técnica", "tecnología, técnica, pirotecnia, tectónico, arquitecto", "Griego 'téchnē'.", "Estudio de las técnicas y sus aplicaciones.", "tecnología");
+    addTecnica(50, "THEOS", "dios", "teología, teísmo, ateo, monoteísmo, politeísmo", "Griego 'theós'.", "Creencia en un solo dios.", "monoteísmo");
+    addTecnica(51, "PSYCHE", "mente, alma", "psicología, psiquiatría, psicosis, psicópata, anímico", "Griego 'psychḗ'.", "Ciencia que estudia los trastornos mentales.", "psiquiatría");
+    addTecnica(52, "GENOS", "origen, raza", "genético, genocidio, gen, genealogía, endógeno", "Griego 'génos'.", "Estudio del origen y descendencia familiar.", "genealogía");
+    addTecnica(53, "NOMOS", "ley", "economía, astronomía, autonomía, nombrar (relacionado), anomia", "Griego 'nómos'.", "Administración de la casa (recursos).", "economía");
+    addTecnica(54, "ASTER", "estrella", "astronomía, asteroide, astrología, desastre (sin estrella), asterisco", "Griego 'astḗr'.", "Cuerpo rocoso que orbita entre Marte y Júpiter.", "asteroide");
+    addTecnica(55, "GEO", "tierra", "geografía, geología, geometría, geotermia, apogeo", "Griego 'gê'.", "Ciencia que mide la Tierra.", "geometría");
+    addTecnica(56, "KINESIS", "movimiento", "cinética, cine (movimiento), telequinesis, cinemática", "Griego 'kínēsis'.", "Energía de movimiento.", "cinética");
+    addTecnica(57, "TROPOS", "giro, cambio", "trópico, heliotropo, fototropismo, tropo (figura literaria)", "Griego 'trópos'.", "Línea imaginaria que gira alrededor de la Tierra.", "trópico");
+    addTecnica(58, "PHOBOS", "miedo", "fobia, claustrofobia, acrofobia, agorafobia, hidrofobia", "Griego 'phóbos'.", "Miedo a los espacios cerrados.", "claustrofobia");
+    addTecnica(59, "PHILIA", "amor", "filantropía, filosofía, filarmónica, bibliófilo, hidrófilo", "Griego 'philía'.", "Amor a la sabiduría.", "filosofía");
+    addTecnica(60, "SOPHIA", "sabiduría", "filosofía, sofista, sofisticado, sabio (evolución)", "Griego 'sophía'.", "Persona que ama la sabiduría.", "filósofo");
+
+    // 61-80: raíces patrimoniales y cultismos latinos adicionales
+    addTecnica(61, "CLAUD-/CLUS-", "cerrar", "cerrar, clausura, claustro, incluir, exclusivo", "Latín 'claudere'.", "Que excluye, que no incluye.", "exclusivo");
+    addTecnica(62, "CURR-/CURS-", "correr", "correr, corriente, curso, recurso, excursión", "Latín 'currere'.", "Acción de correr hacia fuera.", "excursión");
+    addTecnica(63, "FREG-/FRACT-", "romper", "quebrar, fractura, fracción, fraccionar, naufragio", "Latín 'frangere'.", "Parte de un todo.", "fracción");
+    addTecnica(64, "LEG-", "leer", "leer, legible, lector, legado, inteligente (inter+legere)", "Latín 'legere'.", "Que se puede leer fácilmente.", "legible");
+    addTecnica(65, "MOL-", "moler", "moler, molino, muela, molar, molienda", "Latín 'molere'.", "Máquina para moler grano.", "molino");
+    addTecnica(66, "PING-/PICT-", "pintar", "pintar, pintura, pincel, pictórico, pícture (inglés)", "Latín 'pingere'.", "Relativo a la pintura.", "pictórico");
+    addTecnica(67, "POT-", "poder", "poder, posible, potente, omnipotente, potencial", "Latín 'posse'.", "Que puede ser.", "posible");
+    addTecnica(68, "RID-/RIS-", "reír", "reír, risa, ridículo, risible, sonrisa", "Latín 'ridere'.", "Digno de risa, que provoca burla.", "ridículo");
+    addTecnica(69, "SED-/SESS-", "sentarse", "sentarse, sesión, asiento, residir, sedente", "Latín 'sedere'.", "Lugar donde uno se sienta.", "asiento");
+    addTecnica(70, "SOL-", "estar acostumbrado", "soler, solería, insólito, solitario (confusión: solus)", "Latín 'solere' (acostumbrarse).", "Que no es habitual, extraño.", "insólito");
+    addTecnica(71, "TANG-/TACT-", "tocar", "tocar, tacto, tangente, contacto, intacto", "Latín 'tangere'.", "Que no ha sido tocado.", "intacto");
+    addTecnica(72, "TORQU-/TORT-", "torcer", "torcer, tortuoso, tortura, retorcer, contorsión", "Latín 'torquere'.", "Con muchas curvas o vueltas.", "tortuoso");
+    addTecnica(73, "VAL-", "valer, ser fuerte", "valer, valor, válido, equivalente, prevalecer", "Latín 'valere'.", "Que tiene fuerza o vigor.", "valiente");
+    addTecnica(74, "VERB-", "palabra", "verbo, verbal, proverbio, verbena (reunión ruidosa)", "Latín 'verbum'.", "Dicho breve y sentencioso.", "proverbio");
+    addTecnica(75, "VINC-/VICT-", "vencer", "vencer, victoria, convicto, invencible, convincer", "Latín 'vincere'.", "Que no puede ser vencido.", "invencible");
+    addTecnica(76, "VOLV-/VOLUT-", "girar, rodar", "volver, revolver, revolución, evolución, volumen", "Latín 'volvere'.", "Cambio gradual o desarrollo.", "evolución");
+    addTecnica(77, "URB-", "ciudad", "urbano, urbanidad, suburbio, urbanización, urbe", "Latín 'urbs'.", "Zona residencial en las afueras de la ciudad.", "suburbio");
+    addTecnica(78, "MERC-", "comercio, recompensa", "mercado, mercancía, merced, comercio", "Latín 'merx, mercis'.", "Producto que se compra o vende.", "mercancía");
+    addTecnica(79, "ART-", "arte, habilidad", "arte, artista, artificio, artesano, inerté (sin arte)", "Latín 'ars, artis'.", "Persona que trabaja con las manos creando objetos.", "artesano");
+    addTecnica(80, "SIMIL-", "semejante", "similar, semejante, asimilar, disimular, verosímil", "Latín 'similis'.", "Que tiene apariencia de verdad.", "verosímil");
+
+    // 81-100: raíces mixtas (grecas y latinas adicionales) + composición
+    addTecnica(81, "PAN-", "todo", "panorama, pandemía, panteón, panacea, pantomima", "Griego 'pân'.", "Enfermedad que afecta a todo un pueblo.", "pandemia");
+    addTecnica(82, "EU-", "bueno, bien", "eufonía, eufemismo, euforia, eucaristía, eutanasia", "Griego 'eû'.", "Sensación de bienestar y alegría intensa.", "euforia");
+    addTecnica(83, "DYS-", "mal, difícil", "dislexia, disfunción, distopía, dispepsia, disfemia", "Griego 'dys-'.", "Dificultad para leer.", "dislexia");
+    addTecnica(84, "HIPER-", "superioridad, exceso", "hiperactivo, hipertensión, hipérbaton, hipermercado", "Griego 'hypér'.", "Presión arterial excesivamente alta.", "hipertensión");
+    addTecnica(85, "HIPO-", "debajo, escasez", "hipotermia, hipotensión, hipocondría, hipocentro", "Griego 'hypó'.", "Temperatura corporal por debajo de lo normal.", "hipotermia");
+    addTecnica(86, "CIRCUN-", "alrededor", "circunferencia, circunvalación, circunnavegar, circuncisión", "Latín 'circum'.", "Línea que rodea un círculo.", "circunferencia");
+    addTecnica(87, "EXTRA-", "fuera de", "extraterrestre, extraordinario, extraoficial, extralimitarse", "Latín 'extra'.", "Ser vivo proveniente de fuera de la Tierra.", "extraterrestre");
+    addTecnica(88, "INTRA-", "dentro de", "intramuros, intravenoso, intrauterino, intrapersonal", "Latín 'intra'.", "Que se administra dentro de una vena.", "intravenoso");
+    addTecnica(89, "MULTI-", "muchos", "multitud, multimedia, multicolor, multinacional, multipropósito", "Latín 'multus'.", "Empresa que opera en varios países.", "multinacional");
+    addTecnica(90, "PLURI-", "varios", "plurilingüe, pluricelular, pluriempleo, pluripartidismo", "Latín 'plures'.", "Que habla varias lenguas.", "plurilingüe");
+    addTecnica(91, "BENE-", "bien", "beneficio, benévolo, bendecir, benefactor, benigno", "Latín 'bene'.", "Persona que hace el bien.", "benefactor");
+    addTecnica(92, "MALE-", "mal", "maleficio, malévolo, maldecir, maltratar, malograr", "Latín 'male'.", "Decir maldiciones.", "maldecir");
+    addTecnica(93, "CUADR-", "cuatro", "cuadrado, cuadrilátero, cuadrúpedo, cuadrante", "Latín 'quattuor'.", "Animal de cuatro patas.", "cuadrúpedo");
+    addTecnica(94, "UN-", "uno", "unir, unidad, uniforme, unánime, unísono", "Latín 'unus'.", "Que tiene un solo sonido o voz.", "unísono");
+    addTecnica(95, "BIN-", "dos", "binario, binomio, binoculares, bípedo, bilingüe", "Latín 'bini'.", "Instrumento para ver con ambos ojos.", "binoculares");
+    addTecnica(96, "CENT-", "cien", "centímetro, centenario, porcentaje, centígrado, centavo", "Latín 'centum'.", "Medida de longitud que equivale a la centésima parte del metro.", "centímetro");
+    addTecnica(97, "MIL-", "mil", "milímetro, milenio, millón, milenario, milésimo", "Latín 'mille'.", "Período de mil años.", "milenio");
+    addTecnica(98, "OMNI-", "todo", "omnipotente, omnisciente, omnívoro, omnímodo", "Latín 'omnis'.", "Que todo lo sabe.", "omnisciente");
+    addTecnica(99, "PRIM-", "primero", "primer, primario, primitivo, primogénito, primordial", "Latín 'primus'.", "Hijo nacido primero.", "primogénito");
+    addTecnica(100, "ULTIM-", "último", "último, ultimátum, ultramar, ultratumba, ultimidad", "Latín 'ultimus'.", "Exigencia final antes de tomar medidas.", "ultimátum");
+
+    // Ordenar por id (ya lo están)
+    TECNICAS.sort((a,b)=>a.id-b.id);
+    
+    // -------------------- LÓGICA INTERACTIVA (FLASHCARDS Y PROGRESO) --------------------
+    let currentIndex = 0;
+    let completed = new Array(100).fill(false);
+    let flipped = false;
+
+    function loadProgress() {
+        const saved = localStorage.getItem("raicesCastellanoProgress");
+        if (saved) {
+            try {
+                const arr = JSON.parse(saved);
+                if (arr.length === 100) completed = arr;
+            } catch(e) {}
+        }
+        updateProgressUI();
+        updateStats();
+    }
+    function saveProgress() {
+        localStorage.setItem("raicesCastellanoProgress", JSON.stringify(completed));
+        updateProgressUI();
+        updateStats();
+    }
+    function updateProgressUI() {
+        const grid = document.getElementById("progressGrid");
+        grid.innerHTML = "";
+        for (let i = 0; i < 100; i++) {
+            const cell = document.createElement("div");
+            cell.classList.add("progress-cell");
+            if (completed[i]) cell.classList.add("completed");
+            cell.addEventListener("click", (e) => {
+                e.stopPropagation();
+                currentIndex = i;
+                flipped = false;
+                updateFlashcardContent();
+                renderFlipState();
+                updateNavCounter();
+            });
+            grid.appendChild(cell);
+        }
+    }
+    function updateStats() {
+        const count = completed.filter(v=>v===true).length;
+        document.getElementById("completedStats").innerText = `${count} / 100 completadas`;
+    }
+    function markCurrentAsCompleted() {
+        if (!completed[currentIndex]) {
+            completed[currentIndex] = true;
+            saveProgress();
+            const fbDiv = document.getElementById("feedbackMsg");
+            fbDiv.innerText = "✨ ¡Técnica marcada como completada! ✨";
+            fbDiv.className = "feedback correct";
+            setTimeout(()=>{ if(fbDiv) fbDiv.innerText=""; }, 2000);
+        } else {
+            const fbDiv = document.getElementById("feedbackMsg");
+            fbDiv.innerText = "⚠️ Ya estaba completada anteriormente.";
+            fbDiv.className = "feedback wrong";
+            setTimeout(()=>{ if(fbDiv) fbDiv.innerText=""; }, 1500);
+        }
+        updateProgressUI();
+        updateStats();
+    }
+    function updateFlashcardContent() {
+        const t = TECNICAS[currentIndex];
+        document.getElementById("frontCategoria").innerHTML = `📌 ${t.categoria}`;
+        document.getElementById("tecIdFront").innerText = t.id;
+        document.getElementById("frontConcept").innerHTML = t.concepto;
+        document.getElementById("frontExample").innerHTML = t.ejemplo;
+        document.getElementById("frontNota").innerHTML = `📘 Nota: ${t.nota}`;
+        document.getElementById("backCategoria").innerHTML = `✍️ Ejercicio - Raíz ${t.categoria.split(':')[1] || t.categoria}`;
+        document.getElementById("exerciseText").innerHTML = t.ejercicio;
+        document.getElementById("correctAnswerSpan").innerText = t.respuesta;
+        document.getElementById("userAnswer").value = "";
+        document.getElementById("feedbackMsg").innerHTML = "";
+        document.getElementById("feedbackMsg").className = "feedback";
+        document.getElementById("correctAnswerDisplay").style.display = "none";
+    }
+    function updateNavCounter() {
+        document.getElementById("currentIdxDisplay").innerText = currentIndex+1;
+    }
+    function renderFlipState() {
+        const flash = document.getElementById("flashcard");
+        if (flipped) flash.classList.add("flipped");
+        else flash.classList.remove("flipped");
+    }
+    function flipCard() {
+        flipped = !flipped;
+        renderFlipState();
+    }
+    function checkAnswer() {
+        const user = document.getElementById("userAnswer").value.trim().toLowerCase().replace(/\s+/g, ' ');
+        const correctRaw = TECNICAS[currentIndex].respuesta.toLowerCase().replace(/\s+/g, ' ');
+        const fbDiv = document.getElementById("feedbackMsg");
+        const answerDiv = document.getElementById("correctAnswerDisplay");
+        let isCorrect = (user === correctRaw);
+        // Si la respuesta contiene variantes (scriptorium, etc.) se flexibiliza
+        if (!isCorrect && TECNICAS[currentIndex].respuesta.includes("scriptorium") && user.includes("scriptorium")) isCorrect = true;
+        if (isCorrect) {
+            fbDiv.innerHTML = "✅ ¡Correcto! Conoces bien esta raíz. Técnica completada.";
+            fbDiv.className = "feedback correct";
+            if (!completed[currentIndex]) {
+                completed[currentIndex] = true;
+                saveProgress();
+            }
+        } else {
+            fbDiv.innerHTML = `❌ Incorrecto. La respuesta esperada es: "${TECNICAS[currentIndex].respuesta}". Sigue estudiando las raíces.`;
+            fbDiv.className = "feedback wrong";
+            answerDiv.style.display = "block";
+        }
+        updateProgressUI();
+        updateStats();
+    }
+    function revealAnswer() {
+        document.getElementById("correctAnswerSpan").innerText = TECNICAS[currentIndex].respuesta;
+        document.getElementById("correctAnswerDisplay").style.display = "block";
+    }
+    function nextTech() { currentIndex = (currentIndex+1)%100; flipped=false; updateFlashcardContent(); renderFlipState(); updateNavCounter(); }
+    function prevTech() { currentIndex = (currentIndex-1+100)%100; flipped=false; updateFlashcardContent(); renderFlipState(); updateNavCounter(); }
+    function resetProgress() {
+        if (confirm("⚠️ ¿Reiniciar todo el progreso? Se perderán las técnicas marcadas como completadas.")) {
+            completed.fill(false);
+            saveProgress();
+            updateFlashcardContent();
+            updateStats();
+            updateProgressUI();
+            document.getElementById("feedbackMsg").innerHTML = "Progreso reiniciado.";
+        }
+    }
+
+    // Eventos
+    document.getElementById("flipBtn").addEventListener("click", flipCard);
+    document.getElementById("checkBtn").addEventListener("click", checkAnswer);
+    document.getElementById("revealAnswerBtn").addEventListener("click", revealAnswer);
+    document.getElementById("markCompleteBtn").addEventListener("click", markCurrentAsCompleted);
+    document.getElementById("nextBtn").addEventListener("click", nextTech);
+    document.getElementById("prevBtn").addEventListener("click", prevTech);
+    document.getElementById("resetProgressBtn").addEventListener("click", resetProgress);
+    document.getElementById("flashcard").addEventListener("click", (e) => {
+        if (e.target.tagName!=='INPUT' && e.target.tagName!=='BUTTON' && !e.target.closest('button')) flipCard();
+    });
+
+    // Inicialización
+    loadProgress();
+    updateFlashcardContent();
+    updateNavCounter();
+    renderFlipState();
+</script>
+</body>
+</html>

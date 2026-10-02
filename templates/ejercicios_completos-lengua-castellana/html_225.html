@@ -1,0 +1,1823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · La Concordancia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">la concordancia · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Concordancia: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe dos oraciones que ejemplifiquen esta concordancia:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «La casa es grande. / Las casas son grandes.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE LA CONCORDANCIA CASTELLANA
+        //  Concordancia nominal, verbal, de tiempo, de régimen, etc.
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'nominal_genero', label: 'Concordancia nominal (género)' },
+            { id: 'nominal_numero', label: 'Concordancia nominal (número)' },
+            { id: 'verbal_sujeto', label: 'Concordancia verbal (sujeto)' },
+            { id: 'verbal_tiempo', label: 'Concordancia de tiempos' },
+            { id: 'verbal_persona', label: 'Concordancia de persona' },
+            { id: 'sujetos_compuestos', label: 'Sujetos compuestos' },
+            { id: 'colectivos', label: 'Sujetos colectivos' },
+            { id: 'verbos_impersonales', label: 'Verbos impersonales' },
+            { id: 'casos_especiales', label: 'Casos especiales' },
+            { id: 'usos_redaccion', label: 'Usos en redacción' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: CONCORDANCIA NOMINAL (GÉNERO) (1–10)
+        // ============================================================
+        const b1 = [
+            ['Concordancia en género: sustantivo + adjetivo', 'Sustantivo (masc/fem) + adjetivo (masc/fem)',
+                'El adjetivo debe concordar en género y número con el sustantivo al que modifica.',
+                'El coche rojo / La casa roja. / Los coches rojos / Las casas rojas.',
+                'rojo (masc.) / roja (fem.)',
+                '¿Cómo debe concordar el adjetivo con el sustantivo en "coche rojo"?', ['En género y número',
+                    'Solo en género', 'Solo en número', 'No concuerda'
+                ], 0, 'Escribe una oración con "coche rojo" y otra con "casa roja".'
+            ],
+            ['Concordancia en género: sustantivo + artículo', 'Artículo (el/la) + sustantivo (masc/fem)',
+                'El artículo debe concordar en género y número con el sustantivo.',
+                'El libro / La mesa. / Los libros / Las mesas.',
+                'el (masc.) / la (fem.)',
+                '¿Qué artículo corresponde a "mesa"?', ['La', 'El', 'Los', 'Las'],
+                0, 'Escribe una oración con "el libro" y otra con "la mesa".'
+            ],
+            ['Concordancia en género: sustantivo + pronombre', 'Pronombre (él/ella) + sustantivo',
+                'Los pronombres personales concuerdan en género con el sustantivo al que se refieren.',
+                'Juan llegó. Él está cansado. / María llegó. Ella está cansada.',
+                'él (masc.) / ella (fem.)',
+                '¿Qué pronombre corresponde a "María"?', ['Ella', 'Él', 'Ellos', 'Ellas'],
+                0, 'Escribe una oración con "María" y el pronombre correspondiente.'
+            ],
+            ['Concordancia en género: participio + sujeto femenino', 'Participio (fem.) + sujeto femenino',
+                'El participio en tiempos compuestos con "ser" o "estar" concuerda en género con el sujeto.',
+                'La puerta está cerrada. / Las puertas están cerradas.',
+                'cerrada (fem. sing.) / cerradas (fem. plur.)',
+                '¿Cómo se escribe "cerrado" para una puerta?', ['Cerrada', 'Cerrado', 'Cerradas', 'Cerrados'],
+                0, 'Escribe una oración con "la puerta está cerrada".'
+            ],
+            ['Concordancia en género: adjetivo con sustantivo epiceno', 'Adjetivo + sustantivo epiceno (género gramatical)',
+                'Los sustantivos epicenos (la jirafa, el tiburón) mantienen su género gramatical, y los adjetivos concuerdan con él.',
+                'La jirafa es alta. / El tiburón es peligroso.',
+                'alta (fem.) / peligroso (masc.)',
+                '¿Qué adjetivo corresponde a "jirafa"?', ['Alta', 'Alto', 'Altas', 'Altos'],
+                0, 'Escribe una oración con "jirafa" y un adjetivo femenino.'
+            ],
+            ['Concordancia en género: sustantivos de género común', 'Adjetivo + género común (el/la artista)',
+                'Los sustantivos de género común (artista, periodista) mantienen el mismo adjetivo para ambos géneros.',
+                'El artista talentoso / La artista talentosa.',
+                'talentoso (masc.) / talentosa (fem.)',
+                '¿Cómo se dice "el artista es talentoso" en femenino?', ['La artista es talentosa',
+                    'La artista es talentoso', 'El artista es talentosa', 'La artista es talentosa'
+                ], 0, 'Escribe dos oraciones con "artista" en masculino y femenino.'
+            ],
+            ['Concordancia en género: adjetivos con dos terminaciones', 'Adjetivos de dos terminaciones (-o/-a)',
+                'Los adjetivos que terminan en -o/-a varían según el género del sustantivo.',
+                'El niño alto / La niña alta. / Los niños altos / Las niñas altas.',
+                'alto / alta / altos / altas',
+                '¿Cómo se dice "niño alto" en femenino?', ['Niña alta', 'Niña alto', 'Niñas altas', 'Niños altos'],
+                0, 'Escribe dos oraciones con "alto" en masculino y femenino.'
+            ],
+            ['Concordancia en género: adjetivos con una terminación', 'Adjetivos invariables en género (inteligente)',
+                'Algunos adjetivos no varían en género: inteligente, feliz, grande.',
+                'El niño inteligente / La niña inteligente.',
+                'inteligente (invariable)',
+                '¿Cómo se dice "niño inteligente" en femenino?', ['Niña inteligente', 'Niña inteligenta',
+                    'Niña inteligente', 'Niñas inteligentes'
+                ], 0, 'Escribe dos oraciones con "inteligente" en masculino y femenino.'
+            ],
+            ['Concordancia en género: adjetivos de colores', 'Adjetivos de color (rojo/roja)',
+                'Los colores varían en género (rojo/roja) excepto los compuestos (verde manzana).',
+                'El coche rojo / La casa roja.',
+                'rojo (masc.) / roja (fem.)',
+                '¿Cómo se dice "casa roja" en masculino?', ['Coche rojo', 'Coche roja', 'Casa rojo', 'Coches rojos'],
+                0, 'Escribe una oración con "rojo" y "roja".'
+            ],
+            ['Concordancia en género: sustantivos con "el" femeninos', 'Sustantivos femeninos con "el" (agua, alma)',
+                'Los sustantivos femeninos que comienzan con "a" tónica usan "el" pero el adjetivo va en femenino.',
+                'El agua está fría. / El alma es pura.',
+                'fría (fem.) / pura (fem.)',
+                '¿Cómo se dice "el agua está frío"?', ['El agua está fría', 'El agua está frío', 'La agua está fría',
+                    'El aguas está frías'
+                ], 0, 'Escribe una oración con "el agua fría".'
+            ]
+        ];
+        b1.forEach(d => addLesson('nominal_genero', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: CONCORDANCIA NOMINAL (NÚMERO) (11–20)
+        // ============================================================
+        const b2 = [
+            ['Concordancia en número: sustantivo + adjetivo', 'Sustantivo (sing/plur) + adjetivo (sing/plur)',
+                'El adjetivo debe concordar en número (singular o plural) con el sustantivo.',
+                'El perro grande / Los perros grandes. / La casa grande / Las casas grandes.',
+                'grande (sing.) / grandes (plur.)',
+                '¿Cómo se dice "casa grande" en plural?', ['Casas grandes', 'Casa grandes', 'Casas grande', 'Casa grande'],
+                0, 'Escribe una oración con "casa grande" y otra con "casas grandes".'
+            ],
+            ['Concordancia en número: artículo + sustantivo', 'Artículo (el/los, la/las) + sustantivo',
+                'El artículo debe concordar en número con el sustantivo.',
+                'El libro / Los libros. / La mesa / Las mesas.',
+                'el (sing.) / los (plur.)',
+                '¿Qué artículo corresponde a "mesas"?', ['Las', 'La', 'Los', 'El'],
+                0, 'Escribe una oración con "el libro" y otra con "los libros".'
+            ],
+            ['Concordancia en número: sustantivo + pronombre', 'Pronombre (él/ellos, ella/ellas) + sustantivo',
+                'Los pronombres concuerdan en número con el sustantivo al que se refieren.',
+                'Juan llegó. Él está cansado. / Juan y Pedro llegaron. Ellos están cansados.',
+                'él (sing.) / ellos (plur.)',
+                '¿Qué pronombre corresponde a "Juan y Pedro"?', ['Ellos', 'Ellas', 'Él', 'Ella'],
+                0, 'Escribe una oración con "Juan y Pedro" y el pronombre correspondiente.'
+            ],
+            ['Concordancia en número: participio + sujeto plural', 'Participio (plur.) + sujeto plural',
+                'El participio en tiempos compuestos con "ser" o "estar" concuerda en número con el sujeto.',
+                'Las puertas están cerradas. / Los libros están abiertos.',
+                'cerradas (fem. plur.) / abiertos (masc. plur.)',
+                '¿Cómo se escribe "abierto" para "libros"?', ['Abiertos', 'Abiertas', 'Abierto', 'Abierta'],
+                0, 'Escribe una oración con "los libros están abiertos".'
+            ],
+            ['Concordancia en número: adjetivo con sustantivo compuesto', 'Adjetivo + sustantivo compuesto',
+                'Los sustantivos compuestos en singular pueden llevar el adjetivo en singular o plural según el sentido.',
+                'El coche cama es cómodo. / Los coches cama son cómodos.',
+                'cómodo (sing.) / cómodos (plur.)',
+                '¿Cómo se dice "coche cama" en plural con adjetivo?', ['Coches cama cómodos', 'Coche cama cómodos',
+                    'Coches cama cómodo', 'Coche cama cómodo'
+                ], 0, 'Escribe una oración con "coches cama cómodos".'
+            ],
+            ['Concordancia en número: sustantivo colectivo + adjetivo', 'Colectivo (sing.) + adjetivo (sing.)',
+                'Los sustantivos colectivos (grupo, equipo) van en singular y el adjetivo concuerda en singular.',
+                'El equipo está motivado. / La multitud está enfadada.',
+                'motivado (sing.) / enfadada (sing.)',
+                '¿Cómo se dice "equipo motivado" en plural?', ['Equipos motivados', 'Equipo motivados',
+                    'Equipos motivado', 'Equipo motivado'
+                ], 0, 'Escribe una oración con "equipo motivado".'
+            ],
+            ['Concordancia en número: plural de nombres de personas', 'Nombres propios + plural',
+                'Los nombres propios se pluralizan cuando se habla de varios miembros de una familia.',
+                'Los García son muy amables. / Los Pérez están de viaje.',
+                'los + apellido (plural)',
+                '¿Cómo se dice "los García" en singular?', ['El García', 'Los Garcías', 'García', 'Los García'],
+                0, 'Escribe una oración con "los García".'
+            ],
+            ['Concordancia en número: plural de títulos', 'Títulos + plural',
+                'Los títulos de obras se pluralizan cuando hay varios.',
+                'Los "Cien años de soledad" son muchos. (se refiere a ejemplares)',
+                'los + título (plural)',
+                '¿Cómo se pluraliza un título de libro?', ['Los títulos', 'El título', 'Los libro', 'El libro'],
+                0, 'Escribe una oración con "los títulos".'
+            ],
+            ['Concordancia en número: plural de siglas', 'Siglas + plural',
+                'Las siglas no varían en plural, pero el artículo que las acompaña sí.',
+                'Las ONG son importantes. / Los DVD están en la estantería.',
+                'las / los (plural) + sigla',
+                '¿Cómo se dice "ONG" en plural?', ['Las ONG', 'Los ONG', 'Las ONGs', 'Los ONGs'],
+                0, 'Escribe una oración con "las ONG".'
+            ],
+            ['Concordancia en número: plural de extranjerismos', 'Extranjerismos + plural regular',
+                'Los extranjerismos adaptados al español siguen las reglas de pluralización.',
+                'El cómic / Los cómics. / El menú / Los menús.',
+                'cómics / menús',
+                '¿Cómo se dice "cómic" en plural?', ['Cómics', 'Cómices', 'Cómic', 'Cómics'],
+                0, 'Escribe una oración con "cómics".'
+            ]
+        ];
+        b2.forEach(d => addLesson('nominal_numero', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: CONCORDANCIA VERBAL (SUJETO) (21–30)
+        // ============================================================
+        const b3 = [
+            ['Concordancia verbal: sujeto singular + verbo singular', 'Sujeto (sing.) + verbo (sing.)',
+                'El verbo debe concordar en número y persona con el sujeto de la oración.',
+                'El niño juega. / La niña canta.',
+                'juega (3ª sing.) / canta (3ª sing.)',
+                '¿Qué verbo corresponde a "el niño"?', ['Juega', 'Juegan', 'Jugáis', 'Juego'],
+                0, 'Escribe una oración con "el niño juega".'
+            ],
+            ['Concordancia verbal: sujeto plural + verbo plural', 'Sujeto (plur.) + verbo (plur.)',
+                'El verbo debe concordar en número y persona con el sujeto plural.',
+                'Los niños juegan. / Las niñas cantan.',
+                'juegan (3ª plur.) / cantan (3ª plur.)',
+                '¿Qué verbo corresponde a "los niños"?', ['Juegan', 'Juega', 'Jugáis', 'Juego'],
+                0, 'Escribe una oración con "los niños juegan".'
+            ],
+            ['Concordancia verbal: sujeto tácito', 'Sujeto tácito (omitido) + verbo',
+                'Cuando el sujeto está omitido, el verbo indica la persona y el número.',
+                'Comemos en casa. (nosotros) / Vives en Madrid. (tú)',
+                'comemos (1ª plur.) / vives (2ª sing.)',
+                '¿Qué persona indica "comemos"?', ['1ª persona plural', '2ª persona singular', '3ª persona plural',
+                    '1ª persona singular'
+                ], 0, 'Escribe una oración con sujeto tácito en primera persona plural.'
+            ],
+            ['Concordancia verbal: sujeto con preposición', 'Sujeto + preposición (de, con, entre) + verbo',
+                'Cuando el sujeto tiene un complemento con preposición, el verbo concuerda con el núcleo del sujeto.',
+                'El jefe con sus empleados llegó tarde. / El jefe con sus empleados llegaron tarde. (menos común)',
+                'llegó (concuerda con "el jefe")',
+                '¿Con qué concuerda el verbo en "El jefe con sus empleados"?', ['Con "jefe"', 'Con "empleados"',
+                    'Con ambos', 'Con ninguno'
+                ], 0, 'Escribe una oración con "el jefe con sus empleados".'
+            ],
+            ['Concordancia verbal: sujeto compuesto unido por "y"', 'Sujeto + y + sujeto → verbo plural',
+                'Cuando el sujeto está formado por dos o más elementos unidos por "y", el verbo va en plural.',
+                'Juan y María estudian. / El perro y el gato juegan.',
+                'estudian (3ª plur.) / juegan (3ª plur.)',
+                '¿Qué verbo corresponde a "Juan y María"?', ['Estudian', 'Estudia', 'Estudiamos', 'Estudiáis'],
+                0, 'Escribe una oración con "Juan y María estudian".'
+            ],
+            ['Concordancia verbal: sujeto compuesto con "o"', 'Sujeto + o + sujeto → verbo singular o plural',
+                'Con "o" el verbo puede ir en singular (si los elementos son intercambiables) o en plural (si son diferentes).',
+                'Juan o María vendrá. (singular) / Juan o María vendrán. (plural, menos común)',
+                'vendrá (sing.) / vendrán (plur.)',
+                '¿Qué verbo se usa con "Juan o María" generalmente?', ['Vendrá', 'Vendrán', 'Vendremos', 'Venís'],
+                0, 'Escribe una oración con "Juan o María vendrá".'
+            ],
+            ['Concordancia verbal: sujeto compuesto con "ni"', 'Ni + sujeto + ni + sujeto → verbo plural',
+                'Con "ni" el verbo va en plural si los elementos son diferentes.',
+                'Ni Juan ni María vinieron.',
+                'vinieron (3ª plur.)',
+                '¿Qué verbo corresponde a "ni Juan ni María"?', ['Vinieron', 'Vino', 'Vendrán', 'Venimos'],
+                0, 'Escribe una oración con "ni Juan ni María vinieron".'
+            ],
+            ['Concordancia verbal: sujeto compuesto con "como"', 'Sujeto + como + sujeto → verbo singular',
+                'Con "como" (equivalencia) el verbo concuerda con el primer elemento.',
+                'El presidente, como el ministro, asistió.',
+                'asistió (3ª sing.)',
+                '¿Con qué concuerda el verbo en "El presidente, como el ministro"?', ['Con "presidente"',
+                    'Con "ministro"', 'Con ambos', 'Con ninguno'
+                ], 0, 'Escribe una oración con "El presidente, como el ministro, asistió".'
+            ],
+            ['Concordancia verbal: sujeto compuesto con "y" y artículo repetido', 'Artículo + sujeto + y + artículo + sujeto',
+                'Cuando se repite el artículo, el verbo va en plural.',
+                'El presidente y el ministro asistieron.',
+                'asistieron (3ª plur.)',
+                '¿Qué verbo corresponde a "el presidente y el ministro"?', ['Asistieron', 'Asistió', 'Asistimos',
+                    'Asistís'
+                ], 0, 'Escribe una oración con "el presidente y el ministro asistieron".'
+            ],
+            ['Concordancia verbal: sujeto compuesto con "y" y artículo omitido', 'Sujeto + y + sujeto (sin artículo)',
+                'Cuando se omite el artículo, el verbo suele ir en singular si los elementos son considerados una unidad.',
+                'El presidente y ministro asistió. (una misma persona)',
+                'asistió (3ª sing.)',
+                '¿Qué verbo se usa en "El presidente y ministro" cuando es una sola persona?', ['Asistió', 'Asistieron',
+                    'Asistimos', 'Asistís'
+                ], 0, 'Escribe una oración con "El presidente y ministro asistió".'
+            ]
+        ];
+        b3.forEach(d => addLesson('verbal_sujeto', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: CONCORDANCIA DE TIEMPOS (31–40)
+        // ============================================================
+        const b4 = [
+            ['Concordancia de tiempos: presente + presente', 'Presente + presente',
+                'En oraciones coordinadas, los verbos pueden ir en el mismo tiempo.',
+                'Estudio y aprendo todos los días.',
+                'estudio (presente) / aprendo (presente)',
+                '¿Qué tiempos se usan en "Estudio y aprendo"?', ['Presente + presente', 'Pasado + presente',
+                    'Futuro + presente', 'Presente + futuro'
+                ], 0, 'Escribe una oración con dos verbos en presente.'
+            ],
+            ['Concordancia de tiempos: pasado + pasado', 'Pasado + pasado',
+                'Los verbos en una misma oración pueden ir en pasado para indicar acciones simultáneas.',
+                'Llegó y se fue.',
+                'llegó (pretérito) / se fue (pretérito)',
+                '¿Qué tiempos se usan en "Llegó y se fue"?', ['Pretérito + pretérito', 'Presente + pretérito',
+                    'Futuro + pretérito', 'Pretérito + futuro'
+                ], 0, 'Escribe una oración con dos verbos en pretérito.'
+            ],
+            ['Concordancia de tiempos: futuro + futuro', 'Futuro + futuro',
+                'En oraciones coordinadas, los verbos pueden ir en futuro para indicar acciones futuras.',
+                'Iré y te llamaré.',
+                'iré (futuro) / llamaré (futuro)',
+                '¿Qué tiempos se usan en "Iré y te llamaré"?', ['Futuro + futuro', 'Presente + futuro',
+                    'Futuro + presente', 'Pretérito + futuro'
+                ], 0, 'Escribe una oración con dos verbos en futuro.'
+            ],
+            ['Concordancia de tiempos: subordinada temporal (presente + presente)', 'Presente + presente (subordinada)',
+                'En subordinadas temporales, el presente se usa para acciones simultáneas.',
+                'Cuando llego, ceno.',
+                'llego (presente) / ceno (presente)',
+                '¿Qué tiempos se usan en "Cuando llego, ceno"?', ['Presente + presente', 'Presente + futuro',
+                    'Futuro + presente', 'Pretérito + presente'
+                ], 0, 'Escribe una oración con "cuando" y dos verbos en presente.'
+            ],
+            ['Concordancia de tiempos: subordinada temporal (presente + futuro)', 'Presente + futuro (subordinada)',
+                'En subordinadas temporales, el presente de subjuntivo se usa para el futuro.',
+                'Cuando llegues, cenaremos.',
+                'llegues (presente subjuntivo) / cenaremos (futuro)',
+                '¿Qué tiempos se usan en "Cuando llegues, cenaremos"?', ['Presente subjuntivo + futuro',
+                    'Presente + presente', 'Futuro + futuro', 'Pretérito + futuro'
+                ], 0, 'Escribe una oración con "cuando" + subjuntivo y futuro.'
+            ],
+            ['Concordancia de tiempos: subordinada con "si" (presente + futuro)', 'Si + presente + futuro',
+                'En oraciones condicionales reales, se usa presente + futuro.',
+                'Si estudias, aprobarás.',
+                'estudias (presente) / aprobarás (futuro)',
+                '¿Qué tiempos se usan en "Si estudias, aprobarás"?', ['Presente + futuro', 'Presente + presente',
+                    'Subjuntivo + condicional', 'Pretérito + condicional'
+                ], 0, 'Escribe una oración con "si" + presente + futuro.'
+            ],
+            ['Concordancia de tiempos: subordinada con "si" (imperfecto + condicional)', 'Si + imperfecto + condicional',
+                'En oraciones condicionales irreales, se usa imperfecto de subjuntivo + condicional.',
+                'Si estudiara, aprobaría.',
+                'estudiara (imperfecto subjuntivo) / aprobaría (condicional)',
+                '¿Qué tiempos se usan en "Si estudiara, aprobaría"?', ['Imperfecto subj. + condicional',
+                    'Presente + futuro', 'Pretérito + condicional', 'Subjuntivo + presente'
+                ], 0, 'Escribe una oración con "si" + imperfecto subj. + condicional.'
+            ],
+            ['Concordancia de tiempos: subordinada con "si" (pluscuamperfecto + condicional compuesto)',
+                'Si + pluscuamperfecto subj. + condicional compuesto',
+                'En oraciones condicionales irreales en el pasado, se usa pluscuamperfecto de subjuntivo + condicional compuesto.',
+                'Si hubiera estudiado, habría aprobado.',
+                'hubiera estudiado (pluscuamperfecto subj.) / habría aprobado (condicional compuesto)',
+                '¿Qué tiempos se usan en "Si hubiera estudiado, habría aprobado"?',
+                ['Pluscuamperfecto subj. + condicional comp.', 'Imperfecto subj. + condicional', 'Presente + futuro',
+                    'Pretérito + condicional'
+                ], 0, 'Escribe una oración con "si" + pluscuamperfecto subj. + condicional compuesto.'
+            ],
+            ['Concordancia de tiempos: estilo indirecto (presente → presente)', 'Presente + presente (estilo indirecto)',
+                'En estilo indirecto, si el verbo introductor está en presente, el tiempo de la subordinada se mantiene.',
+                'Dice que viene.',
+                'dice (presente) / viene (presente)',
+                '¿Qué tiempos se usan en "Dice que viene"?', ['Presente + presente', 'Presente + futuro',
+                    'Pretérito + pretérito', 'Pretérito + presente'
+                ], 0, 'Escribe una oración en estilo indirecto con presente + presente.'
+            ],
+            ['Concordancia de tiempos: estilo indirecto (pasado → pasado)', 'Pasado + pasado (estilo indirecto)',
+                'En estilo indirecto, si el verbo introductor está en pasado, los tiempos retroceden.',
+                'Dijo que venía.',
+                'dijo (pretérito) / venía (imperfecto)',
+                '¿Qué tiempos se usan en "Dijo que venía"?', ['Pretérito + imperfecto', 'Presente + presente',
+                    'Futuro + futuro', 'Pretérito + presente'
+                ], 0, 'Escribe una oración en estilo indirecto con pretérito + imperfecto.'
+            ]
+        ];
+        b4.forEach(d => addLesson('verbal_tiempo', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: CONCORDANCIA DE PERSONA (41–50)
+        // ============================================================
+        const b5 = [
+            ['Concordancia de persona: 1ª persona singular', 'Yo + verbo en 1ª singular',
+                'El verbo debe concordar en persona con el sujeto "yo".',
+                'Yo estudio español.',
+                'estudio (1ª sing.)',
+                '¿Qué verbo corresponde a "yo"?', ['Estudio', 'Estudias', 'Estudia', 'Estudiamos'],
+                0, 'Escribe una oración con "yo estudio".'
+            ],
+            ['Concordancia de persona: 2ª persona singular', 'Tú + verbo en 2ª singular',
+                'El verbo debe concordar en persona con el sujeto "tú".',
+                'Tú estudias español.',
+                'estudias (2ª sing.)',
+                '¿Qué verbo corresponde a "tú"?', ['Estudias', 'Estudio', 'Estudia', 'Estudiáis'],
+                0, 'Escribe una oración con "tú estudias".'
+            ],
+            ['Concordancia de persona: 3ª persona singular', 'Él / ella / usted + verbo en 3ª singular',
+                'El verbo debe concordar en persona con "él", "ella" o "usted".',
+                'Él estudia español. / Usted estudia español.',
+                'estudia (3ª sing.)',
+                '¿Qué verbo corresponde a "él"?', ['Estudia', 'Estudio', 'Estudias', 'Estudian'],
+                0, 'Escribe una oración con "él estudia".'
+            ],
+            ['Concordancia de persona: 1ª persona plural', 'Nosotros + verbo en 1ª plural',
+                'El verbo debe concordar en persona con "nosotros".',
+                'Nosotros estudiamos español.',
+                'estudiamos (1ª plur.)',
+                '¿Qué verbo corresponde a "nosotros"?', ['Estudiamos', 'Estudian', 'Estudiáis', 'Estudio'],
+                0, 'Escribe una oración con "nosotros estudiamos".'
+            ],
+            ['Concordancia de persona: 2ª persona plural', 'Vosotros + verbo en 2ª plural',
+                'El verbo debe concordar en persona con "vosotros".',
+                'Vosotros estudiáis español.',
+                'estudiáis (2ª plur.)',
+                '¿Qué verbo corresponde a "vosotros"?', ['Estudiáis', 'Estudian', 'Estudiamos', 'Estudio'],
+                0, 'Escribe una oración con "vosotros estudiáis".'
+            ],
+            ['Concordancia de persona: 3ª persona plural', 'Ellos / ellas / ustedes + verbo en 3ª plural',
+                'El verbo debe concordar en persona con "ellos", "ellas" o "ustedes".',
+                'Ellos estudian español. / Ustedes estudian español.',
+                'estudian (3ª plur.)',
+                '¿Qué verbo corresponde a "ellos"?', ['Estudian', 'Estudiáis', 'Estudiamos', 'Estudio'],
+                0, 'Escribe una oración con "ellos estudian".'
+            ],
+            ['Concordancia de persona: sujeto tácito en 1ª persona', 'Sujeto tácito (yo) + verbo en 1ª singular',
+                'Cuando el sujeto es tácito, el verbo indica la persona.',
+                'Estudio español. (sujeto: yo)',
+                'estudio (1ª sing.)',
+                '¿Qué persona indica "estudio"?', ['1ª persona singular', '2ª persona singular', '3ª persona singular',
+                    '1ª persona plural'
+                ], 0, 'Escribe una oración con sujeto tácito en primera persona.'
+            ],
+            ['Concordancia de persona: sujeto tácito en 2ª persona', 'Sujeto tácito (tú) + verbo en 2ª singular',
+                'El verbo indica la persona cuando el sujeto es tácito.',
+                'Estudias español. (sujeto: tú)',
+                'estudias (2ª sing.)',
+                '¿Qué persona indica "estudias"?', ['2ª persona singular', '1ª persona singular', '3ª persona singular',
+                    '2ª persona plural'
+                ], 0, 'Escribe una oración con sujeto tácito en segunda persona.'
+            ],
+            ['Concordancia de persona: sujeto tácito en 3ª persona', 'Sujeto tácito (él/ella) + verbo en 3ª singular',
+                'El verbo indica la persona cuando el sujeto es tácito.',
+                'Estudia español. (sujeto: él/ella/usted)',
+                'estudia (3ª sing.)',
+                '¿Qué persona indica "estudia"?', ['3ª persona singular', '1ª persona singular', '2ª persona singular',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con sujeto tácito en tercera persona.'
+            ],
+            ['Concordancia de persona: sujeto tácito en 1ª plural', 'Sujeto tácito (nosotros) + verbo en 1ª plural',
+                'El verbo indica la persona cuando el sujeto es tácito.',
+                'Estudiamos español. (sujeto: nosotros)',
+                'estudiamos (1ª plur.)',
+                '¿Qué persona indica "estudiamos"?', ['1ª persona plural', '2ª persona plural', '3ª persona plural',
+                    '1ª persona singular'
+                ], 0, 'Escribe una oración con sujeto tácito en primera persona plural.'
+            ]
+        ];
+        b5.forEach(d => addLesson('verbal_persona', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: SUJETOS COMPUESTOS (51–60)
+        // ============================================================
+        const b6 = [
+            ['Sujeto compuesto con "y" (dos elementos)', 'Sujeto A + y + sujeto B → verbo plural',
+                'Cuando el sujeto tiene dos elementos unidos por "y", el verbo va en plural.',
+                'El perro y el gato juegan.',
+                'juegan (3ª plur.)',
+                '¿Qué verbo corresponde a "el perro y el gato"?', ['Juegan', 'Juega', 'Jugamos', 'Jugáis'],
+                0, 'Escribe una oración con "el perro y el gato juegan".'
+            ],
+            ['Sujeto compuesto con "y" (más de dos elementos)', 'Sujeto A, B + y + C → verbo plural',
+                'Con más de dos elementos, el verbo va en plural.',
+                'El perro, el gato y el pájaro juegan.',
+                'juegan (3ª plur.)',
+                '¿Qué verbo corresponde a "el perro, el gato y el pájaro"?', ['Juegan', 'Juega', 'Jugamos', 'Jugáis'],
+                0, 'Escribe una oración con tres sujetos en plural.'
+            ],
+            ['Sujeto compuesto con "o" (alternativa)', 'Sujeto A + o + sujeto B → verbo singular',
+                'Con "o" el verbo suele ir en singular si los elementos son intercambiables.',
+                'Juan o María vendrá.',
+                'vendrá (3ª sing.)',
+                '¿Qué verbo se usa en "Juan o María vendrá"?', ['Vendrá', 'Vendrán', 'Vendremos', 'Vendréis'],
+                0, 'Escribe una oración con "Juan o María vendrá".'
+            ],
+            ['Sujeto compuesto con "ni" (negación)', 'Ni + sujeto A + ni + sujeto B → verbo plural',
+                'Con "ni" el verbo va en plural si los elementos son diferentes.',
+                'Ni Juan ni María vinieron.',
+                'vinieron (3ª plur.)',
+                '¿Qué verbo corresponde a "ni Juan ni María"?', ['Vinieron', 'Vino', 'Vendrán', 'Venimos'],
+                0, 'Escribe una oración con "ni Juan ni María vinieron".'
+            ],
+            ['Sujeto compuesto con "tanto... como"', 'Tanto + sujeto A + como + sujeto B → verbo plural',
+                'Con "tanto... como" el verbo va en plural.',
+                'Tanto Juan como María estudian.',
+                'estudian (3ª plur.)',
+                '¿Qué verbo corresponde a "tanto Juan como María"?', ['Estudian', 'Estudia', 'Estudiamos', 'Estudiáis'],
+                0, 'Escribe una oración con "tanto Juan como María estudian".'
+            ],
+            ['Sujeto compuesto con "no solo... sino también"', 'No solo + sujeto A + sino también + sujeto B → verbo plural',
+                'Con "no solo... sino también" el verbo va en plural.',
+                'No solo Juan sino también María estudian.',
+                'estudian (3ª plur.)',
+                '¿Qué verbo corresponde a "no solo Juan sino también María"?', ['Estudian', 'Estudia', 'Estudiamos',
+                    'Estudiáis'
+                ], 0, 'Escribe una oración con "no solo Juan sino también María estudian".'
+            ],
+            ['Sujeto compuesto con "como" (comparación)', 'Sujeto A + como + sujeto B → verbo singular',
+                'Con "como" el verbo concuerda con el primer elemento.',
+                'Juan, como María, estudia.',
+                'estudia (3ª sing.)',
+                '¿Con qué concuerda el verbo en "Juan, como María"?', ['Con "Juan"', 'Con "María"', 'Con ambos',
+                    'Con ninguno'
+                ], 0, 'Escribe una oración con "Juan, como María, estudia".'
+            ],
+            ['Sujeto compuesto con "y" y artículo repetido', 'El + sujeto A + y + el + sujeto B → verbo plural',
+                'Cuando se repite el artículo, el verbo va en plural.',
+                'El presidente y el ministro asistieron.',
+                'asistieron (3ª plur.)',
+                '¿Qué verbo corresponde a "el presidente y el ministro"?', ['Asistieron', 'Asistió', 'Asistimos',
+                    'Asistís'
+                ], 0, 'Escribe una oración con "el presidente y el ministro asistieron".'
+            ],
+            ['Sujeto compuesto con "y" y artículo omitido', 'Sujeto A + y + sujeto B (sin artículo) → verbo singular',
+                'Cuando se omite el artículo, el verbo suele ir en singular si los elementos son una unidad.',
+                'El presidente y ministro asistió. (una sola persona)',
+                'asistió (3ª sing.)',
+                '¿Qué verbo se usa en "El presidente y ministro" cuando es una sola persona?', ['Asistió', 'Asistieron',
+                    'Asistimos', 'Asistís'
+                ], 0, 'Escribe una oración con "El presidente y ministro asistió".'
+            ],
+            ['Sujeto compuesto con "y" y elementos de diferente número', 'Sujeto sing + y + sujeto plur → verbo plural',
+                'Si los elementos son de diferente número, el verbo va en plural.',
+                'El niño y los adultos juegan.',
+                'juegan (3ª plur.)',
+                '¿Qué verbo corresponde a "el niño y los adultos"?', ['Juegan', 'Juega', 'Jugamos', 'Jugáis'],
+                0, 'Escribe una oración con "el niño y los adultos juegan".'
+            ]
+        ];
+        b6.forEach(d => addLesson('sujetos_compuestos', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: SUJETOS COLECTIVOS (61–70)
+        // ============================================================
+        const b7 = [
+            ['Colectivo singular con verbo singular', 'Colectivo (sing.) + verbo (sing.)',
+                'Los sustantivos colectivos en singular llevan el verbo en singular.',
+                'El equipo juega bien.',
+                'juega (3ª sing.)',
+                '¿Qué verbo corresponde a "el equipo"?', ['Juega', 'Juegan', 'Jugamos', 'Jugáis'],
+                0, 'Escribe una oración con "el equipo juega".'
+            ],
+            ['Colectivo singular con verbo plural (énfasis)', 'Colectivo (sing.) + verbo (plur.) (énfasis)',
+                'En algunos casos, el verbo puede ir en plural para enfatizar a los miembros del colectivo.',
+                'El equipo juegan bien. (enfatiza a los jugadores)',
+                'juegan (3ª plur.)',
+                '¿Cuándo se usa el verbo en plural con un colectivo?', ['Para enfatizar a los miembros',
+                    'Siempre va en singular', 'Nunca va en plural', 'Solo en el pasado'
+                ], 0, 'Escribe una oración con "el equipo" en plural (énfasis).'
+            ],
+            ['Colectivo plural con verbo plural', 'Colectivo (plur.) + verbo (plur.)',
+                'Los colectivos en plural llevan el verbo en plural.',
+                'Los equipos juegan bien.',
+                'juegan (3ª plur.)',
+                '¿Qué verbo corresponde a "los equipos"?', ['Juegan', 'Juega', 'Jugamos', 'Jugáis'],
+                0, 'Escribe una oración con "los equipos juegan".'
+            ],
+            ['Colectivo con complemento partitivo', 'Colectivo + de + sustantivo → verbo singular',
+                'Cuando el colectivo va acompañado de un complemento partitivo, el verbo concuerda con el colectivo.',
+                'Una bandada de pájaros volaba.',
+                'volaba (3ª sing.)',
+                '¿Con qué concuerda el verbo en "una bandada de pájaros"?', ['Con "bandada"', 'Con "pájaros"',
+                    'Con ambos', 'Con ninguno'
+                ], 0, 'Escribe una oración con "una bandada de pájaros volaba".'
+            ],
+            ['Colectivo con complemento partitivo (énfasis)', 'Colectivo + de + sustantivo → verbo plural (énfasis)',
+                'El verbo puede ir en plural para enfatizar los elementos del complemento.',
+                'Una bandada de pájaros volaban.',
+                'volaban (3ª plur.)',
+                '¿Cuándo se usa el verbo en plural con "una bandada de pájaros"?', ['Para enfatizar a los pájaros',
+                    'Siempre va en singular', 'Nunca va en plural', 'Solo en el presente'
+                ], 0, 'Escribe una oración con "una bandada de pájaros" en plural (énfasis).'
+            ],
+            ['Colectivo con numeral', 'Numeral + colectivo → verbo singular o plural',
+                'Con numerales, el verbo puede ir en singular o plural según el sentido.',
+                'Diez personas llegaron. (plural) / Una docena de personas llegó. (singular)',
+                'llegaron (plur.) / llegó (sing.)',
+                '¿Qué verbo se usa con "una docena de personas"?', ['Llegó', 'Llegaron', 'Llegamos', 'Llegáis'],
+                0, 'Escribe una oración con "una docena de personas llegó".'
+            ],
+            ['Colectivo "gente" con verbo singular', 'Gente + verbo singular',
+                '"Gente" siempre va en singular, aunque se refiera a muchas personas.',
+                'La gente está cansada.',
+                'está (3ª sing.)',
+                '¿Qué verbo corresponde a "la gente"?', ['Está', 'Están', 'Estamos', 'Estáis'],
+                0, 'Escribe una oración con "la gente está".'
+            ],
+            ['Colectivo "pueblo" con verbo singular', 'Pueblo + verbo singular',
+                '"Pueblo" en su sentido colectivo va en singular.',
+                'El pueblo reclama justicia.',
+                'reclama (3ª sing.)',
+                '¿Qué verbo corresponde a "el pueblo"?', ['Reclama', 'Reclaman', 'Reclamamos', 'Reclamáis'],
+                0, 'Escribe una oración con "el pueblo reclama".'
+            ],
+            ['Colectivo "multitud" con verbo singular', 'Multitud + verbo singular',
+                '"Multitud" va en singular, aunque se refiera a muchas personas.',
+                'La multitud abarrotaba la plaza.',
+                'abarrotaba (3ª sing.)',
+                '¿Qué verbo corresponde a "la multitud"?', ['Abarrotaba', 'Abarrotaban', 'Abarrotábamos',
+                    'Abarrotabais'
+                ], 0, 'Escribe una oración con "la multitud abarrotaba".'
+            ],
+            ['Colectivo "familia" con verbo singular', 'Familia + verbo singular',
+                '"Familia" va en singular, aunque se refiera a varias personas.',
+                'La familia se fue de vacaciones.',
+                'se fue (3ª sing.)',
+                '¿Qué verbo corresponde a "la familia"?', ['Se fue', 'Se fueron', 'Nos fuimos', 'Os fuisteis'],
+                0, 'Escribe una oración con "la familia se fue".'
+            ]
+        ];
+        b7.forEach(d => addLesson('colectivos', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: VERBOS IMPERSONALES (71–80)
+        // ============================================================
+        const b8 = [
+            ['Verbos meteorológicos (3ª persona singular)', 'Verbos de fenómenos naturales → 3ª sing.',
+                'Los verbos que expresan fenómenos meteorológicos (llover, nevar, granizar) van en 3ª persona singular.',
+                'Llueve mucho. / Nieva en la montaña.',
+                'llueve (3ª sing.) / nieva (3ª sing.)',
+                '¿Qué persona se usa en "llueve"?', ['3ª persona singular', '1ª persona singular', '2ª persona singular',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con "llueve".'
+            ],
+            ['Verbos impersonales con "se" (3ª persona singular)', 'Se + verbo en 3ª sing. (impersonal)',
+                'La forma impersonal con "se" usa el verbo en 3ª persona singular.',
+                'Se vive bien aquí. / Se come muy bien.',
+                'vive (3ª sing.) / come (3ª sing.)',
+                '¿Qué persona se usa en "se vive"?', ['3ª persona singular', '1ª persona plural', '2ª persona plural',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con "se vive".'
+            ],
+            ['Verbos impersonales con "haber" (3ª persona singular)', 'Haber + sustantivo → 3ª sing.',
+                'El verbo "haber" en su sentido impersonal va en 3ª persona singular, incluso si el sustantivo está en plural.',
+                'Hay muchos libros. / Hubo muchos problemas.',
+                'hay (3ª sing.) / hubo (3ª sing.)',
+                '¿Qué persona se usa en "hay muchos libros"?', ['3ª persona singular', '3ª persona plural',
+                    '1ª persona singular', '2ª persona singular'
+                ], 0, 'Escribe una oración con "hay".'
+            ],
+            ['Verbos impersonales con "hacer" (3ª persona singular)', 'Hacer + tiempo → 3ª sing.',
+                'El verbo "hacer" en expresiones de tiempo va en 3ª persona singular.',
+                'Hace mucho calor. / Hace tres años.',
+                'hace (3ª sing.)',
+                '¿Qué persona se usa en "hace mucho calor"?', ['3ª persona singular', '1ª persona singular',
+                    '2ª persona singular', '3ª persona plural'
+                ], 0, 'Escribe una oración con "hace".'
+            ],
+            ['Verbos impersonales con "ser" (3ª persona singular)', 'Ser + hora → 3ª sing.',
+                'El verbo "ser" en expresiones de hora va en 3ª persona singular.',
+                'Es tarde. / Son las tres. (plural en la hora)',
+                'es (3ª sing.) / son (3ª plur.)',
+                '¿Qué persona se usa en "es tarde"?', ['3ª persona singular', '1ª persona singular', '2ª persona singular',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con "es tarde".'
+            ],
+            ['Verbos impersonales con "haber" (expresiones)', 'Haber + que + infinitivo → 3ª sing.',
+                'La expresión "hay que" es impersonal y va en 3ª persona singular.',
+                'Hay que estudiar. / Habrá que hacerlo.',
+                'hay (3ª sing.) / habrá (3ª sing.)',
+                '¿Qué persona se usa en "hay que"?', ['3ª persona singular', '1ª persona plural', '2ª persona plural',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con "hay que".'
+            ],
+            ['Verbos impersonales con "bastar"', 'Bastar + sustantivo → 3ª sing.',
+                'El verbo "bastar" en su sentido impersonal va en 3ª persona singular.',
+                'Basta con eso. / Bastan dos. (si el sustantivo está en plural, puede ir en plural)',
+                'basta (3ª sing.) / bastan (3ª plur.)',
+                '¿Qué persona se usa en "basta"?', ['3ª persona singular', '1ª persona singular', '2ª persona singular',
+                    '3ª persona plural'
+                ], 0, 'Escribe una oración con "basta".'
+            ],
+            ['Verbos impersonales con "sobrar"', 'Sobrar + sustantivo → 3ª sing. o plur.',
+                'El verbo "sobrar" concuerda con el sustantivo que lo acompaña.',
+                'Sobra tiempo. / Sobran días.',
+                'sobra (3ª sing.) / sobran (3ª plur.)',
+                '¿Qué persona se usa en "sobran días"?', ['3ª persona plural', '3ª persona singular', '1ª persona plural',
+                    '2ª persona plural'
+                ], 0, 'Escribe una oración con "sobran".'
+            ],
+            ['Verbos impersonales con "faltar"', 'Faltar + sustantivo → 3ª sing. o plur.',
+                'El verbo "faltar" concuerda con el sustantivo que lo acompaña.',
+                'Falta tiempo. / Faltan días.',
+                'falta (3ª sing.) / faltan (3ª plur.)',
+                '¿Qué persona se usa en "faltan días"?', ['3ª persona plural', '3ª persona singular', '1ª persona plural',
+                    '2ª persona plural'
+                ], 0, 'Escribe una oración con "faltan".'
+            ],
+            ['Verbos impersonales en infinitivo', 'Infinitivo + verbo impersonal',
+                'Los verbos impersonales pueden usarse en infinitivo en construcciones como "es + adjetivo + infinitivo".',
+                'Es importante estudiar.',
+                'es (3ª sing.)',
+                '¿Qué persona se usa en "es importante"?', ['3ª persona singular', '1ª persona singular',
+                    '2ª persona singular', '3ª persona plural'
+                ], 0, 'Escribe una oración con "es importante estudiar".'
+            ]
+        ];
+        b8.forEach(d => addLesson('verbos_impersonales', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: CASOS ESPECIALES (81–90)
+        // ============================================================
+        const b9 = [
+            ['Concordancia con "mayoría"', 'La mayoría + verbo singular o plural',
+                '"La mayoría" puede ir con verbo en singular o plural según el sentido.',
+                'La mayoría está de acuerdo. / La mayoría están de acuerdo. (énfasis)',
+                'está (sing.) / están (plur.)',
+                '¿Qué verbo se usa con "la mayoría" generalmente?', ['Singular', 'Plural', 'Ambos', 'Ninguno'],
+                0, 'Escribe una oración con "la mayoría está".'
+            ],
+            ['Concordancia con "parte"', 'La parte + verbo singular',
+                '"La parte" suele ir con verbo en singular.',
+                'La parte de los estudiantes está contenta.',
+                'está (3ª sing.)',
+                '¿Qué verbo corresponde a "la parte"?', ['Está', 'Están', 'Estamos', 'Estáis'],
+                0, 'Escribe una oración con "la parte está".'
+            ],
+            ['Concordancia con "resto"', 'El resto + verbo singular',
+                '"El resto" suele ir con verbo en singular.',
+                'El resto de los alumnos está en clase.',
+                'está (3ª sing.)',
+                '¿Qué verbo corresponde a "el resto"?', ['Está', 'Están', 'Estamos', 'Estáis'],
+                0, 'Escribe una oración con "el resto está".'
+            ],
+            ['Concordancia con "número"', 'El número + verbo singular',
+                '"El número" en su sentido cuantitativo va con verbo en singular.',
+                'El número de asistentes fue alto.',
+                'fue (3ª sing.)',
+                '¿Qué verbo corresponde a "el número"?', ['Fue', 'Fueron', 'Fuimos', 'Fuisteis'],
+                0, 'Escribe una oración con "el número fue".'
+            ],
+            ['Concordancia con "cantidad"', 'La cantidad + verbo singular',
+                '"La cantidad" va con verbo en singular.',
+                'La cantidad de agua es suficiente.',
+                'es (3ª sing.)',
+                '¿Qué verbo corresponde a "la cantidad"?', ['Es', 'Son', 'Somos', 'Sois'],
+                0, 'Escribe una oración con "la cantidad es".'
+            ],
+            ['Concordancia con "docena"', 'La docena + verbo singular',
+                '"La docena" va con verbo en singular.',
+                'La docena de huevos está fresca.',
+                'está (3ª sing.)',
+                '¿Qué verbo corresponde a "la docena"?', ['Está', 'Están', 'Estamos', 'Estáis'],
+                0, 'Escribe una oración con "la docena está".'
+            ],
+            ['Concordancia con "par"', 'El par + verbo singular',
+                '"El par" va con verbo en singular.',
+                'El par de zapatos es nuevo.',
+                'es (3ª sing.)',
+                '¿Qué verbo corresponde a "el par"?', ['Es', 'Son', 'Somos', 'Sois'],
+                0, 'Escribe una oración con "el par es".'
+            ],
+            ['Concordancia con "mitad"', 'La mitad + verbo singular',
+                '"La mitad" va con verbo en singular.',
+                'La mitad de los estudiantes está en clase.',
+                'está (3ª sing.)',
+                '¿Qué verbo corresponde a "la mitad"?', ['Está', 'Están', 'Estamos', 'Estáis'],
+                0, 'Escribe una oración con "la mitad está".'
+            ],
+            ['Concordancia con "tercio"', 'El tercio + verbo singular',
+                '"El tercio" va con verbo en singular.',
+                'El tercio de los votantes apoyó la medida.',
+                'apoyó (3ª sing.)',
+                '¿Qué verbo corresponde a "el tercio"?', ['Apoyó', 'Apoyaron', 'Apoyamos', 'Apoyasteis'],
+                0, 'Escribe una oración con "el tercio apoyó".'
+            ],
+            ['Concordancia con "quien" y "quienes"', 'Quien + verbo singular / Quienes + verbo plural',
+                '"Quien" va con verbo en singular, "quienes" en plural.',
+                'Quien llegue tarde, no entrará. / Quienes lleguen tarde, no entrarán.',
+                'llegue (sing.) / lleguen (plur.)',
+                '¿Qué verbo corresponde a "quienes"?', ['Lleguen', 'Llegue', 'Llegamos', 'Llegáis'],
+                0, 'Escribe una oración con "quienes lleguen".'
+            ]
+        ];
+        b9.forEach(d => addLesson('casos_especiales', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: USOS EN REDACCIÓN (91–100)
+        // ============================================================
+        const b10 = [
+            ['Concordancia en la redacción formal', 'Concordancia precisa en textos formales',
+                'En la redacción formal, la concordancia debe ser precisa para evitar ambigüedades.',
+                'El informe fue presentado por el director. (concordancia correcta)',
+                'fue presentado (3ª sing.)',
+                '¿Qué debe tenerse en cuenta en la redacción formal?', ['La concordancia precisa', 'La ambigüedad',
+                    'La repetición', 'La informalidad'
+                ], 0, 'Escribe una oración formal con concordancia precisa.'
+            ],
+            ['Concordancia en la redacción académica', 'Concordancia en textos académicos',
+                'En la redacción académica, la concordancia debe ser rigurosa.',
+                'Los datos analizados muestran una tendencia.',
+                'muestran (3ª plur.)',
+                '¿Qué tipo de concordancia se usa en textos académicos?', ['Rigurosa', 'Laxa', 'Coloquial', 'Poética'],
+                0, 'Escribe una oración académica con concordancia rigurosa.'
+            ],
+            ['Concordancia en la redacción publicitaria', 'Concordancia en publicidad (énfasis)',
+                'En publicidad, la concordancia puede usarse con énfasis para captar la atención.',
+                'Ofertas increíbles te esperan.',
+                'esperan (3ª plur.)',
+                '¿Qué efecto busca la concordancia en publicidad?', ['Enfatizar', 'Confundir', 'Aburrir', 'Informar'],
+                0, 'Escribe una oración publicitaria con concordancia enfática.'
+            ],
+            ['Concordancia en la redacción literaria', 'Concordancia en literatura (estilo)',
+                'En literatura, la concordancia puede usarse con fines estilísticos.',
+                'La noche, silenciosa y oscura, caía sobre el valle.',
+                'caía (3ª sing.)',
+                '¿Qué busca la concordancia en la literatura?', ['Estilo y atmósfera', 'Precisión técnica',
+                    'Información', 'Persuasión'
+                ], 0, 'Escribe una frase literaria con concordancia estilística.'
+            ],
+            ['Concordancia en la redacción periodística', 'Concordancia en periodismo (claridad)',
+                'En periodismo, la concordancia debe ser clara para evitar malentendidos.',
+                'El presidente anunció nuevas medidas.',
+                'anunció (3ª sing.)',
+                '¿Qué busca la concordancia en periodismo?', ['Claridad', 'Estilo', 'Persuasión', 'Ambiguëdad'],
+                0, 'Escribe una oración periodística con concordancia clara.'
+            ],
+            ['Concordancia en la redacción administrativa', 'Concordancia en administración (formalidad)',
+                'En la redacción administrativa, la concordancia debe ser formal y precisa.',
+                'Se adjunta la documentación requerida.',
+                'adjunta (3ª sing.)',
+                '¿Qué tipo de concordancia se usa en la redacción administrativa?', ['Formal y precisa', 'Coloquial',
+                    'Ambiguëdad', 'Poética'
+                ], 0, 'Escribe una oración administrativa con concordancia formal.'
+            ],
+            ['Concordancia en la redacción de correos electrónicos', 'Concordancia en correos (adecuación)',
+                'En correos electrónicos, la concordancia debe ser adecuada al registro.',
+                'Le adjunto el documento. (formal) / Te adjunto el documento. (informal)',
+                'adjunto (1ª sing.)',
+                '¿Qué debe tenerse en cuenta en la concordancia de correos?', ['El registro formal/informal',
+                    'La ambigüedad', 'La repetición', 'El estilo literario'
+                ], 0, 'Escribe un correo formal con concordancia adecuada.'
+            ],
+            ['Concordancia en la redacción de informes', 'Concordancia en informes (precisión)',
+                'En los informes, la concordancia debe ser precisa para evitar interpretaciones erróneas.',
+                'Los resultados obtenidos confirman la hipótesis.',
+                'confirman (3ª plur.)',
+                '¿Qué busca la concordancia en los informes?', ['Precisión', 'Estilo', 'Persuasión', 'Ambiguëdad'],
+                0, 'Escribe una frase de informe con concordancia precisa.'
+            ],
+            ['Concordancia en la redacción de actas', 'Concordancia en actas (formalidad)',
+                'En las actas, la concordancia debe ser formal y rigurosa.',
+                'Se aprobaron los puntos del orden del día.',
+                'aprobaron (3ª plur.)',
+                '¿Qué tipo de concordancia se usa en las actas?', ['Formal y rigurosa', 'Coloquial', 'Poética',
+                    'Ambiguëdad'
+                ], 0, 'Escribe una frase de acta con concordancia formal.'
+            ],
+            ['Revisión general: concordancia en la redacción', 'Resumen de la concordancia',
+                'La concordancia es esencial para una redacción correcta y precisa en español.',
+                'La casa es grande. / Las casas son grandes. / El agua está fría. / Los niños juegan.',
+                'resumen de concordancia',
+                '¿Qué tipos de concordancia existen?', ['Nominal y verbal', 'Solo nominal', 'Solo verbal',
+                    'No existe'
+                ], 0, 'Escribe tres oraciones que muestren diferentes tipos de concordancia.'
+            ]
+        ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Concordancia: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · La Concordancia');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Concordancia cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

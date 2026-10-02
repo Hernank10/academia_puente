@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Redacción de Correos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">redacción de correos · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Estructura: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe un fragmento de correo que aplique esta técnica:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Estimado cliente, le informamos...»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS DE REDACCIÓN DE CORREOS
+        //  BASADAS EN GRAMÁTICA Y MORFOSINTAXIS
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'estructura', label: 'Estructura General' },
+            { id: 'saludos', label: 'Saludos y Presentación' },
+            { id: 'cuerpo', label: 'Cuerpo (Sintaxis)' },
+            { id: 'tiempos', label: 'Tiempos Verbales' },
+            { id: 'conectores', label: 'Conectores y Marcadores' },
+            { id: 'cortesia', label: 'Cortesía y Tratamiento' },
+            { id: 'comercial', label: 'Correos Comerciales' },
+            { id: 'academico', label: 'Correos Académicos' },
+            { id: 'marketing', label: 'Correos de Marketing' },
+            { id: 'estilo', label: 'Revisión y Estilo' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: ESTRUCTURA GENERAL (1–10)
+        // ============================================================
+        const b1 = [
+            ['Saludo formal + cuerpo + despedida', 'Saludo (formal) → Cuerpo → Despedida (formal)',
+                'Un correo formal sigue una estructura tripartita: saludo (con tratamiento de cortesía), cuerpo (exposición del asunto) y despedida (fórmula de cierre). La gramática debe ser cuidada y los verbos conjugados en tiempos adecuados.',
+                'Estimado Sr. García: Le escribo para... Atentamente, Juan Pérez.',
+                'Saludo formal (Estimado Sr.) + cuerpo (Le escribo) + despedida (Atentamente)',
+                '¿Cuál es el orden correcto de un correo formal?', ['Saludo → Cuerpo → Despedida',
+                    'Cuerpo → Saludo → Despedida', 'Despedida → Cuerpo → Saludo', 'Saludo → Despedida → Cuerpo'
+                ], 0, 'Escribe un correo formal con saludo, cuerpo y despedida.'
+            ],
+            ['Saludo informal + cuerpo + despedida', 'Saludo (informal) → Cuerpo → Despedida (informal)',
+                'En correos informales, el saludo es más cercano (Hola, ¿Qué tal?), el cuerpo usa un registro coloquial y la despedida es afectuosa (Un abrazo, Saludos).',
+                'Hola Ana: ¿Cómo estás? Te cuento que... Un abrazo, Luis.',
+                'Saludo informal (Hola Ana) + cuerpo (¿Cómo estás? Te cuento) + despedida (Un abrazo)',
+                '¿Qué tipo de saludo es «Hola Ana»?', ['Informal', 'Formal', 'Muy formal', 'Académico'], 0,
+                'Escribe un correo informal con saludo, cuerpo y despedida.'
+            ],
+            ['Asunto claro y conciso', 'Asunto: breve y concreto',
+                'El asunto del correo debe ser una frase nominal o una oración corta que resuma el contenido. Gramaticalmente, se prefiere el uso de sustantivos o infinitivos.',
+                'Asunto: Solicitud de presupuesto', 'Solicitud de presupuesto (sintagma nominal)',
+                '¿Qué tipo de frase es recomendable para el asunto?', ['Sintagma nominal', 'Oración larga',
+                    'Pregunta retórica', 'Exclamación'
+                ], 0, 'Escribe un asunto claro para un correo comercial.'
+            ],
+            ['Saludo con tratamiento formal (Sr./Sra.)', 'Tratamiento + apellido',
+                'En correos formales, se usa «Sr.» o «Sra.» seguido del apellido. El verbo se conjuga en tercera persona (usted).',
+                'Estimado Sr. López: Le agradezco su respuesta.',
+                'Sr. López (tratamiento formal) + Le agradezco (3ª persona)',
+                '¿Qué pronombre de tratamiento se usa con «Sr.»?', ['Usted', 'Tú', 'Vos', 'Él'], 0,
+                'Escribe un saludo formal con «Sr.» y verbo en 3ª persona.'
+            ],
+            ['Saludo con nombre de pila (informal)', 'Nombre de pila + verbo en 2ª persona',
+                'En correos informales, se usa el nombre de pila y el verbo en 2ª persona (tú).',
+                'Hola Marta: ¿Has recibido mi mensaje?', 'Marta (nombre) + ¿Has recibido? (2ª persona)',
+                '¿Qué persona verbal se usa con un saludo informal de nombre de pila?', ['2ª persona (tú)',
+                    '3ª persona (usted)', '1ª persona', '3ª persona plural'
+                ], 0, 'Escribe un saludo informal con nombre de pila y verbo en 2ª persona.'
+            ],
+            ['Despedida formal (Atentamente, Cordialmente)', 'Fórmula de cortesía formal',
+                'Las despedidas formales incluyen «Atentamente», «Cordialmente» o «Reciba un cordial saludo». Van seguidas de una coma y el nombre del remitente.',
+                'Atentamente, Juan Pérez.', 'Atentamente (fórmula formal) + coma + nombre',
+                '¿Cuál es una despedida formal adecuada?', ['Atentamente', 'Un abrazo', 'Besos', 'Chao'], 0,
+                'Escribe una despedida formal para un correo.'
+            ],
+            ['Despedida informal (Un abrazo, Saludos)', 'Fórmula de cortesía informal',
+                'Las despedidas informales incluyen «Un abrazo», «Saludos», «Besos», etc. Son más cercanas y afectuosas.',
+                'Un abrazo, Luis.', 'Un abrazo (fórmula informal) + coma + nombre',
+                '¿Cuál es una despedida informal adecuada?', ['Un abrazo', 'Atentamente', 'Cordialmente',
+                    'Le saluda atentamente'
+                ], 0, 'Escribe una despedida informal para un correo.'
+            ],
+            ['Uso de «Le» y «Les» en cortesía', 'Pronombres de cortesía (le/les)',
+                'En español formal, se usan los pronombres «le» (singular) y «les» (plural) como objeto indirecto para referirse a «usted» y «ustedes».',
+                'Le envío el informe. Les comunico la fecha.',
+                'Le (para usted) + envío; Les (para ustedes) + comunico',
+                '¿Qué pronombre de cortesía se usa para «usted» como objeto indirecto?', ['Le', 'Te', 'Lo', 'La'],
+                0, 'Escribe una oración usando «le» como objeto indirecto de cortesía.'
+            ],
+            ['Uso de «lo» / «la» en cortesía', 'Pronombres de objeto directo (lo/la)',
+                'En formal, se usan «lo» (masculino) y «la» (femenino) como objeto directo para «usted».',
+                'Lo llamaré mañana. La espero en la oficina.',
+                'Lo (a usted, masculino) + llamaré; La (a usted, femenino) + espero',
+                '¿Qué pronombre de objeto directo se usa para «usted» femenino?', ['La', 'Le', 'Lo', 'L']],
+                'Escribe una oración usando «la» como objeto directo de cortesía.'
+            ],
+            ['Firma con cargo y datos de contacto', 'Firma profesional',
+                'La firma debe incluir nombre completo, cargo, empresa, teléfono y correo. Se escribe al final, después de la despedida.',
+                'Juan Pérez, Director de Ventas, juan@empresa.com, 555-1234.',
+                'Nombre + cargo + correo + teléfono',
+                '¿Qué datos debe incluir una firma profesional?', ['Nombre, cargo, correo y teléfono',
+                    'Solo nombre y correo', 'Solo nombre', 'Nombre y cargo'
+                ], 0, 'Escribe una firma profesional completa.'
+            ]
+        ];
+        b1.forEach(d => addLesson('estructura', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: SALUDOS Y PRESENTACIÓN (11–20)
+        // ============================================================
+        const b2 = [
+            ['Saludo con «Estimado/a» + cargo', 'Estimado/a + cargo + apellido',
+                '«Estimado» es una fórmula de cortesía formal. Se usa con el cargo o el apellido. El verbo va en 3ª persona.',
+                'Estimada Directora: Le escribo para...', 'Estimada Directora (tratamiento) + Le escribo (3ª persona)',
+                '¿Qué fórmula de saludo formal se usa con cargos?', ['Estimado/a', 'Hola', 'Querido/a', 'Buenos días'],
+                0, 'Escribe un saludo formal con «Estimado» y un cargo.'
+            ],
+            ['Saludo con «A quien corresponda»', 'A quien corresponda',
+                'Se usa cuando no se conoce el nombre del destinatario. Es una fórmula impersonal y formal. El verbo va en 3ª persona.',
+                'A quien corresponda: Me dirijo a ustedes para...',
+                'A quien corresponda (impersonal) + Me dirijo (3ª persona)',
+                '¿Cuándo se usa «A quien corresponda»?', ['Cuando no se conoce el destinatario',
+                    'Cuando se conoce el destinatario', 'En correos informales', 'En correos de marketing'
+                ], 0, 'Escribe un saludo con «A quien corresponda».'
+            ],
+            ['Saludo con «Muy señor mío» (arcaico)', 'Muy señor mío',
+                'Es una fórmula muy formal y algo arcaica, pero aún usada en contextos muy protocolarios. El verbo va en 3ª persona.',
+                'Muy señor mío: Reciba un cordial saludo.',
+                'Muy señor mío (tratamiento muy formal) + Reciba (3ª persona)',
+                '¿Qué tipo de saludo es «Muy señor mío»?', ['Muy formal', 'Informal', 'Coloquial', 'Académico'],
+                0, 'Escribe un saludo con «Muy señor mío».'
+            ],
+            ['Saludo con «Buenos días» + verbo', 'Buenos días + verbo en 3ª persona',
+                '«Buenos días» es un saludo temporal que puede usarse en correos formales e informales. Va seguido de una coma y el verbo en la persona adecuada.',
+                'Buenos días, Sr. López: Le confirmo la reunión.',
+                'Buenos días (saludo temporal) + Sr. López (tratamiento) + Le confirmo (3ª persona)',
+                '¿Qué tipo de saludo es «Buenos días»?', ['Temporal', 'Formal', 'Informal', 'Muy formal'], 0,
+                'Escribe un saludo con «Buenos días» y tratamiento formal.'
+            ],
+            ['Presentación del remitente (nombre y cargo)', 'Me presento: soy + nombre + cargo',
+                'En el primer contacto, es necesario presentarse. Se usa el verbo «ser» en 1ª persona y se indica el cargo.',
+                'Me presento: soy Juan Pérez, director de ventas.',
+                'Me presento (verbo reflexivo) + soy (1ª persona) + cargo',
+                '¿Qué verbo se usa para presentarse en un correo?', ['Ser', 'Estar', 'Tener', 'Haber'], 0,
+                'Escribe una presentación de remitente con nombre y cargo.'
+            ],
+            ['Referencia al contacto previo', 'En relación a + contacto anterior',
+                'Para dar continuidad a una conversación previa, se usa «en relación a», «respecto a» o «como seguimiento a».',
+                'En relación a nuestra conversación telefónica de ayer...',
+                'En relación a (conector de referencia) + nuestra conversación (sintagma nominal)',
+                '¿Qué conector se usa para hacer referencia a un contacto previo?', ['En relación a', 'Porque',
+                    'Aunque', 'Sin embargo'
+                ], 0, 'Escribe una frase de referencia a un contacto previo.'
+            ],
+            ['Explicación del motivo del correo', 'El motivo es + infinitivo',
+                'Se debe explicar claramente el motivo del correo. Se usa «el motivo de este correo es» seguido de un infinitivo o una oración sustantiva.',
+                'El motivo de este correo es solicitar una reunión.',
+                'El motivo (sujeto) + es (verbo) + solicitar (infinitivo)',
+                '¿Qué estructura se usa para explicar el motivo?', ['Sujeto + ser + infinitivo', 'Sujeto + estar +
+                    gerundio', 'Sujeto + haber + participio', 'Sujeto + tener + sustantivo'
+                ], 0, 'Escribe una frase que explique el motivo de un correo.'
+            ],
+            ['Uso de «le escribo» vs «les escribo»', 'Le / Les + escribo',
+                '«Le escribo» es para una persona (usted), «les escribo» para varias (ustedes). Ambos son formales.',
+                'Le escribo para informarle... / Les escribo para informarles...',
+                'Le (singular) / Les (plural) + escribo (1ª persona)',
+                '¿Cuándo se usa «les escribo»?', ['Cuando se escribe a varias personas',
+                    'Cuando se escribe a una persona', 'En correos informales', 'En correos de marketing'
+                ], 0, 'Escribe una frase con «les escribo» para un grupo.'
+            ],
+            ['Saludo con «Querido/a» + nombre (afectivo)', 'Querido/a + nombre',
+                '«Querido/a» es un saludo afectivo, menos formal que «estimado», pero más cálido. Se usa con nombre de pila.',
+                'Querida Ana: Espero que estés bien.',
+                'Querida Ana (saludo afectivo) + espero (1ª persona)',
+                '¿Qué saludo expresa afecto y cercanía?', ['Querido/a', 'Estimado/a', 'Muy señor mío', 'A quien corresponda'],
+                0, 'Escribe un saludo con «Querido/a» + nombre.'
+            ],
+            ['Saludo con «Hola» + nombre (coloquial)', 'Hola + nombre',
+                '«Hola» es el saludo más coloquial y se usa en correos informales entre conocidos. El verbo va en 2ª persona (tú) o 1ª persona.',
+                'Hola Carlos: ¿Cómo estás?', 'Hola Carlos (coloquial) + ¿Cómo estás? (2ª persona)',
+                '¿En qué tipo de correos se usa «Hola»?', ['Informales', 'Formales', 'Académicos', 'Comerciales'],
+                0, 'Escribe un saludo coloquial con «Hola».'
+            ]
+        ];
+        b2.forEach(d => addLesson('saludos', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: CUERPO (SINTAXIS) (21–30)
+        // ============================================================
+        const b3 = [
+            ['Oraciones simples en el cuerpo', 'Sujeto + verbo + complementos (simple)',
+                'Las oraciones simples son claras y directas. Se usan para dar instrucciones o información concisa.',
+                'Adjunto el documento. Revíselo.', 'Adjunto (verbo) + el documento (CD) ; Revíselo (verbo + pronombre)',
+                '¿Qué tipo de oración es «Adjunto el documento»?', ['Simple', 'Compuesta', 'Coordinada',
+                    'Subordinada'
+                ], 0, 'Escribe dos oraciones simples para el cuerpo de un correo.'
+            ],
+            ['Oraciones compuestas (coordinadas)', 'Coordinación (y, o, pero)',
+                'Las oraciones coordinadas unen dos o más ideas de igual jerarquía mediante conjunciones (y, o, pero).',
+                'He revisado el informe y lo he aprobado.',
+                'He revisado (oración 1) + y (conjunción) + lo he aprobado (oración 2)',
+                '¿Qué conjunción une dos oraciones coordinadas?', ['Y', 'Porque', 'Aunque', 'Cuando'], 0,
+                'Escribe una oración coordinada con «y» para el cuerpo de un correo.'
+            ],
+            ['Oraciones subordinadas sustantivas', 'Sustantiva: que + verbo',
+                'Las subordinadas sustantivas funcionan como sujeto u objeto. Se introducen con «que» y el verbo en indicativo o subjuntivo.',
+                'Le ruego que revise el adjunto.',
+                'Le ruego (principal) + que revise (subordinada sustantiva en subjuntivo)',
+                '¿Qué nexo introduce una subordinada sustantiva?', ['Que', 'Donde', 'Cuando', 'Como'], 0,
+                'Escribe una oración con subordinada sustantiva para un correo formal.'
+            ],
+            ['Subordinadas adjetivas (relativas)', 'Relativa: que / quien / cuyo',
+                'Las relativas describen o especifican al sustantivo. Se usan para añadir información sobre un elemento.',
+                'El informe que le envié ayer está completo.',
+                'El informe (antecedente) + que le envié (relativa)',
+                '¿Qué pronombre relativo se usa para personas?', ['Quien', 'Que', 'Cuyo', 'Donde'], 0,
+                'Escribe una oración de relativo para un correo.'
+            ],
+            ['Subordinadas adverbiales (temporales, causales, etc.)', 'Adverbial: cuando, porque, aunque...',
+                'Las adverbiales expresan circunstancias (tiempo, causa, concesión). Aportan matices al mensaje.',
+                'Cuando reciba el pago, enviaré la mercancía.',
+                'Cuando reciba (temporal) + enviaré (principal)',
+                '¿Qué tipo de subordinada expresa una condición?', ['Condicional', 'Temporal', 'Causal', 'Concesiva'],
+                0, 'Escribe una oración con subordinada temporal para un correo comercial.'
+            ],
+            ['Uso del infinitivo en instrucciones', 'Infinitivo: para + infinitivo',
+                'El infinitivo se usa en instrucciones y para expresar finalidad. Es una forma impersonal y directa.',
+                'Para obtener más información, consulte nuestra web.',
+                'Para obtener (finalidad) + consulte (imperativo)',
+                '¿Qué forma verbal se usa para dar instrucciones impersonales?', ['Infinitivo', 'Gerundio',
+                    'Participio', 'Indicativo'
+                ], 0, 'Escribe una instrucción usando el infinitivo.'
+            ],
+            ['Uso del gerundio en explicaciones', 'Gerundio: -ando / -iendo',
+                'El gerundio expresa acciones simultáneas o explicativas. Se usa para dar contexto.',
+                'Hablando con el cliente, me comentó que...',
+                'Hablando (gerundio) + me comentó (principal)',
+                '¿Qué tiempo verbal expresa acción simultánea?', ['Gerundio', 'Infinitivo', 'Participio', 'Indicativo'],
+                0, 'Escribe una frase explicativa con gerundio para un correo.'
+            ],
+            ['Uso del participio en descripciones', 'Participio: -ado / -ido',
+                'El participio se usa en tiempos compuestos y como adjetivo. Aporta información sobre estados completados.',
+                'El documento está firmado por el director.',
+                'está firmado (participio como adjetivo)',
+                '¿Qué forma verbal se usa para describir un estado completado?', ['Participio', 'Infinitivo',
+                    'Gerundio', 'Subjuntivo'
+                ], 0, 'Escribe una descripción con participio para un correo.'
+            ],
+            ['La voz pasiva en correos formales', 'Voz pasiva: ser + participio',
+                'La voz pasiva es frecuente en correos formales para enfatizar el objeto o cuando el agente no es relevante.',
+                'El pedido será procesado mañana.',
+                'será procesado (pasiva) + mañana (CC tiempo)',
+                '¿Qué estructura se usa para enfatizar el objeto en una oración?', ['Voz pasiva', 'Voz activa',
+                    'Oración impersonal', 'Oración reflexiva'
+                ], 0, 'Escribe una oración en voz pasiva para un correo formal.'
+            ],
+            ['Oraciones impersonales con «se»', 'Se + verbo en 3ª persona',
+                'Las impersonales con «se» son útiles para dar información general sin especificar el sujeto.',
+                'Se recomienda confirmar la asistencia.',
+                'Se recomienda (impersonal) + confirmar (infinitivo)',
+                '¿Qué partícula se usa para formar oraciones impersonales?', ['Se', 'Lo', 'La', 'Le'], 0,
+                'Escribe una oración impersonal con «se» para un correo.'
+            ]
+        ];
+        b3.forEach(d => addLesson('cuerpo', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: TIEMPOS VERBALES (31–40)
+        // ============================================================
+        const b4 = [
+            ['Presente para acciones actuales', 'Presente de indicativo',
+                'El presente se usa para acciones que ocurren en el momento de escribir o para hechos generales.',
+                'Le escribo para solicitar información.',
+                'escribo (presente, 1ª persona)',
+                '¿Qué tiempo se usa para acciones actuales en correos?', ['Presente', 'Pretérito', 'Futuro',
+                    'Condicional'
+                ], 0, 'Escribe una oración en presente para un correo.'
+            ],
+            ['Pretérito para acciones pasadas', 'Pretérito (perfecto simple o compuesto)',
+                'El pretérito se usa para acciones ya completadas. El pretérito perfecto compuesto se usa para acciones pasadas con relevancia en el presente.',
+                'Ayer le envié el informe. (simple) / He recibido su mensaje. (compuesto)',
+                'envié (pretérito simple) / He recibido (pretérito compuesto)',
+                '¿Qué pretérito se usa para acciones pasadas con relevancia en el presente?', ['Pretérito perfecto compuesto',
+                    'Pretérito perfecto simple', 'Pretérito pluscuamperfecto', 'Pretérito anterior'
+                ], 0, 'Escribe una oración en pretérito compuesto para un correo.'
+            ],
+            ['Futuro para acciones venideras', 'Futuro simple o perífrasis ir a + infinitivo',
+                'El futuro se usa para acciones que ocurrirán después del momento de la escritura.',
+                'Mañana le enviaré el documento. / Voy a llamarle esta tarde.',
+                'enviaré (futuro) / Voy a llamar (perífrasis)',
+                '¿Qué tiempo se usa para acciones futuras?', ['Futuro', 'Presente', 'Pretérito', 'Condicional'],
+                0, 'Escribe una oración en futuro para un correo.'
+            ],
+            ['Condicional para cortesía y hipótesis', 'Condicional simple',
+                'El condicional se usa para expresar cortesía (¿Podría...?) o para acciones hipotéticas.',
+                '¿Podría enviarme el informe? / Me gustaría asistir a la reunión.',
+                'Podría (condicional de poder) / Me gustaría (condicional de gustar)',
+                '¿Qué tiempo se usa para preguntar con cortesía?', ['Condicional', 'Futuro', 'Presente', 'Pretérito'],
+                0, 'Escribe una pregunta cortés en condicional para un correo.'
+            ],
+            ['Imperativo para instrucciones', 'Imperativo (afirmativo o negativo)',
+                'El imperativo se usa para dar órdenes o instrucciones directas. En formal, se usa el subjuntivo en lugar del imperativo (que + subjuntivo).',
+                'Revise el adjunto. (informal) / Le ruego que revise el adjunto. (formal)',
+                'Revise (imperativo) / que revise (subjuntivo)',
+                '¿Qué modo se usa para dar instrucciones formales?', ['Subjuntivo', 'Imperativo', 'Indicativo',
+                    'Infinitivo'
+                ], 0, 'Escribe una instrucción formal usando «que» + subjuntivo.'
+            ],
+            ['Subjuntivo en deseos y peticiones', 'Subjuntivo presente',
+                'El subjuntivo se usa en expresiones de deseo, petición o duda (espero que, deseo que, no creo que).',
+                'Espero que todo esté bien. / No creo que sea necesario.',
+                'esté (subjuntivo) / sea (subjuntivo)',
+                '¿Qué modo se usa para expresar deseos?', ['Subjuntivo', 'Indicativo', 'Imperativo', 'Infinitivo'],
+                0, 'Escribe una oración con subjuntivo para expresar un deseo en un correo.'
+            ],
+            ['Pretérito imperfecto en narraciones pasadas', 'Imperfecto de indicativo',
+                'El imperfecto se usa para describir acciones pasadas habituales o en desarrollo en el pasado.',
+                'Cuando trabajaba en la empresa, solía enviar informes semanales.',
+                'trabajaba (imperfecto)',
+                '¿Qué tiempo se usa para acciones pasadas habituales?', ['Imperfecto', 'Pretérito', 'Pluscuamperfecto',
+                    'Condicional'
+                ], 0, 'Escribe una narración en imperfecto para un correo.'
+            ],
+            ['Pluscuamperfecto para acciones pasadas anteriores', 'Pluscuamperfecto (había + participio)',
+                'El pluscuamperfecto se usa para acciones pasadas que ocurrieron antes de otra acción pasada.',
+                'Ya había enviado el correo cuando recibí su llamada.',
+                'había enviado (pluscuamperfecto) + recibí (pretérito)',
+                '¿Qué tiempo indica una acción pasada anterior a otra pasada?', ['Pluscuamperfecto', 'Pretérito',
+                    'Imperfecto', 'Condicional perfecto'
+                ], 0, 'Escribe una oración con pluscuamperfecto en un correo.'
+            ],
+            ['Futuro perfecto para acciones completadas en el futuro', 'Futuro perfecto (habré + participio)',
+                'El futuro perfecto se usa para acciones que se habrán completado en un momento futuro.',
+                'Para el viernes, ya habré terminado el informe.',
+                'habré terminado (futuro perfecto)',
+                '¿Qué tiempo indica que una acción futura ya estará completada?', ['Futuro perfecto', 'Futuro simple',
+                    'Condicional perfecto', 'Pluscuamperfecto'
+                ], 0, 'Escribe una oración en futuro perfecto para un correo.'
+            ],
+            ['Condicional perfecto para hipótesis pasadas', 'Condicional perfecto (habría + participio)',
+                'El condicional perfecto se usa para acciones hipotéticas en el pasado o para expresar probabilidad.',
+                'Habría enviado el documento, pero no recibí su correo.',
+                'habría enviado (condicional perfecto)',
+                '¿Qué tiempo expresa una acción hipotética en el pasado?', ['Condicional perfecto', 'Pluscuamperfecto',
+                    'Pretérito', 'Imperfecto'
+                ], 0, 'Escribe una oración en condicional perfecto para un correo.'
+            ]
+        ];
+        b4.forEach(d => addLesson('tiempos', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: CONECTORES Y MARCADORES (41–50)
+        // ============================================================
+        const b5 = [
+            ['Conectores de inicio (En primer lugar, Para empezar)', 'Conectores de orden',
+                'Se usan para estructurar el discurso y guiar al lector. Indican el comienzo de una enumeración.',
+                'En primer lugar, agradezco su atención.',
+                'En primer lugar (conector de inicio)',
+                '¿Qué conector se usa para iniciar una enumeración?', ['En primer lugar', 'Además', 'Por ejemplo',
+                    'En conclusión'
+                ], 0, 'Escribe una oración con «En primer lugar» para un correo.'
+            ],
+            ['Conectores de adición (Además, Asimismo)', 'Conectores de suma',
+                'Se usan para añadir información. «Además» y «asimismo» son formales.',
+                'Además, le adjunto el presupuesto.',
+                'Además (conector de adición)',
+                '¿Qué conector se usa para añadir información?', ['Además', 'Sin embargo', 'Por lo tanto', 'Aunque'],
+                0, 'Escribe una oración con «Además» en un correo.'
+            ],
+            ['Conectores de contraste (Sin embargo, No obstante)', 'Conectores de oposición',
+                'Se usan para introducir una idea contraria a la anterior. «No obstante» es más formal.',
+                'El producto es caro. Sin embargo, es de alta calidad.',
+                'Sin embargo (conector de contraste)',
+                '¿Qué conector expresa oposición?', ['Sin embargo', 'Por tanto', 'Es decir', 'En efecto'], 0,
+                'Escribe una oración con «Sin embargo» en un correo.'
+            ],
+            ['Conectores de causa (Porque, Puesto que)', 'Conectores de causa',
+                'Expresan la razón de algo. «Puesto que» es formal.',
+                'No pude asistir porque estaba enfermo.',
+                'porque (conector de causa)',
+                '¿Qué conector expresa causa?', ['Porque', 'Por lo tanto', 'Aunque', 'Así que'], 0,
+                'Escribe una oración con «Puesto que» en un correo formal.'
+            ],
+            ['Conectores de consecuencia (Por lo tanto, En consecuencia)', 'Conectores de consecuencia',
+                'Indican una consecuencia lógica. Son formales y muy usados en correos.',
+                'He recibido su solicitud. Por lo tanto, la tramitaré.',
+                'Por lo tanto (conector de consecuencia)',
+                '¿Qué conector expresa una consecuencia?', ['Por lo tanto', 'Porque', 'Además', 'Sin embargo'],
+                0, 'Escribe una oración con «En consecuencia» en un correo.'
+            ],
+            ['Conectores de ejemplificación (Por ejemplo, Como)', 'Conectores de ejemplo',
+                'Se usan para ilustrar una idea con un ejemplo concreto.',
+                'Necesitamos mejorar la comunicación, por ejemplo, enviando resúmenes semanales.',
+                'por ejemplo (conector de ejemplificación)',
+                '¿Qué conector introduce un ejemplo?', ['Por ejemplo', 'Además', 'Sin embargo', 'Por tanto'], 0,
+                'Escribe una oración con «Como» para dar un ejemplo en un correo.'
+            ],
+            ['Marcadores de orden (En primer lugar, En segundo lugar, Finalmente)', 'Marcadores de secuencia',
+                'Ayudan a organizar el contenido en pasos o puntos.',
+                'En primer lugar, revise el adjunto. En segundo lugar, confirme la recepción.',
+                'En primer lugar / En segundo lugar (marcadores de orden)',
+                '¿Qué marcador indica el último punto de una enumeración?', ['Finalmente', 'En primer lugar',
+                    'Además', 'Asimismo'
+                ], 0, 'Escribe una secuencia de dos pasos usando marcadores de orden.'
+            ],
+            ['Conectores de reformulación (Es decir, O sea)', 'Conectores de aclaración',
+                'Se usan para explicar de otra manera lo dicho, para mayor claridad.',
+                'El plazo es el 15 de mayo, es decir, dentro de dos semanas.',
+                'es decir (conector de reformulación)',
+                '¿Qué conector se usa para aclarar una idea?', ['Es decir', 'Además', 'Por tanto', 'Sin embargo'],
+                0, 'Escribe una oración con «O sea» para aclarar en un correo.'
+            ],
+            ['Conectores de conclusión (En conclusión, En resumen)', 'Conectores de cierre',
+                'Se usan para finalizar el correo y resumir la idea principal.',
+                'En conclusión, espero su respuesta.',
+                'En conclusión (conector de cierre)',
+                '¿Qué conector se usa para finalizar un correo?', ['En conclusión', 'En primer lugar', 'Además',
+                    'Por ejemplo'
+                ], 0, 'Escribe una oración con «En resumen» para cerrar un correo.'
+            ],
+            ['Conectores de condición (Si, En caso de que)', 'Conectores de condición',
+                'Se usan para expresar condiciones. «En caso de que» es formal y requiere subjuntivo.',
+                'Si necesita más información, no dude en contactarme.',
+                'Si (condicional)',
+                '¿Qué conector introduce una condición?', ['Si', 'Porque', 'Aunque', 'Es decir'], 0,
+                'Escribe una oración con «En caso de que» + subjuntivo en un correo formal.'
+            ],
+            ['Conectores de finalidad (Para, Con el fin de)', 'Conectores de finalidad',
+                'Expresan el propósito de una acción. «Con el fin de» es formal.',
+                'Le escribo para informarle sobre el cambio.',
+                'para (finalidad)',
+                '¿Qué conector expresa finalidad?', ['Para', 'Porque', 'Aunque', 'Además'], 0,
+                'Escribe una oración con «Con el fin de» en un correo formal.'
+            ]
+        ];
+        b5.forEach(d => addLesson('conectores', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: CORTESÍA Y TRATAMIENTO (51–60)
+        // ============================================================
+        const b6 = [
+            ['Uso de «usted» en correos formales', 'Tratamiento de cortesía (usted)',
+                'En correos formales, se usa «usted» para dirigirse al destinatario. Los verbos se conjugan en 3ª persona.',
+                'Le agradezco su atención. / Espero su respuesta.',
+                'Le (OI) + agradezco (1ª persona) ; su (posesivo)',
+                '¿Qué pronombre de cortesía se usa en correos formales?', ['Usted', 'Tú', 'Vos', 'Él'], 0,
+                'Escribe una oración usando «usted» en un correo formal.'
+            ],
+            ['Uso de «tú» en correos informales', 'Tratamiento informal (tú)',
+                'En correos informales o con confianza, se usa «tú». Los verbos se conjugan en 2ª persona.',
+                'Te agradezco tu atención. / Espero tu respuesta.',
+                'Te (OI) + agradezco ; tu (posesivo)',
+                '¿Qué pronombre de tratamiento se usa en correos informales?', ['Tú', 'Usted', 'Vos', 'Él'], 0,
+                'Escribe una oración usando «tú» en un correo informal.'
+            ],
+            ['Fórmulas de cortesía iniciales (Me dirijo a usted para...)', 'Fórmulas de presentación formal',
+                'Se usan al inicio del cuerpo para presentar el motivo de manera cortés.',
+                'Me dirijo a usted para solicitar... / Por medio de la presente...',
+                'Me dirijo a usted (fórmula formal)',
+                '¿Qué fórmula se usa para iniciar un correo formal?', ['Me dirijo a usted', 'Hola', 'Querido', 'Buenas'],
+                0, 'Escribe una fórmula de cortesía inicial para un correo formal.'
+            ],
+            ['Fórmulas de cortesía para peticiones (Le ruego que...)', 'Ruego + que + subjuntivo',
+                'Para hacer peticiones formales, se usa «rogar» o «solicitar» en presente o condicional.',
+                'Le ruego que revise el adjunto. / Le solicito que confirme su asistencia.',
+                'Le ruego que (petición formal) + revise (subjuntivo)',
+                '¿Qué verbo se usa para hacer una petición formal?', ['Rogar', 'Pedir', 'Decir', 'Hablar'], 0,
+                'Escribe una petición formal con «Le ruego que» + subjuntivo.'
+            ],
+            ['Fórmulas de cortesía para agradecer (Agradezco su...)', 'Agradecimiento formal',
+                'Se usan para expresar gratitud. Pueden ir al inicio o al final del correo.',
+                'Agradezco su atención. / Le agradezco de antemano.',
+                'Agradezco (verbo en 1ª persona) + su (posesivo)',
+                '¿Qué verbo se usa para agradecer formalmente?', ['Agradecer', 'Dar las gracias', 'Decir gracias',
+                    'Apreciar'
+                ], 0, 'Escribe una frase de agradecimiento formal para un correo.'
+            ],
+            ['Fórmulas de disculpa (Lamento las molestias)', 'Disculpa formal',
+                'Para disculparse, se usa «lamentar» o «disculpar» en presente o condicional.',
+                'Lamento las molestias ocasionadas. / Le pido disculpas por el retraso.',
+                'Lamento (1ª persona) + las molestias (objeto)',
+                '¿Qué verbo se usa para disculparse formalmente?', ['Lamentar', 'Pedir disculpas', 'Decir perdón',
+                    'Aceptar'
+                ], 0, 'Escribe una disculpa formal para un correo.'
+            ],
+            ['Fórmulas de cierre formales (Quedo a la espera de su respuesta)', 'Cierre formal de expectativa',
+                'Se usan para indicar que se espera una respuesta o acción del destinatario.',
+                'Quedo a la espera de su respuesta. / A la espera de sus noticias.',
+                'Quedo a la espera (1ª persona)',
+                '¿Qué expresión se usa para indicar que se espera respuesta?', ['Quedo a la espera', 'Adiós', 'Hasta luego',
+                    'Un saludo'
+                ], 0, 'Escribe un cierre formal indicando que esperas respuesta.'
+            ],
+            ['Fórmulas de ofrecimiento (Quedo a su disposición para...)', 'Ofrecimiento formal',
+                'Se usa para ofrecer ayuda o disponibilidad.',
+                'Quedo a su disposición para cualquier duda.',
+                'Quedo a su disposición (ofrecimiento)',
+                '¿Qué expresión se usa para ofrecer ayuda formalmente?', ['Quedo a su disposición', 'Estoy para servirle',
+                    'Puedo ayudar', 'Ofrezco ayuda'
+                ], 0, 'Escribe una frase de ofrecimiento formal para un correo.'
+            ],
+            ['Tratamiento de cargos (Director, Gerente, etc.)', 'Cargo + apellido',
+                'En correos formales, se menciona el cargo del destinatario como forma de respeto.',
+                'Estimado Director de Ventas: ...',
+                'Director de Ventas (cargo)',
+                '¿Qué elemento se usa para tratar a alguien por su cargo?', ['El cargo', 'El nombre de pila',
+                    'El apodo', 'El número de empleado'
+                ], 0, 'Escribe un saludo dirigido a un cargo específico.'
+            ],
+            ['Fórmulas de despedida con ofrecimiento (Sin otro particular, ...)', 'Despedida formal con cierre',
+                'Se usa «Sin otro particular» para indicar que se cierra el correo, seguido de la despedida.',
+                'Sin otro particular, le saluda atentamente, Juan Pérez.',
+                'Sin otro particular (fórmula de cierre)',
+                '¿Qué expresión se usa para cerrar formalmente un correo?', ['Sin otro particular', 'Un abrazo',
+                    'Besos', 'Hasta luego'
+                ], 0, 'Escribe una despedida formal con «Sin otro particular».'
+            ]
+        ];
+        b6.forEach(d => addLesson('cortesia', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: CORREOS COMERCIALES (61–70)
+        // ============================================================
+        const b7 = [
+            ['Oferta comercial: presentación de producto', 'Presentación + beneficios + llamada a la acción',
+                'Un correo comercial debe presentar el producto, destacar sus beneficios e incluir una llamada a la acción (CTA).',
+                'Le presentamos nuestro nuevo software. Aumentará su productividad en un 30%. Solicite una demo gratuita.',
+                'Presentamos (verbo) + aumentará (futuro) + solicite (imperativo)',
+                '¿Qué elemento debe incluir todo correo comercial?', ['Llamada a la acción (CTA)', 'Datos personales',
+                    'Historia de la empresa', 'Opiniones de clientes'
+                ], 0, 'Escribe un párrafo de oferta comercial con CTA.'
+            ],
+            ['Solicitud de presupuesto', 'Solicitud + especificaciones + plazo',
+                'Para solicitar un presupuesto, se debe describir lo que se necesita y pedir una cotización con plazo.',
+                'Le solicito presupuesto para 100 unidades del producto X. Por favor, envíelo antes del viernes.',
+                'solicito (presente) + envíelo (imperativo)',
+                '¿Qué verbo se usa para pedir un presupuesto?', ['Solicitar', 'Preguntar', 'Decir', 'Comprar'],
+                0, 'Escribe una solicitud de presupuesto para un correo comercial.'
+            ],
+            ['Reclamación o queja formal', 'Exposición del problema + solicitud de solución',
+                'Para reclamar, se expone claramente el problema y se pide una solución. Se usa tono cortés pero firme.',
+                'El producto recibido presenta defectos. Le ruego que me envíe un reemplazo o reembolse el importe.',
+                'presenta (presente) + ruego que (subjuntivo)',
+                '¿Qué tono debe usarse en una reclamación formal?', ['Cortés pero firme', 'Agresivo', 'Indiferente',
+                    'Suplicante'
+                ], 0, 'Escribe una reclamación formal para un correo comercial.'
+            ],
+            ['Confirmación de pedido', 'Confirmación + detalles + agradecimiento',
+                'Para confirmar un pedido, se detallan los productos, cantidades, precio y se agradece.',
+                'Confirmamos su pedido del 10 de mayo: 10 unidades del modelo A. El total es 500 €. Agradecemos su compra.',
+                'Confirmamos (presente) + Agradecemos (presente)',
+                '¿Qué información debe incluir una confirmación de pedido?', ['Detalles del pedido y agradecimiento',
+                    'Solo el precio', 'Solo el producto', 'Solo el agradecimiento'
+                ], 0, 'Escribe una confirmación de pedido para un correo comercial.'
+            ],
+            ['Anuncio de descuentos o promociones', 'Oferta + descuento + fecha límite',
+                'Para anunciar una promoción, se destaca el descuento, el producto y la fecha límite para aprovecharla.',
+                'Aproveche el 20% de descuento en toda la tienda. Oferta válida hasta el 31 de mayo.',
+                'Aproveche (imperativo) + válida (participio)',
+                '¿Qué elemento es clave en una promoción comercial?', ['Fecha límite', 'Historia de la empresa',
+                    'Opiniones', 'Datos de contacto'
+                ], 0, 'Escribe un anuncio de promoción con fecha límite.'
+            ],
+            ['Respuesta a una consulta comercial', 'Agradecimiento + respuesta + ofrecimiento',
+                'Al responder una consulta, se agradece, se da la información solicitada y se ofrece ayuda adicional.',
+                'Agradecemos su consulta. El producto está disponible en azul y rojo. Si necesita más información, no dude en contactarnos.',
+                'Agradecemos (presente) + está disponible (presente) + no dude (imperativo)',
+                '¿Qué se debe hacer al responder una consulta?', ['Agradecer, responder y ofrecer más ayuda',
+                    'Solo responder', 'Solo agradecer', 'Solo ofrecer ayuda'
+                ], 0, 'Escribe una respuesta a una consulta comercial.'
+            ],
+            ['Envío de factura o documento', 'Adjunto + descripción + solicitud de confirmación',
+                'Al enviar un documento, se indica lo que se adjunta, su motivo y se pide confirmación de recepción.',
+                'Adjunto la factura correspondiente al pedido 1234. Por favor, confirme su recepción.',
+                'Adjunto (presente) + confirme (imperativo)',
+                '¿Qué se debe pedir al enviar un documento?', ['Confirmación de recepción', 'Un pago', 'Una firma',
+                    'Una opinión'
+                ], 0, 'Escribe un correo para enviar una factura.'
+            ],
+            ['Cancelación de pedido o servicio', 'Explicación + disculpa + alternativa',
+                'Para cancelar, se explica el motivo, se disculpa y se ofrece una alternativa si es posible.',
+                'Lamentamos informarle que cancelamos el pedido debido a problemas de inventario. Le ofrecemos un producto similar.',
+                'Lamentamos (presente) + ofrecemos (presente)',
+                '¿Qué debe incluir una cancelación?', ['Explicación, disculpa y alternativa', 'Solo explicación',
+                    'Solo disculpa', 'Solo alternativa'
+                ], 0, 'Escribe una cancelación de pedido con alternativa.'
+            ],
+            ['Seguimiento de una comunicación previa', 'Referencia + avance + petición de acción',
+                'Para dar seguimiento, se menciona la comunicación anterior, se da un avance y se pide una acción.',
+                'En relación a nuestra conversación del lunes, hemos avanzado en el proyecto. Le solicito que revise el cronograma.',
+                'En relación a (referencia) + hemos avanzado (pretérito perfecto) + solicito (presente)',
+                '¿Qué se debe incluir en un correo de seguimiento?', ['Referencia, avance y petición',
+                    'Solo avance', 'Solo referencia', 'Solo petición'
+                ], 0, 'Escribe un correo de seguimiento de una conversación previa.'
+            ],
+            ['Cierre de venta o agradecimiento por compra', 'Agradecimiento + confirmación + futuro contacto',
+                'Al cerrar una venta, se agradece, se confirma y se establece un contacto futuro.',
+                'Gracias por su compra. Su pedido será enviado mañana. Estaremos encantados de atenderle nuevamente.',
+                'Gracias (agradecimiento) + será enviado (futuro pasivo)',
+                '¿Qué se debe hacer al cerrar una venta?', ['Agradecer y confirmar envío', 'Solo agradecer',
+                    'Solo confirmar', 'No hacer nada'
+                ], 0, 'Escribe un cierre de venta con agradecimiento.'
+            ]
+        ];
+        b7.forEach(d => addLesson('comercial', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: CORREOS ACADÉMICOS (71–80)
+        // ============================================================
+        const b8 = [
+            ['Solicitud de información académica', 'Saludo formal + presentación + petición',
+                'Para solicitar información a una institución educativa, se usa un tono formal, se presenta al remitente y se pide la información.',
+                'Estimado Sr. Coordinador: Soy estudiante de la Universidad X y deseo información sobre el programa de máster.',
+                'Soy (presente) + deseo (presente)',
+                '¿Qué se debe incluir en una solicitud académica?', ['Presentación y petición clara',
+                    'Solo la petición', 'Solo la presentación', 'Datos personales extensos'
+                ], 0, 'Escribe una solicitud de información académica.'
+            ],
+            ['Solicitud de carta de recomendación', 'Petición formal + relación con el profesor + justificación',
+                'Para pedir una carta de recomendación, se debe explicar quién es el remitente, su relación con el profesor y el motivo.',
+                'Estimado Prof. Gómez: Fui su alumno en la asignatura de Gramática. Le escribo para solicitar una carta de recomendación para mi solicitud de beca.',
+                'Fui (pretérito) + Le escribo (presente)',
+                '¿Qué información es crucial al pedir una carta de recomendación?', ['La relación con el profesor',
+                    'El teléfono del profesor', 'La dirección de la universidad', 'El nombre de la beca'
+                ], 0, 'Escribe una solicitud de carta de recomendación.'
+            ],
+            ['Envío de trabajo o tarea', 'Adjunto + descripción + solicitud de confirmación',
+                'Al enviar un trabajo, se indica el archivo adjunto, se describe brevemente y se pide confirmación.',
+                'Adjunto mi trabajo final sobre sintaxis. Por favor, confirme su recepción.',
+                'Adjunto (presente) + confirme (imperativo)',
+                '¿Qué se debe pedir al enviar un trabajo académico?', ['Confirmación de recepción', 'Una nota',
+                    'Una corrección', 'Una publicación'
+                ], 0, 'Escribe un correo para enviar un trabajo académico.'
+            ],
+            ['Pregunta a un profesor sobre contenido', 'Saludo formal + consulta + agradecimiento',
+                'Para hacer una consulta académica, se usa un tono respetuoso, se formula la pregunta y se agradece de antemano.',
+                'Estimado profesor: Tengo una duda sobre el tema 3 del temario. ¿Podría explicarlo de nuevo? Le agradezco su atención.',
+                'Tengo (presente) + ¿Podría? (condicional) + agradezco (presente)',
+                '¿Qué tono se usa para preguntar a un profesor?', ['Respetuoso y formal', 'Coloquial',
+                    'Exigente', 'Indiferente'
+                ], 0, 'Escribe una consulta a un profesor sobre contenido.'
+            ],
+            ['Solicitud de prórroga para entrega de trabajo', 'Explicación + solicitud + nuevo plazo',
+                'Para pedir una prórroga, se explica el motivo (con justificación), se solicita el nuevo plazo y se agradece.',
+                'Solicito una prórroga de 3 días para la entrega del trabajo, ya que he tenido problemas técnicos. El nuevo plazo sería el 20 de mayo.',
+                'Solicito (presente) + he tenido (pretérito perfecto)',
+                '¿Qué se debe incluir en una solicitud de prórroga?', ['Motivo justificado y nuevo plazo',
+                    'Solo el nuevo plazo', 'Solo el motivo', 'Una disculpa'
+                ], 0, 'Escribe una solicitud de prórroga para un trabajo académico.'
+            ],
+            ['Agradecimiento a un profesor', 'Agradecimiento + motivo + cierre',
+                'Para agradecer a un profesor, se expresa gratitud por su labor o ayuda, y se cierra con cortesía.',
+                'Le agradezco su dedicación y paciencia durante el curso. Ha sido un placer ser su alumno.',
+                'Le agradezco (presente) + Ha sido (pretérito perfecto)',
+                '¿Qué se debe hacer al agradecer a un profesor?', ['Expresar gratitud y cerrar con cortesía',
+                    'Solo decir gracias', 'No agradecer', 'Pedir algo'
+                ], 0, 'Escribe un correo de agradecimiento a un profesor.'
+            ],
+            ['Solicitud de cambio de horario de tutoría', 'Petición + justificación + alternativa',
+                'Para solicitar un cambio de horario de tutoría, se pide el cambio, se justifica y se ofrece una alternativa.',
+                'Solicito cambiar mi hora de tutoría de las 10 a las 12, ya que tengo clase a esa hora. ¿Sería posible a las 12?',
+                'Solicito (presente) + ¿Sería posible? (condicional)',
+                '¿Qué se debe ofrecer al solicitar un cambio de horario?', ['Una alternativa', 'Solo el cambio',
+                    'Una disculpa', 'Nada'
+                ], 0, 'Escribe una solicitud de cambio de horario de tutoría.'
+            ],
+            ['Presentación ante un comité académico', 'Saludo formal + presentación + propósito',
+                'Al presentarse ante un comité, se usa un saludo muy formal, se presenta el nombre y el propósito de la comunicación.',
+                'Muy señores míos: Me presento, Juan Pérez, estudiante del doctorado, y expongo mi proyecto de investigación.',
+                'Me presento (presente) + expongo (presente)',
+                '¿Qué estilo se usa para presentarse ante un comité académico?', ['Muy formal y respetuoso',
+                    'Informal', 'Coloquial', 'Directo'
+                ], 0, 'Escribe una presentación formal ante un comité académico.'
+            ],
+            ['Solicitud de beca o ayuda', 'Solicitud + justificación + documentación',
+                'Para solicitar una beca, se indica la solicitud, se justifica la necesidad y se menciona la documentación adjunta.',
+                'Solicito la beca de investigación para el próximo curso. Adjunto mi expediente académico y carta de motivación.',
+                'Solicito (presente) + Adjunto (presente)',
+                '¿Qué se debe adjuntar a una solicitud de beca?', ['Documentación requerida', 'Solo el currículum',
+                    'Solo la carta de motivación', 'Nada'
+                ], 0, 'Escribe una solicitud de beca con mención de documentos adjuntos.'
+            ],
+            ['Consulta sobre calificaciones', 'Consulta + identificación + petición de aclaración',
+                'Para consultar sobre una calificación, se identifica al alumno, se pide aclaración sobre la nota y se agradece.',
+                'Soy el alumno Juan Pérez, de su asignatura de Lingüística. ¿Podría aclararme por qué mi nota es 7 y no 8?',
+                'Soy (presente) + ¿Podría? (condicional)',
+                '¿Qué tono se debe usar al consultar una calificación?', ['Respetuoso', 'Exigente', 'Indiferente',
+                    'Agresivo'
+                ], 0, 'Escribe una consulta sobre una calificación.'
+            ]
+        ];
+        b8.forEach(d => addLesson('academico', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: CORREOS DE MARKETING (81–90)
+        // ============================================================
+        const b9 = [
+            ['Asunto atractivo para newsletter', 'Asunto + beneficio + urgencia',
+                'El asunto de un newsletter debe captar la atención, ofrecer un beneficio y crear urgencia si es necesario.',
+                'Asunto: ¡Última oportunidad! 30% de descuento solo hoy.',
+                'Última oportunidad (urgencia) + descuento (beneficio)',
+                '¿Qué elementos debe tener un buen asunto de marketing?', ['Beneficio y urgencia', 'Solo el nombre',
+                    'Solo la fecha', 'Solo el precio'
+                ], 0, 'Escribe un asunto atractivo para un newsletter.'
+            ],
+            ['Introducción con storytelling', 'Historia corta + conexión con el producto',
+                'Para enganchar al lector, se puede empezar con una historia breve que conecte con el producto o servicio.',
+                '¿Recuerdas cuando perdiste tu móvil? Con nuestra app de rastreo, nunca más lo perderás.',
+                '¿Recuerdas? (pregunta retórica) + nunca más perderás (futuro negativo)',
+                '¿Qué técnica se usa para conectar emocionalmente en marketing?', ['Storytelling', 'Datos fríos',
+                    'Estadísticas', 'Descripción técnica'
+                ], 0, 'Escribe un storytelling breve para un correo de marketing.'
+            ],
+            ['Persuasión con verbos imperativos', 'Imperativos + beneficios',
+                'Los verbos imperativos (compra, aprovecha, descubre) incitan a la acción y se combinan con los beneficios.',
+                'Aprovecha esta oferta y duplica tu ahorro.',
+                'Aprovecha (imperativo) + duplica (imperativo)',
+                '¿Qué modo verbal se usa para incitar a la acción en marketing?', ['Imperativo', 'Indicativo',
+                    'Subjuntivo', 'Infinitivo'
+                ], 0, 'Escribe un mensaje persuasivo usando imperativos.'
+            ],
+            ['Uso de preguntas retóricas', 'Preguntas retóricas + beneficio',
+                'Las preguntas retóricas involucran al lector y lo llevan a reflexionar sobre su necesidad.',
+                '¿No te gustaría tener más tiempo libre? Nuestro sistema de automatización te lo concede.',
+                '¿No te gustaría? (pregunta retórica) + te lo concede (presente)',
+                '¿Qué recurso se usa para involucrar al lector en marketing?', ['Preguntas retóricas', 'Datos',
+                    'Descripciones largas', 'Jerga técnica'
+                ], 0, 'Escribe una pregunta retórica para un correo de marketing.'
+            ],
+            ['Llamada a la acción (CTA) clara', 'CTA + beneficio + urgencia',
+                'La CTA debe ser visible, clara, con un verbo de acción, beneficio y un motivo para actuar ahora.',
+                'Haz clic aquí y obtén tu 20% de descuento antes de que se acabe el tiempo.',
+                'Haz clic (imperativo) + obtén (imperativo)',
+                '¿Qué debe tener una CTA efectiva?', ['Verbo de acción, beneficio y urgencia', 'Solo el verbo',
+                    'Solo el beneficio', 'Solo la urgencia'
+                ], 0, 'Escribe una CTA efectiva para un correo de marketing.'
+            ],
+            ['Prueba social (testimonios)', 'Testimonio + nombre + beneficio',
+                'Incluir testimonios de clientes reales añade credibilidad y confianza.',
+                '«Este producto cambió mi vida» - Ana García, clienta satisfecha.',
+                'Testimonio en primera persona + nombre',
+                '¿Qué recurso aporta credibilidad en marketing?', ['Testimonios', 'Descripciones técnicas',
+                    'Datos sin fuente', 'Opiniones no verificadas'
+                ], 0, 'Escribe un testimonio ficticio para un correo de marketing.'
+            ],
+            ['Ofertas con cuenta atrás (urgencia)', 'Temporizador + oferta + acción',
+                'Crear urgencia con fechas límite o temporizadores incrementa la conversión.',
+                'Oferta válida solo hasta las 23:59 de hoy. ¡No te lo pierdas!',
+                'válida hasta (futuro) + ¡No te lo pierdas! (exclamación + imperativo)',
+                '¿Qué técnica crea urgencia en marketing?', ['Cuenta atrás o fecha límite', 'Descripción del producto',
+                    'Historia de la empresa', 'Datos de contacto'
+                ], 0, 'Escribe un mensaje con cuenta atrás para una oferta.'
+            ],
+            ['Segmentación de audiencia (tú / usted)', 'Tratamiento según el perfil',
+                'Usar «tú» para jóvenes o marcas informales, y «usted» para públicos profesionales o mayores.',
+                'Tú: «Descubre tu próximo destino» / Usted: «Descubra su próximo destino».',
+                'Descubre (tú) / Descubra (usted)',
+                '¿Qué diferencia el tratamiento en marketing según la audiencia?', ['Tú (informal) / Usted (formal)',
+                    'Tú (formal) / Usted (informal)', 'No hay diferencia', 'Solo se usa usted'
+                ], 0, 'Escribe una misma oferta para audiencia joven (tú) y profesional (usted).'
+            ],
+            ['Uso de emociones (alegría, miedo, asombro)', 'Emoción + solución + producto',
+                'Apelar a emociones como la alegría (exclusividad), el miedo (perder una oportunidad) o el asombro (descubrimiento).',
+                'No dejes que se te escape esta oportunidad única. ¡Te sorprenderás!',
+                'No dejes (imperativo negativo) + te sorprenderás (futuro)',
+                '¿Qué emociones se usan en marketing?', ['Alegría, miedo, asombro', 'Solo alegría', 'Solo miedo',
+                    'Indiferencia'
+                ], 0, 'Escribe un mensaje que apelé al miedo o a la alegría.'
+            ],
+            ['Cierre con oferta adicional o descuento', 'Oferta adicional + agradecimiento + CTA',
+                'Al final, se puede añadir un extra (envío gratis, descuento adicional) para incentivar la compra.',
+                'Además, por tiempo limitado, envío gratuito. Aprovecha ahora.',
+                'Además (adición) + envío gratuito (beneficio) + Aprovecha (imperativo)',
+                '¿Qué se puede añadir al final para incentivar la compra?', ['Oferta adicional', 'Solo un saludo',
+                    'Solo la firma', 'Nada'
+                ], 0, 'Escribe un cierre con una oferta adicional para un correo de marketing.'
+            ]
+        ];
+        b9.forEach(d => addLesson('marketing', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: REVISIÓN Y ESTILO (91–100)
+        // ============================================================
+        const b10 = [
+            ['Evitar la voz pasiva excesiva', 'Preferir activa frente a pasiva',
+                'La voz pasiva puede hacer el texto más pesado. Se recomienda usar activa para mayor claridad y dinamismo.',
+                'Pasiva: El informe fue elaborado por el equipo. / Activa: El equipo elaboró el informe.',
+                'fue elaborado (pasiva) / elaboró (activa)',
+                '¿Qué voz se recomienda para textos claros y directos?', ['Activa', 'Pasiva', 'Impersonal',
+                    'Reflexiva'
+                ], 0, 'Reescribe una oración pasiva a activa para un correo.'
+            ],
+            ['Eliminar muletillas y palabras vacías', 'Redundancias: en realidad, de hecho, etc.',
+                'Evitar palabras que no aportan contenido como «en realidad», «de hecho», «básicamente».',
+                'En realidad, creo que deberías revisar esto. → Creo que deberías revisar esto.',
+                'En realidad (muletilla)',
+                '¿Qué tipo de palabras se deben eliminar para un estilo conciso?', ['Muletillas', 'Verbos',
+                    'Adjetivos', 'Sustantivos'
+                ], 0, 'Reescribe un párrafo eliminando muletillas.'
+            ],
+            ['Usar sinónimos para evitar repeticiones', 'Variedad léxica',
+                'Repetir la misma palabra cansa al lector. Usar sinónimos adecuados.',
+                'El producto es bueno, el precio es bueno. → El producto es excelente, el precio es competitivo.',
+                'bueno / excelente, competitivo',
+                '¿Qué recurso evita la repetición?', ['Sinónimos', 'Repetición', 'Muletillas', 'Pasiva'], 0,
+                'Reescribe un párrafo usando sinónimos para evitar repeticiones.'
+            ],
+            ['Revisar concordancia de género y número', 'Concordancia',
+                'Asegurar que sustantivos y adjetivos concuerden en género y número. Los verbos con el sujeto.',
+                'Las oferta son buena. → Las ofertas son buenas.',
+                'oferta/son (incorrecto) → ofertas/son (correcto)',
+                '¿Qué tipo de concordancia es fundamental en la redacción?', ['Género y número', 'Solo género',
+                    'Solo número', 'Tiempo verbal'
+                ], 0, 'Corrige una oración con errores de concordancia.'
+            ],
+            ['Evitar gerundios de posterioridad', 'Gerundio + posterioridad (incorrecto)',
+                'El gerundio no debe indicar una acción posterior a la principal. Se usa para simultaneidad.',
+                'Incorrecto: Se cayó, rompiéndose la pierna. (rompiéndose es posterior) → Correcto: Se cayó y se rompió la pierna.',
+                'rompiéndose (gerundio incorrecto)',
+                '¿Cuándo no se debe usar el gerundio?', ['Para acciones posteriores', 'Para acciones simultáneas',
+                    'Para explicar', 'Para describir'
+                ], 0, 'Reescribe una oración con gerundio incorrecto.'
+            ],
+            ['Uso correcto de «sino» y «si no»', 'Sino (adversativo) / si no (condicional)',
+                '«Sino» se usa para contraponer (no... sino), «si no» para condición (si no, ...).',
+                'No es caro, sino barato. / Si no pagas, no te lo envío.',
+                'sino (adversativo) / si no (condicional)',
+                '¿Cuándo se usa «sino»?', ['Para contraponer', 'Para condición', 'Para causa', 'Para consecuencia'],
+                0, 'Escribe una oración con «sino» y otra con «si no».'
+            ],
+            ['Uso correcto de «a ver» y «haber»', 'A ver (verbo ver) / Haber (auxiliar)',
+                '«A ver» es la preposición «a» + el verbo «ver»; «haber» es el auxiliar.',
+                'A ver qué pasa. / Ha habido muchos cambios.',
+                'A ver (verbo ver) / Haber (auxiliar)',
+                '¿Cuál es la forma correcta para decir «vamos a ver»?', ['A ver', 'Haber', 'A haber', 'Ha ver'],
+                0, 'Escribe una oración con «a ver» y otra con «haber».'
+            ],
+            ['Revisar tildes y puntuación', 'Tildes y signos de puntuación',
+                'Revisar las tildes en palabras como «tú», «sí», «qué», y la puntuación para evitar ambigüedades.',
+                'Tu opinion es importante. → Tu opinión es importante.',
+                'tu (posesivo) / tú (pronombre)',
+                '¿Qué elemento puede cambiar el significado de una frase?', ['Las tildes', 'Las mayúsculas',
+                    'El tamaño de fuente', 'El color'
+                ], 0, 'Corrige un párrafo con errores de tildes y puntuación.'
+            ],
+            ['Estructurar en párrafos cortos', 'Párrafos de 3-4 líneas',
+                'Los párrafos cortos facilitan la lectura en pantalla. Cada párrafo debe desarrollar una idea.',
+                'Un párrafo muy largo se divide en dos o más para mejorar la legibilidad.',
+                'Párrafo largo → varios cortos',
+                '¿Cuántas líneas se recomienda por párrafo en correos?', ['3-4 líneas', '10 líneas', '20 líneas',
+                    'Una línea'
+                ], 0, 'Divide un párrafo largo en dos o más párrafos cortos.'
+            ],
+            ['Uso de listas y viñetas para claridad', 'Listas con viñetas o numeradas',
+                'Las viñetas ayudan a organizar información de forma visual y rápida. Son útiles para enumerar características, pasos o beneficios.',
+                'Beneficios: - Ahorro de tiempo. - Reducción de costes. - Mayor eficiencia.',
+                'Lista con viñetas',
+                '¿Qué recurso visual mejora la claridad en correos?', ['Viñetas o listas', 'Párrafos largos',
+                    'Sin puntos', 'Todo en mayúsculas'
+                ], 0, 'Convierte un párrafo enumerativo en una lista con viñetas.'
+            ]
+        ];
+        b10.forEach(d => addLesson('estilo', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Estructura: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Redacción de Correos');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Correos cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

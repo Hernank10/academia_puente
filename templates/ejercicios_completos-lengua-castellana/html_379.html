@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diario Personal — Cien Técnicas</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE4D2; --parchment-dk:#DDCFA9;
+    --ink:#241C13; --ink-soft:#463B29;
+    --rubric:#7A2E2A; --gold:#B08A3E; --verdigris:#3F6357;
+    --shadow: 0 6px 18px rgba(36,28,19,.25);
+  }
+  *{box-sizing:border-box;}
+  body{
+    background: radial-gradient(ellipse at top left, rgba(176,138,62,.10), transparent 45%),
+                radial-gradient(ellipse at bottom right, rgba(63,99,87,.08), transparent 50%),
+                var(--parchment);
+    color:var(--ink); font-family:'EB Garamond', serif; font-size:1.08rem; min-height:100vh;
+  }
+  h1,h2,h3,h4{font-family:'Cinzel', serif; letter-spacing:.04em;}
+  .brand-title{font-family:'Cinzel Decorative', serif;}
+  .rubric{color:var(--rubric);} .gold{color:var(--gold);}
+
+  .folio-header{
+    background: linear-gradient(180deg, var(--ink) 0%, #34281a 100%);
+    color:var(--parchment); border-bottom: 6px double var(--gold);
+    padding: 2rem 1rem 1.4rem; text-align:center; position:relative;
+  }
+  .folio-header::after{
+    content:""; position:absolute; left:0; right:0; bottom:-6px; height:6px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 20px); opacity:.6;
+  }
+  /* ---- Libro medieval iluminado: pergamino apilado, esquinas y manchas de tinta ---- */
+  .page{
+    background:
+      radial-gradient(ellipse at 15% 10%, rgba(122,46,42,.05), transparent 40%),
+      radial-gradient(ellipse at 85% 90%, rgba(63,99,87,.05), transparent 40%),
+      var(--parchment);
+    border:1px solid rgba(36,28,19,.35); box-shadow: var(--shadow);
+    padding: 1.8rem 1.6rem; position:relative; z-index:1;
+  }
+  .page::before, .page::after{
+    content:""; position:absolute; inset:0; z-index:-1;
+    background: var(--parchment-dk); border:1px solid rgba(36,28,19,.3);
+  }
+  .page::before{ transform: rotate(-1deg) translate(-5px,4px); }
+  .page::after{ transform: rotate(0.8deg) translate(5px,6px); }
+
+  .corner-flourish{
+    position:absolute; width:46px; height:46px; opacity:.55; pointer-events:none; z-index:2;
+  }
+  .corner-flourish.tl{top:6px; left:6px;}
+  .corner-flourish.tr{top:6px; right:6px; transform:scaleX(-1);}
+  .corner-flourish.bl{bottom:6px; left:6px; transform:scaleY(-1);}
+  .corner-flourish.br{bottom:6px; right:6px; transform:scale(-1,-1);}
+
+  .ink-blot{position:absolute; opacity:.08; pointer-events:none; z-index:0;}
+  .ink-blot.b1{width:120px; top:-20px; right:8%;}
+  .ink-blot.b2{width:90px; bottom:-10px; left:5%;}
+
+  .quill-icon{width:44px; height:44px; vertical-align:middle; margin:0 .4rem;}
+
+  /* Pluma como cursor al escribir en los campos del cuaderno */
+  .tech-card textarea{
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 32 32"><path fill="%23241C13" d="M29 3c-6 0-14 4-19 10C6 17 3 22 2 27l3 1c1-4 3-8 6-11l3 3-8 8 2 2 8-8 3 3c3-3 5-7 6-11 2-3 3-7 4-11z"/></svg>') 2 26, text;
+  }
+
+
+  .seal-progress{display:flex; align-items:center; gap:.75rem;}
+  .seal{
+    width:60px;height:60px;border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #9a3f37, var(--rubric) 60%, #5c211e 100%);
+    display:flex;align-items:center;justify-content:center; color:var(--parchment);
+    font-family:'Cinzel',serif; font-weight:700; font-size:.9rem;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.5), 0 3px 6px rgba(0,0,0,.35); border: 2px solid #3c1512;
+  }
+
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:.7rem; align-items:center;
+    background:rgba(255,252,242,.6); border:1px solid rgba(36,28,19,.25); padding:.7rem .9rem; margin-bottom:1rem;
+  }
+  .toolbar label{font-size:.78rem; font-family:'Cinzel',serif; margin-bottom:0;}
+  .toolbar select, .toolbar input[type=range]{max-width:200px;}
+
+  .style-pill{
+    border:1px solid var(--ink); border-radius:20px; padding:.3rem .8rem; font-size:.8rem;
+    background:var(--parchment-dk); cursor:pointer; font-family:'Cinzel',serif;
+  }
+  .style-pill.active{background:var(--ink); color:var(--parchment); border-color:var(--ink);}
+
+  .accordion-button{font-family:'Cinzel', serif; background: var(--parchment-dk); color:var(--ink);}
+  .accordion-button:not(.collapsed){background: var(--ink); color: var(--parchment);}
+  .accordion-button:focus{box-shadow:none; outline:2px solid var(--gold);}
+  .accordion-item{border-color: rgba(36,28,19,.35);}
+
+  .tech-card{
+    border:1px solid rgba(36,28,19,.3); background: rgba(255,252,242,.55);
+    border-left: 4px solid var(--verdigris); padding: .9rem 1rem; margin-bottom:.8rem;
+  }
+  .tech-card.done{border-left-color: var(--rubric); background: rgba(122,46,42,.06);}
+  .tech-num{font-family:'Cinzel', serif; color:var(--gold); font-weight:700;}
+  .tech-card textarea{
+    font-family:'EB Garamond', serif; font-size:1.02rem;
+    background: repeating-linear-gradient(var(--parchment) 0 33px, rgba(36,28,19,.18) 34px);
+    line-height:34px; padding-top:2px; border:1px solid rgba(36,28,19,.35);
+  }
+  .ejemplo-original{
+    border-left:3px solid var(--gold); padding-left:.7rem; font-style:italic; color:var(--ink-soft);
+    margin:.5rem 0;
+  }
+  .mi-ejemplo-preview{
+    min-height:60px; border-bottom:2px solid var(--ink); padding:.4rem .2rem; margin-top:.4rem;
+    color:var(--rubric); font-size:1.6rem; line-height:1.4;
+  }
+  .btn-ink{background:var(--ink); color:var(--parchment); border:1px solid var(--ink); font-family:'Cinzel',serif; font-size:.82rem;}
+  .btn-ink:hover{background:#3a2c1c; color:var(--parchment);}
+  .btn-outline-ink{border:1px solid var(--ink); color:var(--ink); font-family:'Cinzel',serif; font-size:.82rem;}
+  .btn-outline-ink:hover{background:var(--ink); color:var(--parchment);}
+  .btn-voice{border:1px solid var(--verdigris); color:var(--verdigris); font-size:.8rem; background:transparent;}
+  .btn-voice:hover{background:var(--verdigris); color:var(--parchment);}
+  .btn-voice.speaking{background:var(--verdigris); color:var(--parchment);}
+  .form-check-input:checked{background-color:var(--verdigris); border-color:var(--verdigris);}
+
+  footer{background:var(--ink); color:var(--parchment); text-align:center; padding: 1.1rem; font-family:'IM Fell English', serif; font-style:italic;}
+  .toast-ink{background:var(--ink); color:var(--parchment); font-family:'Cinzel',serif;}
+  .hint{font-size:.85rem; font-style:italic; opacity:.85;}
+  .fab-stop{
+    position:fixed; bottom:20px; right:20px; z-index:1050; display:none;
+    background:var(--rubric); color:var(--parchment); border:2px solid var(--ink);
+    padding:.6rem 1.1rem; font-family:'Cinzel',serif; box-shadow: var(--shadow);
+  }
+</style>
+</head>
+<body>
+
+<header class="folio-header">
+  <svg class="quill-icon" viewBox="0 0 32 32" fill="none">
+    <path d="M29 3c-6 0-14 4-19 10C6 17 3 22 2 27l3 1c1-4 3-8 6-11l3 3-8 8 2 2 8-8 3 3c3-3 5-7 6-11 2-3 3-7 4-11z" fill="#B08A3E"/>
+  </svg>
+  <h1 class="brand-title display-5 mb-1 d-inline-block">Diario Personal</h1>
+  <svg class="quill-icon" viewBox="0 0 24 24" fill="none">
+    <ellipse cx="12" cy="18" rx="8" ry="4" fill="#241C13"/>
+    <ellipse cx="12" cy="17" rx="6" ry="2.6" fill="#B08A3E"/>
+  </svg>
+  <p class="mb-0 hint">Cien técnicas para escribir tu cuaderno, con lector de voz y tus propios ejemplos en caligrafía</p>
+</header>
+
+<div class="container my-4">
+
+  <div class="toolbar">
+    <div class="seal-progress me-3">
+      <div class="seal" id="sealCount">0/100</div>
+      <div>
+        <div class="fw-bold" style="font-family:'Cinzel',serif; font-size:.85rem;">Entradas escritas</div>
+        <div class="progress" style="width:180px; height:9px; background:var(--parchment-dk); border:1px solid var(--ink);">
+          <div class="progress-bar" id="progressBar" style="width:0%; background:var(--verdigris);"></div>
+        </div>
+      </div>
+    </div>
+    <label>Voz</label>
+    <select id="voiceSelect" class="form-select form-select-sm"></select>
+    <label>Velocidad</label>
+    <input type="range" id="rateRange" min="0.6" max="1.4" step="0.1" value="0.95">
+    <input type="text" class="form-control form-control-sm ms-auto" id="searchInput" placeholder="Buscar técnica…" style="max-width:220px;">
+  </div>
+
+  <div class="mb-3">
+    <label class="small fw-bold d-block mb-1" style="font-family:'Cinzel',serif;">Caligrafía para tus propios ejemplos</label>
+    <div class="d-flex flex-wrap gap-2" id="stylePills"></div>
+  </div>
+
+  <p class="hint mb-4">Escucha el ejemplo original con el botón 🔊, escribe tu propia entrada similar en el campo de abajo, y verás cómo se transforma en la caligrafía elegida. Todo queda guardado en tu cuaderno.</p>
+
+  <div class="page">
+    <svg class="corner-flourish tl" viewBox="0 0 46 46"><path d="M2 2 Q2 20 20 20 M2 2 Q20 2 20 20 M2 2 L2 12 M2 2 L12 2" stroke="#7A2E2A" stroke-width="2" fill="none"/><circle cx="2" cy="2" r="2.5" fill="#B08A3E"/></svg>
+    <svg class="corner-flourish tr" viewBox="0 0 46 46"><path d="M2 2 Q2 20 20 20 M2 2 Q20 2 20 20 M2 2 L2 12 M2 2 L12 2" stroke="#7A2E2A" stroke-width="2" fill="none"/><circle cx="2" cy="2" r="2.5" fill="#B08A3E"/></svg>
+    <svg class="corner-flourish bl" viewBox="0 0 46 46"><path d="M2 2 Q2 20 20 20 M2 2 Q20 2 20 20 M2 2 L2 12 M2 2 L12 2" stroke="#7A2E2A" stroke-width="2" fill="none"/><circle cx="2" cy="2" r="2.5" fill="#B08A3E"/></svg>
+    <svg class="corner-flourish br" viewBox="0 0 46 46"><path d="M2 2 Q2 20 20 20 M2 2 Q20 2 20 20 M2 2 L2 12 M2 2 L12 2" stroke="#7A2E2A" stroke-width="2" fill="none"/><circle cx="2" cy="2" r="2.5" fill="#B08A3E"/></svg>
+    <svg class="ink-blot b1" viewBox="0 0 100 60"><path d="M10 30 Q5 10 30 10 Q60 0 70 20 Q95 25 85 45 Q70 60 45 50 Q15 55 10 30Z" fill="#241C13"/></svg>
+    <svg class="ink-blot b2" viewBox="0 0 100 60"><path d="M10 30 Q5 10 30 10 Q60 0 70 20 Q95 25 85 45 Q70 60 45 50 Q15 55 10 30Z" fill="#241C13"/></svg>
+    <div class="accordion" id="accordionCategorias"></div>
+  </div>
+</div>
+
+<footer>Scribendo disces — «escribiendo aprenderás»</footer>
+
+<button class="fab-stop" id="stopSpeech">⏹ Detener lectura</button>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="saveToast" class="toast toast-ink" role="status"><div class="toast-body">Guardado.</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ======================================================================
+   DATOS: 100 TÉCNICAS DE DIARIO PERSONAL
+   ====================================================================== */
+const categorias = [
+{ nombre:"Apertura de la entrada", tecnicas:[
+["Anclar la entrada en la hora exacta","Empieza anotando la hora, no solo la fecha; cambia el tono según sea de madrugada o de noche.","06:12. Todavía no ha salido el sol y ya estoy despierto pensando en la reunión de las nueve."],
+["Abrir con una sensación física","Antes de contar hechos, describe qué siente tu cuerpo en ese instante.","Los hombros tensos, como si hubiera dormido cargando algo. Aún no sé qué."],
+["Abrir con el ambiente de la nave o el lugar","Sitúa primero el entorno, luego a ti mismo dentro de él.","Día 12 a bordo de la Deneb-3. El zumbido del reciclador de aire es lo primero que oigo cada mañana; ya no distingo si es de día."],
+["Empezar por una pregunta sin responder","Deja que la entrada nazca de una duda, no de una afirmación.","¿Por qué me costó tanto salir de la cama hoy, si ayer no pasó nada grave?"],
+["Abrir con un sonido","El oído es el sentido menos usado al escribir; empieza por ahí.","El microondas pitando tres veces, la alarma del vecino, mi propio bostezo: así empezó el lunes."],
+["Retomar la última frase de ayer","Empieza citándote a ti mismo del día anterior, como si continuaras una conversación.","Ayer dije que hoy sería diferente. No lo fue, pero al menos lo intenté."],
+["Abrir con una cifra","Un número concreto ancla la entrada en la realidad medible.","Día 200 de misión. La mitad exacta del viaje a la órbita de Europa, y ya extraño la lluvia."],
+["Nombrar el clima interior antes que el exterior","Antes de decir qué tiempo hace afuera, describe tu clima emocional.","Por dentro, niebla. Por fuera, un martes cualquiera de oficina."],
+["Abrir con una lista breve","A veces basta enumerar tres cosas para empezar a escribir sin bloquearte.","Hoy: café frío, un mensaje sin responder, y las mismas ganas de siempre de mirar por la ventanilla."],
+["Empezar en medio de la acción","Salta la introducción y entra directo al momento más vivo del día.","La alarma de presión sonó justo cuando estaba lavando los platos, y por un segundo pensé que era en serio."]
+]},
+{ nombre:"Registro emocional", tecnicas:[
+["Nombrar la emoción con precisión","En vez de «mal», busca la palabra exacta: irritado, decepcionado, aturdido.","No estoy triste, estoy más bien desconcertado, como cuando cambian los muebles de sitio sin avisar."],
+["Escribir la emoción como clima","Traducir el estado de ánimo a un fenómeno meteorológico ayuda a verlo desde fuera.","Hoy hay marea baja en mí: todo lo que normalmente cubre el agua queda expuesto y no me gusta lo que veo."],
+["Registrar la emoción en el cuerpo","Localiza dónde se siente físicamente antes de interpretarla.","La ansiedad de hoy vive en la garganta, no en el pecho como otras veces."],
+["Contradecir la propia emoción","Permítete decir «estoy bien» y «no estoy bien» en el mismo párrafo, sin resolverlo.","Estoy tranquilo. También estoy a punto de llorar por algo que no sé nombrar. Las dos cosas son ciertas."],
+["Diario de la tripulación emocional","Trata cada emoción del día como si fuera un miembro distinto de una tripulación con voz propia.","Hoy discutieron dos oficiales a bordo: el Miedo, que quería quedarnos en órbita segura, y la Curiosidad, que ya había puesto rumbo al descenso."],
+["Medir la intensidad con una escala propia","Inventa tu propia escala de 1 a 10 y anótala cada día para ver patrones con el tiempo.","Ansiedad: 4/10. Bajó desde el 7 de anoche en cuanto empecé a doblar la ropa."],
+["Escribir la emoción que no quieres sentir","Anota específicamente lo que estás evitando reconocer.","No quiero admitir que tengo envidia, así que lo escribo aquí donde nadie más lo lee: tengo envidia."],
+["Diario de la calma técnica","Ante el estrés, describe los procedimientos que sigues para regularte, como una bitácora de mantenimiento.","Protocolo aplicado a las 15:40: seis respiraciones, agua, ventana abierta. Sistema estabilizado, por ahora."],
+["Registrar el humor del entorno","A veces es más fácil describir el ánimo de una habitación que el propio.","La cocina hoy tenía un humor apagado, como si nadie hubiera querido encender la luz de verdad."],
+["Cerrar la emoción con una imagen","En vez de explicar por qué te sientes así, termina con una imagen que la resuma.","Así me sentí hoy: una ventanilla empañada desde la que se adivina, pero no se ve, una estrella."]
+]},
+{ nombre:"Memoria y retrospectiva", tecnicas:[
+["La entrada espejo","Vuelve a leer una entrada de hace un año exacto y escribe una nueva en diálogo con ella.","Hace un año escribí que temía este viaje. Hoy, a bordo, releo esas líneas desde la ventanilla que entonces solo imaginaba."],
+["Reconstruir el día hacia atrás","Empieza por el último momento del día y ve retrocediendo hasta la mañana.","Me dormí leyendo. Antes cené tarde. Antes discutí por teléfono. Antes de eso, el día era todavía inocente."],
+["El inventario de rutina semanal","Una vez por semana, enumera qué se repitió y qué se rompió del patrón habitual.","Se repitió: café a las siete, la misma ruta al trabajo. Se rompió: hoy no revisé el correo antes de levantarme."],
+["Bitácora comparativa de turnos","Compara cómo cambia tu percepción del mismo lugar en distintos momentos del día.","La sala de mando a las 6:00 es silenciosa y azul; a las 22:00 es la misma sala, pero suena a motores y a cansancio."],
+["Recordar mediante un objeto","Elige un objeto cualquiera del día y usa su historia para desbloquear el recuerdo completo.","La taza desportillada de esta mañana: me la regalaron el día que me aceptaron en el programa de vuelo."],
+["El resumen en una sola frase","Al final del día, obligarte a resumir todo en una sola oración ayuda a encontrar el hilo central.","Resumen del día 88: aprendí a arreglar la válvula, y a esperar sin desesperarme."],
+["Diario retrospectivo de decisiones","Anota una decisión pequeña del día y, más adelante, vuelve a evaluarla con distancia.","Decidí no responder el mensaje enseguida. Dentro de una semana veré si fue paciencia o evitación."],
+["La cronología partida en tres","Divide el día en mañana, tarde y noche, y dale a cada tramo un título de una palabra.","Mañana: lentitud. Tarde: avance. Noche: dudas."],
+["Recordar lo que casi se olvida","Antes de cerrar la entrada, pregúntate qué detalle menor casi se te escapó.","Casi se me olvida: hoy vi, por la escotilla, algo que parecía una aurora en la atmósfera del planeta que sobrevolamos."],
+["El diario de aniversarios personales","Marca fechas propias que solo tienen sentido para ti y revísalas cada año.","Hoy hace tres años de la primera vez que dormí bien después de la mudanza. Lo anoto para no olvidar que las cosas mejoran."]
+]},
+{ nombre:"Observación y detalle sensorial", tecnicas:[
+["La regla de los tres sentidos","En cada entrada, incluye al menos tres sentidos distintos, no solo la vista.","El pan recién hecho (olfato), la radio de fondo (oído), y el frío del suelo bajo los pies descalzos (tacto)."],
+["Describir un objeto como si fuera la primera vez","Aplica extrañamiento a algo completamente cotidiano.","Miré el tenedor como si no supiera su función: cuatro puntas de metal, frío, exacto, absurdo si lo piensas demasiado."],
+["El diario de bitácora técnica","Describe el día con precisión casi instrumental, como si fueras un instrumento de medición.","Temperatura interior: 21°C. Presión estable. Estado de ánimo: dentro de parámetros normales."],
+["Un solo color por entrada","Elige un color dominante del día y organiza la entrada alrededor de él.","Hoy todo fue gris: el cielo, el café frío, el silencio de la videollamada que se cortó."],
+["Detalle mínimo, significado máximo","Elige el detalle más pequeño del día y explica por qué contiene todo lo demás.","La miga de pan que dejé en la mesa toda la tarde resume mejor este día que cualquier otra cosa que podría contar."],
+["Observar la ventanilla o la ventana como marco","Usa un marco físico real para organizar lo que describes.","Por la escotilla de estribor: primero estrellas, luego el borde curvo del planeta, después nada, solo mi propio reflejo."],
+["El diario del cuerpo en movimiento","Describe el día a través de cómo se movió tu cuerpo, no de lo que pensaste.","Caminé más rápido de lo normal hasta el metro, después me quedé quieto media hora, después corrí a casa."],
+["Registrar un olor que dispara memoria","Sigue un olor concreto hasta el recuerdo que activa, sin forzar la conexión.","El olor a metal caliente del panel de control me devuelve, no sé por qué, al taller de mi padre."],
+["Contraste de dos espacios en el mismo día","Describe dos lugares muy distintos que visitaste y déjalos uno junto al otro.","A las 9:00, la sala de espera del médico, con su luz blanca. A las 20:00, el balcón, con la luz naranja del atardecer."],
+["El diario del silencio","En vez de describir sonidos, describe la ausencia de ellos y qué revela.","El silencio de la nave a las 3:00 no es vacío: tiene textura, como si todo el metal estuviera conteniendo la respiración."]
+]},
+{ nombre:"Voz y estilo personal", tecnicas:[
+["Escribirse una carta a uno mismo del futuro","Cambia el destinatario del diario a un «tú» que lo leerá en años.","Cuando leas esto, espero que ya no te dé miedo pedir ayuda. Hoy todavía te cuesta."],
+["Escribirse una carta desde el uno mismo del pasado","Invierte la dirección: responde como si fueras tu versión de hace años.","Sé que a los veinte pensabas que esto no se arreglaría nunca. Te escribo desde el otro lado para decirte que sí."],
+["Cambiar de persona gramatical a mitad de entrada","Empieza en primera persona y pasa a segunda o tercera cuando la emoción se vuelve difícil.","Hoy tuve miedo. Tuviste miedo, otra vez, del mismo modo de siempre."],
+["El diario como informe de misión","Adopta el registro impersonal de un reporte, aunque el contenido sea muy íntimo.","Informe del día 34: se detectó una anomalía emocional a las 11:00, causa probable, soledad."],
+["El diario como conversación con un objeto inanimado","Dirige la entrada a algo que no puede responder: la casa, la nave, el reloj.","Nave, hoy no sé si eres tú la que se mueve o soy yo el que sigue quieto por dentro."],
+["Escribir en presente aunque el hecho ya pasó","Narra un recuerdo como si estuviera ocurriendo ahora.","Vuelvo a estar en esa sala. Suena la alarma. Todos corren menos yo, que me quedo mirando el panel."],
+["Adoptar un alter ego para los días difíciles","Dale un nombre a la versión de ti que aparece cuando todo se complica.","Hoy escribió el Comandante, no yo: el que toma decisiones frías cuando el resto de la tripulación interior está en pánico."],
+["El diario en segunda persona imperativa","Date instrucciones a ti mismo, como listas de órdenes breves.","Levántate. Abre la ventana. No revises el teléfono todavía."],
+["Mezclar registros: técnico y poético","Alterna frases de precisión casi científica con frases de imagen libre.","Velocidad de crucero: 24.000 km/h. Y aun así, algo en mí sigue yendo más despacio que la nave."],
+["Firmar la entrada con un estado, no con el nombre","En vez de firmar con tu nombre, cierra con una palabra que resuma cómo te vas de la página.","Firmo esta entrada: cansado, pero entero."]
+]},
+{ nombre:"Diálogo interno y autoconocimiento", tecnicas:[
+["El diario de las dos voces","Divide la página en lo que piensas y lo que sientes, sin que coincidan necesariamente.","Pienso: no pasa nada. Siento: algo pasa, y no sé nombrarlo todavía."],
+["Entrevistarte a ti mismo","Escribe tres preguntas y respóndelas como si un entrevistador externo te las hiciera.","¿Qué fue lo más difícil de hoy? Pedir ayuda. ¿Qué fue lo más fácil? Fingir que no la necesitaba."],
+["Escribir la objeción interna","Después de afirmar algo, añade inmediatamente la voz que lo cuestiona.","Creo que estoy avanzando. (¿O solo te estás acostumbrando a quedarte quieto?)"],
+["El consejo de tripulación interior","Convoca a distintas «partes» tuyas a dar su opinión sobre una decisión.","El Ingeniero dice que hay que revisar todo antes de decidir. El Piloto dice que ya llevamos demasiado tiempo dando vueltas."],
+["Registrar el pensamiento antes de editarlo","Escribe el primer pensamiento crudo, sin pulirlo, y solo después coméntalo.","Pensamiento crudo: «no le importo a nadie». Comentario: probablemente no es cierto, pero hoy se sintió así con fuerza."],
+["La pregunta que evitas responder","Anota una pregunta incómoda que te haces y permítete no responderla todavía.","¿Por qué acepté esta misión en realidad? Todavía no lo sé del todo, y está bien no saberlo hoy."],
+["El diario del crítico interno separado","Dale nombre y voz propia a tu autocrítica para poder discutir con ella.","El Inspector volvió a decir que no hice lo suficiente. Le respondo: hiciste lo que pudiste con la energía que tenías."],
+["Comparar la versión pública y la privada del día","Escribe qué dijiste que hiciste hoy y qué hiciste realmente.","Le dije a todos que estaba «bien, ocupado». La verdad es que pasé una hora mirando el techo sin poder empezar nada."],
+["El diario de las excusas honestas","En vez de justificar lo que no hiciste, anota la excusa tal cual la pensaste.","No fui porque «hacía frío». La verdad es que tenía miedo de encontrarme con él."],
+["Preguntarte qué necesitarías oír","Cierra la entrada escribiendo la frase exacta que te gustaría que alguien te dijera hoy.","Lo que necesitaba oír hoy: «lo estás haciendo mejor de lo que crees»."]
+]},
+{ nombre:"Proyección y futuro", tecnicas:[
+["La lista de lo que espero de mañana","Antes de dormir, anota tres expectativas concretas y pequeñas para el día siguiente.","Mañana espero: dormir siete horas, terminar el informe, y no revisar el móvil antes del desayuno."],
+["El diario del «si sale bien / si sale mal»","Escribe ambos escenarios posibles de algo incierto, sin decidir cuál ocurrirá.","Si la revisión de mañana sale bien, seguimos rumbo. Si sale mal, aprenderemos algo de todos modos."],
+["Carta a la versión de dentro de diez años","Proyecta una pregunta muy concreta hacia un futuro lejano.","Dentro de diez años, ¿todavía recordarás el nombre de esta estrella que hoy no supe pronunciar bien?"],
+["El plan de vuelo emocional","Traza, como una ruta de navegación, los pasos que planeas dar para salir de un estado difícil.","Ruta trazada: hoy hablar con alguien, mañana salir a caminar, pasado mañana, revisar si mejoró algo."],
+["Escribir el final feliz antes de que ocurra","Redacta cómo te gustaría que terminara una situación abierta, como ensayo de esperanza.","Me gustaría que esta entrada, dentro de un mes, termine diciendo que sí conseguí el traslado."],
+["El diario del conteo regresivo","Cuando esperas algo, cuenta los días que faltan y usa esa cuenta como estructura.","Faltan 14 días para el aterrizaje. Cada entrada desde hoy será un paso menos en esta cuenta atrás."],
+["Redactar la instrucción para el yo de mañana","Termina la entrada con un mensaje directo y práctico para cuando despiertes.","Para el yo de mañana: no revises el correo antes del café. Confía en mí, hazlo así."],
+["El diario de metas mínimas","En vez de grandes proyectos, anota la meta más pequeña posible del día siguiente.","Meta de mañana: solo lavar los platos. Nada más. Eso ya sería suficiente."],
+["Imaginar la bitácora de un futuro que no llegó","Escribe una entrada de un futuro que decidiste no perseguir, para entender qué perdiste y qué ganaste.","En la línea temporal donde no acepté esta misión, probablemente hoy estaría mirando el mismo techo de siempre."],
+["Cerrar con una pregunta abierta al futuro","Termina sin resolver, dejando una pregunta que solo el tiempo podrá responder.","¿Será este el año en que por fin aprenda a descansar sin sentir culpa?"]
+]},
+{ nombre:"Rutinas y hábitos", tecnicas:[
+["La bitácora de la misma hora","Escribe siempre a la misma hora exacta y compara después cómo cambia el contenido con el tiempo.","07:00, como cada día de este mes. Hoy, a diferencia de la semana pasada, me costó menos levantarme."],
+["El diario del ritual mínimo","Describe con detalle un pequeño ritual repetido y qué significa mantenerlo.","El ritual de comprobar el nivel de oxígeno cada mañana ya no es solo procedimiento: es lo que me recuerda que sigo aquí."],
+["Registrar la variación dentro de la rutina","Aunque el día se repita, busca y anota el único elemento que cambió.","Todo igual que siempre, salvo que hoy el pan sabía distinto. Pequeña grieta en la repetición."],
+["El diario de hábitos en tabla","Anota cada noche, en una lista corta, qué hábitos cumpliste y cuáles no, sin juzgarte.","Agua: sí. Ejercicio: no. Lectura: sí, diez minutos. Suficiente por hoy."],
+["Bitácora de mantenimiento personal","Trata tu cuidado diario como si fuera el mantenimiento técnico de una nave.","Revisión de sistemas: alimentación aceptable, descanso insuficiente, ánimo estable."],
+["El diario del domingo distinto","Dedica una entrada semanal a notar en qué se diferenció ese día del resto de la semana.","El domingo aquí, a bordo, se parece a los de la Tierra en una sola cosa: nadie tiene prisa por hacer nada."],
+["Registrar el primer y el último gesto del día","Anota solo dos acciones: la primera al despertar y la última antes de dormir.","Primer gesto: apagar la alarma. Último gesto: comprobar que la puerta esté bien cerrada."],
+["El diario de lo que se volvió automático","Identifica algo que antes requería esfuerzo consciente y ahora haces sin pensar.","Ya no pienso en cómo ponerme el traje de presión: los dedos lo hacen solos."],
+["Bitácora de rutina compartida","Describe una rutina que compartes con otra persona y qué revela sobre esa relación.","El café de las ocho con mi compañero de turno se ha vuelto el único momento del día en que hablamos sin hablar de trabajo."],
+["El diario de romper la rutina a propósito","Un día, cambia deliberadamente un hábito fijo y anota qué se sintió distinto.","Hoy comí en el puente de mando en vez de en el comedor, solo para ver las estrellas mientras almorzaba."]
+]},
+{ nombre:"Técnicas creativas y experimentales", tecnicas:[
+["El diario de a bordo ficticio","Aunque tu vida sea terrestre y ordinaria, escribe una entrada como si fueras tripulante de una nave.","Bitácora de la nave Trabajo-Casa-Trabajo, día 1.204: hoy completamos con éxito otra órbita alrededor de la misma rutina."],
+["Traducir un día aburrido a lenguaje espacial","Reescribe una tarea mundana con vocabulario de misión interestelar.","A las 14:00 se ejecutó con éxito la maniobra de reabastecimiento de víveres, conocida coloquialmente como «ir al supermercado»."],
+["El diario del planeta inventado","Describe tu ciudad o tu casa como si fuera un planeta desconocido.","Informe sobre el planeta Cocina: habitado por una sola forma de vida cansada, con un satélite llamado Nevera."],
+["Bitácora de un objeto no humano","Escribe la entrada del día desde el punto de vista de un objeto de tu rutina.","Diario de la Cafetera: hoy me encendieron tarde, a las 7:20 en vez de las 7:00. Algo distinto está pasando en esta casa."],
+["El diario en clave de reporte de anomalía","Cuando algo inesperado ocurra, redáctalo como un reporte técnico de fallo.","Anomalía detectada a las 18:00: llanto sin causa aparente. Diagnóstico preliminar: acumulación de cansancio no reportado."],
+["Escribir el diario de otro planeta habitado por ti mismo","Imagina una versión alterna de tu vida en otro lugar y escribe su entrada de hoy.","En la colonia de Marte, mi otro yo también se despertó cansado esta mañana."],
+["El diario del regreso a la Tierra","Escribe la entrada como si acabaras de «aterrizar» de un periodo difícil.","Día 1 después del aterrizaje. La gravedad de la vida normal todavía se siente rara en las piernas."],
+["Bitácora de la tripulación imaginaria de tu vida","Asigna roles ficticios a las personas reales de tu día.","Hoy la Médica de a bordo (mi hermana) insistió en que descansara."],
+["El diario de la cuenta de combustible","Usa la metáfora de la energía como combustible y anota cuánta te queda al final del día.","Nivel de combustible al cierre del día: 20%. Gastado en: una reunión difícil, una discusión evitada."],
+["Escribir una entrada sin usar la palabra «yo»","Como ejercicio de estilo, cuenta el día entero evitando el pronombre en primera persona.","Amaneció tarde en esta casa. La taza quedó sin lavar. El día avanzó despacio."]
+]},
+{ nombre:"Cierre y revisión periódica", tecnicas:[
+["Cerrar con una sola palabra","Termina cada entrada resumiendo el día entero en una única palabra.","Cierre del día: pendiente."],
+["La revisión mensual en una página","Al final de cada mes, resume treinta entradas en un solo párrafo que busque el patrón general.","Este mes aprendí más de lo que registré: que el cansancio de la primera semana no era pereza, era falta de descanso real."],
+["El diario del «todavía»","Cierra las entradas difíciles con la palabra «todavía», para dejar la puerta abierta al cambio.","No sé resolver esto todavía. Pero lo escribo con esa palabra a propósito: todavía."],
+["Contar entradas, no días","Numera tus entradas en vez de solo fecharlas, para notar con qué frecuencia real escribes.","Entrada número 214. Empecé este cuaderno hace 340 días."],
+["El cierre en forma de bitácora final de misión","Cuando termine una etapa importante, escribe su cierre como el informe final de una misión.","Fin de la misión «primer año en el nuevo trabajo». Objetivos cumplidos: adaptación exitosa."],
+["Revisar sin corregir lo ya escrito","Al releer entradas viejas, resiste la tentación de cambiar nada; solo comenta al margen.","(Nota de hoy sobre lo que escribí hace un año: ya no pienso así, pero me alegra ver de dónde vengo.)"],
+["El diario del «qué me llevo de hoy»","Cierra cada entrada con una sola cosa concreta que decides quedarte del día.","Me llevo de hoy: la luz naranja de las cinco de la tarde entrando por la ventana mientras trabajaba."],
+["Cerrar con gratitud específica","En vez de «agradecido por todo», nombra un detalle exacto y por qué importó.","Agradecido, específicamente, porque alguien me guardó un trozo de pastel sin que se lo pidiera."],
+["El resumen anual en diez líneas","El último día del año, resume los doce meses en exactamente diez frases cortas.","Este año: un cambio de casa, un miedo superado a medias, una amistad recuperada."],
+["Cerrar el cuaderno con una carta de despedida","Al terminar un cuaderno, escríbele una última entrada al cuaderno mismo.","Gracias, cuaderno, por sostener lo que no supe decir en voz alta durante estos meses."]
+]}
+];
+
+/* ======================================================================
+   ESTILOS DE CALIGRAFÍA PARA "MI EJEMPLO"
+   ====================================================================== */
+const estilos = [
+  { id:"spencerian", nombre:"Script Spencerian", font:"'Tangerine', cursive" },
+  { id:"copperplate", nombre:"Cursiva inglesa", font:"'Petit Formal Script', cursive" },
+  { id:"chancery", nombre:"Cursiva itálica", font:"'Mrs Saint Delafield', cursive" },
+  { id:"palmer", nombre:"Cursiva Palmer", font:"'Homemade Apple', cursive" },
+  { id:"normal", nombre:"Sin caligrafía (texto normal)", font:"'EB Garamond', serif" }
+];
+let estiloActivo = estilos[0];
+
+/* ======================================================================
+   ESTADO Y ALMACENAMIENTO
+   ====================================================================== */
+let estado = { practicadas:{}, textos:{}, estilosPorTecnica:{} };
+
+function mostrarToast(msg){
+  const t = document.getElementById('saveToast');
+  t.querySelector('.toast-body').textContent = msg;
+  new bootstrap.Toast(t, {delay:1400}).show();
+}
+async function cargarEstado(){
+  try{
+    const r = await window.storage.get('diario-personal:estado');
+    if(r && r.value) estado = JSON.parse(r.value);
+  }catch(e){}
+  renderTecnicas();
+  actualizarProgreso();
+}
+async function guardarEstado(){
+  try{ await window.storage.set('diario-personal:estado', JSON.stringify(estado)); }
+  catch(e){ console.error(e); }
+}
+
+/* ======================================================================
+   LECTOR DE VOZ (Web Speech API)
+   ====================================================================== */
+let vocesDisponibles = [];
+let vozElegida = null;
+let botonHablando = null;
+
+function cargarVoces(){
+  vocesDisponibles = speechSynthesis.getVoices();
+  const sel = document.getElementById('voiceSelect');
+  sel.innerHTML = "";
+  const esVoices = vocesDisponibles.filter(v => v.lang && v.lang.toLowerCase().startsWith('es'));
+  const listar = esVoices.length ? esVoices : vocesDisponibles;
+  listar.forEach((v, i)=>{
+    const opt = document.createElement('option');
+    opt.value = v.name;
+    opt.textContent = `${v.name} (${v.lang})`;
+    sel.appendChild(opt);
+  });
+  vozElegida = listar[0] || null;
+  sel.addEventListener('change', ()=>{
+    vozElegida = vocesDisponibles.find(v=>v.name===sel.value) || null;
+  });
+}
+if('speechSynthesis' in window){
+  speechSynthesis.onvoiceschanged = cargarVoces;
+  cargarVoces();
+}
+
+function hablar(texto, btn){
+  if(!('speechSynthesis' in window)){
+    mostrarToast('Este navegador no soporta lectura en voz alta.');
+    return;
+  }
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(texto);
+  if(vozElegida) utter.voice = vozElegida;
+  utter.lang = vozElegida ? vozElegida.lang : 'es-ES';
+  utter.rate = parseFloat(document.getElementById('rateRange').value);
+  if(botonHablando) botonHablando.classList.remove('speaking');
+  botonHablando = btn;
+  if(btn) btn.classList.add('speaking');
+  document.getElementById('stopSpeech').style.display = 'block';
+  utter.onend = ()=>{
+    if(btn) btn.classList.remove('speaking');
+    document.getElementById('stopSpeech').style.display = 'none';
+  };
+  speechSynthesis.speak(utter);
+}
+document.getElementById('stopSpeech').addEventListener('click', ()=>{
+  speechSynthesis.cancel();
+  if(botonHablando) botonHablando.classList.remove('speaking');
+  document.getElementById('stopSpeech').style.display = 'none';
+});
+
+/* ======================================================================
+   SELECTOR DE CALIGRAFÍA GLOBAL
+   ====================================================================== */
+function renderStylePills(){
+  const cont = document.getElementById('stylePills');
+  estilos.forEach((e,i)=>{
+    const b = document.createElement('button');
+    b.className = "style-pill" + (i===0 ? " active":"");
+    b.textContent = e.nombre;
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.style-pill').forEach(p=>p.classList.remove('active'));
+      b.classList.add('active');
+      estiloActivo = e;
+      document.querySelectorAll('.mi-ejemplo-preview').forEach(p=> p.style.fontFamily = e.font);
+    });
+    cont.appendChild(b);
+  });
+}
+
+/* ======================================================================
+   RENDER: TÉCNICAS
+   ====================================================================== */
+function idTecnica(catIdx, tIdx){ return catIdx+"-"+tIdx; }
+
+function renderTecnicas(filtro=""){
+  const cont = document.getElementById('accordionCategorias');
+  cont.innerHTML = "";
+  categorias.forEach((cat, ci)=>{
+    const items = cat.tecnicas.map((t,ti)=>({t,ti})).filter(o => filtro==="" || o.t[0].toLowerCase().includes(filtro.toLowerCase()));
+    if(items.length===0) return;
+    const accId = "cat"+ci;
+    const item = document.createElement('div');
+    item.className = "accordion-item";
+    item.innerHTML = `
+      <h2 class="accordion-header">
+        <button class="accordion-button ${ci===0?'':'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#${accId}">
+          ${ci+1}. ${cat.nombre}
+        </button>
+      </h2>
+      <div id="${accId}" class="accordion-collapse collapse ${ci===0?'show':''}" data-bs-parent="#accordionCategorias">
+        <div class="accordion-body" id="body-${accId}"></div>
+      </div>`;
+    cont.appendChild(item);
+    const body = item.querySelector(`#body-${accId}`);
+    items.forEach(({t,ti})=>{
+      const id = idTecnica(ci,ti);
+      const [nombre,def,ejemplo] = t;
+      const numGlobal = categorias.slice(0,ci).reduce((a,c)=>a+c.tecnicas.length,0) + ti + 1;
+      const done = !!estado.practicadas[id];
+      const texto = estado.textos[id] || "";
+
+      const card = document.createElement('div');
+      card.className = "tech-card" + (done ? " done":"");
+      card.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <span class="tech-num">#${numGlobal}</span> <strong>${nombre}</strong>
+            <div class="small mt-1">${def}</div>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input chk-done" type="checkbox" id="chk-${id}" ${done?'checked':''}>
+            <label class="form-check-label small" for="chk-${id}">escrita</label>
+          </div>
+        </div>
+        <div class="ejemplo-original">
+          «${ejemplo}»
+          <button class="btn btn-sm btn-voice ms-2 btn-hear-original" type="button">🔊 Escuchar</button>
+        </div>
+        <label class="small fw-bold d-block mb-1" style="font-family:'Cinzel',serif;">Tu propio ejemplo</label>
+        <textarea class="form-control" rows="2" placeholder="Escribe tu propia entrada con esta técnica…">${texto}</textarea>
+        <div class="mi-ejemplo-preview" style="font-family:${estiloActivo.font};"></div>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+          <button class="btn btn-sm btn-outline-ink btn-save">Guardar</button>
+          <button class="btn btn-sm btn-voice btn-hear-mine" type="button">🔊 Leer mi ejemplo</button>
+        </div>
+      `;
+      body.appendChild(card);
+
+      const preview = card.querySelector('.mi-ejemplo-preview');
+      const textarea = card.querySelector('textarea');
+      preview.textContent = texto;
+
+      textarea.addEventListener('input', ()=>{ preview.textContent = textarea.value; });
+
+      card.querySelector('.chk-done').addEventListener('change', async (e)=>{
+        estado.practicadas[id] = e.target.checked;
+        card.classList.toggle('done', e.target.checked);
+        await guardarEstado();
+        actualizarProgreso();
+      });
+      card.querySelector('.btn-save').addEventListener('click', async ()=>{
+        estado.textos[id] = textarea.value;
+        await guardarEstado();
+        mostrarToast('Guardado en el cuaderno.');
+      });
+      card.querySelector('.btn-hear-original').addEventListener('click', (e)=>{
+        hablar(`${nombre}. ${def} Ejemplo: ${ejemplo}`, e.currentTarget);
+      });
+      card.querySelector('.btn-hear-mine').addEventListener('click', (e)=>{
+        const txt = textarea.value.trim();
+        if(!txt){ mostrarToast('Escribe primero tu propio ejemplo.'); return; }
+        hablar(txt, e.currentTarget);
+      });
+    });
+  });
+}
+function actualizarProgreso(){
+  const total = categorias.reduce((a,c)=>a+c.tecnicas.length,0);
+  const hechas = Object.values(estado.practicadas).filter(Boolean).length;
+  document.getElementById('sealCount').textContent = hechas+"/"+total;
+  document.getElementById('progressBar').style.width = (hechas/total*100)+"%";
+}
+document.getElementById('searchInput').addEventListener('input', (e)=> renderTecnicas(e.target.value));
+
+/* ======================================================================
+   INIT
+   ====================================================================== */
+renderStylePills();
+cargarEstado();
+</script>
+</body>
+</html>

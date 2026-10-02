@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Scriptorium — Técnicas narrativas y caligrafía</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Cinzel+Decorative:wght@700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=IM+Fell+English:ital@0;1&family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --parchment:#EDE4D2; --parchment-dk:#DDCFA9;
+    --ink:#241C13; --ink-soft:#463B29;
+    --rubric:#7A2E2A; --gold:#B08A3E; --verdigris:#3F6357;
+    --shadow: 0 6px 18px rgba(36,28,19,.25);
+  }
+  *{box-sizing:border-box; touch-action:manipulation;}
+  body{
+    background: radial-gradient(ellipse at top left, rgba(176,138,62,.10), transparent 45%),
+                radial-gradient(ellipse at bottom right, rgba(63,99,87,.08), transparent 50%),
+                var(--parchment);
+    color:var(--ink); font-family:'EB Garamond', serif; font-size:1.08rem; min-height:100vh;
+  }
+  h1,h2,h3,h4,.font-display{font-family:'Cinzel', serif; letter-spacing:.04em;}
+  .brand-title{font-family:'Cinzel Decorative', serif;}
+  .rubric{color:var(--rubric);} .gold{color:var(--gold);}
+
+  .folio-header{
+    background: linear-gradient(180deg, var(--ink) 0%, #34281a 100%);
+    color:var(--parchment); border-bottom: 6px double var(--gold);
+    padding: 2rem 1rem 1.4rem; text-align:center; position:relative;
+  }
+  .folio-header::after{
+    content:""; position:absolute; left:0; right:0; bottom:-6px; height:6px;
+    background: repeating-linear-gradient(90deg, var(--gold) 0 10px, transparent 10px 20px); opacity:.6;
+  }
+
+  /* Pestañas principales */
+  .nav-tabs{border-bottom: 3px solid var(--ink); gap:.35rem; flex-wrap:wrap;}
+  .nav-tabs .nav-link{
+    font-family:'Cinzel', serif; font-size:.9rem; color:var(--ink-soft);
+    background: var(--parchment-dk); border:2px solid var(--ink); border-bottom:none;
+    border-radius: 6px 6px 0 0; padding:.55rem 1.05rem;
+  }
+  .nav-tabs .nav-link.active{background:var(--parchment); color:var(--rubric); border-color:var(--ink);}
+
+  .page{background: var(--parchment); border:1px solid rgba(36,28,19,.35); box-shadow: var(--shadow); padding: 1.4rem;}
+
+  /* ---- Sub-pestañas de Caligrafía ---- */
+  .subnav{display:flex; gap:.4rem; margin-bottom:1rem; flex-wrap:wrap;}
+  .subnav button{
+    border:1px solid var(--ink); background:var(--parchment-dk); font-family:'Cinzel',serif;
+    font-size:.85rem; padding:.4rem .9rem; border-radius:20px; cursor:pointer;
+  }
+  .subnav button.active{background:var(--ink); color:var(--parchment);}
+  .subpage{display:none;} .subpage.active{display:block;}
+
+  /* ---- Técnicas ---- */
+  .seal-progress{display:flex; align-items:center; gap:.75rem;}
+  .seal{
+    width:60px;height:60px;border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #9a3f37, var(--rubric) 60%, #5c211e 100%);
+    display:flex;align-items:center;justify-content:center; color:var(--parchment);
+    font-family:'Cinzel',serif; font-weight:700; font-size:.9rem;
+    box-shadow: inset 0 0 8px rgba(0,0,0,.5), 0 3px 6px rgba(0,0,0,.35); border: 2px solid #3c1512;
+  }
+  .accordion-button{font-family:'Cinzel', serif; background: var(--parchment-dk); color:var(--ink);}
+  .accordion-button:not(.collapsed){background: var(--ink); color: var(--parchment);}
+  .accordion-button:focus{box-shadow:none; outline:2px solid var(--gold);}
+  .accordion-item{border-color: rgba(36,28,19,.35);}
+  .tech-card{
+    border:1px solid rgba(36,28,19,.3); background: rgba(255,252,242,.55);
+    border-left: 4px solid var(--verdigris); padding: .85rem 1rem; margin-bottom:.7rem;
+  }
+  .tech-card.done{border-left-color: var(--rubric); background: rgba(122,46,42,.06);}
+  .tech-num{font-family:'Cinzel', serif; color:var(--gold); font-weight:700;}
+  .tech-card textarea{
+    font-family:'EB Garamond', serif; font-size:1.02rem;
+    background: repeating-linear-gradient(var(--parchment) 0 33px, rgba(36,28,19,.18) 34px);
+    line-height:34px; padding-top:2px; border:1px solid rgba(36,28,19,.35);
+  }
+  .btn-ink{background:var(--ink); color:var(--parchment); border:1px solid var(--ink); font-family:'Cinzel',serif; font-size:.85rem;}
+  .btn-ink:hover{background:#3a2c1c; color:var(--parchment);}
+  .btn-outline-ink{border:1px solid var(--ink); color:var(--ink); font-family:'Cinzel',serif; font-size:.85rem;}
+  .btn-outline-ink:hover{background:var(--ink); color:var(--parchment);}
+  .form-check-input:checked{background-color:var(--verdigris); border-color:var(--verdigris);}
+
+  /* ---- Caligrafía: estudio ---- */
+  .calli-card{background: rgba(255,252,242,.6); border:1px solid rgba(36,28,19,.3); padding:1.3rem; margin-bottom:1.4rem;}
+  .calli-alphabet{
+    background: repeating-linear-gradient(var(--parchment) 0 44px, rgba(36,28,19,.22) 45px);
+    padding: 1rem .5rem .5rem; font-size:2rem; line-height:44px; letter-spacing:.15em;
+    color: var(--ink-soft); word-spacing: .4em; overflow-x:auto; white-space:nowrap;
+  }
+  .calli-sample{font-size:2.3rem; color:var(--rubric); line-height:1.3;}
+  .calli-live{font-size:2.1rem; min-height:70px; border-bottom:2px solid var(--ink); color:var(--ink); padding:.3rem .2rem;}
+
+  /* ---- Caligrafía: práctica manual ---- */
+  .style-pill{
+    border:1px solid var(--ink); border-radius:20px; padding:.35rem .9rem; font-size:.85rem;
+    background:var(--parchment-dk); cursor:pointer; font-family:'Cinzel',serif;
+  }
+  .style-pill.active{background:var(--ink); color:var(--parchment); border-color:var(--ink);}
+  .toolbar{
+    display:flex; flex-wrap:wrap; gap:.6rem; align-items:center;
+    background:rgba(255,252,242,.6); border:1px solid rgba(36,28,19,.25); padding:.6rem .8rem; margin-bottom:.8rem;
+  }
+  .toolbar label{font-size:.78rem; font-family:'Cinzel',serif; margin-bottom:0;}
+  .letter-grid{display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.8rem;}
+  .letter-btn{
+    width:38px; height:38px; border:1px solid var(--ink); background:var(--parchment-dk);
+    font-family:'EB Garamond',serif; font-weight:600; border-radius:4px; cursor:pointer;
+  }
+  .letter-btn.active{background:var(--rubric); color:var(--parchment); border-color:var(--rubric);}
+  .trace-wrap{position:relative; overflow-x:auto; overflow-y:hidden; background:var(--parchment); border:1px solid rgba(36,28,19,.35);}
+  .guide-lines{position:absolute; inset:0; pointer-events:none;}
+  .guide-lines div{position:absolute; left:0; right:0; border-top:1px solid rgba(122,46,42,.35);}
+  .guide-lines .ascender{top:8%; border-top-style:dashed;}
+  .guide-lines .xheight{top:42%; border-top-style:dashed; border-color:rgba(63,99,87,.5);}
+  .guide-lines .baseline{top:74%; border-top:1.5px solid rgba(36,28,19,.65);}
+  .guide-lines .descender{top:96%; border-top-style:dashed;}
+  .guide-letter{
+    position:absolute; left:0; top:0; height:100%; display:flex; align-items:flex-end;
+    padding-bottom:10%; white-space:nowrap; pointer-events:none; user-select:none;
+    color:transparent; -webkit-text-stroke: 1.4px rgba(36,28,19,.4);
+  }
+  @supports not (-webkit-text-stroke: 1px black){ .guide-letter{color: rgba(36,28,19,.25);} }
+  .guide-letter.hidden-guide{opacity:0;}
+  canvas.draw-layer{position:relative; display:block; touch-action:none; cursor:crosshair;}
+
+  /* ---- Galería ---- */
+  .gallery-item{border:1px solid rgba(36,28,19,.3); background:rgba(255,252,242,.6); padding:.5rem; margin-bottom:.7rem;}
+  .gallery-item img{width:100%; border:1px solid rgba(36,28,19,.2); background:#fff;}
+  .badge-style{background:var(--verdigris); font-family:'Cinzel',serif; font-size:.7rem;}
+
+  footer{background:var(--ink); color:var(--parchment); text-align:center; padding: 1.1rem; font-family:'IM Fell English', serif; font-style:italic;}
+  .toast-ink{background:var(--ink); color:var(--parchment); font-family:'Cinzel',serif;}
+  .hint{font-size:.85rem; font-style:italic; opacity:.85;}
+</style>
+</head>
+<body>
+
+<header class="folio-header">
+  <h1 class="brand-title display-5 mb-1">✒ Scriptorium</h1>
+  <p class="mb-0 hint">Cien técnicas narrativas · cuatro escrituras de mano para estudiar y practicar</p>
+</header>
+
+<div class="container my-4">
+
+  <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-tecnicas" type="button">Técnicas narrativas</button></li>
+    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-caligrafia" type="button">Caligrafía</button></li>
+  </ul>
+
+  <div class="tab-content page mt-0">
+
+    <!-- ===================== TAB TÉCNICAS ===================== -->
+    <div class="tab-pane fade show active" id="tab-tecnicas" role="tabpanel">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-3">
+        <div class="seal-progress">
+          <div class="seal" id="sealCount">0/100</div>
+          <div>
+            <div class="fw-bold" style="font-family:'Cinzel',serif;">Folios completados</div>
+            <div class="progress" style="width:220px; height:10px; background:var(--parchment-dk); border:1px solid var(--ink);">
+              <div class="progress-bar" id="progressBar" role="progressbar" style="width:0%; background:var(--verdigris);"></div>
+            </div>
+          </div>
+        </div>
+        <div style="max-width:320px; width:100%;">
+          <input type="text" class="form-control" id="searchInput" placeholder="Buscar técnica por nombre…" style="font-family:'EB Garamond',serif;">
+        </div>
+      </div>
+      <p class="fst-italic small mb-4">Marca "practicada" tras escribir tu ejercicio. Tu texto y tu progreso quedan guardados en este cuaderno.</p>
+      <div class="accordion" id="accordionCategorias"></div>
+    </div>
+
+    <!-- ===================== TAB CALIGRAFÍA (con sub-pestañas) ===================== -->
+    <div class="tab-pane fade" id="tab-caligrafia" role="tabpanel">
+
+      <div class="subnav" id="calliSubnav">
+        <button class="active" data-sub="estudio">Estudiar los estilos</button>
+        <button data-sub="letras">Practicar letras</button>
+        <button data-sub="palabras">Practicar palabras y frases</button>
+        <button data-sub="libre">Mi estilo libre</button>
+        <button data-sub="firma">Firma digital</button>
+        <button data-sub="galeria">Galería</button>
+      </div>
+
+      <!-- Selector de estilo activo (para práctica) -->
+      <div class="d-flex flex-wrap gap-2 mb-3" id="stylePills"></div>
+
+      <!-- ---- ESTUDIO ---- -->
+      <div class="subpage active" id="sub-estudio">
+        <p class="hint mb-3">Observa cada estilo antes de practicarlo a mano en la pestaña "Practicar".</p>
+        <div id="calliContainer"></div>
+      </div>
+
+      <!-- ---- PRACTICAR LETRAS ---- -->
+      <div class="subpage" id="sub-letras">
+        <p class="hint mb-2">Elige una letra y repásala varias veces. Cuando te sientas segura o seguro, oculta la guía y escríbela de memoria.</p>
+        <div class="letter-grid" id="letterGridUpper"></div>
+        <div class="letter-grid" id="letterGridLower"></div>
+        <div class="toolbar">
+          <label>Color</label><input type="color" id="colorLetra" value="#241C13">
+          <label>Grosor</label><input type="range" id="widthLetra" min="1" max="8" value="3">
+          <button class="btn btn-outline-ink" id="toggleGuideLetra">Ocultar guía</button>
+          <button class="btn btn-outline-ink" id="undoLetra">Deshacer</button>
+          <button class="btn btn-outline-ink" id="clearLetra">Borrar</button>
+          <button class="btn btn-ink" id="saveLetra">Guardar en galería</button>
+          <button class="btn btn-outline-ink" id="printLetra">Imprimir hoja en blanco</button>
+        </div>
+        <div class="trace-wrap" id="traceWrapLetra" style="height:260px;">
+          <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+          <div class="guide-letter" id="guideLetra" style="font-size:9rem; width:340px;">A</div>
+          <canvas class="draw-layer" id="canvasLetra" style="width:340px; height:260px;"></canvas>
+        </div>
+      </div>
+
+      <!-- ---- PRACTICAR PALABRAS ---- -->
+      <div class="subpage" id="sub-palabras">
+        <p class="hint mb-2">Escribe una palabra o frase breve; aparecerá como guía para que la repases con tu propio trazo.</p>
+        <input type="text" class="form-control mb-3" id="wordInput" placeholder="Escribe una palabra o frase…" value="escritura">
+        <div class="toolbar">
+          <label>Color</label><input type="color" id="colorPalabra" value="#241C13">
+          <label>Grosor</label><input type="range" id="widthPalabra" min="1" max="8" value="3">
+          <button class="btn btn-outline-ink" id="toggleGuidePalabra">Ocultar guía</button>
+          <button class="btn btn-outline-ink" id="undoPalabra">Deshacer</button>
+          <button class="btn btn-outline-ink" id="clearPalabra">Borrar</button>
+          <button class="btn btn-ink" id="savePalabra">Guardar en galería</button>
+          <button class="btn btn-outline-ink" id="printPalabra">Imprimir hoja en blanco</button>
+        </div>
+        <div class="trace-wrap" id="traceWrapPalabra" style="height:220px;">
+          <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+          <div class="guide-letter" id="guidePalabra" style="font-size:4.2rem;">escritura</div>
+          <canvas class="draw-layer" id="canvasPalabra" style="height:220px;"></canvas>
+        </div>
+      </div>
+
+      <!-- ---- MI ESTILO LIBRE ---- -->
+      <div class="subpage" id="sub-libre">
+        <p class="hint mb-2">Aquí no hay guía: es tu propio papel pautado para inventar y afinar tu estilo personal de cursiva.</p>
+        <div class="toolbar">
+          <label>Color</label><input type="color" id="colorLibre" value="#241C13">
+          <label>Grosor</label><input type="range" id="widthLibre" min="1" max="8" value="3">
+          <button class="btn btn-outline-ink" id="undoLibre">Deshacer</button>
+          <button class="btn btn-outline-ink" id="clearLibre">Borrar</button>
+          <input type="text" class="form-control" id="nombreLibre" placeholder="Nombra este boceto (ej. Mi firma 1)" style="max-width:220px;">
+          <button class="btn btn-ink" id="saveLibre">Guardar en galería</button>
+        </div>
+        <div class="trace-wrap" id="traceWrapLibre" style="height:280px;">
+          <div class="guide-lines"><div class="ascender"></div><div class="xheight"></div><div class="baseline"></div><div class="descender"></div></div>
+          <canvas class="draw-layer" id="canvasLibre" style="width:100%; height:280px;"></canvas>
+        </div>
+      </div>
+
+      <!-- ---- FIRMA DIGITAL ---- -->
+      <div class="subpage" id="sub-firma">
+        <p class="hint mb-2">Dibuja tu firma con el dedo o el lápiz óptico y expórtala como imagen con fondo transparente, lista para usar como firma digital.</p>
+        <input type="text" class="form-control mb-3" id="signNameInput" placeholder="Tu nombre, como guía opcional…" value="">
+        <div class="toolbar">
+          <label>Color</label><input type="color" id="colorFirma" value="#241C13">
+          <label>Grosor</label><input type="range" id="widthFirma" min="1" max="8" value="3">
+          <button class="btn btn-outline-ink" id="toggleGuideFirma">Ocultar guía</button>
+          <button class="btn btn-outline-ink" id="undoFirma">Deshacer</button>
+          <button class="btn btn-outline-ink" id="clearFirma">Borrar</button>
+          <button class="btn btn-ink" id="saveFirma">Guardar en galería</button>
+          <button class="btn btn-outline-ink" id="exportFirma">Exportar PNG transparente</button>
+        </div>
+        <div class="trace-wrap" id="traceWrapFirma" style="height:200px;">
+          <div class="guide-lines"><div class="baseline" style="top:70%;"></div></div>
+          <div class="guide-letter" id="guideFirma" style="font-size:3.6rem; padding-bottom:26%;"></div>
+          <canvas class="draw-layer" id="canvasFirma" style="width:100%; height:200px;"></canvas>
+        </div>
+        <p class="hint mt-2">La exportación transparente conserva solo tu trazo, sin la línea guía ni el papel de fondo: ideal para pegar sobre documentos o correos.</p>
+      </div>
+
+      <!-- ---- GALERÍA ---- -->
+      <div class="subpage" id="sub-galeria">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <p class="hint mb-0">Tus prácticas guardadas, para ver cómo evoluciona tu letra con el tiempo.</p>
+          <button class="btn btn-sm btn-outline-ink" id="clearGallery">Vaciar galería</button>
+        </div>
+        <div class="row" id="galleryGrid"></div>
+        <p class="hint" id="galleryEmpty">Aún no has guardado ninguna práctica.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<footer>Feliciter scriptum, manus scribit animus format — «bien escrito; la mano escribe, el ánimo la forma»</footer>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="saveToast" class="toast toast-ink" role="status"><div class="toast-body">Guardado.</div></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+/* ======================================================================
+   DATOS: 100 TÉCNICAS NARRATIVAS
+   ====================================================================== */
+const categorias = [
+{ nombre:"Punto de vista y voz narrativa", tecnicas:[
+["Narrador omnisciente","Conoce pensamientos y hechos de todos los personajes y lugares.","Tolstói en Guerra y paz salta entre la mente de un general y la de un campesino.","Escribe una escena saltando entre la interioridad de dos personajes sin cambiar de párrafo."],
+["Narrador en primera persona","El «yo» cuenta solo lo que vive y sabe.","Salinger construye así a Holden en El guardián entre el centeno.","Narra un recuerdo real tuyo cambiando deliberadamente algunos hechos."],
+["Narrador poco fiable","El lector debe dudar de lo que se le cuenta.","Nabokov lo perfecciona en Lolita con Humbert Humbert.","Escribe una confesión donde el narrador minimice su culpa sin que tú lo señales."],
+["Segunda persona narrativa","El relato se dirige a un «tú» que es protagonista.","Cortázar la usa en fragmentos de Rayuela.","Escribe una escena cotidiana en segunda persona."],
+["Narrador testigo","Un personaje secundario cuenta la historia de otro.","Nick Carraway narra la vida de Gatsby.","Narra la historia de un personaje central desde los ojos de su mejor amigo."],
+["Focalización múltiple","Distintos capítulos, distintos narradores.","Faulkner lo lleva al extremo en Mientras agonizo.","Escribe una discusión familiar desde dos personajes, con vocabulario distinto en cada uno."],
+["Narrador colectivo (nosotros)","La voz de un grupo, no de un individuo.","Eugenides usa el «nosotros» vecinal en Las vírgenes suicidas.","Narra un evento del barrio como si hablara la comunidad entera."],
+["Distancia narrativa variable","Acercar o alejar la cámara emocional del narrador.","Flaubert alterna ironía distante e inmersión en Madame Bovary.","Reescribe un párrafo tuyo con distancia fría y luego con cercanía íntima."],
+["Narrador que desafía la verosimilitud","La voz narrativa se sostiene más allá de lo posible.","Alice Sebold hace narrar a una niña asesinada en Desde mi cielo.","Explora narrar desde un lugar imposible para tu historia."],
+["Cambio de persona gramatical","Alternar yo, tú y él para el mismo personaje.","Michel Butor lo hace en La modificación.","Narra un capítulo alternando persona gramatical en los quiebres emocionales."]
+]},
+{ nombre:"Estructura y tiempo", tecnicas:[
+["In medias res","Comenzar en mitad de la acción.","La Ilíada empieza en el noveno año de guerra.","Abre tu relato en el momento de mayor tensión y retrocede después."],
+["Analepsis (flashback)","Interrumpir el presente con el pasado.","García Márquez lo hace constantemente en Cien años de soledad.","Inserta un recuerdo de una sola frase en medio de una escena de acción."],
+["Prolepsis (flash-forward)","Adelantar un hecho futuro.","La primera línea de Cien años de soledad anuncia un fusilamiento futuro.","Escribe una frase inicial que revele el final y construye hacia ese punto."],
+["Estructura circular","El final regresa al punto de partida.","El manuscrito que se lee a sí mismo cierra Cien años de soledad.","Diseña un final cuya última línea repita, transformada, la primera."],
+["Estructura fragmentada","El relato se arma con piezas no lineales.","Cortázar propone órdenes alternativos de capítulos en Rayuela.","Escribe una historia en fragmentos numerados sin orden obligatorio."],
+["Cronología múltiple entrelazada","Dos líneas temporales avanzan en paralelo.","Ishiguro alterna presente y memoria en Los restos del día.","Alterna capítulo a capítulo el «ahora» y el «antes» de un personaje."],
+["Elipsis temporal","Omitir deliberadamente un periodo de tiempo.","Woolf salta diez años en la sección central de Al faro.","Salta meses entre dos párrafos y deja que el lector complete lo elidido."],
+["Mise en abyme","Una historia dentro de la historia que refleja el todo.","La obra de teatro dentro de Hamlet representa el crimen real.","Incluye un cuento o carta dentro de tu relato que anticipe su desenlace."],
+["Ritmo por yuxtaposición de escenas breves","Capítulos cortos que aceleran la lectura.","Hemingway lo practica en Los asesinos.","Divide una escena larga en tres fragmentos separados por espacio en blanco."],
+["Final abierto","No resolver todos los conflictos.","Henry James deja ambigua la maldad en Otra vuelta de tuerca.","Termina un relato sin responder la pregunta central que planteaste."]
+]},
+{ nombre:"Caracterización", tecnicas:[
+["Caracterización por acción","Mostrar el carácter mediante lo que el personaje hace.","Homero define a Aquiles por sus actos en batalla.","Presenta a un personaje nuevo solo mediante una acción, sin describirlo."],
+["Caracterización por objetos","Un objeto revela quién es alguien.","El abrigo en El capote de Gógol define su identidad social.","Describe un objeto cotidiano para revelar el carácter de su dueño."],
+["Personajes especulares","Dos personajes reflejan valores opuestos.","Don Quijote y Sancho Panza: idealismo y pragmatismo.","Crea una pareja que responda de forma opuesta al mismo conflicto."],
+["Personaje redondo vs. plano","Complejidad frente a función fija.","Los personajes de Dickens son memorables por rasgos fijos.","Diseña un secundario «plano» con un solo rasgo dominante."],
+["Monólogo interior","Acceso directo al flujo de pensamiento.","Molly Bloom cierra Ulises con un monólogo sin puntuación.","Escribe medio folio del pensamiento de un personaje sin puntos ni comas."],
+["Corriente de conciencia","Mezcla de percepciones, recuerdos y sensaciones sin orden lógico.","Woolf la despliega en La señora Dalloway.","Escribe una caminata mezclando lo que el personaje ve, recuerda y siente."],
+["Caracterización por diálogo indirecto","Lo que otros dicen del personaje ausente.","El lector conoce a los fantasmas solo por referencias en James.","Presenta un personaje que nunca aparece, solo mencionado por otros."],
+["Arco de transformación","Evolución interna motivada por la trama.","Scrooge se transforma en Cuento de Navidad.","Traza el antes, el quiebre y el después de un personaje."],
+["Antihéroe","Protagonista con defectos morales visibles.","Raskólnikov comete un crimen y conserva la empatía del lector.","Haz que tu protagonista actúe mal pero deja una grieta de humanidad."],
+["Caracterización por el habla (idiolecto)","Cada personaje tiene un modo único de hablar.","Twain diferencia dialectos en Huckleberry Finn.","Da a dos personajes muletillas y ritmo de frase distintos."]
+]},
+{ nombre:"Diálogo", tecnicas:[
+["Diálogo subtextual","Los personajes dicen una cosa y quieren decir otra.","Hemingway lo perfecciona en Colinas como elefantes blancos.","Escribe un diálogo trivial que en realidad discuta algo grave."],
+["Diálogo sin acotaciones","Prescindir de «dijo», «preguntó».","McCarthy elimina casi toda acotación en La carretera.","Escribe un intercambio identificando a los hablantes solo por su estilo."],
+["Interrupción y solapamiento","Los personajes se cortan entre sí.","Recurso habitual del diálogo realista contemporáneo.","Usa el guion largo para cortar una frase que el otro retoma."],
+["Silencio como respuesta","Lo no dicho pesa más que lo dicho.","Chéjov construye tensión evitando lo esencial.","Responde una pregunta importante solo con una acción física."],
+["Diálogo coral","Varias voces simultáneas, casi teatral.","Faulkner y Dos Passos retratan comunidades así.","Escribe una fiesta con fragmentos de al menos cuatro voces entremezcladas."],
+["Revelación diferida en diálogo","La información clave se entrega en fragmentos.","Agatha Christie dosifica pistas en sus novelas.","Divide una confesión importante en tres diálogos distintos."],
+["Registro y clase social en el habla","El nivel de lenguaje delata origen y educación.","Dickens marca diferencias de clase en el habla londinense.","Escribe «llegas tarde» en boca de dos personajes de estratos distintos."],
+["Ironía verbal en el diálogo","Decir lo contrario de lo que se piensa.","Austen construye tensión social con ironía conversacional.","Escribe un diálogo cortés que oculte un desprecio mutuo."],
+["Diálogo telegráfico","Frases cortísimas que aceleran el ritmo.","Carver reduce el diálogo a lo esencial.","Elimina toda palabra no estrictamente necesaria de un diálogo tuyo."],
+["Monólogo a interlocutor mudo","Un personaje habla y el otro nunca responde.","Recurso clásico de cartas no respondidas y monólogos dramáticos.","Escribe una escena donde un personaje hable largamente a otro en silencio."]
+]},
+{ nombre:"Estilo y lenguaje", tecnicas:[
+["Estilo indirecto libre","Fusión de la voz del narrador y el pensamiento del personaje.","Flaubert lo inventa en Madame Bovary.","Narra un pensamiento en tercera persona pero con el vocabulario del personaje."],
+["Frase larga acumulativa","Periodos extensos que imitan el pensamiento continuo.","Proust construye frases de página entera.","Escribe un párrafo de una sola frase sin punto hasta el cierre."],
+["Frase corta y seca","Economía extrema como recurso de tensión.","Hemingway la eleva a estilo propio.","Reescribe una escena usando solo frases de menos de ocho palabras."],
+["Repetición anafórica","Repetir una palabra al inicio de frases sucesivas.","Whitman la usa en Hojas de hierba.","Escribe un párrafo donde cada frase empiece igual."],
+["Polisíndeton","Multiplicar conjunciones para dar sensación de urgencia.","Hemingway y la prosa bíblica la usan con frecuencia.","Encadena una escena de acción con «y» en vez de puntuar."],
+["Asíndeton","Eliminar conjunciones para dar velocidad.","César la usa en su prosa latina.","Convierte una frase con «y» en frases cortas separadas por comas."],
+["Metáfora extendida","Una imagen que se desarrolla en varios párrafos.","Kafka literaliza la alienación en La metamorfosis.","Desarrolla una metáfora simple en tres momentos del relato."],
+["Prosa poética","Lenguaje narrativo cercano a la densidad del poema.","Toni Morrison lo logra en Beloved.","Describe un paisaje priorizando el sonido sobre la información."],
+["Extrañamiento (ostranenie)","Describir lo cotidiano como si se viera por primera vez.","Tolstói y los formalistas rusos la teorizan y practican.","Describe un objeto doméstico como alguien que nunca vio algo similar."],
+["Registro mixto (alta y baja cultura)","Combinar lenguaje culto y coloquial.","Joyce mezcla parodia épica y jerga dublinesa en Ulises.","Escribe un párrafo que alterne una referencia culta con jerga callejera."]
+]},
+{ nombre:"Ambientación y atmósfera", tecnicas:[
+["Pathetic fallacy","El entorno natural refleja el estado emocional.","Las tormentas de Cumbres borrascosas acompañan la pasión.","Describe el clima de una escena para expresar la emoción sin nombrarla."],
+["Ambientación como personaje","El lugar pesa tanto como los humanos.","Macondo y Yoknapatawpha funcionan así.","Dale a tu escenario una historia propia, con nombre y memoria."],
+["Detalle sensorial selectivo","Elegir dos o tres detalles en vez de describirlo todo.","Chéjov aconsejaba mostrar el vidrio roto bajo la luna.","Describe una habitación usando solo tres objetos."],
+["Atmósfera gótica","Ambientes cerrados y opresivos que generan inquietud.","Poe la perfecciona en La caída de la casa Usher.","Describe la entrada a un edificio antiguo enfatizando el deterioro."],
+["Realismo mágico","Elementos fantásticos tratados con naturalidad.","García Márquez y Rulfo son referentes centrales.","Introduce un hecho imposible y nárralo con tono cotidiano."],
+["Descripción por ausencia","Definir un lugar por lo que falta en él.","McCarthy describe un mundo posapocalíptico por lo perdido.","Describe una ciudad nombrando tres cosas que ya no están."],
+["Sinestesia descriptiva","Mezclar sentidos en una misma imagen.","Rimbaud y los simbolistas la explotan.","Escribe una descripción combinando dos sentidos distintos."],
+["Clima o estaciones simbólicas","Vincular fases del año a fases de la trama.","Muchas tragedias clásicas sitúan el clímax en tormenta o invierno.","Haz coincidir el mayor conflicto con un cambio de estación."],
+["Espacio como metáfora psicológica","Laberintos y casas que representan el estado mental.","El castillo de El proceso de Kafka es un estado mental.","Diseña un espacio cuya disposición refleje la confusión interior."],
+["Contraste interior/exterior","Oponer un espacio íntimo a uno público.","Ibsen lo usa en Casa de muñecas.","Escribe una escena que empiece en privado y termine en público."]
+]},
+{ nombre:"Tensión y suspenso", tecnicas:[
+["El fusil de Chéjov","Todo elemento introducido debe tener función posterior.","Chéjov formuló que un arma mostrada debe dispararse antes del final.","Introduce un objeto trivial al inicio y dale importancia decisiva al final."],
+["Ironía dramática","El lector sabe algo que el personaje ignora.","Shakespeare la usa en Otelo.","Revela al lector un dato oculto al protagonista."],
+["Retardación (delay)","Aplazar la información crucial con digresiones controladas.","Las novelas de folletín de Dickens dominan este recurso.","Interrumpe el momento de mayor tensión con un breve desvío."],
+["Pista falsa","Un elemento que desvía la atención deliberadamente.","Agatha Christie construye tramas alrededor de pistas falsas.","Introduce un sospechoso que luego resulte irrelevante."],
+["Cliffhanger de capítulo","Terminar una sección en el punto de mayor incertidumbre.","Dickens publicaba así sus novelas por entregas.","Corta un capítulo justo antes de una noticia decisiva."],
+["Reloj narrativo","Un límite de tiempo que aumenta la presión.","Muchos thrillers usan plazos explícitos.","Da a tu protagonista un plazo concreto para resolver el conflicto."],
+["Presagios (foreshadowing)","Sembrar señales del desenlace sin revelarlo.","Sófocles siembra el destino de Edipo desde el oráculo.","Incluye una frase inocente que, releída, anuncie el final."],
+["Suspenso por punto de vista limitado","El lector solo sabe lo que el narrador percibe.","Los relatos de terror de Poe dependen de esta restricción.","Cuenta un peligro sin que el narrador vea lo que hay detrás de la puerta."],
+["Contraste de ritmo","Alternar escenas lentas y rápidas.","Los thrillers alternan calma y acción explosiva.","Antecede tu escena de más acción con un párrafo lento."],
+["Revelación tardía (twist)","Un giro que reinterpreta todo lo anterior.","El final de Otra vuelta de tuerca depende de esto.","Decide el giro final primero y siembra las pistas que lo permitan."]
+]},
+{ nombre:"Metaficción y experimentación", tecnicas:[
+["Metaficción","La ficción expone su propia condición de artificio.","Cervantes lo hace en la segunda parte del Quijote.","Haz que un personaje mencione que está dentro de una historia."],
+["Novela epistolar","La historia se cuenta mediante cartas.","Drácula y Las relaciones peligrosas son ejemplos centrales.","Cuenta un conflicto entero mediante tres cartas cruzadas."],
+["Formato de diario","Narración cronológica en primera persona con entradas fechadas.","El diario de Ana Frank es el ejemplo más conocido.","Escribe cinco entradas que muestren el cambio de un personaje."],
+["Segunda persona interactiva","El lector se convierte en actor de las decisiones.","Cortázar lo experimenta parcialmente en Rayuela.","Ofrece al lector dos caminos posibles y desarrolla ambos."],
+["Documento encontrado","El relato se presenta como manuscrito hallado o editado.","Drácula y Frankenstein usan marcos de documentos reales.","Presenta tu relato como manuscrito descubierto con una nota editorial."],
+["Ruptura de la cuarta pared","El narrador se dirige directamente al lector.","Fielding lo hace en Tom Jones.","Escribe un párrafo donde el narrador comente sus propias decisiones."],
+["Narrador que miente conscientemente","La mentira es deliberada y se revela después.","Ishiguro lo trabaja en Los restos del día.","Haz que el narrador oculte algo y luego admita que mintió."],
+["Estructura en catálogo o lista","El relato avanza mediante enumeraciones.","Perec construye La vida instrucciones de uso como inventario.","Escribe una escena entera como lista de objetos o instrucciones."],
+["Colage de géneros discursivos","Mezclar recortes de periódico, actas o anuncios.","Dos Passos lo hace en su trilogía U.S.A.","Inserta un fragmento de noticia ficticia dentro de tu relato."],
+["Fragmentación tipográfica","Usar el espacio en blanco como parte del sentido.","B. S. Johnson experimenta con la disposición visual del texto.","Usa espacios en blanco inusuales para representar una interrupción emocional."]
+]},
+{ nombre:"Simbolismo y recursos retóricos", tecnicas:[
+["Símbolo recurrente","Un objeto o imagen que se repite y acumula significado.","La ballena blanca en Moby Dick es el ejemplo canónico.","Haz reaparecer un objeto tres veces con un matiz distinto cada vez."],
+["Alegoría","La historia completa funciona como metáfora de otra realidad.","Rebelión en la granja de Orwell es alegoría política.","Diseña tu trama para que sostenga una lectura moral paralela."],
+["Motivo (leitmotiv)","Una frase o gesto que se repite para dar cohesión.","Thomas Mann lo usa en La montaña mágica.","Repite una misma frase corta en tres momentos, con más carga cada vez."],
+["Ironía dramática estructural","El destino contradice los propios valores del personaje.","Edipo busca la verdad que lo destruirá.","Haz que el objetivo del protagonista sea justo lo que provoque su ruina."],
+["Doble o doppelgänger","Un personaje representa el lado oculto de otro.","Jekyll y Hyde lo formulan directamente.","Crea un secundario que actúe como espejo oscuro del protagonista."],
+["Objeto transicional cargado de memoria","Un objeto conecta pasado y presente.","La magdalena de Proust dispara la memoria involuntaria.","Elige un objeto sensorial que desencadene un recuerdo completo."],
+["Paralelismo estructural entre tramas","Dos historias se iluminan mutuamente.","Ana Karenina contrasta a Ana y a Levin.","Escribe dos subtramas que respondan a la misma pregunta de forma opuesta."],
+["Ironía de tono","El narrador comenta con distancia burlona.","Austen y Vargas Llosa la dominan.","Narra un evento serio con un tono ligeramente burlón."],
+["Personificación de fuerzas abstractas","Dar cualidades activas al tiempo o la muerte.","La Muerte narra en La ladrona de libros.","Convierte una fuerza abstracta en una presencia casi personal."],
+["Circularidad simbólica del título","El título cobra sentido pleno solo al terminar.","Cien años de soledad funciona así.","Elige el título después de escribir, para que cierre el sentido."]
+]},
+{ nombre:"Cierre y resolución", tecnicas:[
+["Final epifánico","Comprensión súbita que ilumina sin resolver la trama.","Joyce construye Dublineses alrededor de epifanías.","Termina con un instante de comprensión silenciosa, sin explicarlo."],
+["Final circular con variación","Se repite la escena inicial con un matiz distinto.","Recurso clásico para mostrar transformación del personaje.","Reescribe tu primera escena al final cambiando un solo detalle."],
+["Final trágico inevitable","El desenlace se anuncia desde el principio y aun así conmueve.","La tragedia griega se basa en este principio.","Anuncia el destino fatal desde el inicio; que importe el cómo."],
+["Final ambiguo deliberado","Dos lecturas igualmente válidas del desenlace.","Otra vuelta de tuerca permite dos interpretaciones.","Construye un final que admita dos lecturas opuestas y coherentes."],
+["Resolución por objeto simbólico final","El destino del objeto recurrente cierra la historia.","El objeto que abre la historia regresa transformado.","Haz reaparecer tu símbolo recurrente por última vez."],
+["Final con cambio de narrador","La voz que cierra no es la que empezó.","Las novelas polifónicas ceden la última palabra a otro personaje.","Cierra con la voz de un personaje que no había narrado antes."],
+["Coda o epílogo temporal","Un salto al futuro muestra consecuencias lejanas.","Cien años de soledad y Middlemarch usan epílogos así.","Añade un párrafo final que salte años y resuma destinos."],
+["Anticlímax deliberado","El desenlace es deliberadamente menor tras tanta tensión.","Chéjov y Beckett dominan este recurso.","Resuelve una gran expectativa con un gesto mínimo."],
+["Final que retoma el título","La última línea contiene, transformada, la frase del título.","Recurso frecuente en el cuento breve.","Escribe tu última frase usando de forma distinta las palabras del título."],
+["Silencio final","El relato termina en una acción, no en una reflexión explicada.","Hemingway y Carver prefieren terminar en un gesto.","Termina con una sola acción física, sin comentario del narrador."]
+]}
+];
+
+/* ======================================================================
+   DATOS: ESTILOS DE CALIGRAFÍA
+   ====================================================================== */
+const estilos = [
+  { id:"spencerian", nombre:"Script — Cursiva Spencerian", font:"'Tangerine', cursive", tam:"3.6rem",
+    historia:"Estilo estadounidense de mediados del siglo XIX, fluido y ornamental, base de la firma comercial elegante antes de la escritura mecanografiada." },
+  { id:"copperplate", nombre:"Cursiva inglesa (Copperplate / Roundhand)", font:"'Petit Formal Script', cursive", tam:"2.6rem",
+    historia:"Escritura inglesa de trazo fino y grueso alternado, nacida de la pluma de punta metálica en el siglo XVIII; base de la caligrafía formal europea." },
+  { id:"chancery", nombre:"Cursiva itálica (Chancery)", font:"'Mrs Saint Delafield', cursive", tam:"2.8rem",
+    historia:"Cursiva cancilleresca renacentista italiana, inclinada y rápida, creada para la correspondencia oficial y hoy base de la itálica caligráfica moderna." },
+  { id:"palmer", nombre:"Cursiva Palmer", font:"'Homemade Apple', cursive", tam:"2.3rem",
+    historia:"Método estadounidense de escritura ligada, simplificado a inicios del siglo XX para la enseñanza escolar rápida y legible." }
+];
+let estiloActivo = estilos[0];
+
+/* ======================================================================
+   ESTADO Y ALMACENAMIENTO
+   ====================================================================== */
+let estadoTecnicas = { practicadas:{}, textos:{} };
+let galeria = [];
+
+function mostrarToast(msg){
+  const t = document.getElementById('saveToast');
+  t.querySelector('.toast-body').textContent = msg;
+  new bootstrap.Toast(t, {delay:1400}).show();
+}
+
+async function cargarTodo(){
+  try{
+    const r = await window.storage.get('scriptorium:estado');
+    if(r && r.value) estadoTecnicas = JSON.parse(r.value);
+  }catch(e){}
+  try{
+    const g = await window.storage.get('scriptorium:galeria');
+    if(g && g.value) galeria = JSON.parse(g.value);
+  }catch(e){}
+  renderTecnicas();
+  actualizarProgreso();
+  renderGaleria();
+}
+async function guardarEstadoTecnicas(){
+  try{ await window.storage.set('scriptorium:estado', JSON.stringify(estadoTecnicas)); }
+  catch(e){ console.error(e); }
+}
+async function guardarGaleriaStorage(){
+  try{ await window.storage.set('scriptorium:galeria', JSON.stringify(galeria)); }
+  catch(e){ console.error(e); }
+}
+
+/* ======================================================================
+   RENDER: TÉCNICAS
+   ====================================================================== */
+function idTecnica(catIdx, tIdx){ return catIdx+"-"+tIdx; }
+
+function renderTecnicas(filtro=""){
+  const cont = document.getElementById('accordionCategorias');
+  cont.innerHTML = "";
+  categorias.forEach((cat, ci)=>{
+    const items = cat.tecnicas.map((t,ti)=>({t,ti}))
+      .filter(o => filtro==="" || o.t[0].toLowerCase().includes(filtro.toLowerCase()));
+    if(items.length===0) return;
+    const accId = "cat"+ci;
+    const item = document.createElement('div');
+    item.className = "accordion-item";
+    item.innerHTML = `
+      <h2 class="accordion-header">
+        <button class="accordion-button ${ci===0?'':'collapsed'}" type="button" data-bs-toggle="collapse" data-bs-target="#${accId}">
+          ${ci+1}. ${cat.nombre}
+        </button>
+      </h2>
+      <div id="${accId}" class="accordion-collapse collapse ${ci===0?'show':''}" data-bs-parent="#accordionCategorias">
+        <div class="accordion-body" id="body-${accId}"></div>
+      </div>`;
+    cont.appendChild(item);
+    const body = item.querySelector(`#body-${accId}`);
+    items.forEach(({t,ti})=>{
+      const id = idTecnica(ci,ti);
+      const [nombre,def,ejemplo,ejercicio] = t;
+      const numGlobal = categorias.slice(0,ci).reduce((a,c)=>a+c.tecnicas.length,0) + ti + 1;
+      const done = !!estadoTecnicas.practicadas[id];
+      const texto = estadoTecnicas.textos[id] || "";
+      const card = document.createElement('div');
+      card.className = "tech-card" + (done ? " done":"");
+      card.innerHTML = `
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+          <div>
+            <span class="tech-num">#${numGlobal}</span> <strong>${nombre}</strong>
+            <div class="small mt-1">${def}</div>
+            <div class="small fst-italic mt-1 rubric">Ejemplo: ${ejemplo}</div>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input chk-done" type="checkbox" id="chk-${id}" ${done?'checked':''}>
+            <label class="form-check-label small" for="chk-${id}">practicada</label>
+          </div>
+        </div>
+        <div class="small gold mt-2 mb-1"><strong>Ejercicio:</strong> ${ejercicio}</div>
+        <textarea class="form-control mt-1" rows="3" placeholder="Escribe aquí tu práctica…">${texto}</textarea>
+        <button class="btn btn-sm btn-outline-ink mt-2 btn-save">Guardar folio</button>
+      `;
+      body.appendChild(card);
+      card.querySelector('.chk-done').addEventListener('change', async (e)=>{
+        estadoTecnicas.practicadas[id] = e.target.checked;
+        card.classList.toggle('done', e.target.checked);
+        await guardarEstadoTecnicas();
+        actualizarProgreso();
+      });
+      card.querySelector('.btn-save').addEventListener('click', async ()=>{
+        estadoTecnicas.textos[id] = card.querySelector('textarea').value;
+        await guardarEstadoTecnicas();
+        mostrarToast('Guardado en el cuaderno.');
+      });
+    });
+  });
+}
+function actualizarProgreso(){
+  const total = categorias.reduce((a,c)=>a+c.tecnicas.length,0);
+  const hechas = Object.values(estadoTecnicas.practicadas).filter(Boolean).length;
+  document.getElementById('sealCount').textContent = hechas+"/"+total;
+  document.getElementById('progressBar').style.width = (hechas/total*100)+"%";
+}
+document.getElementById('searchInput').addEventListener('input', (e)=> renderTecnicas(e.target.value));
+
+/* ======================================================================
+   SUB-PESTAÑAS DE CALIGRAFÍA
+   ====================================================================== */
+document.querySelectorAll('#calliSubnav button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('#calliSubnav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.subpage').forEach(p=>p.classList.remove('active'));
+    document.getElementById('sub-'+btn.dataset.sub).classList.add('active');
+    // Reajustar lienzos al mostrarse (dimensiones reales)
+    if(['letras','palabras','libre','firma'].includes(btn.dataset.sub)){
+      canvasLetra._resize(); canvasPalabra._resize(); canvasLibre._resize(); canvasFirma._resize();
+    }
+  });
+});
+
+/* ======================================================================
+   CALIGRAFÍA: ESTUDIO
+   ====================================================================== */
+const alfabetoLower = "a b c d e f g h i j k l m n ñ o p q r s t u v w x y z".split(" ");
+const alfabetoUpper = "A B C D E F G H I J K L M N Ñ O P Q R S T U V W X Y Z".split(" ");
+
+function renderCalligraphyStudy(){
+  const cont = document.getElementById('calliContainer');
+  estilos.forEach(est=>{
+    const card = document.createElement('div');
+    card.className = "calli-card";
+    card.innerHTML = `
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+        <h3 class="mb-0">${est.nombre}</h3>
+      </div>
+      <p class="small fst-italic">${est.historia}</p>
+      <div class="calli-alphabet" style="font-family:${est.font}; font-size:${est.tam};">${alfabetoUpper.join(" ")}</div>
+      <div class="calli-alphabet mt-2" style="font-family:${est.font}; font-size:${est.tam};">${alfabetoLower.join(" ")}</div>
+      <div class="calli-sample mt-3" style="font-family:${est.font};">Feliciter scriptum — bien escrito</div>
+      <hr>
+      <label class="form-label small fw-bold" style="font-family:'Cinzel',serif;">Vista previa de tu propio texto</label>
+      <input type="text" class="form-control calli-input" placeholder="Escribe una palabra o frase…">
+      <div class="calli-live mt-2" style="font-family:${est.font};"></div>
+    `;
+    cont.appendChild(card);
+    card.querySelector('.calli-input').addEventListener('input', (e)=>{
+      card.querySelector('.calli-live').textContent = e.target.value;
+    });
+  });
+}
+
+/* ======================================================================
+   CALIGRAFÍA: SELECTOR DE ESTILO PARA PRÁCTICA
+   ====================================================================== */
+function renderStylePills(){
+  const cont = document.getElementById('stylePills');
+  estilos.forEach((e,i)=>{
+    const b = document.createElement('button');
+    b.className = "style-pill" + (i===0 ? " active":"");
+    b.textContent = e.nombre.split(" — ")[0] === "Script" ? e.nombre : e.nombre.split(" (")[0];
+    b.dataset.id = e.id;
+    b.addEventListener('click', ()=>{
+      document.querySelectorAll('.style-pill').forEach(p=>p.classList.remove('active'));
+      b.classList.add('active');
+      estiloActivo = e;
+      aplicarEstiloGuia();
+    });
+    cont.appendChild(b);
+  });
+}
+function aplicarEstiloGuia(){
+  document.getElementById('guideLetra').style.fontFamily = estiloActivo.font;
+  document.getElementById('guidePalabra').style.fontFamily = estiloActivo.font;
+  const gf = document.getElementById('guideFirma');
+  if(gf) gf.style.fontFamily = estiloActivo.font;
+}
+
+/* ======================================================================
+   CALIGRAFÍA: LIENZOS DE TRAZADO
+   ====================================================================== */
+function crearLienzo(canvas, colorInput, widthInput){
+  function resize(){
+    const rect = canvas.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    canvas.width = Math.max(1, rect.width * dpr);
+    canvas.height = Math.max(1, rect.height * dpr);
+    const ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    canvas._ctx = ctx;
+  }
+  resize();
+  canvas._undoStack = [];
+  let drawing = false, lastX=0, lastY=0;
+  function pos(e){ const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function pushUndo(){
+    try{
+      const snap = canvas.toDataURL('image/png');
+      canvas._undoStack.push(snap);
+      if(canvas._undoStack.length > 12) canvas._undoStack.shift();
+    }catch(e){}
+  }
+  canvas.addEventListener('pointerdown', (e)=>{
+    canvas.setPointerCapture(e.pointerId);
+    pushUndo(); drawing = true;
+    const p = pos(e); lastX = p.x; lastY = p.y;
+    const ctx = canvas._ctx;
+    ctx.strokeStyle = colorInput.value;
+    ctx.lineWidth = parseFloat(widthInput.value);
+    ctx.beginPath(); ctx.moveTo(lastX, lastY);
+  });
+  canvas.addEventListener('pointermove', (e)=>{
+    if(!drawing) return;
+    const p = pos(e); const ctx = canvas._ctx;
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    lastX = p.x; lastY = p.y;
+  });
+  function endStroke(){ drawing = false; }
+  canvas.addEventListener('pointerup', endStroke);
+  canvas.addEventListener('pointerleave', endStroke);
+  canvas.addEventListener('pointercancel', endStroke);
+  canvas._resize = resize;
+  canvas._clear = ()=>{ const ctx=canvas._ctx; ctx.clearRect(0,0,canvas.width,canvas.height); };
+  canvas._undo = ()=>{
+    if(canvas._undoStack.length===0){ canvas._clear(); return; }
+    const data = canvas._undoStack.pop();
+    const img = new Image();
+    img.onload = ()=>{
+      const ctx = canvas._ctx;
+      ctx.save(); ctx.setTransform(1,0,0,1,0,0);
+      ctx.clearRect(0,0,canvas.width,canvas.height);
+      ctx.drawImage(img,0,0,canvas.width,canvas.height);
+      ctx.restore();
+    };
+    img.src = data;
+  };
+  return canvas;
+}
+
+const canvasLetra = document.getElementById('canvasLetra');
+crearLienzo(canvasLetra, document.getElementById('colorLetra'), document.getElementById('widthLetra'));
+document.getElementById('clearLetra').addEventListener('click', ()=>canvasLetra._clear());
+document.getElementById('undoLetra').addEventListener('click', ()=>canvasLetra._undo());
+document.getElementById('toggleGuideLetra').addEventListener('click', (e)=>{
+  const g = document.getElementById('guideLetra');
+  g.classList.toggle('hidden-guide');
+  e.target.textContent = g.classList.contains('hidden-guide') ? 'Mostrar guía' : 'Ocultar guía';
+});
+
+const canvasPalabra = document.getElementById('canvasPalabra');
+function anchoPalabra(texto){ return Math.max(340, texto.length*70); }
+function actualizarPalabra(){
+  const texto = document.getElementById('wordInput').value || " ";
+  const ancho = anchoPalabra(texto);
+  document.getElementById('guidePalabra').textContent = texto;
+  document.getElementById('guidePalabra').style.width = ancho+"px";
+  canvasPalabra.style.width = ancho+"px";
+  canvasPalabra._resize();
+}
+document.getElementById('wordInput').addEventListener('input', actualizarPalabra);
+crearLienzo(canvasPalabra, document.getElementById('colorPalabra'), document.getElementById('widthPalabra'));
+actualizarPalabra();
+document.getElementById('clearPalabra').addEventListener('click', ()=>canvasPalabra._clear());
+document.getElementById('undoPalabra').addEventListener('click', ()=>canvasPalabra._undo());
+document.getElementById('toggleGuidePalabra').addEventListener('click', (e)=>{
+  const g = document.getElementById('guidePalabra');
+  g.classList.toggle('hidden-guide');
+  e.target.textContent = g.classList.contains('hidden-guide') ? 'Mostrar guía' : 'Ocultar guía';
+});
+
+const canvasLibre = document.getElementById('canvasLibre');
+crearLienzo(canvasLibre, document.getElementById('colorLibre'), document.getElementById('widthLibre'));
+document.getElementById('clearLibre').addEventListener('click', ()=>canvasLibre._clear());
+document.getElementById('undoLibre').addEventListener('click', ()=>canvasLibre._undo());
+
+/* ---- Firma digital ---- */
+const canvasFirma = document.getElementById('canvasFirma');
+crearLienzo(canvasFirma, document.getElementById('colorFirma'), document.getElementById('widthFirma'));
+document.getElementById('clearFirma').addEventListener('click', ()=>canvasFirma._clear());
+document.getElementById('undoFirma').addEventListener('click', ()=>canvasFirma._undo());
+document.getElementById('signNameInput').addEventListener('input', (e)=>{
+  document.getElementById('guideFirma').textContent = e.target.value;
+  document.getElementById('guideFirma').style.fontFamily = estiloActivo.font;
+});
+document.getElementById('toggleGuideFirma').addEventListener('click', (e)=>{
+  const g = document.getElementById('guideFirma');
+  g.classList.toggle('hidden-guide');
+  e.target.textContent = g.classList.contains('hidden-guide') ? 'Mostrar guía' : 'Ocultar guía';
+});
+document.getElementById('exportFirma').addEventListener('click', ()=>{
+  const link = document.createElement('a');
+  link.download = 'firma-digital.png';
+  link.href = canvasFirma.toDataURL('image/png');
+  link.click();
+  mostrarToast('Firma exportada en PNG transparente.');
+});
+document.getElementById('saveFirma').addEventListener('click', ()=>{
+  guardarEnGaleria(canvasFirma, 'Firma digital');
+});
+
+/* ======================================================================
+   CALIGRAFÍA: GRID DE LETRAS
+   ====================================================================== */
+function renderLetterGrid(){
+  const upper = document.getElementById('letterGridUpper');
+  const lower = document.getElementById('letterGridLower');
+  const letras = "abcdefghijklmnñopqrstuvwxyz".split("");
+  letras.forEach((l,i)=>{
+    const bU = document.createElement('button');
+    bU.className = "letter-btn" + (i===0?" active":"");
+    bU.textContent = l.toUpperCase();
+    bU.addEventListener('click', ()=>seleccionarLetra(l.toUpperCase(), bU));
+    upper.appendChild(bU);
+    const bL = document.createElement('button');
+    bL.className = "letter-btn";
+    bL.textContent = l;
+    bL.addEventListener('click', ()=>seleccionarLetra(l, bL));
+    lower.appendChild(bL);
+  });
+}
+function seleccionarLetra(letra, btn){
+  document.querySelectorAll('.letter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('guideLetra').textContent = letra;
+  canvasLetra._clear();
+}
+
+/* ======================================================================
+   GALERÍA
+   ====================================================================== */
+function renderGaleria(){
+  const grid = document.getElementById('galleryGrid');
+  const vacio = document.getElementById('galleryEmpty');
+  grid.innerHTML = "";
+  vacio.style.display = galeria.length === 0 ? 'block' : 'none';
+  galeria.slice().reverse().forEach(item=>{
+    const col = document.createElement('div');
+    col.className = "col-6 col-md-4 col-lg-3";
+    col.innerHTML = `
+      <div class="gallery-item">
+        <img src="${item.dataURL}" alt="práctica">
+        <div class="small mt-1"><span class="badge badge-style">${item.estilo}</span></div>
+        <div class="small">${item.etiqueta}</div>
+        <div class="small text-muted">${item.fecha}</div>
+        <a class="btn btn-sm btn-outline-ink mt-1" download="${item.etiqueta.replace(/\s+/g,'_')}.png" href="${item.dataURL}">Descargar</a>
+      </div>`;
+    grid.appendChild(col);
+  });
+}
+async function guardarEnGaleria(canvas, etiqueta){
+  const dataURL = canvas.toDataURL('image/png');
+  galeria.push({ id: Date.now(), estilo: estiloActivo.nombre, etiqueta, dataURL, fecha: new Date().toLocaleDateString() });
+  if(galeria.length > 60) galeria.shift();
+  await guardarGaleriaStorage();
+  renderGaleria();
+  mostrarToast('Guardado en la galería.');
+}
+document.getElementById('saveLetra').addEventListener('click', ()=>{
+  const letra = document.getElementById('guideLetra').textContent;
+  guardarEnGaleria(canvasLetra, `Letra "${letra}"`);
+});
+document.getElementById('savePalabra').addEventListener('click', ()=>{
+  const texto = document.getElementById('wordInput').value || "palabra";
+  guardarEnGaleria(canvasPalabra, texto);
+});
+document.getElementById('saveLibre').addEventListener('click', ()=>{
+  const nombre = document.getElementById('nombreLibre').value || "Estilo libre";
+  guardarEnGaleria(canvasLibre, nombre);
+});
+document.getElementById('clearGallery').addEventListener('click', async ()=>{
+  galeria = [];
+  await guardarGaleriaStorage();
+  renderGaleria();
+  mostrarToast('Galería vaciada.');
+});
+
+/* ======================================================================
+   IMPRESIÓN
+   ====================================================================== */
+function imprimirHoja(contenido){
+  const w = window.open('', '_blank');
+  w.document.write(`
+    <html><head><title>${estiloActivo.nombre}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Petit+Formal+Script&family=Mrs+Saint+Delafield&family=Homemade+Apple&display=swap" rel="stylesheet">
+    <style>
+      body{font-family:sans-serif; padding:30px;}
+      .line{font-family:${estiloActivo.font}; font-size:3rem; border-bottom:1px solid #999; padding:14px 4px; margin-bottom:6px; color:#444;}
+      .empty{border-bottom:1px solid #ccc; height:56px; margin-bottom:6px;}
+      h2{font-family:sans-serif;}
+    </style></head><body>
+    <h2>${estiloActivo.nombre} — hoja de práctica</h2>
+    <div class="line">${contenido}</div>
+    <div class="empty"></div><div class="empty"></div>
+    <div class="line">${contenido}</div>
+    <div class="empty"></div><div class="empty"></div>
+    <div class="empty"></div><div class="empty"></div>
+    </body></html>`);
+  w.document.close(); w.print();
+}
+document.getElementById('printLetra').addEventListener('click', ()=>{
+  imprimirHoja(document.getElementById('guideLetra').textContent.repeat(20));
+});
+document.getElementById('printPalabra').addEventListener('click', ()=>{
+  imprimirHoja(document.getElementById('wordInput').value || "practica");
+});
+
+/* ======================================================================
+   INIT
+   ====================================================================== */
+renderStylePills();
+aplicarEstiloGuia();
+renderLetterGrid();
+renderCalligraphyStudy();
+cargarTodo();
+</script>
+</body>
+</html>

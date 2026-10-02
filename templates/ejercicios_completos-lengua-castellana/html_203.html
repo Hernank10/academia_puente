@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas sustantivales</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados {
+            text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic;
+        }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas sustantivales · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'colectivo', 'metáfora', 'elipsis', 'sustantivación')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de uso del sustantivo en la prosa literaria en lengua castellana de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto, devolviendo al oficio de escribir su dimensión física y artesanal.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas sustantivales han sido seleccionadas a partir del análisis estilístico de autores como Gabriel García Márquez, Julio Cortázar, Juan Rulfo, Jorge Luis Borges, Roberto Bolaño, Mario Vargas Llosa, Alejo Carpentier, Carmen Martín Gaite y muchos otros. Se organizan en diez familias: concreción/abstracción, nombres propios, colectivos, derivación, género/número, sintaxis, metáfora sustantival, acumulación, omisión y sustantivación de otras categorías.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia estilística</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Concreción y abstracción",
+                tecnicas: [
+                    {nombre:"Sustantivo concreto sensorial", desc:"Evoca una percepción física inmediata.", ej:"El olor de la guayaba (García Márquez)."},
+                    {nombre:"Sustantivo abstracto personificado", desc:"Un concepto abstracto actúa como un ser.", ej:"La soledad lo visitaba cada noche (Rulfo)."},
+                    {nombre:"Alternancia concreto/abstracto", desc:"Yuxtaposición de lo material y lo intangible.", ej:"El amor y el pan (Benedetti)."},
+                    {nombre:"Abstracto con artículo definido enfático", desc:"El artículo resalta la esencia del concepto.", ej:"La belleza era eso."},
+                    {nombre:"Concreto metonímico", desc:"Un objeto representa una institución o idea.", ej:"El trono (por la monarquía)."},
+                    {nombre:"Sustantivo abstracto en acción", desc:"Abstracción que ejecuta una acción inesperada.", ej:"La esperanza cabalgaba sobre el pueblo."},
+                    {nombre:"Concreto con valor simbólico", desc:"Un objeto concreto se carga de significado.", ej:"El reloj de pared detenido marcaba el fin."},
+                    {nombre:"Abstracto que designa sensación física", desc:"Concepto intangible que describe una percepción.", ej:"El frío del amanecer."},
+                    {nombre:"Concreto usado como abstracto en plural", desc:"El plural eleva lo material a categoría.", ej:"Los mármoles (por el poder, la opulencia)."},
+                    {nombre:"Sustantivo de materia con valor metafórico", desc:"La materia nombra una cualidad moral.", ej:"Oro (por riqueza o pureza)."}
+                ]
+            },
+            {
+                nombre: "B. Nombres propios y su tratamiento",
+                tecnicas: [
+                    {nombre:"Nombre propio con artículo", desc:"Artículo que crea familiaridad o extrañeza.", ej:"La Maga (Cortázar)."},
+                    {nombre:"Antropónimo sin artículo", desc:"Nombre escueto que dota de universalidad.", ej:"Aureliano Buendía."},
+                    {nombre:"Topónimo con valor simbólico", desc:"El lugar se convierte en arquetipo.", ej:"Macondo."},
+                    {nombre:"Nombre propio convertido en común", desc:"Antonomásia: un nombre propio pasa a designar una categoría.", ej:"un donjuán."},
+                    {nombre:"Alias o apodo literario", desc:"Apodo que define al personaje.", ej:"el Pibe, el Flaco."},
+                    {nombre:"Nombre propio con diminutivo afectivo", desc:"Aporta cercanía o ternura.", ej:"Juanito."},
+                    {nombre:"Nombre propio en plural", desc:"Pluraliza un nombre para sugerir estirpe o repetición.", ej:"los Aurelianos (García Márquez)."},
+                    {nombre:"Omisión del nombre propio", desc:"El personaje se designa por su rol o característica.", ej:"la mujer, el coronel."},
+                    {nombre:"Nombre propio como título de obra", desc:"Un nombre propio encabeza la obra y la sintetiza.", ej:"Rayuela."},
+                    {nombre:"Nombre propio exótico o inventado", desc:"Creación léxica que dota de misterio.", ej:"Funes el memorioso (Borges)."}
+                ]
+            },
+            {
+                nombre: "C. Sustantivos colectivos e individuales",
+                tecnicas: [
+                    {nombre:"Colectivo que individualiza", desc:"El colectivo actúa como suma de individuos.", ej:"La gente se arremolinaba."},
+                    {nombre:"Individual con valor colectivo", desc:"Un singular que representa a toda la especie.", ej:"El hombre es mortal."},
+                    {nombre:"Colectivo con verbo en plural", desc:"Concordancia ad sensum: el colectivo se siente plural.", ej:"La multitud gritaban."},
+                    {nombre:"Colectivo poético", desc:"Término que agrupa con carga lírica.", ej:"El follaje susurraba."},
+                    {nombre:"Colectivo técnico o especializado", desc:"Designa un grupo con precisión.", ej:"La jauría."},
+                    {nombre:"Individual que designa un par", desc:"Singular con valor de objeto doble.", ej:"El pantalón."},
+                    {nombre:"Colectivo partitivo", desc:"Parte de un colectivo con preposición.", ej:"Una parte del público."},
+                    {nombre:"Plural de modestia o autor", desc:"El plural diluye al individuo.", ej:"Nosotros, el autor."},
+                    {nombre:"Colectivo con artículo indefinido", desc:"Indefinido que masifica.", ej:"Una muchedumbre."},
+                    {nombre:"Individual que se vuelve colectivo por contexto", desc:"Un singular que pasa a designar un conjunto.", ej:"El cabello (por los cabellos)."}
+                ]
+            },
+            {
+                nombre: "D. Derivación y neología sustantival",
+                tecnicas: [
+                    {nombre:"Sustantivo deverbal con -ción", desc:"Acción o efecto de un verbo.", ej:"La fundación."},
+                    {nombre:"Sustantivo deadjetival con -idad", desc:"Cualidad abstracta.", ej:"La terquedad."},
+                    {nombre:"Neologismo por composición", desc:"Unión de lexemas.", ej:"Sacacorchos."},
+                    {nombre:"Neologismo por acronimia", desc:"Siglas que forman una palabra.", ej:"Ovni."},
+                    {nombre:"Préstamo léxico adaptado", desc:"Palabra extranjera asimilada.", ej:"Fútbol."},
+                    {nombre:"Aumentativo con valor despectivo", desc:"Tamaño que añade connotación negativa.", ej:"Caserón."},
+                    {nombre:"Diminutivo afectivo", desc:"Tamaño pequeño con carga emotiva.", ej:"Viejecita."},
+                    {nombre:"Despectivo con -ucho/-ajo", desc:"Sufijo que expresa desprecio.", ej:"Papelucho."},
+                    {nombre:"Sustantivación de prefijo", desc:"Un prefijo se convierte en sustantivo.", ej:"El anti (por el opuesto)."},
+                    {nombre:"Sustantivación de una frase hecha", desc:"Un sintagma completo actúa como sustantivo.", ej:"El qué dirán."}
+                ]
+            },
+            {
+                nombre: "E. Género y número con valor estilístico",
+                tecnicas: [
+                    {nombre:"Masculino genérico", desc:"Uso del masculino para designar a toda la humanidad.", ej:"Los hombres (por la humanidad)."},
+                    {nombre:"Femenino de profesión reivindicativo", desc:"Marca de género con intención política.", ej:"La médica."},
+                    {nombre:"Plural expresivo", desc:"Plural que intensifica la imagen.", ej:"Los cielos."},
+                    {nombre:"Singular con valor generalizador", desc:"El singular como representante de una clase.", ej:"El perro es fiel."},
+                    {nombre:"Plural poético", desc:"Plural que ennoblece o amplifica.", ej:"Las arenas (del desierto)."},
+                    {nombre:"Cambio de significado por número", desc:"El plural altera el sentido.", ej:"El celo / los celos."},
+                    {nombre:"Género marcado para personificación", desc:"El género gramatical dota de personalidad.", ej:"La muerte (femenino)."},
+                    {nombre:"Epiceno con artículo que revela sexo", desc:"Sustantivo de un solo género pero con sexo deducible.", ej:"La víctima (puede ser varón)."},
+                    {nombre:"Plural de autor", desc:"Uso de 'nosotros' en textos académicos.", ej:"En el presente trabajo sostenemos..."},
+                    {nombre:"Falso plural o plural léxico", desc:"Plural que designa un concepto unitario.", ej:"Los dineros."}
+                ]
+            },
+            {
+                nombre: "F. Sintaxis del sustantivo",
+                tecnicas: [
+                    {nombre:"Aposición explicativa", desc:"Añade información no restrictiva entre comas.", ej:"Madrid, capital de España."},
+                    {nombre:"Aposición especificativa", desc:"Aposición sin pausa que restringe.", ej:"El rey poeta."},
+                    {nombre:"Complemento del nombre con 'de' metafórico", desc:"La preposición 'de' crea una imagen.", ej:"El cristal de la voz."},
+                    {nombre:"Sustantivo como núcleo de subordinada sustantiva", desc:"Un hecho o idea introducido por 'que'.", ej:"El hecho de que vinieras."},
+                    {nombre:"Sustantivo en construcción absoluta", desc:"Estructura de participio con sustantivo.", ej:"Muerto el perro, se acabó la rabia."},
+                    {nombre:"Sustantivo como complemento directo interno", desc:"El verbo y el objeto comparten raíz.", ej:"Vivir la vida."},
+                    {nombre:"Complemento de régimen con sustantivo", desc:"Sustantivo que rige preposición.", ej:"Confianza en el futuro."},
+                    {nombre:"Cascada de aposiciones", desc:"Varias aposiciones seguidas.", ej:"El escritor, periodista, viajero incansable."},
+                    {nombre:"Sustantivo como vocativo", desc:"Llamada directa.", ej:"¡Capitán!"},
+                    {nombre:"Aposición con guion", desc:"Unión gráfica que fusiona dos sustantivos.", ej:"Hombre-araña."}
+                ]
+            },
+            {
+                nombre: "G. Metáfora sustantival",
+                tecnicas: [
+                    {nombre:"Metáfora pura (A es B)", desc:"Identificación total.", ej:"Tus ojos son dos luceros."},
+                    {nombre:"Metáfora impura (A de B)", desc:"El segundo término modifica al primero.", ej:"Los luceros de tus ojos."},
+                    {nombre:"Sinécdoque (parte por el todo)", desc:"Una parte representa al todo.", ej:"Velas (por barcos)."},
+                    {nombre:"Metonimia (causa por efecto)", desc:"El instrumento por quien lo usa.", ej:"El whisky (por la botella)."},
+                    {nombre:"Animalización", desc:"Atribución de cualidades animales.", ej:"Ese hombre es un cerdo."},
+                    {nombre:"Cosificación", desc:"Una persona se convierte en objeto.", ej:"Era una piedra en el camino."},
+                    {nombre:"Nombre de persona como cualidad", desc:"Antropónimo que designa una característica.", ej:"Es un judas."},
+                    {nombre:"Topónimo como cualidad", desc:"Un lugar evoca un estado o situación.", ej:"Esto es un calvario."},
+                    {nombre:"Metáfora de materia", desc:"La sustancia material define una cualidad abstracta.", ej:"Mármol (por frialdad)."},
+                    {nombre:"Metáfora sinestésica con sustantivo", desc:"Mezcla de sentidos en un sustantivo.", ej:"El perfume del silencio."}
+                ]
+            },
+            {
+                nombre: "H. Acumulación, enumeración y ritmo",
+                tecnicas: [
+                    {nombre:"Enumeración caótica", desc:"Sustantivos dispares sin orden aparente.", ej:"Todo estaba lleno de libros, papeles, colillas, tazas."},
+                    {nombre:"Asíndeton sustantival", desc:"Sin conjunciones para acelerar.", ej:"Mujeres, niños, ancianos."},
+                    {nombre:"Polisíndeton sustantival", desc:"Repetición de 'y' para lentitud o solemnidad.", ej:"Y el mar y el cielo y la arena."},
+                    {nombre:"Gradación ascendente", desc:"De menor a mayor tamaño o importancia.", ej:"Pueblo, ciudad, metrópoli."},
+                    {nombre:"Gradación descendente", desc:"De mayor a menor.", ej:"Universo, mundo, país, aldea."},
+                    {nombre:"Parejas de sustantivos antitéticos", desc:"Opuestos que generan tensión.", ej:"Amor y odio."},
+                    {nombre:"Tríada rítmica", desc:"Tres sustantivos que forman una unidad.", ej:"Vida, pasión y muerte."},
+                    {nombre:"Sustantivos en cascada pospuestos", desc:"Sucesión que amplía la imagen.", ej:"El ruido, la furia, el caos."},
+                    {nombre:"Sustantivo único tras pausa", desc:"Un solo sustantivo con valor conclusivo.", ej:"Y entonces, el silencio."},
+                    {nombre:"Ristra acumulativa", desc:"Enumeración que sugiere abundancia.", ej:"Lo tenía todo: fama, dinero, poder, mujeres."}
+                ]
+            },
+            {
+                nombre: "I. Omisión y silencio del sustantivo",
+                tecnicas: [
+                    {nombre:"Elipsis del sustantivo por contexto", desc:"Se sobreentiende el referente.", ej:"Llegaron los de siempre."},
+                    {nombre:"Oración nominal sin sustantivo explícito", desc:"Solo adjetivo o adverbio con valor sustantivo.", ej:"Hermoso."},
+                    {nombre:"Uso de pronombre en lugar del sustantivo", desc:"El pronombre evita la repetición.", ej:"Él ya no estaba."},
+                    {nombre:"Demostrativo sustantivado", desc:"El demostrativo funciona como núcleo.", ej:"Eso es lo que quiero."},
+                    {nombre:"Posesivo sustantivado", desc:"El posesivo como equivalente de un sintagma nominal.", ej:"Lo mío."},
+                    {nombre:"Artículo + adjetivo sin sustantivo", desc:"El adjetivo sustituye al sustantivo omitido.", ej:"Los tristes."},
+                    {nombre:"Omisión del sustantivo en refranes", desc:"Estructura elíptica fijada.", ej:"A buen entendedor, pocas palabras."},
+                    {nombre:"Silencio del sustantivo tras preposición", desc:"La preposición rige un elemento tácito.", ej:"Estaba en contra."},
+                    {nombre:"Sustantivo tácito en diálogo", desc:"Se responde sin repetir el sustantivo.", ej:"—¿Qué quieres? —Agua."},
+                    {nombre:"Elipsis del agente", desc:"No se nombra al sujeto de la acción.", ej:"Los que saben."}
+                ]
+            },
+            {
+                nombre: "J. Sustantivación de otras categorías",
+                tecnicas: [
+                    {nombre:"Infinitivo sustantivado", desc:"El verbo en infinitivo actúa como sustantivo.", ej:"El vivir."},
+                    {nombre:"Adjetivo sustantivado con artículo neutro", desc:"'Lo' + adjetivo.", ej:"Lo bueno."},
+                    {nombre:"Adverbio sustantivado", desc:"Un adverbio se usa como núcleo nominal.", ej:"El aquí y ahora."},
+                    {nombre:"Conjunción sustantivada", desc:"Una conjunción con artículo se vuelve sustantivo.", ej:"El porqué."},
+                    {nombre:"Interjección sustantivada", desc:"Una exclamación se convierte en sustantivo.", ej:"Un ay de dolor."},
+                    {nombre:"Frase completa sustantivada", desc:"Un enunciado se trata como sustantivo.", ej:"El 'no sé qué'."},
+                    {nombre:"Onomatopeya sustantivada", desc:"Un sonido se transforma en sustantivo.", ej:"El tictac del reloj."},
+                    {nombre:"Preposición sustantivada", desc:"Una preposición precedida de artículo.", ej:"Los pros y los contras."},
+                    {nombre:"Pronombre personal sustantivado", desc:"El pronombre se convierte en concepto.", ej:"El yo poético."},
+                    {nombre:"Forma verbal conjugada como sustantivo", desc:"Una forma conjugada se cita como palabra.", ej:"El 'quiero' de su boca."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoSustantival')) {
+                const p = JSON.parse(localStorage.getItem('progresoSustantival'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoSustantival', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea la técnica <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

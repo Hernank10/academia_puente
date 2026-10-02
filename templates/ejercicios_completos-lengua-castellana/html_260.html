@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Fórmulas de Comparación</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        /* ===== Estilos holográficos (mismos que antes) ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-secondary: #111122;
+            --cyan: #00f0ff;
+            --violet: #b000ff;
+            --cyan-glow: 0 0 15px rgba(0,240,255,0.3);
+            --violet-glow: 0 0 20px rgba(176,0,255,0.4);
+            --text-cyan: #a0faff;
+            --text-violet: #d9a0ff;
+            --card-bg: rgba(18,18,40,0.7);
+            --border-cyan: 1px solid rgba(0,240,255,0.2);
+            --border-violet: 1px solid rgba(176,0,255,0.2);
+        }
+        body {
+            background: var(--bg-primary);
+            color: #e0e0ff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.03) 0%, transparent 60%),
+                              radial-gradient(circle at 80% 70%, rgba(176,0,255,0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }
+        .app-container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.8rem; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            padding: 1.2rem 2rem; background: var(--card-bg); border: var(--border-cyan); border-radius: 18px;
+            backdrop-filter: blur(8px); box-shadow: var(--cyan-glow);
+        }
+        .brand { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px var(--cyan)); }
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,240,255,0.2); letter-spacing: 2px;
+        }
+        .brand span { font-size: 0.9rem; color: var(--text-cyan); font-weight: 300; letter-spacing: 4px; -webkit-text-fill-color: var(--text-cyan); background: none; margin-left: 0.5rem; opacity: 0.7; }
+        .stats { display: flex; gap: 2rem; font-family: 'Orbitron', monospace; font-weight: 600; font-size: 0.8rem; color: var(--text-cyan); }
+        .stats-item { display: flex; align-items: center; gap: 0.4rem; }
+        .stats-item .num { color: #fff; font-weight: 700; font-size: 1.1rem; min-width: 1.8rem; text-align: center; }
+        .stats-item .label { color: rgba(160,250,255,0.6); font-weight: 300; }
+        .stats-item .highlight { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .vector-row {
+            display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
+            padding: 0.8rem 1rem; background: rgba(0,0,0,0.3); border-radius: 60px; border: var(--border-violet);
+            backdrop-filter: blur(4px);
+        }
+        .vector-avatar {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.3rem 1.2rem; border-radius: 40px; cursor: pointer; transition: all 0.3s ease;
+            background: transparent; border: 1px solid transparent; opacity: 0.5;
+        }
+        .vector-avatar.active { opacity: 1; background: rgba(176,0,255,0.12); border-color: var(--violet); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .vector-avatar:hover { opacity: 0.9; transform: scale(1.05); }
+        .vector-avatar .icon { font-size: 2.2rem; filter: drop-shadow(0 0 8px var(--cyan)); }
+        .vector-avatar .name { font-size: 0.6rem; font-weight: 600; color: var(--text-cyan); letter-spacing: 1px; text-transform: uppercase; font-family: 'Orbitron', monospace; }
+        .vector-avatar.active .name { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .blocks-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
+        .block-tab {
+            padding: 0.3rem 1.2rem; border-radius: 30px; background: rgba(0,240,255,0.05);
+            border: 1px solid rgba(0,240,255,0.1); color: rgba(160,250,255,0.5);
+            font-family: 'Orbitron', monospace; font-size: 0.65rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; letter-spacing: 0.5px;
+        }
+        .block-tab.active { background: rgba(176,0,255,0.15); border-color: var(--violet); color: #fff; box-shadow: 0 0 20px rgba(176,0,255,0.15); }
+        .block-tab .badge { background: rgba(0,240,255,0.2); border-radius: 20px; padding: 0 0.5rem; margin-left: 0.4rem; font-size: 0.55rem; color: var(--text-cyan); }
+        .block-tab.active .badge { background: rgba(176,0,255,0.3); color: var(--text-violet); }
+        .lesson-card {
+            background: var(--card-bg); border: var(--border-cyan); border-radius: 24px;
+            padding: 2rem 2.5rem; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,240,255,0.05);
+        }
+        .lesson-header {
+            display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+            margin-bottom: 1.8rem; border-bottom: 1px solid rgba(0,240,255,0.08); padding-bottom: 0.8rem;
+        }
+        .lesson-header h2 {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .lesson-header .counter { font-size: 0.8rem; color: var(--text-cyan); font-weight: 300; opacity: 0.7; }
+        .theory-box {
+            background: rgba(0,240,255,0.04); border-left: 3px solid var(--cyan);
+            padding: 1.2rem 1.8rem; border-radius: 12px; margin-bottom: 1.5rem;
+        }
+        .theory-box .root { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 30px rgba(0,240,255,0.2); }
+        .theory-box .meaning { font-size: 1.1rem; margin-top: 0.3rem; color: #c8c8ff; }
+        .theory-box .origin { font-size: 0.9rem; color: rgba(160,250,255,0.5); margin-top: 0.2rem; font-style: italic; }
+        .example-holo {
+            background: rgba(176,0,255,0.06); border: 1px solid rgba(176,0,255,0.2);
+            border-radius: 16px; padding: 1.2rem 1.8rem; margin-bottom: 1.8rem;
+            box-shadow: 0 0 30px rgba(176,0,255,0.08); position: relative; overflow: hidden;
+        }
+        .example-holo::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(176,0,255,0.05), transparent, rgba(0,240,255,0.05), transparent);
+            animation: rotateHolo 12s linear infinite;
+        }
+        @keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .example-holo .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-violet); font-weight: 600; position: relative; z-index: 1; }
+        .example-holo .word { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 0 25px rgba(176,0,255,0.5); position: relative; z-index: 1; }
+        .example-holo .breakdown { font-size: 1.1rem; color: var(--text-cyan); position: relative; z-index: 1; font-weight: 300; letter-spacing: 1px; }
+        .example-holo .breakdown span { color: var(--violet); font-weight: 600; }
+        .exercise-area { margin-top: 1.5rem; padding: 1.2rem 1.8rem; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(0,240,255,0.08); }
+        .exercise-area .question { font-size: 1rem; font-weight: 500; margin-bottom: 1rem; color: #d0d0ff; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .opt-btn {
+            padding: 0.7rem 1.2rem; border-radius: 12px; background: rgba(0,240,255,0.04);
+            border: 1px solid rgba(0,240,255,0.1); color: #b0b0ff; font-family: 'Rajdhani', sans-serif;
+            font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; text-align: left;
+        }
+        .opt-btn:hover:not(:disabled) { background: rgba(0,240,255,0.1); border-color: var(--cyan); color: #fff; transform: scale(1.01); }
+        .opt-btn.correct { background: rgba(0,240,255,0.2); border-color: var(--cyan); color: #fff; box-shadow: 0 0 25px rgba(0,240,255,0.15); }
+        .opt-btn.wrong { background: rgba(255,0,100,0.15); border-color: #ff0055; color: #ff88aa; }
+        .opt-btn:disabled { cursor: default; opacity: 0.7; }
+        .feedback { margin-top: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 500; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: rgba(0,240,255,0.08); color: var(--text-cyan); border: 1px solid rgba(0,240,255,0.2); }
+        .feedback.wrong { background: rgba(255,0,100,0.08); color: #ff88aa; border: 1px solid rgba(255,0,100,0.2); }
+        .nav-buttons {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: rgba(0,240,255,0.08); border: 1px solid var(--cyan); color: var(--text-cyan);
+            padding: 0.5rem 1.8rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-btn:hover:not(:disabled) { background: rgba(0,240,255,0.2); box-shadow: 0 0 25px rgba(0,240,255,0.2); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .voice-btn {
+            background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet);
+            padding: 0.5rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .voice-btn:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .terminal-box {
+            margin-top: 1.8rem; background: #050510; border: 1px solid rgba(0,240,255,0.1);
+            border-radius: 16px; padding: 1.2rem 1.8rem; font-family: 'Rajdhani', monospace;
+        }
+        .terminal-box .term-header { display: flex; justify-content: space-between; color: rgba(160,250,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,240,255,0.05); padding-bottom: 0.4rem; margin-bottom: 0.8rem; }
+        .terminal-input-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+        .terminal-input-row input { flex: 1; background: transparent; border: none; border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-cyan); font-family: 'Rajdhani', monospace; font-size: 1rem; padding: 0.4rem 0.2rem; outline: none; transition: border 0.3s; min-width: 150px; }
+        .terminal-input-row input:focus { border-bottom-color: var(--violet); }
+        .terminal-input-row button { background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet); padding: 0.3rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px; }
+        .terminal-input-row button:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .term-output { margin-top: 0.8rem; padding: 0.8rem; background: rgba(0,0,0,0.4); border-radius: 10px; min-height: 2.5rem; color: #a0c0ff; font-size: 0.9rem; border-left: 2px solid var(--cyan); opacity: 0.7; transition: all 0.3s; }
+        .term-output.populated { opacity: 1; border-left-color: var(--violet); }
+        @media (max-width: 700px) {
+            body { padding: 0.8rem; }
+            .header { flex-direction: column; align-items: stretch; gap: 0.8rem; padding: 1rem; }
+            .brand h1 { font-size: 1.3rem; }
+            .stats { justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+            .lesson-card { padding: 1.2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .vector-avatar .icon { font-size: 1.6rem; }
+            .vector-avatar { padding: 0.2rem 0.8rem; }
+            .example-holo .word { font-size: 1.3rem; }
+            .theory-box .root { font-size: 1.4rem; }
+            .blocks-nav { justify-content: center; }
+            .block-tab { font-size: 0.55rem; padding: 0.2rem 0.8rem; }
+            .terminal-input-row { flex-wrap: wrap; }
+            .terminal-input-row input { min-width: 100%; }
+            .nav-buttons { flex-direction: column; align-items: stretch; }
+            .nav-btn, .voice-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="header">
+        <div class="brand">
+            <span class="brand-icon">⚖️</span>
+            <h1>Archivo de Vector <span>· Comparaciones</span></h1>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><span class="label">aciertos</span><span class="num" id="scoreDisplay">0</span></div>
+            <div class="stats-item"><span class="label">racha</span><span class="num highlight" id="streakDisplay">0</span></div>
+            <div class="stats-item"><span class="label">progreso</span><span class="num" id="progressDisplay">0/10</span></div>
+        </div>
+    </header>
+    <div class="vector-row" id="vectorRow">
+        <div class="vector-avatar active" data-state="0"><span class="icon">📁</span><span class="name">Archivo</span></div>
+        <div class="vector-avatar" data-state="1"><span class="icon">🕰️</span><span class="name">Biblioteca</span></div>
+        <div class="vector-avatar" data-state="2"><span class="icon">📡</span><span class="name">En transmisión</span></div>
+        <div class="vector-avatar" data-state="3"><span class="icon">🏛️</span><span class="name">Coordenada Roma</span></div>
+        <div class="vector-avatar" data-state="4"><span class="icon">🏺</span><span class="name">Coordenada Grecia</span></div>
+    </div>
+    <div class="blocks-nav" id="blocksNav"></div>
+    <div class="lesson-card">
+        <div class="lesson-header">
+            <h2 id="blockTitle">Comparativos de igualdad</h2>
+            <span class="counter" id="lessonCounter">1 / 10</span>
+        </div>
+        <div class="theory-box">
+            <div class="root" id="rootDisplay">tan ... como</div>
+            <div class="meaning" id="meaningDisplay">igualdad en grado</div>
+            <div class="origin" id="originDisplay">🔹 estructura: tan + adjetivo/adverbio + como</div>
+        </div>
+        <div class="example-holo">
+            <div class="label">⬡ proyección comparativa</div>
+            <div class="word" id="exampleWord">Eres tan alto como yo</div>
+            <div class="breakdown" id="exampleBreakdown"><span>tan</span> (grado) + <span>alto</span> (cualidad) + <span>como</span> (término de comparación)</div>
+        </div>
+        <div class="exercise-area">
+            <div class="question" id="questionText">¿Qué expresa la estructura "tan ... como"?</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+            <div>
+                <button class="nav-btn" id="prevBtn">◀ Anterior</button>
+                <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+            </div>
+            <button class="voice-btn" id="voiceBtn">🔊 Escuchar</button>
+        </div>
+    </div>
+    <div class="terminal-box">
+        <div class="term-header"><span>✦ terminal de práctica</span><span>escribe tu propia comparación</span></div>
+        <div class="terminal-input-row">
+            <input type="text" id="termInput" placeholder="ej. 'Más vale tarde que nunca'..." autocomplete="off" />
+            <button id="termBtn">➤ enviar</button>
+        </div>
+        <div class="term-output" id="termOutput">⏺ esperando tu creación...</div>
+    </div>
+</div>
+<script>
+(function() {
+    // ================================================================
+    //  100 FÓRMULAS DE COMPARACIÓN · 10 bloques temáticos
+    // ================================================================
+    const BLOCKS = [
+        {
+            name: 'Comparativos de igualdad',
+            items: [
+                { root: 'tan ... como', meaning: 'igualdad en grado', example: 'Eres tan alto como yo', breakdown: 'tan + adjetivo/adverbio + como' },
+                { root: 'tanto ... como', meaning: 'igualdad en cantidad', example: 'Tiene tanto dinero como yo', breakdown: 'tanto + sustantivo + como' },
+                { root: 'igual ... que', meaning: 'misma cualidad', example: 'Su coche es igual que el mío', breakdown: 'igual + sustantivo + que' },
+                { root: 'lo mismo ... que', meaning: 'identidad', example: 'Piensa lo mismo que yo', breakdown: 'lo mismo + que' },
+                { root: 'tan ... cuanto', meaning: 'igualdad (literario)', example: 'Es tan sabio cuanto prudente', breakdown: 'tan + adjetivo + cuanto' },
+                { root: 'tanto cuanto', meaning: 'cantidad igual', example: 'Come tanto cuanto quiere', breakdown: 'tanto + cuanto' },
+                { root: 'de igual ... que', meaning: 'misma magnitud', example: 'De igual tamaño que el otro', breakdown: 'de igual + sustantivo + que' },
+                { root: 'tan ... como (con verbos)', meaning: 'igualdad de acción', example: 'Corre tan rápido como habla', breakdown: 'tan + adverbio + como' },
+                { root: 'tanto ... como (con verbos)', meaning: 'misma cantidad de acción', example: 'Trabaja tanto como estudia', breakdown: 'tanto + verbo + como' },
+                { root: 'tal ... cual', meaning: 'identidad plena', example: 'Tal padre, cual hijo', breakdown: 'tal + sustantivo + cual' }
+            ]
+        },
+        {
+            name: 'Comparativos de superioridad',
+            items: [
+                { root: 'más ... que', meaning: 'superioridad general', example: 'Es más inteligente que tú', breakdown: 'más + adjetivo/adverbio + que' },
+                { root: 'mayor ... que', meaning: 'superioridad en tamaño/edad', example: 'Es mayor que su hermana', breakdown: 'mayor + que' },
+                { root: 'mejor ... que', meaning: 'superioridad en calidad', example: 'Este vino es mejor que el otro', breakdown: 'mejor + que' },
+                { root: 'más de', meaning: 'superioridad con números', example: 'Hay más de 100 personas', breakdown: 'más de + cantidad' },
+                { root: 'superior a', meaning: 'superioridad formal', example: 'Este producto es superior al anterior', breakdown: 'superior a + sustantivo' },
+                { root: 'por encima de', meaning: 'superioridad jerárquica', example: 'Está por encima de la media', breakdown: 'por encima de + sustantivo' },
+                { root: 'más ... que (con verbos)', meaning: 'acción en mayor grado', example: 'Estudia más que duerme', breakdown: 'más + verbo + que' },
+                { root: 'más bien ... que', meaning: 'preferencia', example: 'Es más bien tímido que extrovertido', breakdown: 'más bien + que' },
+                { root: 'antes ... que', meaning: 'prioridad temporal', example: 'Llegó antes que yo', breakdown: 'antes + que' },
+                { root: 'más vale ... que', meaning: 'superioridad de valor', example: 'Más vale pájaro en mano que ciento volando', breakdown: 'más vale + que' }
+            ]
+        },
+        {
+            name: 'Comparativos de inferioridad',
+            items: [
+                { root: 'menos ... que', meaning: 'inferioridad general', example: 'Es menos alto que su hermano', breakdown: 'menos + adjetivo/adverbio + que' },
+                { root: 'menor ... que', meaning: 'inferioridad en tamaño/edad', example: 'Es menor que su primo', breakdown: 'menor + que' },
+                { root: 'peor ... que', meaning: 'inferioridad en calidad', example: 'Este libro es peor que el anterior', breakdown: 'peor + que' },
+                { root: 'menos de', meaning: 'inferioridad con números', example: 'Gana menos de 1000 €', breakdown: 'menos de + cantidad' },
+                { root: 'inferior a', meaning: 'inferioridad formal', example: 'Su rendimiento es inferior al esperado', breakdown: 'inferior a + sustantivo' },
+                { root: 'por debajo de', meaning: 'inferioridad jerárquica', example: 'Está por debajo de lo normal', breakdown: 'por debajo de + sustantivo' },
+                { root: 'menos ... que (con verbos)', meaning: 'acción en menor grado', example: 'Duerme menos que estudia', breakdown: 'menos + verbo + que' },
+                { root: 'más ... que (negación)', meaning: 'no superioridad', example: 'No es más alto que yo', breakdown: 'no + más + que' },
+                { root: 'no tan ... como', meaning: 'inferioridad en comparación', example: 'No es tan rápido como tú', breakdown: 'no tan + adjetivo + como' },
+                { root: 'menos vale ... que', meaning: 'inferioridad de valor', example: 'Menos vale que te calles', breakdown: 'menos vale + que' }
+            ]
+        },
+        {
+            name: 'Superlativos absolutos',
+            items: [
+                { root: 'muy + adj', meaning: 'grado alto', example: 'Es muy inteligente', breakdown: 'muy + adjetivo' },
+                { root: 'sumamente + adj', meaning: 'grado máximo', example: 'Es sumamente interesante', breakdown: 'sumamente + adjetivo' },
+                { root: 'extremadamente + adj', meaning: 'grado extremo', example: 'Es extremadamente difícil', breakdown: 'extremadamente + adjetivo' },
+                { root: '-ísimo / -érrimo', meaning: 'superlativo morfológico', example: 'Guapísimo / Paupérrimo', breakdown: 'raíz + -ísimo/-érrimo' },
+                { root: 'increíblemente + adj', meaning: 'énfasis', example: 'Increíblemente rápido', breakdown: 'increíblemente + adjetivo' },
+                { root: 'bastante + adj', meaning: 'grado considerable', example: 'Es bastante bueno', breakdown: 'bastante + adjetivo' },
+                { root: 'demasiado + adj', meaning: 'exceso', example: 'Es demasiado caro', breakdown: 'demasiado + adjetivo' },
+                { root: 'absolutamente + adj', meaning: 'totalidad', example: 'Es absolutamente necesario', breakdown: 'absolutamente + adjetivo' },
+                { root: 'completamente + adj', meaning: 'totalidad', example: 'Está completamente lleno', breakdown: 'completamente + adjetivo' },
+                { root: 'realmente + adj', meaning: 'grado real', example: 'Es realmente impresionante', breakdown: 'realmente + adjetivo' }
+            ]
+        },
+        {
+            name: 'Superlativos relativos',
+            items: [
+                { root: 'el más ... (de)', meaning: 'máximo en un grupo', example: 'Es el más alto de la clase', breakdown: 'el/la + más + adjetivo + de' },
+                { root: 'el menos ... (de)', meaning: 'mínimo en un grupo', example: 'Es el menos ruidoso de todos', breakdown: 'el/la + menos + adjetivo + de' },
+                { root: 'el mejor (de)', meaning: 'el superior', example: 'Es el mejor de todos', breakdown: 'el mejor + de' },
+                { root: 'el peor (de)', meaning: 'el inferior', example: 'Es el peor de la familia', breakdown: 'el peor + de' },
+                { root: 'el mayor (de)', meaning: 'el más grande/edad', example: 'Es el mayor de sus hermanos', breakdown: 'el mayor + de' },
+                { root: 'el menor (de)', meaning: 'el más pequeño', example: 'Es el menor de la pandilla', breakdown: 'el menor + de' },
+                { root: 'uno de los más', meaning: 'entre los mejores', example: 'Es uno de los más famosos', breakdown: 'uno de los más + adjetivo' },
+                { root: 'el más ... que', meaning: 'superlativo con "que"', example: 'Es el más alto que he visto', breakdown: 'el más + adjetivo + que' },
+                { root: 'la más ... de', meaning: 'superlativo femenino', example: 'Es la más rápida de todas', breakdown: 'la más + adjetivo + de' },
+                { root: 'los más ... de', meaning: 'plural', example: 'Son los más listos de la clase', breakdown: 'los más + adjetivo + de' }
+            ]
+        },
+        {
+            name: 'Correlativas y proporcionales',
+            items: [
+                { root: 'cuanto más ... más', meaning: 'proporción directa', example: 'Cuanto más estudias, más aprendes', breakdown: 'cuanto más + verbo, más + verbo' },
+                { root: 'cuanto menos ... menos', meaning: 'proporción inversa', example: 'Cuanto menos comes, menos engordas', breakdown: 'cuanto menos + verbo, menos + verbo' },
+                { root: 'cuanto más ... menos', meaning: 'proporción cruzada', example: 'Cuanto más lo pienso, menos lo entiendo', breakdown: 'cuanto más + verbo, menos + verbo' },
+                { root: 'cuanto menos ... más', meaning: 'proporción inversa', example: 'Cuanto menos te preocupas, más disfrutas', breakdown: 'cuanto menos + verbo, más + verbo' },
+                { root: 'a más ... más', meaning: 'proporción directa', example: 'A más trabajo, más estrés', breakdown: 'a más + sustantivo, más + sustantivo' },
+                { root: 'cuanto ... tanto', meaning: 'proporción equivalente', example: 'Cuanto digas, tanto valdrás', breakdown: 'cuanto + verbo, tanto + verbo' },
+                { root: 'mientras más ... más', meaning: 'variante coloquial', example: 'Mientras más lo intentes, más cerca estarás', breakdown: 'mientras más + verbo, más + verbo' },
+                { root: 'cuanto más ... (y) más', meaning: 'énfasis', example: 'Cuanto más lo veo, y más me gusta', breakdown: 'cuanto más + verbo, y más + verbo' },
+                { root: 'entre más ... más', meaning: 'variante americana', example: 'Entre más estudio, más sé', breakdown: 'entre más + verbo, más + verbo' },
+                { root: 'cuanto ... con tanto', meaning: 'correlación', example: 'Cuanto te esfuerzas, con tanto éxito', breakdown: 'cuanto + verbo, con tanto + sustantivo' }
+            ]
+        },
+        {
+            name: 'Comparaciones con verbos',
+            items: [
+                { root: 'preferir ... a', meaning: 'comparación de preferencia', example: 'Prefiero el té al café', breakdown: 'preferir + sustantivo + a + sustantivo' },
+                { root: 'gustar más ... que', meaning: 'comparación de gusto', example: 'Me gusta más el verano que el invierno', breakdown: 'gustar más + sustantivo + que' },
+                { root: 'parecerse a', meaning: 'semejanza', example: 'Se parece a su madre', breakdown: 'parecerse a + sustantivo' },
+                { root: 'comparar con', meaning: 'acción de comparar', example: 'Compara su coche con el mío', breakdown: 'comparar + sustantivo + con' },
+                { root: 'distinguir de', meaning: 'diferenciar', example: 'Distingue lo importante de lo urgente', breakdown: 'distinguir + sustantivo + de' },
+                { root: 'diferenciarse de', meaning: 'ser diferente', example: 'Se diferencia de los demás', breakdown: 'diferenciarse de + sustantivo' },
+                { root: 'superar a', meaning: 'sobrepasar', example: 'Supera a todos en velocidad', breakdown: 'superar a + sustantivo' },
+                { root: 'aventajar a', meaning: 'superar en algo', example: 'Aventaja a su rival en experiencia', breakdown: 'aventajar a + sustantivo' },
+                { root: 'sobrepasar a', meaning: 'exceder', example: 'Sobrepasa a su hermano en altura', breakdown: 'sobrepasar a + sustantivo' },
+                { root: 'igualar a', meaning: 'ser igual', example: 'Iguala a su modelo en eficacia', breakdown: 'igualar a + sustantivo' }
+            ]
+        },
+        {
+            name: 'Falsos comparativos y modales',
+            items: [
+                { root: 'como si', meaning: 'comparación hipotética', example: 'Actúa como si fuera rico', breakdown: 'como si + subjuntivo' },
+                { root: 'igual que', meaning: 'comparación de igualdad', example: 'Canta igual que su hermana', breakdown: 'igual que + sustantivo' },
+                { root: 'tal como', meaning: 'modo', example: 'Hazlo tal como te expliqué', breakdown: 'tal como + oración' },
+                { root: 'de la misma manera que', meaning: 'mismo modo', example: 'Piensa de la misma manera que yo', breakdown: 'de la misma manera que + sujeto' },
+                { root: 'al igual que', meaning: 'similar', example: 'Al igual que tú, yo también estudio', breakdown: 'al igual que + sujeto' },
+                { root: 'cual', meaning: 'comparación literaria', example: 'El león, cual rey de la selva', breakdown: 'cual + sustantivo' },
+                { root: 'tal cual', meaning: 'exactamente', example: 'Lo dejé tal cual estaba', breakdown: 'tal cual + oración' },
+                { root: 'como', meaning: 'comparación simple', example: 'Es fuerte como un toro', breakdown: 'como + sustantivo' },
+                { root: 'así como', meaning: 'comparación adicional', example: 'Estudia inglés, así como francés', breakdown: 'así como + sustantivo' },
+                { root: 'lo mismo que', meaning: 'identidad', example: 'Pienso lo mismo que tú', breakdown: 'lo mismo que + sujeto' }
+            ]
+        },
+        {
+            name: 'Expresiones fijas de comparación',
+            items: [
+                { root: 'más vale ... que', meaning: 'refrán comparativo', example: 'Más vale pájaro en mano que ciento volando', breakdown: 'más vale + infinitivo + que' },
+                { root: 'más ... que el hambre', meaning: 'superlativo coloquial', example: 'Tiene más hambre que el hambre', breakdown: 'más + adjetivo + que el hambre' },
+                { root: 'como una casa', meaning: 'tamaño grande', example: 'Es grande como una casa', breakdown: 'como + una casa' },
+                { root: 'más listo que los ratones', meaning: 'astucia', example: 'Es más listo que los ratones', breakdown: 'más listo que + sustantivo' },
+                { root: 'más tonto que una piedra', meaning: 'falta de inteligencia', example: 'Es más tonto que una piedra', breakdown: 'más tonto que + sustantivo' },
+                { root: 'más rápido que una bala', meaning: 'velocidad', example: 'Corre más rápido que una bala', breakdown: 'más rápido que + sustantivo' },
+                { root: 'más valiente que un león', meaning: 'coraje', example: 'Es más valiente que un león', breakdown: 'más valiente que + sustantivo' },
+                { root: 'más rico que un rey', meaning: 'riqueza', example: 'Es más rico que un rey', breakdown: 'más rico que + sustantivo' },
+                { root: 'más lento que una tortuga', meaning: 'lentitud', example: 'Va más lento que una tortuga', breakdown: 'más lento que + sustantivo' },
+                { root: 'más bueno que el pan', meaning: 'bondad', example: 'Es más bueno que el pan', breakdown: 'más bueno que + sustantivo' }
+            ]
+        },
+        {
+            name: 'Construcciones con "de" y "que"',
+            items: [
+                { root: 'más de (lo que)', meaning: 'superioridad en cantidad esperada', example: 'Ganó más de lo que esperaba', breakdown: 'más de + lo que' },
+                { root: 'menos de (lo que)', meaning: 'inferioridad en cantidad esperada', example: 'Comió menos de lo que debía', breakdown: 'menos de + lo que' },
+                { root: 'tan ... como (con "de")', meaning: 'igualdad con números', example: 'Tan alto como de costumbre', breakdown: 'tan + adjetivo + como de' },
+                { root: 'tanto ... como (con "de")', meaning: 'cantidad equivalente', example: 'Tanto de esto como de aquello', breakdown: 'tanto de + sustantivo + como de' },
+                { root: 'más que (con "de")', meaning: 'comparación enfática', example: 'Es más que un amigo: es un hermano', breakdown: 'más que + sustantivo' },
+                { root: 'menos que (con "de")', meaning: 'comparación enfática', example: 'Es menos que un principiante', breakdown: 'menos que + sustantivo' },
+                { root: 'de lo más ...', meaning: 'superlativo ponderativo', example: 'Es de lo más interesante', breakdown: 'de lo más + adjetivo' },
+                { root: 'de lo menos ...', meaning: 'inferioridad ponderativa', example: 'Es de lo menos importante', breakdown: 'de lo menos + adjetivo' },
+                { root: 'más ... de la cuenta', meaning: 'exceso', example: 'Gastó más de la cuenta', breakdown: 'más de la cuenta' },
+                { root: 'menos ... de la cuenta', meaning: 'defecto', example: 'Comió menos de la cuenta', breakdown: 'menos de la cuenta' }
+            ]
+        }
+    ];
+
+    // ================================================================
+    //  ESTADO Y DOM (mismo que antes)
+    // ================================================================
+    let currentBlock = 0, currentLesson = 0, score = 0, streak = 0, answered = false;
+    const blocksNav = document.getElementById('blocksNav');
+    const blockTitle = document.getElementById('blockTitle');
+    const lessonCounter = document.getElementById('lessonCounter');
+    const rootDisplay = document.getElementById('rootDisplay');
+    const meaningDisplay = document.getElementById('meaningDisplay');
+    const originDisplay = document.getElementById('originDisplay');
+    const exampleWord = document.getElementById('exampleWord');
+    const exampleBreakdown = document.getElementById('exampleBreakdown');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const streakDisplay = document.getElementById('streakDisplay');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const termInput = document.getElementById('termInput');
+    const termBtn = document.getElementById('termBtn');
+    const termOutput = document.getElementById('termOutput');
+    const vectorAvatars = document.querySelectorAll('.vector-avatar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const voiceBtn = document.getElementById('voiceBtn');
+
+    function getLesson(b, l) { return BLOCKS[b].items[l]; }
+    function getCurrentLesson() { return getLesson(currentBlock, currentLesson); }
+    function shuffleArray(arr) { for (let i = arr.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+    function renderBlockTabs() {
+        blocksNav.innerHTML = '';
+        BLOCKS.forEach((block, idx) => {
+            const tab = document.createElement('div');
+            tab.className = 'block-tab' + (idx === currentBlock ? ' active' : '');
+            tab.innerHTML = `${block.name} <span class="badge">${block.items.length}</span>`;
+            tab.dataset.idx = idx;
+            tab.addEventListener('click', () => { currentBlock = idx; currentLesson = 0; renderAll(); });
+            blocksNav.appendChild(tab);
+        });
+    }
+
+    function renderLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        blockTitle.textContent = BLOCKS[currentBlock].name;
+        lessonCounter.textContent = `${currentLesson + 1} / ${BLOCKS[currentBlock].items.length}`;
+        rootDisplay.textContent = lesson.root;
+        meaningDisplay.textContent = lesson.meaning;
+        originDisplay.textContent = `🔹 estructura: ${lesson.breakdown.split('→')[0].trim()}`;
+        exampleWord.textContent = lesson.example;
+        exampleBreakdown.innerHTML = lesson.breakdown.replace(/\b(\w+)\b/g, m => `<span>${m}</span>`);
+        generateExercise(lesson);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        answered = false;
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = false);
+        let done = 0;
+        for (let i = 0; i < currentBlock; i++) done += BLOCKS[i].items.length;
+        done += currentLesson;
+        const total = BLOCKS.reduce((a,b) => a + b.items.length, 0);
+        progressDisplay.textContent = `${Math.min(Math.floor((done/total)*10), 10)}/10`;
+        prevBtn.disabled = (currentBlock === 0 && currentLesson === 0);
+        const lastBlock = BLOCKS.length - 1;
+        const lastLesson = BLOCKS[lastBlock].items.length - 1;
+        nextBtn.disabled = (currentBlock === lastBlock && currentLesson === lastLesson);
+    }
+
+    function generateExercise(lesson) {
+        const all = []; BLOCKS.forEach(b => b.items.forEach(it => all.push({ root: it.root, meaning: it.meaning })));
+        const correct = lesson.meaning;
+        let wrongs = all.filter(m => m.meaning !== correct && m.root !== lesson.root);
+        shuffleArray(wrongs);
+        wrongs = wrongs.slice(0, 3);
+        const options = [correct, ...wrongs.map(w => w.meaning)];
+        shuffleArray(options);
+        questionText.textContent = `¿Qué expresa la estructura "${lesson.root}"?`;
+        optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.textContent = opt;
+            btn.dataset.value = opt;
+            btn.addEventListener('click', () => handleOptionClick(btn, correct));
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function handleOptionClick(btn, correct) {
+        if (answered) return;
+        const selected = btn.dataset.value;
+        const isCorrect = selected === correct;
+        answered = true;
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score++; streak++;
+            feedback.className = 'feedback show correct';
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+        } else {
+            btn.classList.add('wrong');
+            streak = 0;
+            allBtns.forEach(b => { if (b.dataset.value === correct) b.classList.add('correct'); });
+            feedback.className = 'feedback show wrong';
+            feedback.textContent = `❌ No. La respuesta correcta es "${correct}".`;
+        }
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    function goToLesson(b, l) {
+        if (b < 0 || b >= BLOCKS.length) return;
+        if (l < 0 || l >= BLOCKS[b].items.length) return;
+        currentBlock = b; currentLesson = l; renderAll();
+    }
+    function nextLesson() {
+        if (currentLesson < BLOCKS[currentBlock].items.length - 1) goToLesson(currentBlock, currentLesson + 1);
+        else if (currentBlock < BLOCKS.length - 1) goToLesson(currentBlock + 1, 0);
+    }
+    function prevLesson() {
+        if (currentLesson > 0) goToLesson(currentBlock, currentLesson - 1);
+        else if (currentBlock > 0) goToLesson(currentBlock - 1, BLOCKS[currentBlock - 1].items.length - 1);
+    }
+
+    function speakLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        const text = `${lesson.root}. Significado: ${lesson.meaning}. Ejemplo: ${lesson.example}. Desglose: ${lesson.breakdown}`;
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else alert('Tu navegador no soporta síntesis de voz.');
+    }
+
+    function handleTerminal() {
+        const val = termInput.value.trim();
+        if (!val) {
+            termOutput.textContent = '⏺ escribe una frase comparativa...';
+            termOutput.classList.remove('populated');
+            return;
+        }
+        let found = false, msg = `🔍 "${val}" → `;
+        for (const block of BLOCKS) {
+            for (const item of block.items) {
+                const rootClean = item.root.replace(/[()]/g, '').trim();
+                if (val.toLowerCase().includes(rootClean.toLowerCase()) ||
+                    item.example.toLowerCase().includes(val.toLowerCase().replace(/[()]/g, ''))) {
+                    msg += `relacionado con "${item.root}" (${item.meaning}). `;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        if (!found) msg += 'no se reconoció una estructura comparativa concreta, pero tu creatividad cuenta. ⚖️';
+        termOutput.textContent = msg;
+        termOutput.classList.add('populated');
+        termInput.value = '';
+    }
+
+    function renderAll() {
+        renderBlockTabs();
+        renderLesson();
+        vectorAvatars.forEach((el, idx) => el.classList.toggle('active', idx === (currentBlock % 5)));
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    // Eventos
+    prevBtn.addEventListener('click', prevLesson);
+    nextBtn.addEventListener('click', nextLesson);
+    voiceBtn.addEventListener('click', speakLesson);
+    termBtn.addEventListener('click', handleTerminal);
+    termInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleTerminal(); });
+    vectorAvatars.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+            currentBlock = idx % BLOCKS.length;
+            currentLesson = 0;
+            renderAll();
+        });
+    });
+
+    renderAll();
+    setTimeout(() => {
+        termOutput.textContent = '⏳ Vector activo. Explora las 100 fórmulas de comparación. Escribe tu propia frase.';
+        termOutput.classList.add('populated');
+    }, 500);
+})();
+</script>
+</body>
+</html>

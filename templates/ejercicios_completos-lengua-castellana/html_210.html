@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Coma en Subordinadas Explicativas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: #0a0a12;
+            --bg-secondary: #111122;
+            --cyan: #00f0ff;
+            --violet: #b000ff;
+            --cyan-glow: 0 0 15px rgba(0,240,255,0.3);
+            --violet-glow: 0 0 20px rgba(176,0,255,0.4);
+            --text-cyan: #a0faff;
+            --text-violet: #d9a0ff;
+            --card-bg: rgba(18,18,40,0.7);
+            --border-cyan: 1px solid rgba(0,240,255,0.2);
+            --border-violet: 1px solid rgba(176,0,255,0.2);
+        }
+        body {
+            background: var(--bg-primary);
+            color: #e0e0ff;
+            font-family: 'Rajdhani', sans-serif;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image: radial-gradient(circle at 20% 30%, rgba(0,240,255,0.03) 0%, transparent 60%),
+                              radial-gradient(circle at 80% 70%, rgba(176,0,255,0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--violet); border-radius: 8px; box-shadow: var(--violet-glow); }
+        .app-container { max-width: 1300px; margin: 0 auto; display: flex; flex-direction: column; gap: 1.8rem; }
+        .header {
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+            padding: 1.2rem 2rem; background: var(--card-bg); border: var(--border-cyan); border-radius: 18px;
+            backdrop-filter: blur(8px); box-shadow: var(--cyan-glow);
+        }
+        .brand { display: flex; align-items: center; gap: 0.8rem; }
+        .brand-icon { font-size: 2.2rem; filter: drop-shadow(0 0 10px var(--cyan)); }
+        .brand h1 {
+            font-family: 'Orbitron', sans-serif; font-weight: 900; font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0,240,255,0.2); letter-spacing: 2px;
+        }
+        .brand span { font-size: 0.9rem; color: var(--text-cyan); font-weight: 300; letter-spacing: 4px; -webkit-text-fill-color: var(--text-cyan); background: none; margin-left: 0.5rem; opacity: 0.7; }
+        .stats { display: flex; gap: 2rem; font-family: 'Orbitron', monospace; font-weight: 600; font-size: 0.8rem; color: var(--text-cyan); }
+        .stats-item { display: flex; align-items: center; gap: 0.4rem; }
+        .stats-item .num { color: #fff; font-weight: 700; font-size: 1.1rem; min-width: 1.8rem; text-align: center; }
+        .stats-item .label { color: rgba(160,250,255,0.6); font-weight: 300; }
+        .stats-item .highlight { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .vector-row {
+            display: flex; gap: 0.8rem; flex-wrap: wrap; justify-content: center;
+            padding: 0.8rem 1rem; background: rgba(0,0,0,0.3); border-radius: 60px; border: var(--border-violet);
+            backdrop-filter: blur(4px);
+        }
+        .vector-avatar {
+            display: flex; flex-direction: column; align-items: center; gap: 0.2rem;
+            padding: 0.3rem 1.2rem; border-radius: 40px; cursor: pointer; transition: all 0.3s ease;
+            background: transparent; border: 1px solid transparent; opacity: 0.5;
+        }
+        .vector-avatar.active { opacity: 1; background: rgba(176,0,255,0.12); border-color: var(--violet); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .vector-avatar:hover { opacity: 0.9; transform: scale(1.05); }
+        .vector-avatar .icon { font-size: 2.2rem; filter: drop-shadow(0 0 8px var(--cyan)); }
+        .vector-avatar .name { font-size: 0.6rem; font-weight: 600; color: var(--text-cyan); letter-spacing: 1px; text-transform: uppercase; font-family: 'Orbitron', monospace; }
+        .vector-avatar.active .name { color: var(--violet); text-shadow: 0 0 15px var(--violet); }
+        .blocks-nav { display: flex; flex-wrap: wrap; gap: 0.5rem; padding: 0.5rem 0; }
+        .block-tab {
+            padding: 0.3rem 1.2rem; border-radius: 30px; background: rgba(0,240,255,0.05);
+            border: 1px solid rgba(0,240,255,0.1); color: rgba(160,250,255,0.5);
+            font-family: 'Orbitron', monospace; font-size: 0.65rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s; letter-spacing: 0.5px;
+        }
+        .block-tab.active { background: rgba(176,0,255,0.15); border-color: var(--violet); color: #fff; box-shadow: 0 0 20px rgba(176,0,255,0.15); }
+        .block-tab .badge { background: rgba(0,240,255,0.2); border-radius: 20px; padding: 0 0.5rem; margin-left: 0.4rem; font-size: 0.55rem; color: var(--text-cyan); }
+        .block-tab.active .badge { background: rgba(176,0,255,0.3); color: var(--text-violet); }
+        .lesson-card {
+            background: var(--card-bg); border: var(--border-cyan); border-radius: 24px;
+            padding: 2rem 2.5rem; backdrop-filter: blur(10px); box-shadow: 0 0 40px rgba(0,240,255,0.05);
+        }
+        .lesson-header {
+            display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;
+            margin-bottom: 1.8rem; border-bottom: 1px solid rgba(0,240,255,0.08); padding-bottom: 0.8rem;
+        }
+        .lesson-header h2 {
+            font-family: 'Orbitron', sans-serif; font-weight: 700; font-size: 1.3rem;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .lesson-header .counter { font-size: 0.8rem; color: var(--text-cyan); font-weight: 300; opacity: 0.7; }
+        .theory-box {
+            background: rgba(0,240,255,0.04); border-left: 3px solid var(--cyan);
+            padding: 1.2rem 1.8rem; border-radius: 12px; margin-bottom: 1.5rem;
+        }
+        .theory-box .root { font-family: 'Orbitron', monospace; font-size: 1.8rem; font-weight: 700; color: var(--cyan); text-shadow: 0 0 30px rgba(0,240,255,0.2); }
+        .theory-box .meaning { font-size: 1.1rem; margin-top: 0.3rem; color: #c8c8ff; }
+        .theory-box .origin { font-size: 0.9rem; color: rgba(160,250,255,0.5); margin-top: 0.2rem; font-style: italic; }
+        .example-holo {
+            background: rgba(176,0,255,0.06); border: 1px solid rgba(176,0,255,0.2);
+            border-radius: 16px; padding: 1.2rem 1.8rem; margin-bottom: 1.8rem;
+            box-shadow: 0 0 30px rgba(176,0,255,0.08); position: relative; overflow: hidden;
+        }
+        .example-holo::before {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: conic-gradient(from 0deg, transparent, rgba(176,0,255,0.05), transparent, rgba(0,240,255,0.05), transparent);
+            animation: rotateHolo 12s linear infinite;
+        }
+        @keyframes rotateHolo { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .example-holo .label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 3px; color: var(--text-violet); font-weight: 600; position: relative; z-index: 1; }
+        .example-holo .word { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 0 25px rgba(176,0,255,0.5); position: relative; z-index: 1; }
+        .example-holo .breakdown { font-size: 1.1rem; color: var(--text-cyan); position: relative; z-index: 1; font-weight: 300; letter-spacing: 1px; }
+        .example-holo .breakdown span { color: var(--violet); font-weight: 600; }
+        .exercise-area { margin-top: 1.5rem; padding: 1.2rem 1.8rem; background: rgba(0,0,0,0.3); border-radius: 16px; border: 1px solid rgba(0,240,255,0.08); }
+        .exercise-area .question { font-size: 1rem; font-weight: 500; margin-bottom: 1rem; color: #d0d0ff; }
+        .options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+        .opt-btn {
+            padding: 0.7rem 1.2rem; border-radius: 12px; background: rgba(0,240,255,0.04);
+            border: 1px solid rgba(0,240,255,0.1); color: #b0b0ff; font-family: 'Rajdhani', sans-serif;
+            font-weight: 500; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; text-align: left;
+        }
+        .opt-btn:hover:not(:disabled) { background: rgba(0,240,255,0.1); border-color: var(--cyan); color: #fff; transform: scale(1.01); }
+        .opt-btn.correct { background: rgba(0,240,255,0.2); border-color: var(--cyan); color: #fff; box-shadow: 0 0 25px rgba(0,240,255,0.15); }
+        .opt-btn.wrong { background: rgba(255,0,100,0.15); border-color: #ff0055; color: #ff88aa; }
+        .opt-btn:disabled { cursor: default; opacity: 0.7; }
+        .feedback { margin-top: 0.8rem; padding: 0.6rem 1.2rem; border-radius: 10px; font-weight: 500; display: none; }
+        .feedback.show { display: block; }
+        .feedback.correct { background: rgba(0,240,255,0.08); color: var(--text-cyan); border: 1px solid rgba(0,240,255,0.2); }
+        .feedback.wrong { background: rgba(255,0,100,0.08); color: #ff88aa; border: 1px solid rgba(255,0,100,0.2); }
+        .nav-buttons {
+            display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; gap: 1rem; flex-wrap: wrap;
+        }
+        .nav-btn {
+            background: rgba(0,240,255,0.08); border: 1px solid var(--cyan); color: var(--text-cyan);
+            padding: 0.5rem 1.8rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s;
+            letter-spacing: 1px; display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .nav-btn:hover:not(:disabled) { background: rgba(0,240,255,0.2); box-shadow: 0 0 25px rgba(0,240,255,0.2); }
+        .nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .voice-btn {
+            background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet);
+            padding: 0.5rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace;
+            font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .voice-btn:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .terminal-box {
+            margin-top: 1.8rem; background: #050510; border: 1px solid rgba(0,240,255,0.1);
+            border-radius: 16px; padding: 1.2rem 1.8rem; font-family: 'Rajdhani', monospace;
+        }
+        .terminal-box .term-header { display: flex; justify-content: space-between; color: rgba(160,250,255,0.4); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; border-bottom: 1px solid rgba(0,240,255,0.05); padding-bottom: 0.4rem; margin-bottom: 0.8rem; }
+        .terminal-input-row { display: flex; gap: 0.8rem; align-items: center; flex-wrap: wrap; }
+        .terminal-input-row input { flex: 1; background: transparent; border: none; border-bottom: 1px solid rgba(0,240,255,0.2); color: var(--text-cyan); font-family: 'Rajdhani', monospace; font-size: 1rem; padding: 0.4rem 0.2rem; outline: none; transition: border 0.3s; min-width: 150px; }
+        .terminal-input-row input:focus { border-bottom-color: var(--violet); }
+        .terminal-input-row button { background: rgba(176,0,255,0.15); border: 1px solid var(--violet); color: var(--text-violet); padding: 0.3rem 1.5rem; border-radius: 30px; font-family: 'Orbitron', monospace; font-size: 0.7rem; font-weight: 600; cursor: pointer; transition: all 0.3s; letter-spacing: 1px; }
+        .terminal-input-row button:hover { background: rgba(176,0,255,0.25); box-shadow: 0 0 25px rgba(176,0,255,0.2); }
+        .term-output { margin-top: 0.8rem; padding: 0.8rem; background: rgba(0,0,0,0.4); border-radius: 10px; min-height: 2.5rem; color: #a0c0ff; font-size: 0.9rem; border-left: 2px solid var(--cyan); opacity: 0.7; transition: all 0.3s; }
+        .term-output.populated { opacity: 1; border-left-color: var(--violet); }
+        @media (max-width: 700px) {
+            body { padding: 0.8rem; }
+            .header { flex-direction: column; align-items: stretch; gap: 0.8rem; padding: 1rem; }
+            .brand h1 { font-size: 1.3rem; }
+            .stats { justify-content: space-around; flex-wrap: wrap; gap: 0.5rem; }
+            .lesson-card { padding: 1.2rem; }
+            .options-grid { grid-template-columns: 1fr; }
+            .vector-avatar .icon { font-size: 1.6rem; }
+            .vector-avatar { padding: 0.2rem 0.8rem; }
+            .example-holo .word { font-size: 1.3rem; }
+            .theory-box .root { font-size: 1.4rem; }
+            .blocks-nav { justify-content: center; }
+            .block-tab { font-size: 0.55rem; padding: 0.2rem 0.8rem; }
+            .terminal-input-row { flex-wrap: wrap; }
+            .terminal-input-row input { min-width: 100%; }
+            .nav-buttons { flex-direction: column; align-items: stretch; }
+            .nav-btn, .voice-btn { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container">
+    <header class="header">
+        <div class="brand">
+            <span class="brand-icon">,</span>
+            <h1>Archivo de Vector <span>· Coma Explicativa</span></h1>
+        </div>
+        <div class="stats">
+            <div class="stats-item"><span class="label">aciertos</span><span class="num" id="scoreDisplay">0</span></div>
+            <div class="stats-item"><span class="label">racha</span><span class="num highlight" id="streakDisplay">0</span></div>
+            <div class="stats-item"><span class="label">progreso</span><span class="num" id="progressDisplay">0/10</span></div>
+        </div>
+    </header>
+    <div class="vector-row" id="vectorRow">
+        <div class="vector-avatar active" data-state="0"><span class="icon">📁</span><span class="name">Archivo</span></div>
+        <div class="vector-avatar" data-state="1"><span class="icon">🕰️</span><span class="name">Biblioteca</span></div>
+        <div class="vector-avatar" data-state="2"><span class="icon">📡</span><span class="name">En transmisión</span></div>
+        <div class="vector-avatar" data-state="3"><span class="icon">🏛️</span><span class="name">Coordenada Roma</span></div>
+        <div class="vector-avatar" data-state="4"><span class="icon">🏺</span><span class="name">Coordenada Grecia</span></div>
+    </div>
+    <div class="blocks-nav" id="blocksNav"></div>
+    <div class="lesson-card">
+        <div class="lesson-header">
+            <h2 id="blockTitle">Coma con "que" explicativo</h2>
+            <span class="counter" id="lessonCounter">1 / 10</span>
+        </div>
+        <div class="theory-box">
+            <div class="root" id="rootDisplay">, que</div>
+            <div class="meaning" id="meaningDisplay">introduce subordinada explicativa</div>
+            <div class="origin" id="originDisplay">🔹 se escribe entre comas</div>
+        </div>
+        <div class="example-holo">
+            <div class="label">⬡ proyección ortográfica</div>
+            <div class="word" id="exampleWord">El libro, que es muy largo, me encanta</div>
+            <div class="breakdown" id="exampleBreakdown"><span>, que</span> (explicativa) entre comas</div>
+        </div>
+        <div class="exercise-area">
+            <div class="question" id="questionText">¿Cómo se escribe la subordinada explicativa con "que"?</div>
+            <div class="options-grid" id="optionsGrid"></div>
+            <div class="feedback" id="feedback"></div>
+        </div>
+        <div class="nav-buttons">
+            <div>
+                <button class="nav-btn" id="prevBtn">◀ Anterior</button>
+                <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+            </div>
+            <button class="voice-btn" id="voiceBtn">🔊 Escuchar</button>
+        </div>
+    </div>
+    <div class="terminal-box">
+        <div class="term-header"><span>✦ terminal de práctica</span><span>escribe una frase explicativa</span></div>
+        <div class="terminal-input-row">
+            <input type="text" id="termInput" placeholder="ej. 'Mi hermana, que vive en Madrid, viene'..." autocomplete="off" />
+            <button id="termBtn">➤ enviar</button>
+        </div>
+        <div class="term-output" id="termOutput">⏺ esperando tu creación...</div>
+    </div>
+</div>
+<script>
+(function() {
+    // ================================================================
+    //  100 TÉCNICAS · COMA EN SUBORDINADAS EXPLICATIVAS
+    // ================================================================
+    const BLOCKS = [
+        {
+            name: 'Coma con "que" explicativo',
+            items: [
+                { root: ', que (explicativo)', meaning: 'introduce aposición explicativa con "que"', example: 'El libro, que es muy largo, me encanta', breakdown: 'explicativa entre comas' },
+                { root: ', que (sujeto)', meaning: 'explicativa que amplía el sujeto', example: 'María, que es mi hermana, viene hoy', breakdown: 'explicación del sujeto' },
+                { root: ', que (objeto directo)', meaning: 'explicativa que amplía el CD', example: 'Compré el coche, que era rojo, ayer', breakdown: 'explicación del CD' },
+                { root: ', que (objeto indirecto)', meaning: 'explicativa que amplía el CI', example: 'Di el regalo a Juan, que es mi amigo', breakdown: 'explicación del CI' },
+                { root: ', que (complemento circunstancial)', meaning: 'explicativa que amplía un CC', example: 'Vivo en Madrid, que es la capital', breakdown: 'explicación del CC' },
+                { root: ', que (con nombre propio)', meaning: 'explicativa con nombre propio', example: 'Luis, que es médico, trabaja mucho', breakdown: 'explicación del nombre propio' },
+                { root: ', que (con cargo o profesión)', meaning: 'explicativa con cargo', example: 'El jefe, que es severo, nos evaluó', breakdown: 'explicación del cargo' },
+                { root: ', que (con pronombre personal)', meaning: 'explicativa con pronombre', example: 'Ellos, que son mis amigos, vendrán', breakdown: 'explicación del pronombre' },
+                { root: ', que (con posesivo)', meaning: 'explicativa con posesivo', example: 'Mi casa, que es antigua, necesita reformas', breakdown: 'explicación del posesivo' },
+                { root: ', que (con demostrativo)', meaning: 'explicativa con demostrativo', example: 'Ese, que es mi vecino, es pintor', breakdown: 'explicación del demostrativo' }
+            ]
+        },
+        {
+            name: 'Coma con "el cual / la cual"',
+            items: [
+                { root: ', el cual', meaning: 'pronombre relativo explicativo masculino singular', example: 'El libro, el cual es muy largo, me encanta', breakdown: 'el cual entre comas' },
+                { root: ', la cual', meaning: 'pronombre relativo explicativo femenino singular', example: 'La casa, la cual es antigua, es bonita', breakdown: 'la cual entre comas' },
+                { root: ', los cuales', meaning: 'pronombre relativo explicativo masculino plural', example: 'Los libros, los cuales son largos, me gustan', breakdown: 'los cuales entre comas' },
+                { root: ', las cuales', meaning: 'pronombre relativo explicativo femenino plural', example: 'Las casas, las cuales son antiguas, son bonitas', breakdown: 'las cuales entre comas' },
+                { root: ', el cual (con preposición)', meaning: 'relativo con preposición', example: 'El amigo, del cual te hablé, viene', breakdown: 'del cual entre comas' },
+                { root: ', la cual (con preposición)', meaning: 'relativo con preposición femenino', example: 'La chica, de la cual te hablé, es simpática', breakdown: 'de la cual entre comas' },
+                { root: ', los cuales (con preposición)', meaning: 'relativo plural con preposición', example: 'Los vecinos, de los cuales te hablé, son ruidosos', breakdown: 'de los cuales entre comas' },
+                { root: ', las cuales (con preposición)', meaning: 'relativo plural femenino con preposición', example: 'Las tiendas, en las cuales compré, son caras', breakdown: 'en las cuales entre comas' },
+                { root: ', el cual (explicación de sustantivo propio)', meaning: 'explicación de nombre propio', example: 'Madrid, el cual es mi ciudad, es grande', breakdown: 'el cual con nombre propio' },
+                { root: ', la cual (explicación de concepto abstracto)', meaning: 'explicación de concepto abstracto', example: 'La idea, la cual es genial, se aprobó', breakdown: 'la cual con concepto abstracto' }
+            ]
+        },
+        {
+            name: 'Coma con "quien / quienes"',
+            items: [
+                { root: ', quien', meaning: 'pronombre relativo explicativo singular (personas)', example: 'Juan, quien es mi amigo, viene', breakdown: 'quien entre comas' },
+                { root: ', quienes', meaning: 'pronombre relativo explicativo plural (personas)', example: 'Los niños, quienes son pequeños, juegan', breakdown: 'quienes entre comas' },
+                { root: ', quien (con preposición)', meaning: 'relativo con preposición', example: 'María, a quien conocí ayer, es simpática', breakdown: 'a quien entre comas' },
+                { root: ', quienes (con preposición)', meaning: 'relativo plural con preposición', example: 'Los vecinos, a quienes saludé, son amables', breakdown: 'a quienes entre comas' },
+                { root: ', quien (explicación de persona con cargo)', meaning: 'explicación de persona con cargo', example: 'El presidente, quien es honesto, habló', breakdown: 'quien con cargo' },
+                { root: ', quienes (explicación de grupo)', meaning: 'explicación de grupo de personas', example: 'Los estudiantes, quienes están cansados, descansan', breakdown: 'quienes con grupo' },
+                { root: ', quien (con nombre propio)', meaning: 'explicación de nombre propio', example: 'Ana, quien es mi hermana, cocina bien', breakdown: 'quien con nombre propio' },
+                { root: ', quienes (con preposición y nombre propio)', meaning: 'con preposición y nombre propio plural', example: 'Los Pérez, con quienes cené, son encantadores', breakdown: 'con quienes entre comas' },
+                { root: ', quien (explicación de familiar)', meaning: 'explicación de familiar', example: 'Mi primo, quien vive en París, viene', breakdown: 'quien con familiar' },
+                { root: ', quienes (explicación de grupo con preposición)', meaning: 'grupo con preposición', example: 'Los alumnos, a quienes les enseñé, aprobaron', breakdown: 'a quienes entre comas' }
+            ]
+        },
+        {
+            name: 'Coma con "cuyo / cuya / cuyos / cuyas"',
+            items: [
+                { root: ', cuyo', meaning: 'posesivo relativo explicativo masculino singular', example: 'El libro, cuyo autor es famoso, se agotó', breakdown: 'cuyo entre comas' },
+                { root: ', cuya', meaning: 'posesivo relativo explicativo femenino singular', example: 'La casa, cuya fachada es bonita, es antigua', breakdown: 'cuya entre comas' },
+                { root: ', cuyos', meaning: 'posesivo relativo explicativo masculino plural', example: 'Los libros, cuyos autores son famosos, se agotaron', breakdown: 'cuyos entre comas' },
+                { root: ', cuyas', meaning: 'posesivo relativo explicativo femenino plural', example: 'Las casas, cuyas fachadas son bonitas, son antiguas', breakdown: 'cuyas entre comas' },
+                { root: ', cuyo (con nombre propio)', meaning: 'posesivo relativo con nombre propio', example: 'Luis, cuyo coche es rojo, llegó tarde', breakdown: 'cuyo con nombre propio' },
+                { root: ', cuya (con profesión)', meaning: 'posesivo relativo con profesión', example: 'La enfermera, cuya paciencia es infinita, ayuda a todos', breakdown: 'cuya con profesión' },
+                { root: ', cuyos (con familiar)', meaning: 'posesivo relativo plural con familiar', example: 'Mis hermanos, cuyos hijos son pequeños, viajan', breakdown: 'cuyos con familiar' },
+                { root: ', cuyas (con objeto plural)', meaning: 'posesivo relativo femenino plural', example: 'Las mesas, cuyas patas son de madera, son resistentes', breakdown: 'cuyas con objeto' },
+                { root: ', cuyo (con lugar)', meaning: 'posesivo relativo con lugar', example: 'El pueblo, cuyo nombre olvidé, es bonito', breakdown: 'cuyo con lugar' },
+                { root: ', cuya (con concepto abstracto)', meaning: 'posesivo relativo con concepto abstracto', example: 'La teoría, cuya validez es discutida, se estudia', breakdown: 'cuya con concepto abstracto' }
+            ]
+        },
+        {
+            name: 'Coma con sustantivos en aposición explicativa',
+            items: [
+                { root: ', nombre propio (aposición)', meaning: 'aposición explicativa con nombre propio', example: 'Madrid, capital de España, es grande', breakdown: 'aposición entre comas' },
+                { root: ', cargo (aposición)', meaning: 'aposición explicativa con cargo', example: 'El presidente, jefe de estado, habló', breakdown: 'aposición con cargo' },
+                { root: ', profesión (aposición)', meaning: 'aposición explicativa con profesión', example: 'Mi hermana, médica, trabaja en un hospital', breakdown: 'aposición con profesión' },
+                { root: ', parentesco (aposición)', meaning: 'aposición explicativa con parentesco', example: 'Juan, mi primo, viene hoy', breakdown: 'aposición con parentesco' },
+                { root: ', lugar (aposición)', meaning: 'aposición explicativa con lugar', example: 'París, la ciudad de la luz, es preciosa', breakdown: 'aposición con lugar' },
+                { root: ', nacionalidad (aposición)', meaning: 'aposición explicativa con nacionalidad', example: 'Pablo, argentino, vive en España', breakdown: 'aposición con nacionalidad' },
+                { root: ', edad (aposición)', meaning: 'aposición explicativa con edad', example: 'María, de 30 años, estudia medicina', breakdown: 'aposición con edad' },
+                { root: ', característica (aposición)', meaning: 'aposición explicativa con característica', example: 'El coche, rojo y brillante, es de mi padre', breakdown: 'aposición con característica' },
+                { root: ', institución (aposición)', meaning: 'aposición explicativa con institución', example: 'La ONU, organización internacional, tiene su sede en Nueva York', breakdown: 'aposición con institución' },
+                { root: ', obra (aposición)', meaning: 'aposición explicativa con obra', example: 'El Quijote, obra maestra de Cervantes, es universal', breakdown: 'aposición con obra' }
+            ]
+        },
+        {
+            name: 'Coma con sustantivos en función de vocativo',
+            items: [
+                { root: ', vocativo (nombre)', meaning: 'vocativo con nombre propio', example: 'Juan, ven aquí', breakdown: 'vocativo entre comas' },
+                { root: ', vocativo (cargo)', meaning: 'vocativo con cargo', example: 'Doctor, ¿puede atenderme?', breakdown: 'vocativo con cargo' },
+                { root: ', vocativo (parentesco)', meaning: 'vocativo con parentesco', example: 'Mamá, ¿qué hay de comer?', breakdown: 'vocativo con parentesco' },
+                { root: ', vocativo (título)', meaning: 'vocativo con título', example: 'Señor, ¿puede ayudarme?', breakdown: 'vocativo con título' },
+                { root: ', vocativo (apelativo cariñoso)', meaning: 'vocativo con apelativo', example: 'Cariño, ¿qué te pasa?', breakdown: 'vocativo cariñoso' },
+                { root: ', vocativo (profesión)', meaning: 'vocativo con profesión', example: 'Arquitecto, ¿cuándo entrega el proyecto?', breakdown: 'vocativo con profesión' },
+                { root: ', vocativo (tratamiento formal)', meaning: 'vocativo formal', example: 'Excelencia, es un honor', breakdown: 'vocativo formal' },
+                { root: ', vocativo (apodo)', meaning: 'vocativo con apodo', example: 'Paco, ¿te gusta el cine?', breakdown: 'vocativo con apodo' },
+                { root: ', vocativo (en medio de la oración)', meaning: 'vocativo entre comas en medio', example: 'Dime, Juan, ¿qué piensas?', breakdown: 'vocativo entre comas' },
+                { root: ', vocativo (al final de la oración)', meaning: 'vocativo al final con coma', example: 'Ven aquí, María', breakdown: 'vocativo final con coma' }
+            ]
+        },
+        {
+            name: 'Coma con incisos explicativos',
+            items: [
+                { root: ', inciso aclaratorio', meaning: 'inciso que aclara información', example: 'El coche, como ya sabes, es nuevo', breakdown: 'inciso entre comas' },
+                { root: ', inciso con "es decir"', meaning: 'inciso con "es decir"', example: 'La solución, es decir, el acuerdo, fue aprobada', breakdown: 'inciso con "es decir"' },
+                { root: ', inciso con "o sea"', meaning: 'inciso con "o sea"', example: 'Mañana, o sea, el lunes, nos vemos', breakdown: 'inciso con "o sea"' },
+                { root: ', inciso con "por ejemplo"', meaning: 'inciso con "por ejemplo"', example: 'Frutas, por ejemplo, manzanas y peras', breakdown: 'inciso con "por ejemplo"' },
+                { root: ', inciso con "como"', meaning: 'inciso con "como"', example: 'Los animales, como el perro y el gato, son domésticos', breakdown: 'inciso con "como"' },
+                { root: ', inciso con "sobre todo"', meaning: 'inciso con "sobre todo"', example: 'El trabajo, sobre todo el manual, es cansado', breakdown: 'inciso con "sobre todo"' },
+                { root: ', inciso con "principalmente"', meaning: 'inciso con "principalmente"', example: 'Los niños, principalmente los pequeños, necesitan atención', breakdown: 'inciso con "principalmente"' },
+                { root: ', inciso con "incluso"', meaning: 'inciso con "incluso"', example: 'La familia, incluso los primos, vino a la fiesta', breakdown: 'inciso con "incluso"' },
+                { root: ', inciso con "especialmente"', meaning: 'inciso con "especialmente"', example: 'Las verduras, especialmente las de hoja verde, son saludables', breakdown: 'inciso con "especialmente"' },
+                { root: ', inciso con "particularmente"', meaning: 'inciso con "particularmente"', example: 'Me gusta el cine, particularmente el europeo', breakdown: 'inciso con "particularmente"' }
+            ]
+        },
+        {
+            name: 'Coma con subordinadas explicativas de lugar, tiempo y modo',
+            items: [
+                { root: ', donde (explicativo)', meaning: 'subordinada explicativa de lugar', example: 'Vivo en Madrid, donde nací', breakdown: 'donde explicativo entre comas' },
+                { root: ', en donde (explicativo)', meaning: 'subordinada explicativa con preposición', example: 'La casa, en donde crecí, es vieja', breakdown: 'en donde entre comas' },
+                { root: ', cuando (explicativo)', meaning: 'subordinada explicativa de tiempo', example: 'El verano, cuando hace calor, es mi estación favorita', breakdown: 'cuando explicativo entre comas' },
+                { root: ', mientras (explicativo)', meaning: 'subordinada explicativa de tiempo simultáneo', example: 'El año pasado, mientras estudiaba, viajé mucho', breakdown: 'mientras entre comas' },
+                { root: ', como (explicativo de modo)', meaning: 'subordinada explicativa de modo', example: 'Lo hizo, como te expliqué, correctamente', breakdown: 'como explicativo entre comas' },
+                { root: ', tal como (explicativo)', meaning: 'subordinada explicativa con "tal como"', example: 'La situación, tal como la describiste, es grave', breakdown: 'tal como entre comas' },
+                { root: ', según (explicativo)', meaning: 'subordinada explicativa con "según"', example: 'El informe, según dice el director, es positivo', breakdown: 'según entre comas' },
+                { root: ', cuando (con nombre propio)', meaning: 'explicativa de tiempo con nombre propio', example: 'El año 2020, cuando empezó la pandemia, fue difícil', breakdown: 'cuando explicativo con año' },
+                { root: ', donde (con ciudad)', meaning: 'explicativa de lugar con ciudad', example: 'París, donde viví dos años, es preciosa', breakdown: 'donde explicativo con ciudad' },
+                { root: ', mientras (con actividad)', meaning: 'explicativa de tiempo con actividad', example: 'El examen, mientras estudiaba, era difícil', breakdown: 'mientras explicativo con actividad' }
+            ]
+        },
+        {
+            name: 'Casos especiales y excepciones',
+            items: [
+                { root: ', que (explicativa con verbo en subjuntivo)', meaning: 'explicativa con subjuntivo', example: 'El libro, que sea interesante o no, lo leeré', breakdown: 'explicativa con subjuntivo' },
+                { root: ', que (explicativa con condicional)', meaning: 'explicativa con condicional', example: 'Mi amigo, que vendría si pudiera, está enfermo', breakdown: 'explicativa con condicional' },
+                { root: ', cual (explicativo literario)', meaning: 'explicativo con "cual" (literario)', example: 'El viento, cual susurro, pasaba', breakdown: 'cual literario entre comas' },
+                { root: ', cosa que (explicativo)', meaning: 'explicativo con "cosa que"', example: 'Llegó tarde, cosa que no me gustó', breakdown: 'cosa que explicativo' },
+                { root: ', lo que (explicativo)', meaning: 'explicativo con "lo que"', example: 'Estudió mucho, lo que le ayudó a aprobar', breakdown: 'lo que explicativo' },
+                { root: ', el cual (explicativo con participio)', meaning: 'explicativo con participio', example: 'El cuadro, pintado por Goya, es famoso', breakdown: 'el cual con participio' },
+                { root: ', que (explicativa con gerundio)', meaning: 'explicativa con gerundio', example: 'La niña, jugando en el parque, se cayó', breakdown: 'explicativa con gerundio' },
+                { root: ', que (explicativa con infinitivo)', meaning: 'explicativa con infinitivo', example: 'El plan, por ser ambicioso, fracasó', breakdown: 'explicativa con infinitivo' },
+                { root: ', que (explicativa con aposición sin verbo)', meaning: 'aposición explicativa sin verbo', example: 'Mi amigo, el de la barba, viene', breakdown: 'aposición sin verbo' },
+                { root: ', que (explicativa con construcción absoluta)', meaning: 'construcción absoluta explicativa', example: 'El sol, brillando en el cielo, calentaba', breakdown: 'construcción absoluta' }
+            ]
+        },
+        {
+            name: 'Comparativa explicativa vs. especificativa',
+            items: [
+                { root: ', que (explicativa) vs. que (especificativa)', meaning: 'diferencia entre explicativa y especificativa', example: 'Los niños, que son pequeños, juegan (explicativa) vs. Los niños que son pequeños juegan (especificativa)', breakdown: 'explicativa con comas, especificativa sin comas' },
+                { root: ', el cual (explicativa) vs. el cual (especificativa)', meaning: 'relativo explicativo vs. especificativo', example: 'El libro, el cual es largo, me gusta (explicativa) vs. El libro el cual es largo me gusta (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', quien (explicativa) vs. quien (especificativa)', meaning: 'diferencia con "quien"', example: 'Mi amigo, quien es médico, trabaja (explicativa) vs. Mi amigo quien es médico trabaja (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', cuyo (explicativa) vs. cuyo (especificativa)', meaning: 'diferencia con "cuyo"', example: 'El profesor, cuyo libro es famoso, llega (explicativa) vs. El profesor cuyo libro es famoso llega (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', aposición (explicativa) vs. aposición (especificativa)', meaning: 'aposición explicativa sin comas', example: 'Madrid, capital de España (explicativa) vs. Madrid ciudad (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', inciso (explicativa) vs. inciso (especificativa)', meaning: 'inciso explicativo vs. especificativo', example: 'Los animales, como el perro, son domésticos (explicativa) vs. Los animales como el perro son domésticos (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', donde (explicativa) vs. donde (especificativa)', meaning: 'diferencia con "donde"', example: 'Vivo en Madrid, donde nací (explicativa) vs. Vivo en Madrid donde nací (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', cuando (explicativa) vs. cuando (especificativa)', meaning: 'diferencia con "cuando"', example: 'El verano, cuando hace calor, es bueno (explicativa) vs. El verano cuando hace calor es bueno (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', como (explicativa) vs. como (especificativa)', meaning: 'diferencia con "como"', example: 'Lo hizo, como te dije, bien (explicativa) vs. Lo hizo como te dije (especificativa)', breakdown: 'explicativa con comas' },
+                { root: ', según (explicativa) vs. según (especificativa)', meaning: 'diferencia con "según"', example: 'El informe, según dice, es positivo (explicativa) vs. El informe según dice es positivo (especificativa)', breakdown: 'explicativa con comas' }
+            ]
+        }
+    ];
+
+    // ================================================================
+    //  ESTADO Y DOM
+    // ================================================================
+    let currentBlock = 0, currentLesson = 0, score = 0, streak = 0, answered = false;
+    const blocksNav = document.getElementById('blocksNav');
+    const blockTitle = document.getElementById('blockTitle');
+    const lessonCounter = document.getElementById('lessonCounter');
+    const rootDisplay = document.getElementById('rootDisplay');
+    const meaningDisplay = document.getElementById('meaningDisplay');
+    const originDisplay = document.getElementById('originDisplay');
+    const exampleWord = document.getElementById('exampleWord');
+    const exampleBreakdown = document.getElementById('exampleBreakdown');
+    const questionText = document.getElementById('questionText');
+    const optionsGrid = document.getElementById('optionsGrid');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const streakDisplay = document.getElementById('streakDisplay');
+    const progressDisplay = document.getElementById('progressDisplay');
+    const termInput = document.getElementById('termInput');
+    const termBtn = document.getElementById('termBtn');
+    const termOutput = document.getElementById('termOutput');
+    const vectorAvatars = document.querySelectorAll('.vector-avatar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const voiceBtn = document.getElementById('voiceBtn');
+
+    function getLesson(b, l) { return BLOCKS[b].items[l]; }
+    function getCurrentLesson() { return getLesson(currentBlock, currentLesson); }
+    function shuffleArray(arr) { for (let i = arr.length-1; i>0; i--) { const j = Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+    function renderBlockTabs() {
+        blocksNav.innerHTML = '';
+        BLOCKS.forEach((block, idx) => {
+            const tab = document.createElement('div');
+            tab.className = 'block-tab' + (idx === currentBlock ? ' active' : '');
+            tab.innerHTML = `${block.name} <span class="badge">${block.items.length}</span>`;
+            tab.dataset.idx = idx;
+            tab.addEventListener('click', () => { currentBlock = idx; currentLesson = 0; renderAll(); });
+            blocksNav.appendChild(tab);
+        });
+    }
+
+    function renderLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        blockTitle.textContent = BLOCKS[currentBlock].name;
+        lessonCounter.textContent = `${currentLesson + 1} / ${BLOCKS[currentBlock].items.length}`;
+        rootDisplay.textContent = lesson.root;
+        meaningDisplay.textContent = lesson.meaning;
+        originDisplay.textContent = `🔹 función: ${lesson.breakdown.split('→')[0].trim()}`;
+        exampleWord.textContent = lesson.example;
+        exampleBreakdown.innerHTML = lesson.breakdown.replace(/\b(\w+)\b/g, m => `<span>${m}</span>`);
+        generateExercise(lesson);
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+        answered = false;
+        document.querySelectorAll('.opt-btn').forEach(b => b.disabled = false);
+        let done = 0;
+        for (let i = 0; i < currentBlock; i++) done += BLOCKS[i].items.length;
+        done += currentLesson;
+        const total = BLOCKS.reduce((a,b) => a + b.items.length, 0);
+        progressDisplay.textContent = `${Math.min(Math.floor((done/total)*10), 10)}/10`;
+        prevBtn.disabled = (currentBlock === 0 && currentLesson === 0);
+        const lastBlock = BLOCKS.length - 1;
+        const lastLesson = BLOCKS[lastBlock].items.length - 1;
+        nextBtn.disabled = (currentBlock === lastBlock && currentLesson === lastLesson);
+    }
+
+    function generateExercise(lesson) {
+        const all = []; BLOCKS.forEach(b => b.items.forEach(it => all.push({ root: it.root, meaning: it.meaning })));
+        const correct = lesson.meaning;
+        let wrongs = all.filter(m => m.meaning !== correct && m.root !== lesson.root);
+        shuffleArray(wrongs);
+        wrongs = wrongs.slice(0, 3);
+        const options = [correct, ...wrongs.map(w => w.meaning)];
+        shuffleArray(options);
+        questionText.textContent = `¿Qué uso describe "${lesson.root}"?`;
+        optionsGrid.innerHTML = '';
+        options.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.textContent = opt;
+            btn.dataset.value = opt;
+            btn.addEventListener('click', () => handleOptionClick(btn, correct));
+            optionsGrid.appendChild(btn);
+        });
+    }
+
+    function handleOptionClick(btn, correct) {
+        if (answered) return;
+        const selected = btn.dataset.value;
+        const isCorrect = selected === correct;
+        answered = true;
+        const allBtns = document.querySelectorAll('.opt-btn');
+        allBtns.forEach(b => b.disabled = true);
+        if (isCorrect) {
+            btn.classList.add('correct');
+            score++; streak++;
+            feedback.className = 'feedback show correct';
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+        } else {
+            btn.classList.add('wrong');
+            streak = 0;
+            allBtns.forEach(b => { if (b.dataset.value === correct) b.classList.add('correct'); });
+            feedback.className = 'feedback show wrong';
+            feedback.textContent = `❌ No. La respuesta correcta es "${correct}".`;
+        }
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    function goToLesson(b, l) {
+        if (b < 0 || b >= BLOCKS.length) return;
+        if (l < 0 || l >= BLOCKS[b].items.length) return;
+        currentBlock = b; currentLesson = l; renderAll();
+    }
+    function nextLesson() {
+        if (currentLesson < BLOCKS[currentBlock].items.length - 1) goToLesson(currentBlock, currentLesson + 1);
+        else if (currentBlock < BLOCKS.length - 1) goToLesson(currentBlock + 1, 0);
+    }
+    function prevLesson() {
+        if (currentLesson > 0) goToLesson(currentBlock, currentLesson - 1);
+        else if (currentBlock > 0) goToLesson(currentBlock - 1, BLOCKS[currentBlock - 1].items.length - 1);
+    }
+
+    function speakLesson() {
+        const lesson = getCurrentLesson();
+        if (!lesson) return;
+        const text = `${lesson.root}. Significado: ${lesson.meaning}. Ejemplo: ${lesson.example}. Desglose: ${lesson.breakdown}`;
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'es-ES';
+            utterance.rate = 0.9;
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        } else alert('Tu navegador no soporta síntesis de voz.');
+    }
+
+    function handleTerminal() {
+        const val = termInput.value.trim();
+        if (!val) {
+            termOutput.textContent = '⏺ escribe una frase con subordinada explicativa...';
+            termOutput.classList.remove('populated');
+            return;
+        }
+        let found = false, msg = `🔍 "${val}" → `;
+        for (const block of BLOCKS) {
+            for (const item of block.items) {
+                const rootClean = item.root.replace(/[()]/g, '').trim();
+                if (val.toLowerCase().includes(rootClean.toLowerCase()) ||
+                    item.example.toLowerCase().includes(val.toLowerCase().replace(/[()]/g, ''))) {
+                    msg += `relacionado con "${item.root}" (${item.meaning}). `;
+                    found = true;
+                    break;
+                }
+            }
+            if (found) break;
+        }
+        if (!found) msg += 'no se reconoció una estructura explicativa concreta, pero tu creatividad cuenta. ,';
+        termOutput.textContent = msg;
+        termOutput.classList.add('populated');
+        termInput.value = '';
+    }
+
+    function renderAll() {
+        renderBlockTabs();
+        renderLesson();
+        vectorAvatars.forEach((el, idx) => el.classList.toggle('active', idx === (currentBlock % 5)));
+        scoreDisplay.textContent = score;
+        streakDisplay.textContent = streak;
+    }
+
+    // Eventos
+    prevBtn.addEventListener('click', prevLesson);
+    nextBtn.addEventListener('click', nextLesson);
+    voiceBtn.addEventListener('click', speakLesson);
+    termBtn.addEventListener('click', handleTerminal);
+    termInput.addEventListener('keydown', e => { if (e.key === 'Enter') handleTerminal(); });
+    vectorAvatars.forEach((el, idx) => {
+        el.addEventListener('click', () => {
+            currentBlock = idx % BLOCKS.length;
+            currentLesson = 0;
+            renderAll();
+        });
+    });
+
+    renderAll();
+    setTimeout(() => {
+        termOutput.textContent = '⏳ Vector activo. Explora el uso de la coma en subordinadas explicativas con sustantivos, "que" y pronombres relativos.';
+        termOutput.classList.add('populated');
+    }, 500);
+})();
+</script>
+</body>
+</html>

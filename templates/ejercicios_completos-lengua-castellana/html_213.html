@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · El Gerundio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">el gerundio · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Gerundio: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una oración que use correctamente esta forma del gerundio:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Estoy estudiando toda la tarde.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE EL GERUNDIO CASTELLANO
+        //  Formación, usos, perífrasis, valores, errores y redacción
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'formacion', label: 'Formación y Conjugación' },
+            { id: 'perifrasis', label: 'Perífrasis Verbales con Gerundio' },
+            { id: 'simultaneidad', label: 'Simultaneidad y Modo' },
+            { id: 'causa_condicion', label: 'Causa, Condición y Concesión' },
+            { id: 'tiempos_verbales', label: 'Gerundio con Tiempos Verbales' },
+            { id: 'usos_especificos', label: 'Usos Específicos' },
+            { id: 'errores_comunes', label: 'Errores Comunes y Vicios' },
+            { id: 'gerundio_adjetivo', label: 'Gerundio con Valor Adjetivo' },
+            { id: 'gerundio_absoluto', label: 'Construcciones Absolutas' },
+            { id: 'usos_redaccion', label: 'Usos en Redacción y Estilo' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: FORMACIÓN Y CONJUGACIÓN (1–10)
+        // ============================================================
+        const b1 = [
+            ['Gerundio de verbos regulares: -ando', '-ando (1ª conjugación)',
+                'Los verbos de la 1ª conjugación (terminados en -ar) forman el gerundio añadiendo -ando a la raíz: hablar → hablando, cantar → cantando.',
+                'Estoy hablando por teléfono. / Va cantando por la calle.',
+                'hablar → hablando (raíz habl- + -ando)',
+                '¿Qué terminación tiene el gerundio de los verbos de la 1ª conjugación?', ['-ando', '-iendo', '-yendo',
+                    '-endo'
+                ], 0, 'Escribe una oración con el gerundio de un verbo de la 1ª conjugación.'
+            ],
+            ['Gerundio de verbos regulares: -iendo', '-iendo (2ª y 3ª conjugación)',
+                'Los verbos de la 2ª y 3ª conjugación (terminados en -er o -ir) forman el gerundio añadiendo -iendo a la raíz: comer → comiendo, vivir → viviendo.',
+                'Estoy comiendo una manzana. / Está viviendo en Madrid.',
+                'comer → comiendo (raíz com- + -iendo) / vivir → viviendo (raíz viv- + -iendo)',
+                '¿Qué terminación tienen los gerundios de los verbos de la 2ª y 3ª conjugación?', ['-iendo', '-ando',
+                    '-yendo', '-endo'
+                ], 0, 'Escribe una oración con el gerundio de un verbo de la 2ª conjugación.'
+            ],
+            ['Gerundios irregulares: verbos con diptongo', '-yendo (verbos con diptongo)',
+                'Los verbos que tienen diptongo en la raíz (leer, caer, traer, oír) forman el gerundio con -yendo: leyendo, cayendo, trayendo, oyendo.',
+                'Estoy leyendo un libro. / Va cayendo la lluvia.',
+                'leer → leyendo (le- + -yendo) / caer → cayendo (ca- + -yendo)',
+                '¿Qué gerundio corresponde al verbo "leer"?', ['Leyendo', 'Leiendo', 'Leendo', 'Leyendo'],
+                0, 'Escribe una oración con el gerundio "leyendo".'
+            ],
+            ['Gerundios irregulares: verbos con cambio vocálico', 'Cambio vocálico en el gerundio',
+                'Algunos verbos cambian la vocal de la raíz en el gerundio: dormir → durmiendo, morir → muriendo, poder → pudiendo.',
+                'Está durmiendo la siesta. / El paciente está muriendo.',
+                'dormir → durmiendo (o → u) / morir → muriendo (o → u)',
+                '¿Qué gerundio corresponde al verbo "dormir"?', ['Durmiendo', 'Dormiendo', 'Dormiendo', 'Dormyendo'],
+                0, 'Escribe una oración con el gerundio "durmiendo".'
+            ],
+            ['Gerundios irregulares: verbos con cambio de e → i', '-iendo con cambio de e → i',
+                'Verbos que cambian la e de la raíz por i en el gerundio: pedir → pidiendo, servir → sirviendo, vestir → vistiendo.',
+                'Está pidiendo ayuda. / Va sirviendo la comida.',
+                'pedir → pidiendo (e → i) / servir → sirviendo (e → i)',
+                '¿Qué gerundio corresponde al verbo "pedir"?', ['Pidiendo', 'Pediendo', 'Pidendo', 'Pidyendo'],
+                0, 'Escribe una oración con el gerundio "pidiendo".'
+            ],
+            ['Gerundios de verbos con pronombres', 'Gerundio + pronombre enclítico',
+                'Los pronombres se colocan después del gerundio, formando una sola palabra: diciendo → diciéndolo, mirando → mirándola.',
+                'Estoy mirándola. / Va diciéndolo por todas partes.',
+                'mirando + la = mirándola / diciendo + lo = diciéndolo',
+                '¿Cómo se colocan los pronombres con el gerundio?', ['Después, unidos al gerundio',
+                    'Antes, separados del gerundio', 'Después, separados', 'No se usan'
+                ], 0, 'Escribe una oración con un gerundio y un pronombre enclítico.'
+            ],
+            ['Gerundios de verbos reflexivos', 'Gerundio + pronombre reflexivo',
+                'En verbos reflexivos, el pronombre (me, te, se, nos, os) se coloca después del gerundio: levantando → levantándome, duchando → duchándome.',
+                'Estoy levantándome temprano.',
+                'levantando + me = levantándome',
+                '¿Cómo se coloca el pronombre reflexivo con el gerundio?', ['Después, unido al gerundio',
+                    'Antes, separado', 'Después, separado', 'No se usa'
+                ], 0, 'Escribe una oración con un gerundio reflexivo.'
+            ],
+            ['Gerundio compuesto', 'Habiendo + participio (gerundio compuesto)',
+                'El gerundio compuesto se forma con "habiendo" + participio: habiendo comido, habiendo llegado. Indica una acción anterior a la del verbo principal.',
+                'Habiendo comido, salimos a pasear.',
+                'habiendo + comido (habiendo comido)',
+                '¿Cómo se forma el gerundio compuesto?', ['Habiendo + participio', 'Estar + gerundio',
+                    'Ir + gerundio', 'Andar + gerundio'
+                ], 0, 'Escribe una oración con el gerundio compuesto "habiendo llegado".'
+            ],
+            ['Gerundio pasivo', 'Siendo + participio (gerundio pasivo)',
+                'El gerundio pasivo se forma con "siendo" + participio: siendo visto, siendo escuchado. Indica una acción pasiva simultánea.',
+                'Siendo visto por todos, se sintió avergonzado.',
+                'siendo + visto (siendo visto)',
+                '¿Cómo se forma el gerundio pasivo?', ['Siendo + participio', 'Habiendo + participio',
+                    'Estar + gerundio', 'Ir + gerundio'
+                ], 0, 'Escribe una oración con el gerundio pasivo "siendo escuchado".'
+            ],
+            ['Gerundio de verbos defectivos', 'Gerundios especiales (verbos defectivos)',
+                'Algunos verbos defectivos (que no se conjugan en todos los tiempos) sí tienen gerundio: soler → soliendo, atañer → atañendo.',
+                'Soliendo hacer eso, se acostumbró.',
+                'soler → soliendo (gerundio de verbo defectivo)',
+                '¿Qué gerundio corresponde al verbo "soler"?', ['Soliendo', 'Soliendo', 'Solendo', 'Solyendo'],
+                0, 'Escribe una oración con el gerundio "soliendo".'
+            ]
+        ];
+        b1.forEach(d => addLesson('formacion', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: PERÍFRASIS VERBALES CON GERUNDIO (11–20)
+        // ============================================================
+        const b2 = [
+            ['Perífrasis: estar + gerundio (acción en desarrollo)', 'Estar + gerundio',
+                'La perífrasis "estar + gerundio" expresa una acción que está ocurriendo en el momento del habla o en un período de tiempo.',
+                'Estoy estudiando para el examen.',
+                'Estoy (estar conjugado) + estudiando (gerundio)',
+                '¿Qué expresa "estar + gerundio"?', ['Acción en desarrollo', 'Acción terminada', 'Acción futura',
+                    'Acción habitual'
+                ], 0, 'Escribe una oración con "estar + gerundio".'
+            ],
+            ['Perífrasis: ir + gerundio (progresión)', 'Ir + gerundio',
+                'La perífrasis "ir + gerundio" expresa una acción que se desarrolla de forma progresiva o gradual.',
+                'El proyecto va mejorando día a día.',
+                'va (ir conjugado) + mejorando (gerundio)',
+                '¿Qué expresa "ir + gerundio"?', ['Progresión gradual', 'Acción inmediata', 'Acción terminada',
+                    'Acción futura'
+                ], 0, 'Escribe una oración con "ir + gerundio".'
+            ],
+            ['Perífrasis: venir + gerundio (acción continuada desde el pasado)', 'Venir + gerundio',
+                'La perífrasis "venir + gerundio" expresa una acción que viene realizándose desde un tiempo pasado hasta el presente.',
+                'Vengo estudiando esta lección desde hace dos horas.',
+                'vengo (venir conjugado) + estudiando (gerundio)',
+                '¿Qué expresa "venir + gerundio"?', ['Acción continuada desde el pasado', 'Acción futura',
+                    'Acción terminada', 'Acción simultánea'
+                ], 0, 'Escribe una oración con "venir + gerundio".'
+            ],
+            ['Perífrasis: andar + gerundio (acción esporádica)', 'Andar + gerundio',
+                'La perífrasis "andar + gerundio" expresa una acción que se realiza de forma esporádica o andando de un lado a otro.',
+                'Anda diciendo mentiras por ahí.',
+                'anda (andar conjugado) + diciendo (gerundio)',
+                '¿Qué expresa "andar + gerundio"?', ['Acción esporádica', 'Acción continuada', 'Acción terminada',
+                    'Acción futura'
+                ], 0, 'Escribe una oración con "andar + gerundio".'
+            ],
+            ['Perífrasis: seguir + gerundio (continuidad)', 'Seguir + gerundio',
+                'La perífrasis "seguir + gerundio" expresa que una acción continúa realizándose.',
+                'Sigo estudiando aunque estoy cansado.',
+                'sigo (seguir conjugado) + estudiando (gerundio)',
+                '¿Qué expresa "seguir + gerundio"?', ['Continuidad de la acción', 'Acción terminada', 'Acción futura',
+                    'Acción simultánea'
+                ], 0, 'Escribe una oración con "seguir + gerundio".'
+            ],
+            ['Perífrasis: llevar + gerundio (tiempo acumulado)', 'Llevar + gerundio',
+                'La perífrasis "llevar + gerundio" expresa el tiempo que se lleva realizando una acción.',
+                'Llevo tres horas estudiando.',
+                'llevo (llevar conjugado) + estudiando (gerundio)',
+                '¿Qué expresa "llevar + gerundio"?', ['Tiempo acumulado', 'Acción terminada', 'Acción futura',
+                    'Acción simultánea'
+                ], 0, 'Escribe una oración con "llevar + gerundio".'
+            ],
+            ['Perífrasis: quedar + gerundio (acción aún no realizada)', 'Quedar + gerundio',
+                'La perífrasis "quedar + gerundio" expresa una acción que todavía no se ha realizado o que está pendiente.',
+                'Queda mucho por hacer. (con "por" + infinitivo) / Queda estudiando. (menos común)',
+                'queda (quedar conjugado) + estudiando (gerundio)',
+                '¿Qué expresa "quedar + gerundio"?', ['Acción pendiente', 'Acción terminada', 'Acción futura',
+                    'Acción simultánea'
+                ], 0, 'Escribe una oración con "quedar + gerundio".'
+            ],
+            ['Perífrasis: comenzar + gerundio (inicio)', 'Comenzar + gerundio / Empezar + gerundio',
+                'Las perífrasis "comenzar + gerundio" y "empezar + gerundio" expresan el inicio de una acción.',
+                'Comenzó a llover. (con "a" + infinitivo) / Comenzó lloviendo. (menos común)',
+                'comenzó (comenzar conjugado) + gerundio',
+                '¿Qué expresa "comenzar + gerundio"?', ['Inicio de acción', 'Acción terminada', 'Acción futura',
+                    'Acción habitual'
+                ], 0, 'Escribe una oración con "comenzar + gerundio".'
+            ],
+            ['Perífrasis: acabar + gerundio (final)', 'Acabar + gerundio / Terminar + gerundio',
+                'Las perífrasis "acabar + gerundio" y "terminar + gerundio" expresan el final de una acción.',
+                'Acabó llorando. / Terminó riendo.',
+                'acabó (acabar conjugado) + llorando (gerundio)',
+                '¿Qué expresa "acabar + gerundio"?', ['Final de acción', 'Inicio de acción', 'Acción continuada',
+                    'Acción habitual'
+                ], 0, 'Escribe una oración con "acabar + gerundio".'
+            ],
+            ['Perífrasis: andar + gerundio (valor despectivo)', 'Andar + gerundio (despectivo)',
+                'La perífrasis "andar + gerundio" puede tener un valor despectivo, indicando que alguien hace algo de forma molesta.',
+                'Anda criticando a todos sin motivo.',
+                'anda (andar conjugado) + criticando (gerundio)',
+                '¿Qué valor puede tener "andar + gerundio"?', ['Despectivo o molesto', 'Positivo', 'Neutro',
+                    'Formal'
+                ], 0, 'Escribe una oración con "andar + gerundio" con valor despectivo.'
+            ]
+        ];
+        b2.forEach(d => addLesson('perifrasis', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: SIMULTANEIDAD Y MODO (21–30)
+        // ============================================================
+        const b3 = [
+            ['Gerundio de simultaneidad', 'Gerundio + verbo principal (simultáneo)',
+                'El gerundio expresa una acción simultánea a la del verbo principal. Indica que dos acciones ocurren al mismo tiempo.',
+                'Entró silbando. / Comió viendo la televisión.',
+                'silbando (simultáneo a entró) / viendo (simultáneo a comió)',
+                '¿Qué relación temporal expresa el gerundio en "Entró silbando"?', ['Simultaneidad', 'Anterioridad',
+                    'Posterioridad', 'Causa'
+                ], 0, 'Escribe una oración con gerundio de simultaneidad.'
+            ],
+            ['Gerundio de modo', 'Gerundio + verbo principal (modo)',
+                'El gerundio puede expresar la manera o el modo en que se realiza la acción del verbo principal.',
+                'Llegó corriendo. / Habló gritando.',
+                'corriendo (modo de llegar) / gritando (modo de hablar)',
+                '¿Qué expresa el gerundio en "Llegó corriendo"?', ['Modo de la acción', 'Simultaneidad', 'Causa',
+                    'Condición'
+                ], 0, 'Escribe una oración con gerundio de modo.'
+            ],
+            ['Gerundio de anterioridad inmediata', 'Gerundio + verbo principal (anterioridad)',
+                'El gerundio compuesto (habiendo + participio) expresa una acción anterior a la del verbo principal.',
+                'Habiendo terminado el trabajo, se fue a casa.',
+                'habiendo terminado (anterior a se fue)',
+                '¿Qué expresa el gerundio compuesto?', ['Anterioridad', 'Simultaneidad', 'Posterioridad', 'Modo'],
+                0, 'Escribe una oración con el gerundio compuesto "habiendo terminado".'
+            ],
+            ['Gerundio de posterioridad (incorrecto)', 'Gerundio de posterioridad (error)',
+                'El gerundio no debe expresar una acción posterior a la del verbo principal. Es un error muy común.',
+                'Incorrecto: Se cayó, rompiéndose la pierna. (rompiéndose es posterior)',
+                'rompiéndose (posterioridad → error)',
+                '¿Por qué es incorrecto el gerundio en "Se cayó, rompiéndose la pierna"?', ['Expresa posterioridad',
+                    'Expresa simultaneidad', 'Expresa causa', 'Expresa modo'
+                ], 0, 'Corrige la oración "Se cayó, rompiéndose la pierna" usando una forma correcta.'
+            ],
+            ['Gerundio con "sin" (ausencia de acción)', 'Sin + gerundio (ausencia)',
+                'La construcción "sin + gerundio" expresa que una acción no se realiza al mismo tiempo que otra.',
+                'Salió sin despedirse.',
+                'sin + despedirse (ausencia de la acción)',
+                '¿Qué expresa "sin + gerundio"?', ['Ausencia de acción simultánea', 'Simultaneidad', 'Causa',
+                    'Modo'
+                ], 0, 'Escribe una oración con "sin + gerundio".'
+            ],
+            ['Gerundio con "con" (simultaneidad)', 'Con + gerundio (simultaneidad)',
+                'La construcción "con + gerundio" expresa simultaneidad o modo, aunque es menos común que el gerundio simple.',
+                'Con todo lo estudiando, no aprobó. (menos común)',
+                'con + estudiando (simultaneidad)',
+                '¿Qué expresa "con + gerundio"?', ['Simultaneidad', 'Causa', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con "con + gerundio".'
+            ],
+            ['Gerundio con "para" (finalidad incorrecta)', 'Para + gerundio (incorrecto)',
+                'No se debe usar "para + gerundio" con valor de finalidad. Es un galicismo. Se usa "para + infinitivo".',
+                'Incorrecto: Lo hice para mejorando mi salud. / Correcto: Lo hice para mejorar mi salud.',
+                'para + mejorando (incorrecto) → para + mejorar (correcto)',
+                '¿Cómo se expresa correctamente la finalidad en español?', ['Para + infinitivo', 'Para + gerundio',
+                    'A + infinitivo', 'Que + subjuntivo'
+                ], 0, 'Escribe una oración con "para + infinitivo" en lugar de "para + gerundio".'
+            ],
+            ['Gerundio con "sin" + pronombre', 'Sin + gerundio + pronombre',
+                'En "sin + gerundio", los pronombres se colocan después del gerundio: sin verme, sin saberlo.',
+                'Se fue sin mirarme.',
+                'sin + mirarme (gerundio + pronombre)',
+                '¿Dónde se coloca el pronombre en "sin + gerundio"?', ['Después del gerundio', 'Antes del gerundio',
+                    'Antes de "sin"', 'No se usa'
+                ], 0, 'Escribe una oración con "sin + gerundio" + pronombre.'
+            ],
+            ['Gerundio con "tras" (anterioridad)', 'Tras + gerundio (anterioridad)',
+                'La construcción "tras + gerundio" expresa que una acción ocurre después de otra (anterioridad de la acción del gerundio).',
+                'Tras llegar, se fue a dormir.',
+                'tras + llegar (gerundio que expresa anterioridad)',
+                '¿Qué expresa "tras + gerundio"?', ['Anterioridad de la acción del gerundio', 'Simultaneidad',
+                    'Posterioridad', 'Modo'
+                ], 0, 'Escribe una oración con "tras + gerundio".'
+            ],
+            ['Gerundio con "al" (simultaneidad)', 'Al + infinitivo (no gerundio)',
+                'Para expresar simultaneidad con valor temporal, se usa "al + infinitivo", no el gerundio.',
+                'Al llegar, me llamó. (no "llegando")',
+                'al + llegar (infinitivo)',
+                '¿Qué construcción se usa para expresar simultaneidad temporal con "al"?', ['Al + infinitivo',
+                    'Al + gerundio', 'Cuando + gerundio', 'Mientras + gerundio'
+                ], 0, 'Escribe una oración con "al + infinitivo" para expresar simultaneidad.'
+            ]
+        ];
+        b3.forEach(d => addLesson('simultaneidad', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: CAUSA, CONDICIÓN Y CONCESIÓN (31–40)
+        // ============================================================
+        const b4 = [
+            ['Gerundio causal', 'Gerundio + verbo principal (causa)',
+                'El gerundio puede expresar la causa de la acción del verbo principal.',
+                'Estando cansado, se fue a dormir. / Habiendo perdido el tren, llegué tarde.',
+                'estando cansado (causa de se fue) / habiendo perdido (causa de llegué)',
+                '¿Qué expresa el gerundio en "Estando cansado, se fue a dormir"?', ['Causa', 'Simultaneidad', 'Modo',
+                    'Condición'
+                ], 0, 'Escribe una oración con gerundio causal.'
+            ],
+            ['Gerundio condicional', 'Gerundio + verbo principal (condición)',
+                'El gerundio puede expresar una condición para que se cumpla la acción del verbo principal.',
+                'Estudiando mucho, aprobarás. (Si estudias mucho, aprobarás)',
+                'estudiando mucho (condición para aprobarás)',
+                '¿Qué expresa el gerundio en "Estudiando mucho, aprobarás"?', ['Condición', 'Causa', 'Simultaneidad',
+                    'Concesión'
+                ], 0, 'Escribe una oración con gerundio condicional.'
+            ],
+            ['Gerundio concesivo', 'Gerundio + verbo principal (concesión)',
+                'El gerundio puede expresar una concesión, indicando que a pesar de la acción del gerundio, se realiza la del verbo principal.',
+                'Aun estudiando mucho, no aprobó. / Con lo bien que cantaba, no ganó.',
+                'aun estudiando (concesión)',
+                '¿Qué expresa "aun + gerundio"?', ['Concesión', 'Causa', 'Condición', 'Modo'],
+                0, 'Escribe una oración con "aun + gerundio" con valor concesivo.'
+            ],
+            ['Gerundio con "incluso" (concesión enfática)', 'Incluso + gerundio (concesión)',
+                'La construcción "incluso + gerundio" enfatiza el valor concesivo de la acción.',
+                'Incluso yendo a pie, llegamos tarde.',
+                'incluso yendo (concesión enfática)',
+                '¿Qué valor tiene "incluso + gerundio"?', ['Concesión enfática', 'Causa', 'Condición', 'Modo'],
+                0, 'Escribe una oración con "incluso + gerundio".'
+            ],
+            ['Gerundio con "ni" (condición negativa)', 'Ni + gerundio (condición negativa)',
+                'La construcción "ni + gerundio" expresa una condición negativa para que se cumpla la acción principal.',
+                'Ni estudiando aprobarás. (ni siquiera estudiando)',
+                'ni + estudiando (condición negativa)',
+                '¿Qué expresa "ni + gerundio"?', ['Condición negativa', 'Causa', 'Concesión', 'Modo'],
+                0, 'Escribe una oración con "ni + gerundio".'
+            ],
+            ['Gerundio con "con" (causa)', 'Con + gerundio (causa)',
+                'La construcción "con + gerundio" puede expresar causa, aunque es menos común.',
+                'Con todo lo estudiando, no aprobó.',
+                'con + estudiando (causa)',
+                '¿Qué expresa "con + gerundio"?', ['Causa', 'Simultaneidad', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con "con + gerundio" con valor causal.'
+            ],
+            ['Gerundio con "por" (causa)', 'Por + gerundio (causa)',
+                'La construcción "por + gerundio" expresa causa, equivalente a "por haber + participio" o "porque".',
+                'Por no estudiar, suspendió. (por + infinitivo) / Por estudiando, suspendió. (menos común)',
+                'por + estudiando (causa)',
+                '¿Qué expresa "por + gerundio"?', ['Causa', 'Simultaneidad', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con "por + gerundio" con valor causal.'
+            ],
+            ['Gerundio con "de" (causa)', 'De + gerundio (causa)',
+                'La construcción "de + gerundio" expresa causa, a menudo con un valor de "por".',
+                'De cansado que estaba, se durmió. (menos común)',
+                'de + gerundio (causa)',
+                '¿Qué expresa "de + gerundio"?', ['Causa', 'Simultaneidad', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con "de + gerundio" con valor causal.'
+            ],
+            ['Gerundio con "a" (condición)', 'A + gerundio (condición)',
+                'La construcción "a + gerundio" puede expresar condición, aunque es menos común.',
+                'A fuerza de estudiar, aprobó. (más común con infinitivo)',
+                'a + gerundio (condición)',
+                '¿Qué expresa "a + gerundio"?', ['Condición', 'Causa', 'Simultaneidad', 'Concesión'],
+                0, 'Escribe una oración con "a + gerundio" con valor condicional.'
+            ],
+            ['Gerundio en oraciones condicionales con "si"', 'Si + gerundio (condición)',
+                'El gerundio puede sustituir a la oración condicional con "si": "Si estudias, apruebas" → "Estudiando, apruebas".',
+                'Estudiando mucho, apruebas. (Si estudias mucho, apruebas)',
+                'estudiando (equivalente a "si estudias")',
+                '¿Qué valor tiene el gerundio en "Estudiando mucho, apruebas"?', ['Condicional', 'Causal', 'Concesivo',
+                    'Modo'
+                ], 0, 'Escribe una oración con gerundio con valor condicional.'
+            ]
+        ];
+        b4.forEach(d => addLesson('causa_condicion', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: GERUNDIO CON TIEMPOS VERBALES (41–50)
+        // ============================================================
+        const b5 = [
+            ['Gerundio con presente', 'Presente + gerundio (estar + gerundio)',
+                'El presente con gerundio expresa una acción que está ocurriendo en el momento actual.',
+                'Estoy estudiando ahora mismo.',
+                'estoy (presente) + estudiando (gerundio)',
+                '¿Qué expresa "estar + gerundio" en presente?', ['Acción actual', 'Acción pasada', 'Acción futura',
+                    'Acción habitual'
+                ], 0, 'Escribe una oración con presente + gerundio.'
+            ],
+            ['Gerundio con pretérito imperfecto', 'Imperfecto + gerundio',
+                'El imperfecto con gerundio expresa una acción que estaba en desarrollo en el pasado.',
+                'Estaba estudiando cuando llegaste.',
+                'estaba (imperfecto) + estudiando (gerundio)',
+                '¿Qué expresa el imperfecto + gerundio?', ['Acción en desarrollo en el pasado', 'Acción terminada',
+                    'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe una oración con imperfecto + gerundio.'
+            ],
+            ['Gerundio con pretérito perfecto simple', 'Pretérito + gerundio',
+                'El pretérito con gerundio expresa una acción que estaba en desarrollo y fue interrumpida o completada.',
+                'Estuvo estudiando toda la noche.',
+                'estuvo (pretérito) + estudiando (gerundio)',
+                '¿Qué expresa el pretérito + gerundio?', ['Acción en desarrollo completada', 'Acción actual',
+                    'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe una oración con pretérito + gerundio.'
+            ],
+            ['Gerundio con futuro', 'Futuro + gerundio (futuro + estar + gerundio)',
+                'El futuro con gerundio expresa una acción que estará en desarrollo en un momento futuro.',
+                'Mañana a esta hora estaré estudiando.',
+                'estaré (futuro) + estudiando (gerundio)',
+                '¿Qué expresa el futuro + gerundio?', ['Acción en desarrollo futuro', 'Acción terminada',
+                    'Acción actual', 'Acción habitual'
+                ], 0, 'Escribe una oración con futuro + gerundio.'
+            ],
+            ['Gerundio con condicional', 'Condicional + gerundio',
+                'El condicional con gerundio expresa una acción que estaría en desarrollo bajo ciertas condiciones.',
+                'Estaría estudiando si tuviera tiempo.',
+                'estaría (condicional) + estudiando (gerundio)',
+                '¿Qué expresa el condicional + gerundio?', ['Acción hipotética en desarrollo', 'Acción real',
+                    'Acción terminada', 'Acción futura'
+                ], 0, 'Escribe una oración con condicional + gerundio.'
+            ],
+            ['Gerundio con pretérito perfecto compuesto', 'Pretérito perfecto + gerundio',
+                'El pretérito perfecto con gerundio expresa una acción que ha estado en desarrollo hasta el presente.',
+                'He estado estudiando toda la mañana.',
+                'he estado (pretérito perfecto) + estudiando (gerundio)',
+                '¿Qué expresa el pretérito perfecto + gerundio?', ['Acción en desarrollo hasta el presente',
+                    'Acción terminada', 'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe una oración con pretérito perfecto + gerundio.'
+            ],
+            ['Gerundio con pluscuamperfecto', 'Pluscuamperfecto + gerundio',
+                'El pluscuamperfecto con gerundio expresa una acción que había estado en desarrollo antes de otra acción pasada.',
+                'Había estado estudiando antes de que llegaras.',
+                'había estado (pluscuamperfecto) + estudiando (gerundio)',
+                '¿Qué expresa el pluscuamperfecto + gerundio?', ['Acción anterior en desarrollo', 'Acción actual',
+                    'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe una oración con pluscuamperfecto + gerundio.'
+            ],
+            ['Gerundio con futuro perfecto', 'Futuro perfecto + gerundio',
+                'El futuro perfecto con gerundio expresa una acción que habrá estado en desarrollo en un momento futuro.',
+                'Habré estado estudiando dos horas cuando llegues.',
+                'habré estado (futuro perfecto) + estudiando (gerundio)',
+                '¿Qué expresa el futuro perfecto + gerundio?', ['Acción anterior en desarrollo futuro',
+                    'Acción actual', 'Acción terminada', 'Acción habitual'
+                ], 0, 'Escribe una oración con futuro perfecto + gerundio.'
+            ],
+            ['Gerundio con condicional perfecto', 'Condicional perfecto + gerundio',
+                'El condicional perfecto con gerundio expresa una acción que habría estado en desarrollo bajo condiciones hipotéticas.',
+                'Habría estado estudiando si hubiera tenido tiempo.',
+                'habría estado (condicional perfecto) + estudiando (gerundio)',
+                '¿Qué expresa el condicional perfecto + gerundio?', ['Acción hipotética anterior en desarrollo',
+                    'Acción real', 'Acción terminada', 'Acción futura'
+                ], 0, 'Escribe una oración con condicional perfecto + gerundio.'
+            ],
+            ['Gerundio con subjuntivo', 'Subjuntivo + gerundio',
+                'El subjuntivo con gerundio expresa una acción hipotética, deseada o dudosa en desarrollo.',
+                'Es posible que esté estudiando ahora.',
+                'esté (subjuntivo) + estudiando (gerundio)',
+                '¿Qué expresa el subjuntivo + gerundio?', ['Acción hipotética en desarrollo', 'Acción real',
+                    'Acción terminada', 'Acción futura segura'
+                ], 0, 'Escribe una oración con subjuntivo + gerundio.'
+            ]
+        ];
+        b5.forEach(d => addLesson('tiempos_verbales', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: USOS ESPECÍFICOS (51–60)
+        // ============================================================
+        const b6 = [
+            ['Gerundio con verbos de percepción', 'Verbo de percepción + gerundio',
+                'Los verbos de percepción (ver, oír, sentir, notar) pueden ir seguidos de gerundio para indicar que se percibe una acción en desarrollo.',
+                'La vi saliendo del cine. / Lo oí cantando.',
+                'saliendo (acción percibida en desarrollo) / cantando',
+                '¿Qué expresa el gerundio con verbos de percepción?', ['Acción percibida en desarrollo',
+                    'Acción terminada', 'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe una oración con un verbo de percepción + gerundio.'
+            ],
+            ['Gerundio con verbos de movimiento', 'Verbo de movimiento + gerundio',
+                'Los verbos de movimiento (ir, venir, volver) se usan con gerundio en perífrasis que expresan modo o simultaneidad.',
+                'Va silbando por la calle.',
+                'va (ir) + silbando (gerundio)',
+                '¿Qué expresa el gerundio con verbos de movimiento?', ['Modo o simultaneidad', 'Causa', 'Condición',
+                    'Concesión'
+                ], 0, 'Escribe una oración con un verbo de movimiento + gerundio.'
+            ],
+            ['Gerundio con verbos de comunicación', 'Verbo de comunicación + gerundio',
+                'Los verbos de comunicación (decir, contar, explicar) pueden ir seguidos de gerundio para indicar el modo de la comunicación.',
+                'Me lo dijo riendo. / Te lo cuento cantando.',
+                'riendo (modo de decir) / cantando (modo de contar)',
+                '¿Qué expresa el gerundio con verbos de comunicación?', ['Modo de la comunicación', 'Causa',
+                    'Condición', 'Simultaneidad'
+                ], 0, 'Escribe una oración con un verbo de comunicación + gerundio.'
+            ],
+            ['Gerundio con verbos de comenzar y acabar', 'Comenzar/Acabar + gerundio',
+                'Los verbos que expresan el inicio o el final de una acción pueden ir seguidos de gerundio para indicar el resultado.',
+                'Empezó llorando y acabó riendo.',
+                'llorando (inicio) / riendo (final)',
+                '¿Qué expresa el gerundio con "empezar" y "acabar"?', ['Inicio o final de una acción', 'Causa',
+                    'Condición', 'Simultaneidad'
+                ], 0, 'Escribe una oración con "empezar + gerundio" y "acabar + gerundio".'
+            ],
+            ['Gerundio en titulares y noticias', 'Gerundio en titulares (acción en desarrollo)',
+                'En los titulares de prensa, el gerundio se usa para indicar que una acción está en desarrollo.',
+                'El gobierno anunciando nuevas medidas.',
+                'anunciando (acción en desarrollo)',
+                '¿Qué expresa el gerundio en titulares?', ['Acción en desarrollo', 'Acción terminada',
+                    'Acción futura', 'Acción habitual'
+                ], 0, 'Escribe un titular con gerundio.'
+            ],
+            ['Gerundio en instrucciones', 'Gerundio en instrucciones (modo)',
+                'En instrucciones y recetas, el gerundio puede indicar el modo de realizar una acción.',
+                'Hazlo batiendo los huevos.',
+                'batiendo (modo de hacer)',
+                '¿Qué expresa el gerundio en instrucciones?', ['Modo de la acción', 'Causa', 'Condición',
+                    'Simultaneidad'
+                ], 0, 'Escribe una instrucción con gerundio.'
+            ],
+            ['Gerundio en descripciones', 'Gerundio en descripciones (estado)',
+                'El gerundio puede describir el estado de algo o alguien en un momento dado.',
+                'La encontré llorando en su habitación.',
+                'llorando (estado en que la encontró)',
+                '¿Qué expresa el gerundio en descripciones?', ['Estado o situación', 'Causa', 'Condición', 'Modo'],
+                0, 'Escribe una descripción con gerundio.'
+            ],
+            ['Gerundio con "tratar de"', 'Tratar de + gerundio (intento)',
+                'La construcción "tratar de + infinitivo" expresa un intento. No se usa "tratar de + gerundio".',
+                'Intenta mejorar. (no "intenta mejorando")',
+                'tratar de + mejorar (infinitivo)',
+                '¿Cómo se expresa un intento en español?', ['Tratar de + infinitivo', 'Tratar de + gerundio',
+                    'Intentar + infinitivo', 'Probar + gerundio'
+                ], 0, 'Escribe una oración con "tratar de + infinitivo".'
+            ],
+            ['Gerundio con "evitar"', 'Evitar + gerundio (evitación)',
+                'El verbo "evitar" va seguido de un sustantivo o de "que + subjuntivo", no de gerundio.',
+                'Evita hacer eso. (no "evita haciendo")',
+                'evitar + hacer (infinitivo)',
+                '¿Cómo se usa "evitar" correctamente?', ['Evitar + infinitivo', 'Evitar + gerundio', 'Evitar que + subjuntivo',
+                    'Evitar + sustantivo'
+                ], 0, 'Escribe una oración con "evitar + infinitivo".'
+            ],
+            ['Gerundio con "sentir" (emoción)', 'Sentir + gerundio (emoción)',
+                'El verbo "sentir" puede ir seguido de gerundio para expresar una emoción que se siente mientras se realiza otra acción.',
+                'Siento no poder ayudarte. (sentir + infinitivo) / Lo siento diciendo. (menos común)',
+                'sintiendo (emoción mientras se realiza otra acción)',
+                '¿Qué expresa "sentir + gerundio"?', ['Emoción simultánea', 'Causa', 'Condición', 'Modo'],
+                0, 'Escribe una oración con "sentir + gerundio".'
+            ]
+        ];
+        b6.forEach(d => addLesson('usos_especificos', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: ERRORES COMUNES Y VICIOS (61–70)
+        // ============================================================
+        const b7 = [
+            ['Gerundio de posterioridad (error)', 'Gerundio de posterioridad (vicio)',
+                'El gerundio no debe usarse para expresar una acción posterior a la del verbo principal. Es el error más común.',
+                'Incorrecto: Se levantó, yéndose a trabajar. / Correcto: Se levantó y se fue a trabajar.',
+                'yéndose (posterioridad → error)',
+                '¿Por qué es incorrecto el gerundio en "Se levantó, yéndose a trabajar"?', ['Expresa posterioridad',
+                    'Expresa simultaneidad', 'Expresa causa', 'Expresa modo'
+                ], 0, 'Corrige la oración "Se levantó, yéndose a trabajar".'
+            ],
+            ['Gerundio con valor de finalidad (error)', 'Para + gerundio (finalidad incorrecta)',
+                'No se debe usar "para + gerundio" con valor de finalidad. Es un galicismo. Se usa "para + infinitivo".',
+                'Incorrecto: Estudio para aprendiendo. / Correcto: Estudio para aprender.',
+                'para + aprendiendo (incorrecto) → para + aprender (correcto)',
+                '¿Cómo se expresa correctamente la finalidad?', ['Para + infinitivo', 'Para + gerundio',
+                    'A + infinitivo', 'Que + subjuntivo'
+                ], 0, 'Escribe una oración con "para + infinitivo" en lugar de "para + gerundio".'
+            ],
+            ['Gerundio con valor de imperativo (error)', 'Gerundio con valor de imperativo (error)',
+                'El gerundio no se usa para dar órdenes. Es un error común en carteles y anuncios.',
+                'Incorrecto: Prohibido aparcar, siendo multado. / Correcto: Prohibido aparcar. Será multado.',
+                'siendo multado (imperativo incorrecto)',
+                '¿Por qué es incorrecto usar gerundio en "Prohibido aparcar, siendo multado"?', ['Valor imperativo',
+                    'Expresa simultaneidad', 'Expresa causa', 'Expresa modo'
+                ], 0, 'Corrige la oración "Prohibido aparcar, siendo multado".'
+            ],
+            ['Gerundio con "de" (causa incorrecta)', 'De + gerundio (causa incorrecta)',
+                'El uso de "de + gerundio" con valor causal es poco común y a menudo incorrecto. Se prefiere "por + infinitivo" o "como".',
+                'Incorrecto: De haberme avisado, no habría ido. (mejor: Si me hubieran avisado)',
+                'de + haberme avisado (incorrecto)',
+                '¿Qué construcción se prefiere para expresar causa?', ['Por + infinitivo', 'De + gerundio',
+                    'Al + infinitivo', 'Con + gerundio'
+                ], 0, 'Escribe una oración con "por + infinitivo" para expresar causa.'
+            ],
+            ['Gerundio con "en" (lugar incorrecto)', 'En + gerundio (lugar incorrecto)',
+                'No se usa "en + gerundio" con valor locativo. Se usa "en + sustantivo" o "al + infinitivo".',
+                'Incorrecto: En llegando, te llamo. / Correcto: Al llegar, te llamo.',
+                'en + llegando (incorrecto) → al + llegar (correcto)',
+                '¿Cómo se expresa correctamente "cuando llegues"?', ['Al + infinitivo', 'En + gerundio',
+                    'Cuando + gerundio', 'Mientras + gerundio'
+                ], 0, 'Escribe una oración con "al + infinitivo" en lugar de "en + gerundio".'
+            ],
+            ['Gerundio con "con" (compañía incorrecta)', 'Con + gerundio (compañía incorrecta)',
+                'No se usa "con + gerundio" para expresar compañía. Se usa "con + sustantivo" o "mientras + verbo".',
+                'Incorrecto: Entró con riendo. / Correcto: Entró riendo. (sin "con")',
+                'con + riendo (incorrecto)',
+                '¿Cómo se expresa correctamente la simultaneidad con "mientras"?', ['Mientras + verbo conjugado',
+                    'Con + gerundio', 'Al + infinitivo', 'Cuando + gerundio'
+                ], 0, 'Escribe una oración con "mientras" en lugar de "con + gerundio".'
+            ],
+            ['Gerundio con "que" (subordinación incorrecta)', 'Que + gerundio (subordinación incorrecta)',
+                'No se usa "que + gerundio" en subordinadas sustantivas. Se usa "que + verbo conjugado".',
+                'Incorrecto: Vi a Juan que saliendo. / Correcto: Vi a Juan que salía.',
+                'que + saliendo (incorrecto) → que + salía (correcto)',
+                '¿Cómo se corrige "Vi a Juan que saliendo"?', ['Vi a Juan que salía', 'Vi a Juan saliendo',
+                    'Vi a Juan mientras salía', 'Vi a Juan cuando salía'
+                ], 0, 'Escribe una oración con "que + verbo conjugado" en lugar de "que + gerundio".'
+            ],
+            ['Gerundio con "por" (causa incorrecta)', 'Por + gerundio (causa incorrecta)',
+                'El uso de "por + gerundio" es incorrecto en la mayoría de los casos. Se usa "por + infinitivo".',
+                'Incorrecto: Por estudiando, aprobé. / Correcto: Por estudiar, aprobé. (o "por haber estudiado")',
+                'por + estudiando (incorrecto) → por + estudiar (correcto)',
+                '¿Cómo se expresa correctamente la causa con "por"?', ['Por + infinitivo', 'Por + gerundio',
+                    'Porque + verbo', 'Puesto que + verbo'
+                ], 0, 'Escribe una oración con "por + infinitivo" para expresar causa.'
+            ],
+            ['Gerundio con "a" (finalidad incorrecta)', 'A + gerundio (finalidad incorrecta)',
+                'No se usa "a + gerundio" con valor de finalidad. Se usa "a + infinitivo" o "para + infinitivo".',
+                'Incorrecto: Voy a comprando pan. / Correcto: Voy a comprar pan.',
+                'a + comprando (incorrecto) → a + comprar (correcto)',
+                '¿Cómo se expresa correctamente la finalidad con "a"?', ['A + infinitivo', 'A + gerundio',
+                    'Para + infinitivo', 'Con + infinitivo'
+                ], 0, 'Escribe una oración con "a + infinitivo" en lugar de "a + gerundio".'
+            ],
+            ['Gerundio con "sino" (contraste incorrecto)', 'Sino + gerundio (contraste incorrecto)',
+                'No se usa "sino + gerundio" para expresar contraste. Se usa "sino + verbo conjugado" o "sino + sustantivo".',
+                'Incorrecto: No llegó sino llegando tarde. / Correcto: No llegó sino que llegó tarde.',
+                'sino + llegando (incorrecto) → sino que + llegó (correcto)',
+                '¿Cómo se expresa correctamente el contraste con "sino"?', ['Sino que + verbo', 'Sino + gerundio',
+                    'Sino + sustantivo', 'Pero + verbo'
+                ], 0, 'Escribe una oración con "sino que + verbo" en lugar de "sino + gerundio".'
+            ]
+        ];
+        b7.forEach(d => addLesson('errores_comunes', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: GERUNDIO CON VALOR ADJETIVO (71–80)
+        // ============================================================
+        const b8 = [
+            ['Gerundio como adjetivo (acción en desarrollo)', 'Gerundio + sustantivo (valor adjetivo)',
+                'El gerundio puede funcionar como un adjetivo, describiendo a un sustantivo como una acción en desarrollo.',
+                'El agua hirviendo. / La luz parpadeante.',
+                'hirviendo (acción en desarrollo del agua) / parpadeante (acción en desarrollo de la luz)',
+                '¿Qué valor tiene el gerundio en "agua hirviendo"?', ['Adjetivo de acción en desarrollo', 'Causa',
+                    'Modo', 'Simultaneidad'
+                ], 0, 'Escribe una oración con un gerundio con valor adjetivo.'
+            ],
+            ['Gerundio con valor de estado', 'Gerundio + sustantivo (estado)',
+                'El gerundio puede expresar el estado permanente o temporal de algo.',
+                'La puerta giratoria. / La máquina expendedora.',
+                'giratoria (estado de la puerta) / expendedora (estado de la máquina)',
+                '¿Qué valor tiene el gerundio en "puerta giratoria"?', ['Estado', 'Causa', 'Modo', 'Simultaneidad'],
+                0, 'Escribe una oración con un gerundio con valor de estado.'
+            ],
+            ['Gerundios lexicalizados', 'Gerundio lexicalizado (palabra fija)',
+                'Algunos gerundios se han convertido en palabras fijas con significado propio: andén (de andar), durmiente (de dormir).',
+                'El andén del tren. / El durmiente del ferrocarril.',
+                'andén (lexicalizado) / durmiente (lexicalizado)',
+                '¿Qué es un gerundio lexicalizado?', ['Una palabra fija con significado propio', 'Un error gramatical',
+                    'Un verbo irregular', 'Un adverbio'
+                ], 0, 'Escribe una oración con "andén" como gerundio lexicalizado.'
+            ],
+            ['Gerundio en perífrasis con valor adjetivo', 'Perífrasis con valor adjetivo',
+                'El gerundio en perífrasis como "estar + gerundio" puede tener valor adjetivo en algunas construcciones.',
+                'El hombre que está corriendo. (en lugar de "el hombre corriendo")',
+                'corriendo (valor adjetivo en perífrasis)',
+                '¿Qué valor tiene el gerundio en "el hombre corriendo"?', ['Adjetivo', 'Causa', 'Modo', 'Simultaneidad'],
+                0, 'Escribe una oración con un gerundio con valor adjetivo en perífrasis.'
+            ],
+            ['Gerundio con valor de cualidad', 'Gerundio + sustantivo (cualidad)',
+                'El gerundio puede expresar una cualidad inherente de algo o alguien.',
+                'Un libro interesante. / Una persona amable.',
+                'interesante (cualidad del libro) / amable (cualidad de la persona)',
+                '¿Qué valor tiene el gerundio en "libro interesante"?', ['Cualidad', 'Estado', 'Causa', 'Modo'],
+                0, 'Escribe una oración con un gerundio con valor de cualidad.'
+            ],
+            ['Gerundio en títulos y nombres propios', 'Gerundio en nombres (acción)',
+                'El gerundio se usa en títulos de obras y nombres propios para indicar una acción constante.',
+                'El cantante. / El escribiente.',
+                'cantante (acción de cantar) / escribiente (acción de escribir)',
+                '¿Qué valor tiene el gerundio en "cantante"?', ['Acción habitual', 'Cualidad', 'Estado', 'Causa'],
+                0, 'Escribe una oración con un nombre propio derivado de un gerundio.'
+            ],
+            ['Gerundio con valor de instrumento', 'Gerundio + sustantivo (instrumento)',
+                'El gerundio puede indicar el instrumento o medio con el que se realiza una acción.',
+                'La máquina coser. (el gerundio "cosiendo" se ha lexicalizado)',
+                'coser (instrumento para coser)',
+                '¿Qué valor tiene el gerundio en "máquina coser"?', ['Instrumento', 'Cualidad', 'Estado', 'Causa'],
+                0, 'Escribe una oración con un gerundio con valor de instrumento.'
+            ],
+            ['Gerundio con valor de función', 'Gerundio + sustantivo (función)',
+                'El gerundio puede indicar la función de un objeto o persona.',
+                'El sacapuntas. / El paraguas.',
+                'saca (función de sacar) / para (función de parar)',
+                '¿Qué valor tiene el gerundio en "sacapuntas"?', ['Función', 'Cualidad', 'Estado', 'Causa'],
+                0, 'Escribe una oración con un gerundio con valor de función.'
+            ],
+            ['Gerundio en adjetivos compuestos', 'Gerundio + sustantivo (compuesto)',
+                'El gerundio forma parte de adjetivos compuestos que expresan una acción continua.',
+                'El saltamontes. / El matamoscas.',
+                'salta (acción continua) / mata (acción continua)',
+                '¿Qué valor tiene el gerundio en "saltamontes"?', ['Acción continua', 'Cualidad', 'Estado', 'Causa'],
+                0, 'Escribe una oración con un adjetivo compuesto con gerundio.'
+            ],
+            ['Gerundio con valor de resultado', 'Gerundio + sustantivo (resultado)',
+                'El gerundio puede indicar el resultado de una acción.',
+                'El abrelatas. / El sacacorchos.',
+                'abre (resultado de abrir) / saca (resultado de sacar)',
+                '¿Qué valor tiene el gerundio en "abrelatas"?', ['Resultado', 'Función', 'Cualidad', 'Estado'],
+                0, 'Escribe una oración con un gerundio con valor de resultado.'
+            ]
+        ];
+        b8.forEach(d => addLesson('gerundio_adjetivo', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: CONSTRUCCIONES ABSOLUTAS (81–90)
+        // ============================================================
+        const b9 = [
+            ['Gerundio absoluto', 'Sustantivo + gerundio (construcción absoluta)',
+                'La construcción absoluta con gerundio expresa una circunstancia (tiempo, causa, condición) con un sustantivo en nominativo.',
+                'Llegando el verano, iremos a la playa. / Estando así las cosas, no podemos hacer nada.',
+                'llegando el verano (absoluta temporal) / estando así las cosas (absoluta causal)',
+                '¿Qué expresa la construcción absoluta con gerundio?', ['Circunstancia (tiempo, causa, condición)',
+                    'Simultaneidad', 'Modo', 'Cualidad'
+                ], 0, 'Escribe una oración con una construcción absoluta con gerundio.'
+            ],
+            ['Gerundio absoluto temporal', 'Sustantivo + gerundio (tiempo)',
+                'La construcción absoluta temporal indica el momento en que ocurre la acción principal.',
+                'Amaneciendo, saldremos de viaje.',
+                'amaneciendo (tiempo)',
+                '¿Qué valor temporal tiene el gerundio absoluto?', ['Tiempo', 'Causa', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con gerundio absoluto temporal.'
+            ],
+            ['Gerundio absoluto causal', 'Sustantivo + gerundio (causa)',
+                'La construcción absoluta causal indica la razón por la que ocurre la acción principal.',
+                'Siendo tarde, nos fuimos a casa.',
+                'siendo tarde (causa)',
+                '¿Qué valor causal tiene el gerundio absoluto?', ['Causa', 'Tiempo', 'Condición', 'Concesión'],
+                0, 'Escribe una oración con gerundio absoluto causal.'
+            ],
+            ['Gerundio absoluto condicional', 'Sustantivo + gerundio (condición)',
+                'La construcción absoluta condicional indica la condición para que ocurra la acción principal.',
+                'Saliendo el sol, iremos a la playa.',
+                'saliendo el sol (condición)',
+                '¿Qué valor condicional tiene el gerundio absoluto?', ['Condición', 'Tiempo', 'Causa', 'Concesión'],
+                0, 'Escribe una oración con gerundio absoluto condicional.'
+            ],
+            ['Gerundio absoluto concesivo', 'Sustantivo + gerundio (concesión)',
+                'La construcción absoluta concesiva indica que a pesar de lo que expresa el gerundio, se realiza la acción principal.',
+                'Siendo tan caro, lo compró. (aunque era caro)',
+                'siendo tan caro (concesión)',
+                '¿Qué valor concesivo tiene el gerundio absoluto?', ['Concesión', 'Tiempo', 'Causa', 'Condición'],
+                0, 'Escribe una oración con gerundio absoluto concesivo.'
+            ],
+            ['Gerundio absoluto en literatura', 'Gerundio absoluto en estilo literario',
+                'El gerundio absoluto es muy común en la literatura para crear un estilo más elaborado.',
+                'Llegada la noche, el silencio se apoderó de todo. (con participio) / Llegando la noche, el silencio...',
+                'llegando la noche (absoluta literaria)',
+                '¿En qué registro es más común el gerundio absoluto?', ['Literario', 'Coloquial', 'Técnico',
+                    'Administrativo'
+                ], 0, 'Escribe una frase literaria con gerundio absoluto.'
+            ],
+            ['Gerundio absoluto con sujeto expreso', 'Sustantivo + gerundio (sujeto expreso)',
+                'La construcción absoluta tiene un sujeto propio, distinto del sujeto de la oración principal.',
+                'Cantando ella, todos se callaron.',
+                'ella (sujeto del gerundio) + cantando',
+                '¿Quién es el sujeto del gerundio en "Cantando ella, todos se callaron"?', ['Ella', 'Todos',
+                    'El cantante', 'Nadie'
+                ], 0, 'Escribe una oración con gerundio absoluto con sujeto expreso.'
+            ],
+            ['Gerundio absoluto con sujeto omitido', 'Gerundio + (sujeto omitido)',
+                'En la construcción absoluta, el sujeto del gerundio puede omitirse si se sobreentiende.',
+                'Siendo tarde, nos fuimos.',
+                'siendo tarde (sujeto omitido)',
+                '¿Se puede omitir el sujeto en la construcción absoluta?', ['Sí, si se sobreentiende', 'No, siempre debe ir',
+                    'Solo en poesía', 'Solo en registros formales'
+                ], 0, 'Escribe una oración con gerundio absoluto con sujeto omitido.'
+            ],
+            ['Gerundio absoluto con "sin"', 'Sin + sustantivo + gerundio (absoluta negativa)',
+                'La construcción absoluta con "sin" expresa una circunstancia negativa.',
+                'Sin quererlo, lo rompió.',
+                'sin quererlo (absoluta negativa)',
+                '¿Qué expresa "sin + gerundio" en absoluta?', ['Circunstancia negativa', 'Causa', 'Condición',
+                    'Concesión'
+                ], 0, 'Escribe una oración con "sin + gerundio" en construcción absoluta.'
+            ],
+            ['Gerundio absoluto con "con"', 'Con + sustantivo + gerundio (absoluta)',
+                'La construcción absoluta con "con" expresa una circunstancia de simultaneidad o modo.',
+                'Con ella cantando, todos se callaron.',
+                'con ella cantando (absoluta)',
+                '¿Qué expresa "con + gerundio" en absoluta?', ['Simultaneidad o modo', 'Causa', 'Condición',
+                    'Concesión'
+                ], 0, 'Escribe una oración con "con + gerundio" en construcción absoluta.'
+            ]
+        ];
+        b9.forEach(d => addLesson('gerundio_absoluto', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: USOS EN REDACCIÓN Y ESTILO (91–100)
+        // ============================================================
+        const b10 = [
+            ['Gerundio para dar dinamismo', 'Gerundio + dinamismo',
+                'El gerundio aporta dinamismo y fluidez a la redacción, evitando oraciones subordinadas largas.',
+                'Corriendo, llegó a tiempo. (en lugar de "Corrió y llegó a tiempo")',
+                'corriendo (dinamismo)',
+                '¿Qué aporta el gerundio a la redacción?', ['Dinamismo y fluidez', 'Lentitud', 'Complejidad',
+                    'Abstracción'
+                ], 0, 'Escribe una oración que use el gerundio para dar dinamismo.'
+            ],
+            ['Gerundio para evitar repeticiones', 'Gerundio + variedad',
+                'El gerundio ayuda a evitar la repetición de conjunciones y verbos conjugados.',
+                'Salió, tomó el autobús y llegó. → Saliendo, tomó el autobús y llegó.',
+                'saliendo (evita repetición)',
+                '¿Qué recurso estilístico ofrece el gerundio?', ['Evita repeticiones', 'Complica el texto',
+                    'Alarga el texto', 'No aporta nada'
+                ], 0, 'Reescribe una oración usando el gerundio para evitar repeticiones.'
+            ],
+            ['Gerundio en descripciones vívidas', 'Gerundio + descripción visual',
+                'El gerundio crea descripciones más vívidas y visuales en la redacción.',
+                'El viento silbando entre los árboles.',
+                'silbando (descripción vívida)',
+                '¿Qué efecto crea el gerundio en las descripciones?', ['Viveza y visualidad', 'Abstracción',
+                    'Complejidad', 'Lentitud'
+                ], 0, 'Escribe una descripción vívida usando el gerundio.'
+            ],
+            ['Gerundio en la redacción periodística', 'Gerundio + periodismo',
+                'En periodismo, el gerundio se usa para dar inmediatez y dinamismo a las noticias.',
+                'El presidente anunciando nuevas medidas.',
+                'anunciando (inmediatez)',
+                '¿Qué valor tiene el gerundio en periodismo?', ['Inmediatez', 'Abstracción', 'Complejidad',
+                    'Lentitud'
+                ], 0, 'Escribe un titular periodístico con gerundio.'
+            ],
+            ['Gerundio en la redacción publicitaria', 'Gerundio + publicidad',
+                'En publicidad, el gerundio crea mensajes dinámicos y persuasivos.',
+                'Disfrutando de la vida. / Ahorrando tiempo.',
+                'disfrutando / ahorrando (persuasión)',
+                '¿Qué efecto tiene el gerundio en publicidad?', ['Mensajes dinámicos y persuasivos', 'Abstracción',
+                    'Complejidad', 'Lentitud'
+                ], 0, 'Escribe un eslogan publicitario con gerundio.'
+            ],
+            ['Gerundio en la redacción académica', 'Gerundio + academicismo',
+                'En la redacción académica, el gerundio debe usarse con precisión, evitando el gerundio de posterioridad.',
+                'Analizando los datos, se observa una tendencia.',
+                'analizando (precisión académica)',
+                '¿Cómo se debe usar el gerundio en la redacción académica?', ['Con precisión', 'Abusando de él',
+                    'Evitándolo siempre', 'Usándolo con finalidad'
+                ], 0, 'Escribe una frase académica con gerundio.'
+            ],
+            ['Gerundio en la redacción administrativa', 'Gerundio + administración',
+                'En la redacción administrativa, el gerundio se usa para indicar acciones en curso.',
+                'Procediendo a la firma del documento.',
+                'procediendo (acción en curso)',
+                '¿Qué valor tiene el gerundio en la redacción administrativa?', ['Acción en curso', 'Finalidad',
+                    'Causa', 'Condición'
+                ], 0, 'Escribe una frase administrativa con gerundio.'
+            ],
+            ['Gerundio en la redacción literaria', 'Gerundio + literatura',
+                'En la literatura, el gerundio crea atmósferas y ritmos narrativos.',
+                'La noche cayendo lentamente.',
+                'cayendo (atmósfera literaria)',
+                '¿Qué efecto tiene el gerundio en la literatura?', ['Crea atmósferas y ritmos', 'Abstracción',
+                    'Complejidad', 'Lentitud'
+                ], 0, 'Escribe una frase literaria con gerundio.'
+            ],
+            ['Gerundio en la redacción de instrucciones', 'Gerundio + instrucciones',
+                'En las instrucciones, el gerundio indica el modo de realizar una acción.',
+                'Hazlo batiendo los huevos.',
+                'batiendo (modo)',
+                '¿Qué valor tiene el gerundio en las instrucciones?', ['Modo', 'Causa', 'Condición', 'Finalidad'],
+                0, 'Escribe una instrucción con gerundio.'
+            ],
+            ['Revisión general: usos del gerundio', 'Gerundio (repaso general)',
+                'El gerundio es una forma no personal del verbo que expresa acción en desarrollo, simultaneidad, modo, causa, condición o concesión. Su uso correcto es fundamental para una redacción precisa y elegante.',
+                'Estudiando, aprobé. (condición) / Estando cansado, me fui. (causa) / Llegó corriendo. (modo)',
+                'estudiando / estando / corriendo',
+                '¿Cuáles son los principales usos del gerundio en español?', ['Simultaneidad, modo, causa, condición, concesión',
+                    'Solo simultaneidad', 'Solo modo', 'Solo causa'
+                ], 0, 'Escribe tres oraciones que muestren tres usos diferentes del gerundio.'
+            ]
+        ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Gerundio: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · El Gerundio');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Gerundio cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

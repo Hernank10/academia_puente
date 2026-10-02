@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .perfil-wrapper { max-width: 700px; margin: 2rem auto; }
+    .perfil-title { font-size: 2rem; font-weight: 700; color: #f1c40f; margin-bottom: 0.5rem; }
+    .perfil-sub { color: #8b949e; margin-bottom: 2rem; }
+    .perfil-card { background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 2rem; }
+    .avatar-circle { width: 80px; height: 80px; border-radius: 50%;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2rem; font-weight: 800; color: #0d1117; margin: 0 auto 1.5rem; }
+    .form-label-custom { color: #c9d1d9; font-size: 0.9rem; margin-bottom: 0.3rem; display: block; }
+    .form-input { width: 100%; padding: 0.7rem 1rem; background: #0d1117;
+        border: 1px solid #30363d; border-radius: 8px; color: #e6edf3;
+        font-size: 1rem; margin-bottom: 1rem; }
+    .form-input:focus { outline: none; border-color: #f1c40f;
+        box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1); }
+    textarea.form-input { resize: vertical; min-height: 80px; }
+    select.form-input { appearance: auto; }
+    .btn-submit { padding: 0.8rem 2rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border: none; border-radius: 8px;
+        cursor: pointer; font-size: 1rem; }
+    .btn-submit:hover { transform: scale(1.02); }
+    .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+</style>
+
+<div class="perfil-wrapper">
+    <h1 class="perfil-title">👤 Mi perfil</h1>
+    <p class="perfil-sub">Rango actual: <strong style="color:#f1c40f;">{{ perfil.rango_academico }}</strong>
+       · {{ perfil.puntos }} puntos</p>
+
+    <div class="perfil-card">
+        <div class="avatar-circle">{{ user.username|slice:":2"|upper }}</div>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label class="form-label-custom">Usuario (no editable)</label>
+            <input type="text" class="form-input" value="{{ user.username }}" disabled>
+
+            <div class="row2">
+                <div>
+                    <label class="form-label-custom">{% trans "Nombre" %}</label>
+                    <input type="text" name="first_name" class="form-input" value="{{ user.first_name }}">
+                </div>
+                <div>
+                    <label class="form-label-custom">{% trans "Apellido" %}</label>
+                    <input type="text" name="last_name" class="form-input" value="{{ user.last_name }}">
+                </div>
+            </div>
+
+            <label class="form-label-custom">{% trans "Email" %}</label>
+            <input type="email" name="email" class="form-input" value="{{ user.email }}">
+
+            <label class="form-label-custom">Estado académico</label>
+            <select name="estado_academico" class="form-input">
+                {% for cod, nom in perfil.ESTADOS %}
+                    <option value="{{ cod }}" {% if perfil.estado_academico == cod %}selected{% endif %}>{{ nom }}</option>
+                {% endfor %}
+            </select>
+
+            <label class="form-label-custom">Áreas de especialidad</label>
+            <input type="text" name="areas_especialidad" class="form-input" value="{{ perfil.areas_especialidad }}">
+
+            <div class="row2">
+                <div>
+                    <label class="form-label-custom">Idioma nativo</label>
+                    <select name="idioma_nativo" class="form-input">
+                        {% for cod, nom in perfil.IDIOMAS %}
+                            <option value="{{ cod }}" {% if perfil.idioma_nativo == cod %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="form-label-custom">Variante de interés</label>
+                    <select name="variante_interes" class="form-input">
+                        {% for cod, nom in perfil.VARIANTES %}
+                            <option value="{{ cod }}" {% if perfil.variante_interes == cod %}selected{% endif %}>{{ nom }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <label class="form-label-custom">Biografía</label>
+            <textarea name="biografia" class="form-input">{{ perfil.biografia }}</textarea>
+
+            <button type="submit" class="btn-submit">Guardar cambios</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

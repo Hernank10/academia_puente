@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Leísmo, Laísmo, Loísmo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">leísmo, laísmo, loísmo · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Fenómeno: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una oración que use correctamente el pronombre:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Veo a Juan → Lo veo.»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE LEÍSMO, LAÍSMO, LOÍSMO
+        //  Usos correctos e incorrectos de los pronombres de OD y OI
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'regla_general', label: 'Regla general' },
+            { id: 'leismo', label: 'Leísmo' },
+            { id: 'laismo', label: 'Laísmo' },
+            { id: 'loismo', label: 'Loísmo' },
+            { id: 'leismo_aceptado', label: 'Leísmo aceptado' },
+            { id: 'verbos_especificos', label: 'Verbos específicos' },
+            { id: 'pronombres_combinados', label: 'Pronombres combinados' },
+            { id: 'errores_comunes', label: 'Errores comunes' },
+            { id: 'regionalismos', label: 'Regionalismos' },
+            { id: 'usos_redaccion', label: 'Usos en redacción' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: REGLA GENERAL (1–10)
+        // ============================================================
+        const b1 = [
+            ['Pronombres de objeto directo', 'lo, la, los, las (OD)',
+                'Los pronombres de objeto directo (CD) son "lo" (masculino singular), "la" (femenino singular), "los" (masculino plural) y "las" (femenino plural). Sustituyen al CD.',
+                'Veo el libro → Lo veo. / Veo la mesa → La veo.',
+                'lo (el libro) / la (la mesa)',
+                '¿Qué pronombre sustituye a "el libro" en CD?', ['Lo', 'La', 'Le', 'Los'],
+                0, 'Escribe una oración con "lo" como CD.'
+            ],
+            ['Pronombres de objeto indirecto', 'le, les (OI)',
+                'Los pronombres de objeto indirecto (CI) son "le" (singular) y "les" (plural). Sustituyen al complemento indirecto (a alguien).',
+                'Doy el libro a Juan → Le doy el libro. / Doy el libro a Juan y María → Les doy el libro.',
+                'le (a Juan) / les (a Juan y María)',
+                '¿Qué pronombre sustituye a "a Juan" en CI?', ['Le', 'Lo', 'La', 'Les'],
+                0, 'Escribe una oración con "le" como CI.'
+            ],
+            ['Uso correcto de "lo" y "la" (OD)', 'lo (masc.) / la (fem.)',
+                '"Lo" se usa para CD masculino singular; "la" para CD femenino singular.',
+                'Veo a Juan → Lo veo. / Veo a María → La veo.',
+                'lo (Juan) / la (María)',
+                '¿Qué pronombre se usa para "a María" en CD?', ['La', 'Lo', 'Le', 'Las'],
+                0, 'Escribe una oración con "la" como CD femenino.'
+            ],
+            ['Uso correcto de "los" y "las" (OD plural)', 'los (masc. plur.) / las (fem. plur.)',
+                '"Los" para CD masculino plural; "las" para CD femenino plural.',
+                'Veo a Juan y Pedro → Los veo. / Veo a María y Ana → Las veo.',
+                'los (Juan y Pedro) / las (María y Ana)',
+                '¿Qué pronombre se usa para "a María y Ana" en CD?', ['Las', 'Los', 'Les', 'La'],
+                0, 'Escribe una oración con "las" como CD femenino plural.'
+            ],
+            ['Uso correcto de "le" y "les" (CI)', 'le (sing.) / les (plur.)',
+                    '"Le" para CI singular; "les" para CI plural.',
+                    'Doy un regalo a Juan → Le doy un regalo. / Doy un regalo a Juan y María → Les doy un regalo.',
+                    'le (a Juan) / les (a Juan y María)',
+                    '¿Qué pronombre se usa para "a Juan" en CI?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con "les" como CI plural.'
+                ],
+                ['Diferencia entre OD y CI', 'OD vs CI (lo/la vs le)',
+                    'El OD responde a "¿qué?" o "¿a quién?" sin preposición; el CI responde a "¿a quién?" o "¿para quién?" con preposición "a".',
+                    'Veo a Juan (OD) → Lo veo. / Doy un regalo a Juan (CI) → Le doy un regalo.',
+                    'lo (OD) / le (CI)',
+                    '¿Qué pronombre se usa para el OD?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración que muestre la diferencia entre OD y CI.'
+                ],
+                ['Laísmo: definición', 'la / las en lugar de le / les (CI femenino)',
+                    'El laísmo consiste en usar "la" o "las" como CI femenino en lugar de "le" o "les". Es incorrecto en la norma culta.',
+                    'Incorrecto: La di un regalo. (a ella) / Correcto: Le di un regalo.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Qué es el laísmo?', ['Usar "la" por "le" en CI femenino', 'Usar "le" por "lo" en OD masculino',
+                        'Usar "lo" por "le" en CI masculino', 'Usar "las" por "les" en CI femenino'
+                    ], 0, 'Corrige la oración "La di un regalo".'
+                ],
+                ['Loísmo: definición', 'lo / los en lugar de le / les (CI masculino)',
+                    'El loísmo consiste en usar "lo" o "los" como CI masculino en lugar de "le" o "les". Es incorrecto en la norma culta.',
+                    'Incorrecto: Lo di un regalo. (a él) / Correcto: Le di un regalo.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Qué es el loísmo?', ['Usar "lo" por "le" en CI masculino', 'Usar "le" por "lo" en OD masculino',
+                        'Usar "la" por "le" en CI femenino', 'Usar "los" por "les" en CI masculino'
+                    ], 0, 'Corrige la oración "Lo di un regalo".'
+                ],
+                ['Leísmo: definición', 'le / les en lugar de lo / la (OD de persona)',
+                    'El leísmo consiste en usar "le" o "les" como OD masculino (o femenino) de persona en lugar de "lo" o "la". Es aceptado en algunos casos.',
+                    'Correcto (leísmo aceptado): Le vi ayer. (a él) / Correcto (norma): Lo vi ayer.',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué es el leísmo?', ['Usar "le" por "lo" en OD masculino de persona', 'Usar "la" por "le" en CI femenino',
+                        'Usar "lo" por "le" en CI masculino', 'Usar "les" por "los" en OD plural'
+                    ], 0, 'Escribe una oración con leísmo aceptado: "Le vi ayer".'
+                ],
+                ['Norma general: lo/la para OD, le/les para CI', 'Regla básica de uso',
+                    'En la norma culta del español, "lo/la/los/las" son para el OD; "le/les" son para el CI. El leísmo de persona es aceptado en algunas regiones.',
+                    'Lo veo (OD). / Le hablo (CI).',
+                    'lo (OD) / le (CI)',
+                    '¿Qué pronombre se usa para el OD en la norma culta?', ['Lo/la/los/las', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración con "lo" (OD) y otra con "le" (CI).'
+                ]
+            ];
+        b1.forEach(d => addLesson('regla_general', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: LEÍSMO (11–20)
+        // ============================================================
+        const b2 = [
+            ['Leísmo con verbos de percepción', 'Leísmo con ver + persona',
+                'Con verbos de percepción (ver, mirar, oír) se usa a veces "le" por "lo" para CD masculino de persona en zonas leístas.',
+                'Le vi ayer. (leísmo) / Lo vi ayer. (norma)',
+                'le (leísmo) → lo (norma)',
+                '¿Qué pronombre se usa en leísmo con "ver"?', ['Le', 'Lo', 'La', 'Les'],
+                0, 'Escribe una oración con leísmo: "Le vi".'
+            ],
+            ['Leísmo con verbos de encuentro', 'Leísmo con encontrar + persona',
+                'Con "encontrar" también se da leísmo de persona: "Le encontré" en lugar de "Lo encontré".',
+                'Le encontré en la calle. (leísmo) / Lo encontré en la calle. (norma)',
+                'le (leísmo) → lo (norma)',
+                '¿Qué pronombre se usa en leísmo con "encontrar"?', ['Le', 'Lo', 'La', 'Les'],
+                0, 'Escribe una oración con leísmo: "Le encontré".'
+            ],
+            ['Leísmo con verbos de ayuda', 'Leísmo con ayudar + persona',
+                '"Ayudar" es un verbo que en algunas regiones se usa con leísmo: "Le ayudé" en lugar de "Lo ayudé".',
+                'Le ayudé con la tarea. (leísmo) / Lo ayudé con la tarea. (norma)',
+                'le (leísmo) → lo (norma)',
+                '¿Qué pronombre se usa en leísmo con "ayudar"?', ['Le', 'Lo', 'La', 'Les'],
+                0, 'Escribe una oración con leísmo: "Le ayudé".'
+            ],
+            ['Leísmo con verbos de llamar', 'Leísmo con llamar + persona',
+                '"Llamar" es otro verbo que admite leísmo en algunas zonas: "Le llamé" por "Lo llamé".',
+                'Le llamé por teléfono. (leísmo) / Lo llamé por teléfono. (norma)',
+                'le (leísmo) → lo (norma)',
+                '¿Qué pronombre se usa en leísmo con "llamar"?', ['Le', 'Lo', 'La', 'Les'],
+                0, 'Escribe una oración con leísmo: "Le llamé".'
+            ],
+            ['Leísmo con verbos de conocer', 'Leísmo con conocer + persona',
+                    '"Conocer" admite leísmo en algunas regiones: "Le conozco" por "Lo conozco".',
+                    'Le conozco desde niño. (leísmo) / Lo conozco desde niño. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "conocer"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le conozco".'
+                ],
+                ['Leísmo con verbos de visitar', 'Leísmo con visitar + persona',
+                    '"Visitar" admite leísmo: "Le visité" por "Lo visité".',
+                    'Le visité ayer. (leísmo) / Lo visité ayer. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "visitar"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le visité".'
+                ],
+                ['Leísmo con verbos de acompañar', 'Leísmo con acompañar + persona',
+                    '"Acompañar" admite leísmo: "Le acompañé" por "Lo acompañé".',
+                    'Le acompañé al cine. (leísmo) / Lo acompañé al cine. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "acompañar"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le acompañé".'
+                ],
+                ['Leísmo con verbos de saludar', 'Leísmo con saludar + persona',
+                    '"Saludar" admite leísmo: "Le saludé" por "Lo saludé".',
+                    'Le saludé al llegar. (leísmo) / Lo saludé al llegar. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "saludar"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le saludé".'
+                ],
+                ['Leísmo con verbos de despedir', 'Leísmo con despedir + persona',
+                    '"Despedir" admite leísmo: "Le despedí" por "Lo despedí".',
+                    'Le despedí con un abrazo. (leísmo) / Lo despedí con un abrazo. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "despedir"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le despedí".'
+                ],
+                ['Leísmo con verbos de seguir', 'Leísmo con seguir + persona',
+                    '"Seguir" admite leísmo: "Le seguí" por "Lo seguí".',
+                    'Le seguí hasta su casa. (leísmo) / Lo seguí hasta su casa. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "seguir"?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le seguí".'
+                ]
+            ];
+        b2.forEach(d => addLesson('leismo', ...d));
+
+            // ============================================================
+            //  BLOQUE 3: LAÍSMO (21–30)
+            // ============================================================
+            const b3 = [
+                ['Laísmo: definición y ejemplos', 'la / las en lugar de le / les (CI femenino)',
+                    'El laísmo consiste en usar "la" o "las" como CI femenino en lugar de "le" o "les". Es incorrecto en la norma culta.',
+                    'Incorrecto: La di un regalo. (a ella) / Correcto: Le di un regalo.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Qué pronombre se usa incorrectamente en el laísmo?', ['La', 'Lo', 'Le', 'Les'],
+                    0, 'Corrige la oración "La di un regalo".'
+                ],
+                ['Laísmo con verbos de dar', 'Laísmo con dar + CI femenino',
+                    'Con el verbo "dar", el laísmo se manifiesta como "la di" en lugar de "le di".',
+                    'Incorrecto: La di un libro. / Correcto: Le di un libro.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La di un libro"?', ['Le di un libro', 'Lo di un libro', 'La di un libro',
+                        'Las di un libro'
+                    ], 0, 'Escribe la forma correcta: "___ di un libro" (a ella).'
+                ],
+                ['Laísmo con verbos de contar', 'Laísmo con contar + CI femenino',
+                    'Con "contar", el laísmo es "la conté" en lugar de "le conté".',
+                    'Incorrecto: La conté un secreto. / Correcto: Le conté un secreto.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La conté un secreto"?', ['Le conté un secreto', 'Lo conté un secreto',
+                        'La conté un secreto', 'Las conté un secreto'
+                    ], 0, 'Escribe la forma correcta: "___ conté un secreto" (a ella).'
+                ],
+                ['Laísmo con verbos de decir', 'Laísmo con decir + CI femenino',
+                    'Con "decir", el laísmo es "la dije" en lugar de "le dije".',
+                    'Incorrecto: La dije la verdad. / Correcto: Le dije la verdad.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La dije la verdad"?', ['Le dije la verdad', 'Lo dije la verdad',
+                        'La dije la verdad', 'Las dije la verdad'
+                    ], 0, 'Escribe la forma correcta: "___ dije la verdad" (a ella).'
+                ],
+                ['Laísmo con verbos de mostrar', 'Laísmo con mostrar + CI femenino',
+                    'Con "mostrar", el laísmo es "la mostré" en lugar de "le mostré".',
+                    'Incorrecto: La mostré el museo. / Correcto: Le mostré el museo.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La mostré el museo"?', ['Le mostré el museo', 'Lo mostré el museo',
+                        'La mostré el museo', 'Las mostré el museo'
+                    ], 0, 'Escribe la forma correcta: "___ mostré el museo" (a ella).'
+                ],
+                ['Laísmo con verbos de preguntar', 'Laísmo con preguntar + CI femenino',
+                    'Con "preguntar", el laísmo es "la pregunté" en lugar de "le pregunté".',
+                    'Incorrecto: La pregunté la hora. / Correcto: Le pregunté la hora.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La pregunté la hora"?', ['Le pregunté la hora', 'Lo pregunté la hora',
+                        'La pregunté la hora', 'Las pregunté la hora'
+                    ], 0, 'Escribe la forma correcta: "___ pregunté la hora" (a ella).'
+                ],
+                ['Laísmo con verbos de prometer', 'Laísmo con prometer + CI femenino',
+                    'Con "prometer", el laísmo es "la prometí" en lugar de "le prometí".',
+                    'Incorrecto: La prometí un viaje. / Correcto: Le prometí un viaje.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La prometí un viaje"?', ['Le prometí un viaje', 'Lo prometí un viaje',
+                        'La prometí un viaje', 'Las prometí un viaje'
+                    ], 0, 'Escribe la forma correcta: "___ prometí un viaje" (a ella).'
+                ],
+                ['Laísmo con verbos de enviar', 'Laísmo con enviar + CI femenino',
+                    'Con "enviar", el laísmo es "la envié" en lugar de "le envié".',
+                    'Incorrecto: La envié una carta. / Correcto: Le envié una carta.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La envié una carta"?', ['Le envié una carta', 'Lo envié una carta',
+                        'La envié una carta', 'Las envié una carta'
+                    ], 0, 'Escribe la forma correcta: "___ envié una carta" (a ella).'
+                ],
+                ['Laísmo con verbos de ofrecer', 'Laísmo con ofrecer + CI femenino',
+                    'Con "ofrecer", el laísmo es "la ofrecí" en lugar de "le ofrecí".',
+                    'Incorrecto: La ofrecí mi ayuda. / Correcto: Le ofrecí mi ayuda.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La ofrecí mi ayuda"?', ['Le ofrecí mi ayuda', 'Lo ofrecí mi ayuda',
+                        'La ofrecí mi ayuda', 'Las ofrecí mi ayuda'
+                    ], 0, 'Escribe la forma correcta: "___ ofrecí mi ayuda" (a ella).'
+                ],
+                ['Laísmo con verbos de deber', 'Laísmo con deber + CI femenino',
+                    'Con "deber" (en sentido de "tener que dar"), el laísmo es "la debo" en lugar de "le debo".',
+                    'Incorrecto: La debo un favor. / Correcto: Le debo un favor.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La debo un favor"?', ['Le debo un favor', 'Lo debo un favor', 'La debo un favor',
+                        'Las debo un favor'
+                    ], 0, 'Escribe la forma correcta: "___ debo un favor" (a ella).'
+                ]
+            ];
+        b3.forEach(d => addLesson('laismo', ...d));
+
+            // ============================================================
+            //  BLOQUE 4: LOÍSMO (31–40)
+            // ============================================================
+            const b4 = [
+                ['Loísmo: definición y ejemplos', 'lo / los en lugar de le / les (CI masculino)',
+                    'El loísmo consiste en usar "lo" o "los" como CI masculino en lugar de "le" o "les". Es incorrecto en la norma culta.',
+                    'Incorrecto: Lo di un regalo. (a él) / Correcto: Le di un regalo.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Qué pronombre se usa incorrectamente en el loísmo?', ['Lo', 'La', 'Le', 'Les'],
+                    0, 'Corrige la oración "Lo di un regalo".'
+                ],
+                ['Loísmo con verbos de dar', 'Loísmo con dar + CI masculino',
+                    'Con "dar", el loísmo es "lo di" en lugar de "le di".',
+                    'Incorrecto: Lo di un libro. / Correcto: Le di un libro.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo di un libro"?', ['Le di un libro', 'La di un libro', 'Lo di un libro',
+                        'Los di un libro'
+                    ], 0, 'Escribe la forma correcta: "___ di un libro" (a él).'
+                ],
+                ['Loísmo con verbos de contar', 'Loísmo con contar + CI masculino',
+                    'Con "contar", el loísmo es "lo conté" en lugar de "le conté".',
+                    'Incorrecto: Lo conté un secreto. / Correcto: Le conté un secreto.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo conté un secreto"?', ['Le conté un secreto', 'La conté un secreto',
+                        'Lo conté un secreto', 'Los conté un secreto'
+                    ], 0, 'Escribe la forma correcta: "___ conté un secreto" (a él).'
+                ],
+                ['Loísmo con verbos de decir', 'Loísmo con decir + CI masculino',
+                    'Con "decir", el loísmo es "lo dije" en lugar de "le dije".',
+                    'Incorrecto: Lo dije la verdad. / Correcto: Le dije la verdad.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo dije la verdad"?', ['Le dije la verdad', 'La dije la verdad', 'Lo dije la verdad',
+                        'Los dije la verdad'
+                    ], 0, 'Escribe la forma correcta: "___ dije la verdad" (a él).'
+                ],
+                ['Loísmo con verbos de mostrar', 'Loísmo con mostrar + CI masculino',
+                    'Con "mostrar", el loísmo es "lo mostré" en lugar de "le mostré".',
+                    'Incorrecto: Lo mostré el museo. / Correcto: Le mostré el museo.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo mostré el museo"?', ['Le mostré el museo', 'La mostré el museo',
+                        'Lo mostré el museo', 'Los mostré el museo'
+                    ], 0, 'Escribe la forma correcta: "___ mostré el museo" (a él).'
+                ],
+                ['Loísmo con verbos de preguntar', 'Loísmo con preguntar + CI masculino',
+                    'Con "preguntar", el loísmo es "lo pregunté" en lugar de "le pregunté".',
+                    'Incorrecto: Lo pregunté la hora. / Correcto: Le pregunté la hora.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo pregunté la hora"?', ['Le pregunté la hora', 'La pregunté la hora',
+                        'Lo pregunté la hora', 'Los pregunté la hora'
+                    ], 0, 'Escribe la forma correcta: "___ pregunté la hora" (a él).'
+                ],
+                ['Loísmo con verbos de prometer', 'Loísmo con prometer + CI masculino',
+                    'Con "prometer", el loísmo es "lo prometí" en lugar de "le prometí".',
+                    'Incorrecto: Lo prometí un viaje. / Correcto: Le prometí un viaje.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo prometí un viaje"?', ['Le prometí un viaje', 'La prometí un viaje',
+                        'Lo prometí un viaje', 'Los prometí un viaje'
+                    ], 0, 'Escribe la forma correcta: "___ prometí un viaje" (a él).'
+                ],
+                ['Loísmo con verbos de enviar', 'Loísmo con enviar + CI masculino',
+                    'Con "enviar", el loísmo es "lo envié" en lugar de "le envié".',
+                    'Incorrecto: Lo envié una carta. / Correcto: Le envié una carta.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo envié una carta"?', ['Le envié una carta', 'La envié una carta',
+                        'Lo envié una carta', 'Los envié una carta'
+                    ], 0, 'Escribe la forma correcta: "___ envié una carta" (a él).'
+                ],
+                ['Loísmo con verbos de ofrecer', 'Loísmo con ofrecer + CI masculino',
+                    'Con "ofrecer", el loísmo es "lo ofrecí" en lugar de "le ofrecí".',
+                    'Incorrecto: Lo ofrecí mi ayuda. / Correcto: Le ofrecí mi ayuda.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo ofrecí mi ayuda"?', ['Le ofrecí mi ayuda', 'La ofrecí mi ayuda',
+                        'Lo ofrecí mi ayuda', 'Los ofrecí mi ayuda'
+                    ], 0, 'Escribe la forma correcta: "___ ofrecí mi ayuda" (a él).'
+                ],
+                ['Loísmo con verbos de deber', 'Loísmo con deber + CI masculino',
+                    'Con "deber" (sentido de "tener que dar"), el loísmo es "lo debo" en lugar de "le debo".',
+                    'Incorrecto: Lo debo un favor. / Correcto: Le debo un favor.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo debo un favor"?', ['Le debo un favor', 'La debo un favor', 'Lo debo un favor',
+                        'Los debo un favor'
+                    ], 0, 'Escribe la forma correcta: "___ debo un favor" (a él).'
+                ]
+            ];
+        b4.forEach(d => addLesson('loismo', ...d));
+
+            // ============================================================
+            //  BLOQUE 5: LEÍSMO ACEPTADO (41–50)
+            // ============================================================
+            const b5 = [
+                ['Leísmo de persona (aceptado)', 'le por lo (OD masculino de persona)',
+                    'La RAE acepta el leísmo cuando el OD es una persona masculina. Es decir, usar "le" en lugar de "lo" para CD de persona masculina.',
+                    'Le vi ayer. (leísmo aceptado) / Lo vi ayer. (norma)',
+                    'le (leísmo aceptado) → lo (norma)',
+                    '¿En qué casos la RAE acepta el leísmo?', ['Con OD masculino de persona', 'Con OD femenino de persona',
+                        'Con CI masculino', 'Con CI femenino'
+                    ], 0, 'Escribe una oración con leísmo aceptado: "Le vi".'
+                ],
+                ['Leísmo de persona en singular', 'le por lo (singular)',
+                    'El leísmo de persona se da sobre todo en singular: "le vi" en lugar de "lo vi".',
+                    'Le vi ayer. (leísmo) / Lo vi ayer. (norma)',
+                    'le (sing.) → lo (sing.)',
+                    '¿Qué pronombre se usa en leísmo de persona singular?', ['Le', 'Lo', 'La', 'Los'],
+                    0, 'Escribe una oración con leísmo de persona singular.'
+                ],
+                ['Leísmo de persona en plural', 'les por los (OD masculino plural de persona)',
+                    'El leísmo de persona en plural es "les" por "los" para CD masculino plural de persona.',
+                    'Les vi ayer. (leísmo) / Los vi ayer. (norma)',
+                    'les (leísmo) → los (norma)',
+                    '¿Qué pronombre se usa en leísmo de persona plural?', ['Les', 'Los', 'Las', 'Le'],
+                    0, 'Escribe una oración con leísmo de persona plural: "Les vi".'
+                ],
+                ['Leísmo con "a" personal', 'le + a + persona (leísmo)',
+                    'El leísmo de persona suele aparecer con la "a" personal: "Le vi a Juan" en lugar de "Lo vi a Juan".',
+                    'Le vi a Juan. (leísmo) / Lo vi a Juan. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "a" personal?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración con leísmo: "Le vi a Juan".'
+                ],
+                ['Leísmo con verbos de tratamiento', 'Leísmo con usted (tratamiento)',
+                    'Con "usted" también se da leísmo: "Le vi a usted" en lugar de "Lo vi a usted".',
+                    'Le vi a usted. (leísmo) / Lo vi a usted. (norma)',
+                    'le (leísmo) → lo (norma)',
+                    '¿Qué pronombre se usa en leísmo con "usted"?', ['Le', 'Lo', 'La', 'Los'],
+                    0, 'Escribe una oración con leísmo: "Le vi a usted".'
+                ],
+                ['Leísmo en España vs América', 'Leísmo más común en España',
+                    'El leísmo de persona es más común en España que en América Latina, donde se prefiere "lo" y "la" para el OD.',
+                    'España: Le vi ayer. / América: Lo vi ayer.',
+                    'le (España) / lo (América)',
+                    '¿Dónde es más común el leísmo de persona?', ['En España', 'En América Latina', 'En todo el mundo',
+                        'En ninguna parte'
+                    ], 0, 'Escribe una oración con leísmo (España) y otra con la norma (América).'
+                ],
+                ['Leísmo en textos literarios', 'Leísmo en literatura',
+                    'El leísmo de persona es común en la literatura española, incluso en autores clásicos.',
+                    'Le vio y se enamoró. (leísmo literario)',
+                    'le (leísmo literario)',
+                    '¿En qué tipo de textos es común el leísmo?', ['En literatura española', 'En textos científicos',
+                        'En textos jurídicos', 'En textos administrativos'
+                    ], 0, 'Escribe una frase literaria con leísmo.'
+                ],
+                ['Leísmo en el habla coloquial', 'Leísmo coloquial',
+                    'En el habla coloquial de España, el leísmo es muy común y natural.',
+                    '¿Le has visto? (coloquial) / ¿Lo has visto? (norma)',
+                    'le (coloquial) → lo (norma)',
+                    '¿Dónde es común el leísmo coloquial?', ['En el habla coloquial de España', 'En América Latina',
+                        'En textos formales', 'En ninguna parte'
+                    ], 0, 'Escribe una oración coloquial con leísmo.'
+                ],
+                ['Leísmo en contextos formales', 'Leísmo en registros formales',
+                    'Aunque el leísmo de persona está aceptado, en registros muy formales se prefiere "lo" y "la" para el OD.',
+                    'Formal: Lo vi ayer. / Coloquial: Le vi ayer.',
+                    'lo (formal) / le (coloquial)',
+                    '¿Qué pronombre se prefiere en contextos formales para el OD de persona?', ['Lo', 'Le', 'La', 'Les'],
+                    0, 'Escribe una oración formal con "lo" para el OD de persona.'
+                ],
+                ['Leísmo de cortesía', 'Le por lo (tratamiento de cortesía)',
+                    'El leísmo de cortesía usa "le" para "usted" en lugar de "lo" o "la", incluso cuando es OD.',
+                    'Le veo a usted. (leísmo de cortesía) / Lo veo a usted. (norma)',
+                    'le (cortesía) → lo/la (norma)',
+                    '¿Qué pronombre se usa en el leísmo de cortesía?', ['Le', 'Lo', 'La', 'Los'],
+                    0, 'Escribe una oración con leísmo de cortesía: "Le veo a usted".'
+                ]
+            ];
+        b5.forEach(d => addLesson('leismo_aceptado', ...d));
+
+            // ============================================================
+            //  BLOQUE 6: VERBOS ESPECÍFICOS (51–60)
+            // ============================================================
+            const b6 = [
+                ['Verbo "ver" (OD) vs "hablar" (CI)', 'Ver (OD) / Hablar (CI)',
+                    '"Ver" lleva OD (lo/la); "hablar" lleva CI (le). No confundir.',
+                    'Lo veo. (OD) / Le hablo. (CI)',
+                    'lo (ver) / le (hablar)',
+                    '¿Qué pronombre se usa con "ver"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo veo" y otra con "le hablo".'
+                ],
+                ['Verbo "llamar" (OD) vs "decir" (CI)', 'Llamar (OD) / Decir (CI)',
+                    '"Llamar" lleva OD (lo/la); "decir" lleva CI (le).',
+                    'Lo llamo. (OD) / Le digo. (CI)',
+                    'lo (llamar) / le (decir)',
+                    '¿Qué pronombre se usa con "llamar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo llamo" y otra con "le digo".'
+                ],
+                ['Verbo "ayudar" (OD vs CI)', 'Ayudar puede ser OD o CI',
+                    '"Ayudar" puede llevar OD (a alguien) o CI (a alguien) según la construcción. En norma, OD: "Lo ayudo".',
+                    'Lo ayudo. (OD, norma) / Le ayudo. (CI, leísmo)',
+                    'lo (OD) / le (CI, leísmo)',
+                    '¿Qué pronombre se usa en la norma con "ayudar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo ayudo" (norma).'
+                ],
+                ['Verbo "conocer" (OD) vs "escribir" (CI)', 'Conocer (OD) / Escribir (CI)',
+                    '"Conocer" lleva OD (lo/la); "escribir" lleva CI (le).',
+                    'Lo conozco. (OD) / Le escribo. (CI)',
+                    'lo (conocer) / le (escribir)',
+                    '¿Qué pronombre se usa con "conocer"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo conozco" y otra con "le escribo".'
+                ],
+                ['Verbo "saludar" (OD) vs "agradecer" (CI)', 'Saludar (OD) / Agradecer (CI)',
+                    '"Saludar" lleva OD (lo/la); "agradecer" lleva CI (le).',
+                    'Lo saludo. (OD) / Le agradezco. (CI)',
+                    'lo (saludar) / le (agradecer)',
+                    '¿Qué pronombre se usa con "saludar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo saludo" y otra con "le agradezco".'
+                ],
+                ['Verbo "encontrar" (OD) vs "pedir" (CI)', 'Encontrar (OD) / Pedir (CI)',
+                    '"Encontrar" lleva OD (lo/la); "pedir" lleva CI (le).',
+                    'Lo encuentro. (OD) / Le pido. (CI)',
+                    'lo (encontrar) / le (pedir)',
+                    '¿Qué pronombre se usa con "encontrar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo encuentro" y otra con "le pido".'
+                ],
+                ['Verbo "mirar" (OD) vs "decir" (CI)', 'Mirar (OD) / Decir (CI)',
+                    '"Mirar" lleva OD (lo/la); "decir" lleva CI (le).',
+                    'Lo miro. (OD) / Le digo. (CI)',
+                    'lo (mirar) / le (decir)',
+                    '¿Qué pronombre se usa con "mirar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo miro" y otra con "le digo".'
+                ],
+                ['Verbo "acompañar" (OD) vs "contar" (CI)', 'Acompañar (OD) / Contar (CI)',
+                    '"Acompañar" lleva OD (lo/la); "contar" lleva CI (le).',
+                    'Lo acompaño. (OD) / Le cuento. (CI)',
+                    'lo (acompañar) / le (contar)',
+                    '¿Qué pronombre se usa con "acompañar"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo acompaño" y otra con "le cuento".'
+                ],
+                ['Verbo "despedir" (OD) vs "decir adiós" (CI)', 'Despedir (OD) / Decir adiós (CI)',
+                    '"Despedir" lleva OD (lo/la); "decir adiós" lleva CI (le).',
+                    'Lo despido. (OD) / Le digo adiós. (CI)',
+                    'lo (despedir) / le (decir adiós)',
+                    '¿Qué pronombre se usa con "despedir"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo despido" y otra con "le digo adiós".'
+                ],
+                ['Verbo "seguir" (OD) vs "escribir" (CI)', 'Seguir (OD) / Escribir (CI)',
+                    '"Seguir" lleva OD (lo/la); "escribir" lleva CI (le).',
+                    'Lo sigo. (OD) / Le escribo. (CI)',
+                    'lo (seguir) / le (escribir)',
+                    '¿Qué pronombre se usa con "seguir"?', ['Lo/la', 'Le', 'Les', 'Los/las'],
+                    0, 'Escribe una oración con "lo sigo" y otra con "le escribo".'
+                ]
+            ];
+        b6.forEach(d => addLesson('verbos_especificos', ...d));
+
+            // ============================================================
+            //  BLOQUE 7: PRONOMBRES COMBINADOS (61–70)
+            // ============================================================
+            const b7 = [
+                ['Pronombres combinados: se + lo', 'se lo (por le + lo)',
+                    'Cuando hay un CI (le/les) y un OD (lo/la/los/las), el CI se convierte en "se" y el OD se mantiene.',
+                    'Doy el libro a Juan → Le doy el libro → Se lo doy.',
+                    'se lo (le + lo)',
+                    '¿Qué pronombre se usa cuando hay CI y OD juntos?', ['Se + OD', 'Le + OD', 'Lo + CI', 'La + CI'],
+                    0, 'Escribe una oración con "se lo" (CI + OD).'
+                ],
+                ['Combinación: se + la', 'se la (por le + la)',
+                    'Cuando el OD es femenino singular, la combinación es "se la".',
+                    'Doy la mesa a Juan → Le doy la mesa → Se la doy.',
+                    'se la (le + la)',
+                    '¿Qué pronombre se usa para "le + la"?', ['Se la', 'Se lo', 'Se las', 'Se los'],
+                    0, 'Escribe una oración con "se la" (CI + OD femenino).'
+                ],
+                ['Combinación: se + los', 'se los (por les + los)',
+                    'Cuando el OD es masculino plural, la combinación es "se los".',
+                    'Doy los libros a Juan y María → Les doy los libros → Se los doy.',
+                    'se los (les + los)',
+                    '¿Qué pronombre se usa para "les + los"?', ['Se los', 'Se las', 'Se lo', 'Se la'],
+                    0, 'Escribe una oración con "se los" (CI + OD masculino plural).'
+                ],
+                ['Combinación: se + las', 'se las (por les + las)',
+                    'Cuando el OD es femenino plural, la combinación es "se las".',
+                    'Doy las mesas a Juan y María → Les doy las mesas → Se las doy.',
+                    'se las (les + las)',
+                    '¿Qué pronombre se usa para "les + las"?', ['Se las', 'Se los', 'Se lo', 'Se la'],
+                    0, 'Escribe una oración con "se las" (CI + OD femenino plural).'
+                ],
+                ['Leísmo en pronombres combinados', 'Leísmo + se',
+                    'Incluso en leísmo, la combinación con CI se convierte en "se" + OD.',
+                    'Le doy el libro a Juan (leísmo) → Se lo doy.',
+                    'se lo (leísmo)',
+                    '¿Qué ocurre con el CI en la combinación con OD?', ['Se convierte en "se"', 'Se mantiene como "le"',
+                        'Se convierte en "lo"', 'Desaparece'
+                    ], 0, 'Escribe una oración con "se lo" en contexto de leísmo.'
+                ],
+                ['Orden de los pronombres', 'Se + OD (siempre primero)',
+                    'En la combinación, el CI (convertido en "se") va siempre primero, seguido del OD.',
+                    'Se lo doy. (correcto) / Lo se doy. (incorrecto)',
+                    'se + lo (orden correcto)',
+                    '¿Cuál es el orden correcto de los pronombres combinados?', ['Se + OD', 'OD + se', 'Lo + se',
+                        'La + se'
+                    ], 0, 'Escribe una oración con el orden correcto: "Se lo doy".'
+                ],
+                ['Combinación con "le" (laísmo)', 'Laísmo + combinación',
+                    'En laísmo, la combinación sería "se la" cuando el CI es femenino, pero el laísmo es incorrecto.',
+                    'Incorrecto (laísmo): La di el libro → Se lo di. (correcto, sin laísmo)',
+                    'se lo (correcto)',
+                    '¿Cómo se corrige el laísmo en combinación?', ['Se + OD', 'Le + OD', 'La + OD', 'Lo + OD'],
+                    0, 'Escribe la forma correcta de "La di el libro → Se lo di".'
+                ],
+                ['Combinación con "lo" (loísmo)', 'Loísmo + combinación',
+                    'En loísmo, la combinación sería "se lo" con CI masculino, pero el loísmo es incorrecto.',
+                    'Incorrecto (loísmo): Lo di el libro → Se lo di. (correcto)',
+                    'se lo (correcto)',
+                    '¿Cómo se corrige el loísmo en combinación?', ['Se + OD', 'Le + OD', 'Lo + OD', 'La + OD'],
+                    0, 'Escribe la forma correcta de "Lo di el libro → Se lo di".'
+                ],
+                ['Combinación con pronombres reflexivos', 'Reflexivos + se + OD',
+                    'Con pronombres reflexivos, el orden es: reflexivo + se + OD.',
+                    'Me lo dio. / Te lo digo. / Se lo compró.',
+                    'me lo / te lo / se lo',
+                    '¿Cuál es el orden con pronombres reflexivos?', ['Reflexivo + se + OD', 'Se + reflexivo + OD',
+                        'OD + reflexivo + se', 'Reflexivo + OD + se'
+                    ], 0, 'Escribe una oración con "me lo".'
+                ],
+                ['Combinación en imperativo', 'Imperativo + se + OD',
+                    'En imperativo afirmativo, los pronombres se colocan después del verbo: "Dáselo".',
+                    'Dáselo. (da + se + lo)',
+                    'se + lo (pospuestos)',
+                    '¿Dónde se colocan los pronombres en imperativo afirmativo?', ['Después del verbo', 'Antes del verbo',
+                        'Al final de la frase', 'Separados del verbo'
+                    ], 0, 'Escribe una oración en imperativo con "se lo": "Dáselo".'
+                ]
+            ];
+        b7.forEach(d => addLesson('pronombres_combinados', ...d));
+
+            // ============================================================
+            //  BLOQUE 8: ERRORES COMUNES (71–80)
+            // ============================================================
+            const b8 = [
+                ['Error: "la" por "le" (laísmo)', 'Laísmo (la por le)',
+                    'Usar "la" como CI femenino en lugar de "le" es un error (laísmo).',
+                    'Incorrecto: La di un regalo. / Correcto: Le di un regalo.',
+                    'la (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "La di un regalo"?', ['Le di un regalo', 'Lo di un regalo', 'La di un regalo',
+                        'Las di un regalo'
+                    ], 0, 'Corrige la oración "La di un regalo".'
+                ],
+                ['Error: "lo" por "le" (loísmo)', 'Loísmo (lo por le)',
+                    'Usar "lo" como CI masculino en lugar de "le" es un error (loísmo).',
+                    'Incorrecto: Lo di un regalo. / Correcto: Le di un regalo.',
+                    'lo (incorrecto) → le (correcto)',
+                    '¿Cómo se corrige "Lo di un regalo"?', ['Le di un regalo', 'La di un regalo', 'Lo di un regalo',
+                        'Los di un regalo'
+                    ], 0, 'Corrige la oración "Lo di un regalo".'
+                ],
+                ['Error: "le" por "lo" sin ser persona', 'Leísmo incorrecto (cosa)',
+                    'Usar "le" como OD de cosa es incorrecto. Solo se acepta para persona.',
+                    'Incorrecto: Le vi el libro. (el libro es cosa) / Correcto: Lo vi (el libro).',
+                    'le (incorrecto) → lo (correcto)',
+                    '¿Cuándo es incorrecto el leísmo?', ['Con OD de cosa', 'Con OD de persona', 'Con CI de persona',
+                        'Con CI de cosa'
+                    ], 0, 'Corrige la oración "Le vi el libro".'
+                ],
+                ['Error: "le" por "la" (leísmo femenino)', 'Leísmo femenino (le por la)',
+                    'Usar "le" como OD femenino es leísmo femenino, que no está aceptado.',
+                    'Incorrecto: Le vi a María. (leísmo femenino) / Correcto: La vi a María.',
+                    'le (incorrecto) → la (correcto)',
+                    '¿Cómo se corrige "Le vi a María"?', ['La vi a María', 'Lo vi a María', 'Le vi a María',
+                        'Las vi a María'
+                    ], 0, 'Corrige la oración "Le vi a María".'
+                ],
+                ['Error: "los" por "les" (loísmo plural)', 'Loísmo plural (los por les)',
+                    'Usar "los" como CI plural en lugar de "les" es loísmo plural.',
+                    'Incorrecto: Los di un regalo. (a ellos) / Correcto: Les di un regalo.',
+                    'los (incorrecto) → les (correcto)',
+                    '¿Cómo se corrige "Los di un regalo" (a ellos)?', ['Les di un regalo', 'Los di un regalo',
+                        'Las di un regalo', 'Le di un regalo'
+                    ], 0, 'Corrige la oración "Los di un regalo" (a ellos).'
+                ],
+                ['Error: "las" por "les" (laísmo plural)', 'Laísmo plural (las por les)',
+                    'Usar "las" como CI plural femenino en lugar de "les" es laísmo plural.',
+                    'Incorrecto: Las di un regalo. (a ellas) / Correcto: Les di un regalo.',
+                    'las (incorrecto) → les (correcto)',
+                    '¿Cómo se corrige "Las di un regalo" (a ellas)?', ['Les di un regalo', 'Los di un regalo',
+                        'Las di un regalo', 'Le di un regalo'
+                    ], 0, 'Corrige la oración "Las di un regalo" (a ellas).'
+                ],
+                ['Error: "le" por "les" (singular por plural)', 'Le por les (CI plural)',
+                    'Usar "le" en lugar de "les" para CI plural es un error.',
+                    'Incorrecto: Le di un regalo a ellos. / Correcto: Les di un regalo a ellos.',
+                    'le (incorrecto) → les (correcto)',
+                    '¿Cómo se corrige "Le di un regalo a ellos"?', ['Les di un regalo', 'Los di un regalo',
+                        'Las di un regalo', 'Le di un regalo'
+                    ], 0, 'Corrige la oración "Le di un regalo a ellos".'
+                ],
+                ['Error: "les" por "los" (leísmo plural incorrecto)', 'Les por los (OD plural)',
+                    'Usar "les" como OD plural de persona está aceptado, pero como OD de cosa es incorrecto.',
+                    'Incorrecto: Les vi los libros. (los libros) / Correcto: Los vi (los libros).',
+                    'les (incorrecto) → los (correcto)',
+                    '¿Cómo se corrige "Les vi los libros"?', ['Los vi', 'Las vi', 'Le vi', 'Les vi'],
+                    0, 'Corrige la oración "Les vi los libros".'
+                ],
+                ['Error: "se" por "le" en combinación', 'Se por le (en combinación)',
+                    'En combinación con OD, el CI siempre se convierte en "se", no en "le".',
+                    'Incorrecto: Le lo di. / Correcto: Se lo di.',
+                    'le lo (incorrecto) → se lo (correcto)',
+                    '¿Cómo se corrige "Le lo di"?', ['Se lo di', 'Lo le di', 'Le lo di', 'Se le di'],
+                    0, 'Corrige la oración "Le lo di".'
+                ],
+                ['Error: "lo" por "se" en combinación', 'Lo por se (en combinación)',
+                    'El CI en combinación siempre es "se", no "lo".',
+                    'Incorrecto: Lo lo di. / Correcto: Se lo di.',
+                    'lo lo (incorrecto) → se lo (correcto)',
+                    '¿Cómo se corrige "Lo lo di"?', ['Se lo di', 'Lo se di', 'Lo lo di', 'Se le di'],
+                    0, 'Corrige la oración "Lo lo di".'
+                ]
+            ];
+        b8.forEach(d => addLesson('errores_comunes', ...d));
+
+            // ============================================================
+            //  BLOQUE 9: REGIONALISMOS (81–90)
+            // ============================================================
+            const b9 = [
+                ['Leísmo en España (Castilla)', 'Leísmo castellano',
+                    'En Castilla (España), el leísmo de persona es muy común y está aceptado.',
+                    'Le vi ayer. (Castilla) / Lo vi ayer. (norma)',
+                    'le (Castilla) → lo (norma)',
+                    '¿Dónde es común el leísmo de persona?', ['En Castilla (España)', 'En América Latina',
+                        'En Cataluña', 'En el País Vasco'
+                    ], 0, 'Escribe una oración con leísmo castellano: "Le vi".'
+                ],
+                ['Laísmo en el centro de España', 'Laísmo en La Mancha',
+                    'El laísmo es más común en La Mancha y el centro de España, aunque se considera incorrecto.',
+                    'La di un regalo. (laísmo, La Mancha) / Le di un regalo. (norma)',
+                    'la (laísmo) → le (norma)',
+                    '¿Dónde es común el laísmo?', ['En La Mancha (España)', 'En América Latina', 'En Cataluña',
+                        'En el País Vasco'
+                    ], 0, 'Escribe una oración con laísmo y su corrección.'
+                ],
+                ['Loísmo en algunas regiones', 'Loísmo en zonas rurales',
+                    'El loísmo es menos común, pero aparece en algunas zonas rurales de España.',
+                    'Lo di un regalo. (loísmo) / Le di un regalo. (norma)',
+                    'lo (loísmo) → le (norma)',
+                    '¿Dónde es menos común el loísmo?', ['En zonas rurales de España', 'En América Latina',
+                        'En Cataluña', 'En el País Vasco'
+                    ], 0, 'Escribe una oración con loísmo y su corrección.'
+                ],
+                ['Uso en América Latina', 'Lo/la para OD, le/les para CI (norma)',
+                    'En América Latina, se sigue la norma general: "lo" y "la" para el OD, "le" y "les" para el CI.',
+                    'Lo vi ayer. (América) / Le vi ayer. (España, leísmo)',
+                    'lo (América) / le (España)',
+                    '¿Qué pronombre se usa en América Latina para el OD de persona?', ['Lo/la', 'Le/les', 'Lo/le',
+                        'La/les'
+                    ], 0, 'Escribe una oración como se dice en América Latina: "Lo vi ayer".'
+                ],
+                ['Leísmo en el País Vasco', 'Leísmo en Euskadi',
+                    'En el País Vasco, el leísmo también es común, influido por el euskera.',
+                    'Le vi ayer. (País Vasco)',
+                    'le (leísmo vasco)',
+                    '¿Qué influencia tiene el euskera en el leísmo?', ['Influye en el uso de "le"', 'No influye',
+                        'Influye en el uso de "lo"', 'Influye en el uso de "la"'
+                    ], 0, 'Escribe una oración con leísmo vasco: "Le vi".'
+                ],
+                ['Leísmo en Cataluña', 'Leísmo en Cataluña',
+                    'En Cataluña, el leísmo también es común, influido por el catalán.',
+                    'Le vi ayer. (Cataluña)',
+                    'le (leísmo catalán)',
+                    '¿Qué influencia tiene el catalán en el leísmo?', ['Influye en el uso de "le"', 'No influye',
+                        'Influye en el uso de "lo"', 'Influye en el uso de "la"'
+                    ], 0, 'Escribe una oración con leísmo catalán: "Le vi".'
+                ],
+                ['Laísmo en el centro de América', 'Laísmo en América',
+                    'El laísmo es poco común en América, pero aparece en algunas regiones.',
+                    'La di un regalo. (laísmo, raro en América)',
+                    'la (laísmo) → le (norma)',
+                    '¿Dónde es poco común el laísmo?', ['En América Latina', 'En España', 'En Cataluña', 'En el País Vasco'],
+                    0, 'Escribe una oración con laísmo y su corrección.'
+                ],
+                ['Loísmo en América', 'Loísmo en América',
+                    'El loísmo es muy raro en América, donde se prefiere la norma.',
+                    'Lo di un regalo. (loísmo, raro en América)',
+                    'lo (loísmo) → le (norma)',
+                    '¿Dónde es muy raro el loísmo?', ['En América Latina', 'En España', 'En Cataluña', 'En el País Vasco'],
+                    0, 'Escribe una oración con loísmo y su corrección.'
+                ],
+                ['Norma en el español neutro', 'Norma general (español neutro)',
+                    'En el español neutro (usado en doblajes y traducciones), se sigue la norma general: lo/la para OD, le/les para CI.',
+                    'Lo vi ayer. (neutro)',
+                    'lo (neutro)',
+                    '¿Qué pronombre se usa en el español neutro para el OD de persona?', ['Lo/la', 'Le/les', 'Lo/le',
+                        'La/les'
+                    ], 0, 'Escribe una oración en español neutro: "Lo vi ayer".'
+                ],
+                ['Norma en la RAE', 'Recomendación de la RAE',
+                    'La RAE recomienda el uso de "lo" y "la" para el OD, y "le" y "les" para el CI, pero acepta el leísmo de persona.',
+                    'Lo vi ayer. (recomendado) / Le vi ayer. (aceptado)',
+                    'lo (recomendado) / le (aceptado)',
+                    '¿Qué recomienda la RAE para el OD de persona?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración según la recomendación de la RAE: "Lo vi ayer".'
+                ]
+            ];
+        b9.forEach(d => addLesson('regionalismos', ...d));
+
+            // ============================================================
+            //  BLOQUE 10: USOS EN REDACCIÓN (91–100)
+            // ============================================================
+            const b10 = [
+                ['Uso en textos formales', 'Norma formal (lo/la para OD)',
+                    'En textos formales, se recomienda usar "lo" y "la" para el OD, incluso para personas, para evitar ambigüedades.',
+                    'El informe lo presentó el director. (formal)',
+                    'lo (formal)',
+                    '¿Qué pronombre se recomienda en textos formales para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración formal con "lo" para el OD.'
+                ],
+                ['Uso en textos literarios', 'Leísmo literario (estilo)',
+                    'En la literatura, el leísmo puede usarse como recurso estilístico.',
+                    'Le vio y sintió un escalofrío. (leísmo literario)',
+                    'le (estilístico)',
+                    '¿Qué recurso estilístico puede ser el leísmo?', ['Recurso estilístico', 'Error gramatical',
+                        'Regionalismo', 'Coloquialismo'
+                    ], 0, 'Escribe una frase literaria con leísmo.'
+                ],
+                ['Uso en textos periodísticos', 'Norma periodística (lo/la)',
+                    'En el periodismo, se prefiere la norma general para evitar confusiones.',
+                    'El presidente lo recibió en su despacho. (periodismo)',
+                    'lo (periodístico)',
+                    '¿Qué pronombre se prefiere en periodismo para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración periodística con "lo" para el OD.'
+                ],
+                ['Uso en textos académicos', 'Precisión académica (lo/la)',
+                    'En la redacción académica, se usa la norma general para mayor precisión.',
+                    'El investigador lo entrevistó. (académico)',
+                    'lo (académico)',
+                    '¿Qué pronombre se usa en textos académicos para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración académica con "lo" para el OD.'
+                ],
+                ['Uso en textos administrativos', 'Formalidad administrativa (lo/la)',
+                    'En la administración, se usa la norma general para evitar ambigüedades.',
+                    'El documento lo firmó el secretario. (administrativo)',
+                    'lo (administrativo)',
+                    '¿Qué pronombre se usa en textos administrativos para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración administrativa con "lo" para el OD.'
+                ],
+                ['Uso en textos jurídicos', 'Precisión jurídica (lo/la)',
+                    'En textos jurídicos, la precisión es fundamental, por lo que se usa la norma general.',
+                    'El juez lo condenó. (jurídico)',
+                    'lo (jurídico)',
+                    '¿Qué pronombre se usa en textos jurídicos para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración jurídica con "lo" para el OD.'
+                ],
+                ['Uso en textos coloquiales (España)', 'Leísmo coloquial en España',
+                    'En el habla coloquial de España, el leísmo es muy común y natural.',
+                    'Le vi ayer en el mercado. (coloquial España)',
+                    'le (coloquial España)',
+                    '¿Dónde es común el leísmo coloquial?', ['En España', 'En América Latina', 'En todo el mundo',
+                        'En ninguna parte'
+                    ], 0, 'Escribe una oración coloquial española con leísmo.'
+                ],
+                ['Uso en textos coloquiales (América)', 'Norma coloquial en América',
+                    'En América Latina, el leísmo es menos común y se prefiere "lo" y "la" para el OD.',
+                    'Lo vi ayer en el mercado. (coloquial América)',
+                    'lo (coloquial América)',
+                    '¿Qué pronombre se prefiere en América Latina para el OD?', ['Lo/la', 'Le/les', 'Lo/le', 'La/les'],
+                    0, 'Escribe una oración coloquial americana con "lo" para el OD.'
+                ],
+                ['Uso en redes sociales', 'Leísmo en redes (España)',
+                    'En redes sociales, el leísmo es común en España, mientras que en América se prefiere la norma.',
+                    'Le vi ayer en el parque. (redes España) / Lo vi ayer en el parque. (redes América)',
+                    'le (España) / lo (América)',
+                    '¿Qué pronombre se usa en redes sociales en España para el OD de persona?', ['Le', 'Lo', 'La', 'Les'],
+                    0, 'Escribe una oración como se escribiría en redes sociales en España y otra en América.'
+                ],
+                ['Revisión general: leísmo, laísmo, loísmo', 'Resumen de los tres fenómenos',
+                    'El leísmo es usar "le" por "lo/la" (aceptado para persona masculina). El laísmo es usar "la" por "le" (incorrecto). El loísmo es usar "lo" por "le" (incorrecto).',
+                    'Le vi (leísmo aceptado). / La di (laísmo incorrecto). / Lo di (loísmo incorrecto).',
+                    'le (leísmo) / la (laísmo) / lo (loísmo)',
+                    '¿Cuál de estos fenómenos está aceptado por la RAE?', ['El leísmo de persona masculina',
+                        'El laísmo', 'El loísmo', 'Ninguno'
+                    ], 0, 'Escribe tres oraciones: una con leísmo aceptado, una con laísmo corregido y una con loísmo corregido.'
+                ]
+            ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Fenómeno: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Leísmo, Laísmo, Loísmo');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Leísmo/Laísmo/Loísmo cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

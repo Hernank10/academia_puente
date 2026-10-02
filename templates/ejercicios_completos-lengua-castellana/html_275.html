@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno Argumentativo · Arquitectura Bilingüe</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Great+Vibes&family=Tangerine:wght@700&family=Cookie&family=Patrick+Hand&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #1a8f8f;
+      --teal-light: #7abebe;
+      --teal-dark: #0d5c5c;
+      --galaxy-bg: #eef6f9;
+      --card-bg: #ffffff;
+      --margin-red: #c0392b;
+      --line-blue: #4a90d9;
+      --shadow: 0 8px 32px rgba(26,143,143,0.2);
+    }
+    [data-theme="dark"] {
+      --galaxy-bg: #1a1a2e;
+      --card-bg: #2d2d44;
+      --teal-light: #4a8f8f;
+      --shadow: 0 8px 32px rgba(0,0,0,0.4);
+      color: #e0e0e0;
+    }
+    [data-theme="dark"] .card-cuaderno,
+    [data-theme="dark"] .cuaderno,
+    [data-theme="dark"] .flashcard,
+    [data-theme="dark"] .modal-content,
+    [data-theme="dark"] .stat-card,
+    [data-theme="dark"] .cuaderno-entry,
+    [data-theme="dark"] .caligrafia-panel {
+      background: #2d2d44 !important;
+      color: #e0e0e0 !important;
+    }
+    [data-theme="dark"] .card-cuaderno .definicion,
+    [data-theme="dark"] .card-cuaderno .ejemplo-cursiva,
+    [data-theme="dark"] .cuaderno-entry,
+    [data-theme="dark"] .stat-card {
+      color: #d0d0d0 !important;
+    }
+    [data-theme="dark"] .navbar-custom {
+      background: linear-gradient(135deg, #1a3d3d, #0d5c5c);
+      border-bottom-color: var(--teal);
+    }
+    [data-theme="dark"] .navbar-custom .navbar-brand,
+    [data-theme="dark"] .navbar-custom .nav-link {
+      color: #c0e0e0 !important;
+    }
+    [data-theme="dark"] .filtro-bloque {
+      background-color: #1a3d3d;
+    }
+    [data-theme="dark"] .filtro-bloque .btn-outline-secondary {
+      border-color: var(--teal);
+      color: #7abebe;
+    }
+    [data-theme="dark"] .filtro-bloque .btn-outline-secondary.active {
+      background-color: var(--teal);
+      color: #fff;
+    }
+    [data-theme="dark"] .fuente-selector {
+      background-color: #1a3d3d;
+    }
+    [data-theme="dark"] .fuente-selector select {
+      color: #c0e0e0;
+    }
+    [data-theme="dark"] .manuscrito {
+      color: #e0e0e0;
+    }
+    [data-theme="dark"] .firma-input {
+      color: #e0e0e0;
+    }
+    body {
+      background-color: var(--galaxy-bg);
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      padding-top: 70px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .navbar-custom {
+      background: linear-gradient(135deg, #b8d9d9, #8cc4c4);
+      border-bottom: 3px solid var(--teal);
+      transition: background 0.3s;
+    }
+    .navbar-custom .navbar-brand { font-weight: 700; color: var(--teal-dark); }
+    .navbar-custom .nav-link { color: var(--teal-dark); font-weight: 500; cursor: pointer; }
+    .navbar-custom .nav-link.active {
+      background-color: var(--teal);
+      color: #fff !important;
+      border-radius: 20px;
+      padding: 0.4rem 1.2rem;
+    }
+    .btn-teal { background-color: var(--teal); border-color: var(--teal); color: #fff; }
+    .btn-teal:hover { background-color: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+    .btn-outline-teal { border-color: var(--teal); color: var(--teal); }
+    .btn-outline-teal:hover { background-color: var(--teal); color: #fff; }
+    .card-cuaderno {
+      background: var(--card-bg);
+      border-left: 6px solid var(--teal);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(26,143,143,0.12);
+      transition: transform 0.3s, box-shadow 0.3s, background 0.3s;
+      height: 100%;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      cursor: default;
+    }
+    .card-cuaderno:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(26,143,143,0.25);
+    }
+    .badge-bloque { background-color: var(--teal); color: #fff; font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 30px; }
+    .firma-cursiva { font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--teal-dark); }
+    .fuente-caveat { font-family: 'Caveat', cursive; font-size: 1.3rem; }
+    .fuente-tangerine { font-family: 'Tangerine', cursive; font-size: 1.6rem; }
+    .fuente-cookie { font-family: 'Cookie', cursive; font-size: 1.4rem; }
+    .fuente-greatvibes { font-family: 'Great Vibes', cursive; font-size: 1.6rem; }
+    .fuente-garabato { font-family: 'Patrick Hand', cursive; font-size: 1.2rem; }
+    .progreso-bar { height: 10px; border-radius: 10px; background-color: #d0e8e8; overflow: hidden; }
+    .progreso-bar .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--teal-light), var(--teal)); transition: width 0.6s ease; }
+    .filtro-bloque { background-color: #d0e8e8; border-radius: 30px; padding: 0.25rem 0.5rem; transition: background 0.3s; }
+    .filtro-bloque .btn-outline-secondary { border-color: var(--teal); color: var(--teal); font-size: 0.75rem; padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; }
+    .filtro-bloque .btn-outline-secondary.active { background-color: var(--teal); color: #fff; }
+    .filtro-bloque .btn-outline-secondary:hover { background-color: var(--teal-light); color: var(--teal-dark); }
+    .fuente-selector { background-color: #d0e8e8; border-radius: 30px; padding: 0.2rem 0.8rem; transition: background 0.3s; }
+    .fuente-selector select { border: none; background: transparent; color: var(--teal-dark); font-weight: 500; outline: none; }
+    .modo-practica .card-cuaderno { cursor: pointer; }
+    .modo-practica .card-cuaderno .definicion,
+    .modo-practica .card-cuaderno .ejemplo {
+      filter: blur(4px);
+      user-select: none;
+      transition: filter 0.5s ease, background 0.3s;
+    }
+    .modo-practica .card-cuaderno.revelado .definicion,
+    .modo-practica .card-cuaderno.revelado .ejemplo {
+      filter: blur(0);
+      user-select: auto;
+    }
+    .cuaderno {
+      background: var(--card-bg);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      padding: 2rem 2rem 2rem 3.5rem;
+      margin-bottom: 2rem;
+      border: 1px solid #c0d8d8;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .cuaderno::before {
+      content: '';
+      position: absolute;
+      left: 20px;
+      top: 20px;
+      bottom: 20px;
+      width: 4px;
+      background-color: var(--margin-red);
+      border-radius: 2px;
+    }
+    .cuaderno::after {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 30px;
+      bottom: 30px;
+      width: 16px;
+      background: repeating-linear-gradient(to bottom, #aaa 0px, #aaa 6px, transparent 6px, transparent 18px);
+      border-radius: 8px;
+      opacity: 0.4;
+    }
+    .cuaderno .lineas {
+      background: repeating-linear-gradient(transparent, transparent 28px, var(--line-blue) 28px, var(--line-blue) 29px);
+      background-size: 100% 29px;
+      padding-bottom: 10px;
+    }
+    .manuscrito {
+      font-family: 'Caveat', cursive;
+      font-size: 1.5rem;
+      border: none;
+      border-bottom: 2px dashed var(--teal-light);
+      background: transparent;
+      width: 100%;
+      outline: none;
+      padding: 0.2rem 0.4rem;
+      color: var(--teal-dark);
+      transition: border-color 0.3s;
+    }
+    .manuscrito:focus { border-bottom: 2px solid var(--teal); }
+    .firma-input {
+      font-family: 'Great Vibes', cursive;
+      font-size: 1.8rem;
+      border: none;
+      border-bottom: 2px solid var(--margin-red);
+      background: transparent;
+      width: 100%;
+      outline: none;
+      padding: 0.2rem 0.4rem;
+      color: #2c3e50;
+    }
+    .firma-input:focus { border-bottom: 2px solid #8b4513; }
+    .cuaderno-entry {
+      background: var(--card-bg);
+      border-left: 4px solid var(--teal);
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.75rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      transition: background 0.3s;
+    }
+    .cuaderno-entry .fecha { font-size: 0.75rem; color: #888; }
+    .cuaderno-entry .firma { font-family: 'Great Vibes', cursive; font-size: 1.4rem; color: #2c3e50; }
+    .cuaderno-entry .respuesta { font-family: 'Caveat', cursive; font-size: 1.2rem; }
+
+    .flashcard-wrapper { perspective: 1000px; }
+    .flashcard {
+      background: var(--card-bg);
+      border: 3px solid var(--teal);
+      border-radius: 16px;
+      padding: 2rem;
+      min-height: 320px;
+      box-shadow: var(--shadow);
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s;
+      transform-style: preserve-3d;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+      position: relative;
+    }
+    .flashcard .card-front, .flashcard .card-back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      backface-visibility: hidden;
+      border-radius: 16px;
+      background: var(--card-bg);
+      transition: background 0.3s;
+      text-align: center;
+    }
+    .flashcard .card-back { transform: rotateY(180deg); }
+    .flashcard.revelada { transform: rotateY(180deg); }
+    .flashcard .badge-bloque { font-size: 0.9rem; }
+    .flashcard .card-title { font-size: 2rem; font-weight: 700; color: var(--teal-dark); }
+    .flashcard .definicion { font-size: 1.1rem; }
+    .flashcard .ejemplo { font-family: 'Caveat', cursive; font-size: 1.2rem; }
+
+    .caligrafia-panel {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s;
+      text-align: center;
+    }
+    .caligrafia-preview {
+      font-size: 2.5rem;
+      padding: 1rem;
+      border-radius: 8px;
+      background: rgba(26,143,143,0.08);
+      min-height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+    }
+    .caligrafia-selector {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .caligrafia-selector .btn-caligrafia {
+      padding: 0.4rem 1rem;
+      border: 2px solid var(--teal-light);
+      border-radius: 20px;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 0.9rem;
+    }
+    .caligrafia-selector .btn-caligrafia:hover { background: var(--teal-light); color: #fff; }
+    .caligrafia-selector .btn-caligrafia.active { background: var(--teal); color: #fff; border-color: var(--teal); }
+
+    .stat-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem;
+      box-shadow: var(--shadow);
+      transition: background 0.3s;
+      height: 100%;
+    }
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--teal);
+    }
+    .stat-label { font-size: 0.85rem; color: #888; }
+
+    .theme-toggle {
+      background: none;
+      border: none;
+      color: var(--teal-dark);
+      font-size: 1.2rem;
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 20px;
+      transition: background 0.3s;
+    }
+    .theme-toggle:hover { background: rgba(26,143,143,0.2); }
+
+    .arch-badge {
+      background: var(--teal);
+      color: #fff;
+      font-weight: 700;
+      padding: 0.1rem 0.6rem;
+      border-radius: 12px;
+      font-size: 0.65rem;
+    }
+
+    .instruccion-box {
+      background: rgba(26,143,143,0.08);
+      border-left: 4px solid var(--teal);
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .caligrafia-preview-text {
+      font-size: 1.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      background: rgba(26,143,143,0.05);
+      min-height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Nuevos botones interactivos */
+    .btn-practicar-accion {
+      border-radius: 30px;
+      padding: 0.6rem 1.5rem;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+    .btn-practicar-accion:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(26,143,143,0.3);
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .card-cuaderno {
+      animation: fadeInUp 0.4s ease forwards;
+    }
+    .card-cuaderno:nth-child(2) { animation-delay: 0.05s; }
+    .card-cuaderno:nth-child(3) { animation-delay: 0.1s; }
+    .card-cuaderno:nth-child(4) { animation-delay: 0.15s; }
+    @media (max-width: 576px) {
+      .cuaderno { padding: 1.5rem 1rem 1.5rem 2.5rem; }
+      .cuaderno::before { left: 12px; }
+      .card-cuaderno .card-title { font-size: 0.95rem; }
+      .flashcard .card-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-journal-bookmark-fill me-2" style="color:var(--teal-dark);"></i>Arquitectura Bilingüe</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" data-modo="explorar" href="#"><i class="bi bi-grid-3x3-gap-fill me-1"></i>Explorar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="practicar" href="#"><i class="bi bi-pencil-fill me-1"></i>Practicar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="flashcards" href="#"><i class="bi bi-stack me-1"></i>Flashcards</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="caligrafia" href="#"><i class="bi bi-fonts me-1"></i>Caligrafía</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="examen" href="#"><i class="bi bi-clipboard-check me-1"></i>Examen</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="progreso" href="#"><i class="bi bi-bar-chart-fill me-1"></i>Progreso</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="cuaderno" href="#"><i class="bi bi-journal-text me-1"></i>📖 Bitácora</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <button class="theme-toggle" id="themeToggle" title="Alternar modo oscuro"><i class="bi bi-moon-fill"></i></button>
+        <span id="voiceStatus" class="d-none d-md-inline"><i class="bi bi-volume-up-fill me-1"></i>Lector</span>
+        <button id="btnVoiceToggle" class="btn btn-outline-teal btn-sm"><i class="bi bi-mic"></i></button>
+        <span class="badge bg-teal rounded-pill" id="contadorAprendidas">0/100</span>
+        <span class="arch-badge">🏛️ Arquitectura</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12 d-flex flex-wrap align-items-center gap-2 filtro-bloque p-2">
+      <span class="fw-bold me-2" style="color:var(--teal-dark);"><i class="bi bi-tags"></i> Bloques:</span>
+      <button class="btn btn-outline-secondary active" data-bloque="todos">Todos</button>
+      <button class="btn btn-outline-secondary" data-bloque="I">I</button>
+      <button class="btn btn-outline-secondary" data-bloque="II">II</button>
+      <button class="btn btn-outline-secondary" data-bloque="III">III</button>
+      <button class="btn btn-outline-secondary" data-bloque="IV">IV</button>
+      <button class="btn btn-outline-secondary" data-bloque="V">V</button>
+      <button class="btn btn-outline-secondary" data-bloque="VI">VI</button>
+      <button class="btn btn-outline-secondary" data-bloque="VII">VII</button>
+      <button class="btn btn-outline-secondary" data-bloque="VIII">VIII</button>
+      <button class="btn btn-outline-secondary" data-bloque="IX">IX</button>
+      <span class="ms-2 text-muted small" id="resultCount">100 técnicas</span>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-3 pb-5">
+  <!-- Instrucciones mejoradas -->
+  <div class="instruccion-box">
+    <i class="bi bi-info-circle me-2" style="color:var(--teal);"></i>
+    <strong>📖 ¿Cómo escribir y guardar en tu bitácora?</strong>
+    <div class="row mt-2">
+      <div class="col-md-3 col-6"><span class="badge bg-teal me-1">1</span> Ve a <strong>Practicar</strong></div>
+      <div class="col-md-3 col-6"><span class="badge bg-teal me-1">2</span> Haz clic en <strong>"Practicar"</strong> en cualquier tarjeta</div>
+      <div class="col-md-3 col-6"><span class="badge bg-teal me-1">3</span> Elige tu <strong>caligrafía</strong> y escribe</div>
+      <div class="col-md-3 col-6"><span class="badge bg-teal me-1">4</span> Haz clic en <strong>"💾 Guardar"</strong></div>
+    </div>
+  </div>
+
+  <div id="gridTecnicas" class="row g-3"></div>
+
+  <!-- Flashcard Container -->
+  <div id="flashcardContainer" class="row justify-content-center" style="display:none;">
+    <div class="col-lg-8 col-md-10">
+      <div class="flashcard-wrapper">
+        <div class="flashcard" id="flashcard">
+          <div class="card-front text-center">
+            <span class="badge-bloque mb-2" id="flashBloque">I</span>
+            <h2 class="card-title" id="flashNombre" style="font-family:var(--bs-body-font-family);">Nombre</h2>
+            <p class="text-muted mt-3"><i class="bi bi-info-circle"></i> Haz clic en la tarjeta o en "Voltear"</p>
+          </div>
+          <div class="card-back">
+            <span class="badge-bloque mb-2" id="flashBloqueBack">I</span>
+            <h2 class="card-title" id="flashNombreBack" style="font-family:var(--bs-body-font-family);">Nombre</h2>
+            <p class="definicion" id="flashDefinicion">Definición</p>
+            <p class="ejemplo" id="flashEjemplo">Ejemplo bilingüe</p>
+          </div>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center mt-4">
+        <div>
+          <button id="flashPrev" class="btn btn-outline-teal"><i class="bi bi-chevron-left"></i> Anterior</button>
+          <button id="flashNext" class="btn btn-outline-teal">Siguiente <i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div>
+          <button id="flashVoltear" class="btn btn-teal"><i class="bi bi-arrow-repeat"></i> Voltear</button>
+          <button id="flashFirmar" class="btn btn-outline-warning"><i class="bi bi-pen"></i> Firmar</button>
+          <button id="flashVoice" class="btn btn-outline-teal"><i class="bi bi-volume-up"></i></button>
+        </div>
+      </div>
+      <div class="text-center mt-2"><span id="flashContador" class="text-muted">1 / 100</span></div>
+    </div>
+  </div>
+
+  <!-- Caligrafía Container -->
+  <div id="caligrafiaContainer" style="display:none;">
+    <div class="cuaderno">
+      <div class="lineas">
+        <h4 class="mb-3" style="color:var(--teal-dark);"><i class="bi bi-fonts me-2"></i>Práctica de Caligrafía</h4>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <div class="caligrafia-panel">
+              <h6>Selecciona tu caligrafía</h6>
+              <div class="caligrafia-selector">
+                <button class="btn-caligrafia active" data-caligrafia="caveat" style="font-family:'Caveat',cursive;">Caveat</button>
+                <button class="btn-caligrafia" data-caligrafia="tangerine" style="font-family:'Tangerine',cursive;">Tangerine</button>
+                <button class="btn-caligrafia" data-caligrafia="cookie" style="font-family:'Cookie',cursive;">Cookie</button>
+                <button class="btn-caligrafia" data-caligrafia="greatvibes" style="font-family:'Great Vibes',cursive;">Great Vibes</button>
+                <button class="btn-caligrafia" data-caligrafia="garabato" style="font-family:'Patrick Hand',cursive;">Garabato</button>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="caligrafia-panel">
+              <h6>Escribe una frase en <span id="caligrafiaNombre">Caveat</span></h6>
+              <div class="caligrafia-preview" id="caligrafiaPreview" style="font-family:'Caveat',cursive;">Escribe aquí...</div>
+              <input type="text" id="inputCaligrafia" class="manuscrito" placeholder="Escribe una frase en la caligrafía seleccionada..." style="font-family:'Caveat',cursive;font-size:1.3rem;">
+              <button id="btnGuardarCaligrafia" class="btn btn-teal btn-sm mt-2"><i class="bi bi-save"></i> Guardar frase</button>
+              <div id="frasesCaligrafia" class="mt-2"></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-3">
+          <h6>Asociación Caligrafía-Argumentación</h6>
+          <div class="row g-2" id="asociacionCaligrafia"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Examen Container -->
+  <div id="examenContainer" style="display:none;">
+    <div class="cuaderno">
+      <div class="lineas">
+        <h4 class="mb-3" style="color:var(--teal-dark);"><i class="bi bi-clipboard-check me-2"></i>Examen de Argumentación</h4>
+        <div class="row g-3 mb-3">
+          <div class="col-md-4">
+            <label class="form-label">Número de preguntas</label>
+            <select id="examenCantidad" class="form-select">
+              <option value="5">5</option>
+              <option value="10" selected>10</option>
+              <option value="20">20</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Dificultad</label>
+            <select id="examenDificultad" class="form-select">
+              <option value="facil">Fácil (pendientes)</option>
+              <option value="media" selected>Media (mezcla)</option>
+              <option value="dificil">Difícil (aprendidas)</option>
+            </select>
+          </div>
+          <div class="col-md-4 d-flex align-items-end">
+            <button id="btnGenerarExamen" class="btn btn-teal w-100"><i class="bi bi-play-circle"></i> Generar</button>
+          </div>
+        </div>
+        <div id="examenPreguntas"></div>
+        <div id="examenResultados" class="mt-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progreso Container -->
+  <div id="progresoContainer" style="display:none;">
+    <div class="cuaderno">
+      <div class="lineas">
+        <h4 class="mb-3" style="color:var(--teal-dark);"><i class="bi bi-bar-chart-fill me-2"></i>Progreso</h4>
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <div class="stat-card text-center">
+              <div class="stat-number" id="statAprendidas">0</div>
+              <div class="stat-label">Técnicas aprendidas</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center">
+              <div class="stat-number" id="statRacha">0</div>
+              <div class="stat-label">Racha actual</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center">
+              <div class="stat-number" id="statDominio">0%</div>
+              <div class="stat-label">Dominio global</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card text-center">
+              <div class="stat-number" id="statEntradas">0</div>
+              <div class="stat-label">Entradas en bitácora</div>
+            </div>
+          </div>
+        </div>
+        <div id="estadisticasDetalladas"></div>
+        <div class="mt-3 d-flex gap-2 flex-wrap">
+          <button id="btnExportarCSV" class="btn btn-outline-teal"><i class="bi bi-file-spreadsheet"></i> Exportar CSV</button>
+          <button id="btnExportarJSON" class="btn btn-outline-teal"><i class="bi bi-file-code"></i> Exportar JSON</button>
+          <button id="btnResetearProgreso" class="btn btn-outline-danger"><i class="bi bi-trash3"></i> Resetear</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bitácora Container -->
+  <div id="miCuadernoContainer" style="display:none;">
+    <div class="cuaderno">
+      <div class="lineas">
+        <h4 class="mb-3" style="color:var(--teal-dark);"><i class="bi bi-journal-text me-2"></i>📖 Mi Bitácora de Arquitectura</h4>
+        <div id="miCuadernoLista"></div>
+        <button id="borrarTodoCuaderno" class="btn btn-outline-danger btn-sm mt-3"><i class="bi bi-trash3"></i> Borrar todo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Practicar MEJORADO con nuevos botones -->
+  <div class="modal fade" id="modalPractica" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="background:var(--card-bg);border-radius:16px;transition:background 0.3s;">
+        <div class="modal-header" style="border-bottom:2px solid var(--teal-light);">
+          <h5 class="modal-title" style="color:var(--teal-dark);"><i class="bi bi-pencil-fill me-2"></i>✍️ Practica la técnica argumentativa</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="cuaderno" style="margin:0;padding:1.5rem 1.5rem 1.5rem 2.5rem;">
+            <div class="lineas">
+              <!-- Sección de información -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <div class="p-2" style="background:rgba(26,143,143,0.06);border-radius:8px;">
+                    <p class="mb-1"><strong>📝 Definición:</strong> <span id="modalDefinicion"></span></p>
+                    <p class="mb-0"><strong>🌐 Ejemplo bilingüe:</strong> <span id="modalEjemplo" style="font-family:'Caveat',cursive;font-size:1.2rem;"></span></p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Selector de caligrafía en el modal -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <label class="form-label fw-bold"><i class="bi bi-palette"></i> Elige tu caligrafía:</label>
+                  <div class="d-flex flex-wrap gap-1">
+                    <button class="btn btn-sm btn-outline-teal caligrafia-modal active" data-caligrafia="caveat" style="font-family:'Caveat',cursive;">Caveat</button>
+                    <button class="btn btn-sm btn-outline-teal caligrafia-modal" data-caligrafia="tangerine" style="font-family:'Tangerine',cursive;">Tangerine</button>
+                    <button class="btn btn-sm btn-outline-teal caligrafia-modal" data-caligrafia="cookie" style="font-family:'Cookie',cursive;">Cookie</button>
+                    <button class="btn btn-sm btn-outline-teal caligrafia-modal" data-caligrafia="greatvibes" style="font-family:'Great Vibes',cursive;">Great Vibes</button>
+                    <button class="btn btn-sm btn-outline-teal caligrafia-modal" data-caligrafia="garabato" style="font-family:'Patrick Hand',cursive;">Garabato</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Campo de escritura -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <label class="form-label fw-bold">✏️ Escribe la técnica con tu propia letra:</label>
+                  <input type="text" id="inputRespuesta" class="manuscrito" placeholder="Escribe aquí la técnica argumentativa..." autofocus>
+                  <small class="text-muted">La caligrafía se aplica en tiempo real mientras escribes.</small>
+                </div>
+              </div>
+
+              <!-- Vista previa de la caligrafía -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <label class="form-label fw-bold">👀 Vista previa de tu escritura:</label>
+                  <div id="vistaPrevia" class="caligrafia-preview-text" style="font-family:'Caveat',cursive;font-size:1.5rem;min-height:50px;background:rgba(26,143,143,0.05);border-radius:8px;padding:0.5rem 1rem;">
+                    <span class="text-muted">Escribe para ver tu caligrafía...</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Firma -->
+              <div class="row g-2 mb-3">
+                <div class="col-12">
+                  <label class="form-label fw-bold"><i class="bi bi-pen"></i> Firma (tu rúbrica personal):</label>
+                  <input type="text" id="inputFirma" class="firma-input" placeholder="Tu firma...">
+                  <small class="text-muted">Firma como lo harías en un cuaderno real.</small>
+                </div>
+              </div>
+
+              <!-- Feedback y botones mejorados -->
+              <div id="modalFeedback" class="mt-2"></div>
+              <div class="d-flex flex-wrap gap-2 mt-3">
+                <button id="btnGuardarCuaderno" class="btn btn-teal btn-practicar-accion">
+                  <i class="bi bi-save"></i> 💾 Guardar en bitácora
+                </button>
+                <button id="btnVoiceModal" class="btn btn-outline-teal btn-practicar-accion">
+                  <i class="bi bi-volume-up"></i> 🔊 Escuchar
+                </button>
+                <button id="btnLimpiarModal" class="btn btn-outline-secondary btn-practicar-accion">
+                  <i class="bi bi-eraser"></i> 🧹 Limpiar
+                </button>
+                <button id="btnCerrarModal" class="btn btn-outline-danger btn-practicar-accion" data-bs-dismiss="modal">
+                  <i class="bi bi-x-circle"></i> ❌ Cerrar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ----------------------------------------------------------------
+    // 1. DATOS: 100 técnicas argumentativas para Arquitectura
+    // ----------------------------------------------------------------
+    const TECNICAS = [];
+
+    const caligrafias = ['caveat', 'tangerine', 'cookie', 'greatvibes', 'garabato'];
+    const nombresCaligrafia = { caveat: 'Caveat', tangerine: 'Tangerine', cookie: 'Cookie', greatvibes: 'Great Vibes', garabato: 'Garabato' };
+    const clasesCaligrafia = { caveat: 'fuente-caveat', tangerine: 'fuente-tangerine', cookie: 'fuente-cookie', greatvibes: 'fuente-greatvibes', garabato: 'fuente-garabato' };
+
+    // BLOQUE I: Argumentación básica en arquitectura
+    const bloqueI = [
+      { nombre: 'Tesis arquitectónica / Architectural thesis', definicion: 'Idea central que se defiende sobre un proyecto.', ejemplo: 'Esp: "La arquitectura sostenible es clave para el futuro." / Eng: "Sustainable architecture is key for the future."' },
+      { nombre: 'Argumento lógico / Logical argument', definicion: 'Razonamiento basado en premisas y conclusiones.', ejemplo: 'Esp: "Si el material es resistente, entonces la estructura es segura." / Eng: "If the material is resistant, then the structure is safe."' },
+      { nombre: 'Evidencia empírica / Empirical evidence', definicion: 'Datos que respaldan los argumentos en arquitectura.', ejemplo: 'Esp: "Los datos muestran una reducción del 30% en el consumo energético." / Eng: "The data show a 30% reduction in energy consumption."' },
+      { nombre: 'Contraargumentación / Counterargumentation', definicion: 'Anticipación de objeciones al proyecto.', ejemplo: 'Esp: "Algunos dirán que es caro, pero los beneficios a largo plazo son mayores." / Eng: "Some will say it is expensive, but the long-term benefits are greater."' },
+      { nombre: 'Refutación / Refutation', definicion: 'Demostración de la falsedad de un argumento contrario.', ejemplo: 'Esp: "La objeción no considera la evidencia disponible sobre el terreno." / Eng: "The objection does not consider the available evidence on the terrain."' },
+      { nombre: 'Argumento de autoridad / Authority argument', definicion: 'Apoyo en expertos en arquitectura.', ejemplo: 'Esp: "Según el arquitecto Norman Foster, la sostenibilidad es prioritaria." / Eng: "According to architect Norman Foster, sustainability is a priority."' },
+      { nombre: 'Argumento por analogía / Analogy argument', definicion: 'Comparación con proyectos similares.', ejemplo: 'Esp: "Así como el agua fluye, el espacio debe ser fluido en el diseño." / Eng: "Just as water flows, space must be fluid in design."' },
+      { nombre: 'Argumento por generalización / Generalization argument', definicion: 'Inferencia a partir de casos particulares.', ejemplo: 'Esp: "Los proyectos exitosos en climas cálidos utilizan ventilación natural." / Eng: "Successful projects in warm climates use natural ventilation."' },
+      { nombre: 'Concesión / Concession', definicion: 'Reconocimiento parcial de argumentos opuestos.', ejemplo: 'Esp: "Es cierto que el coste inicial es mayor, pero la inversión se recupera." / Eng: "It is true that the initial cost is higher, but the investment is recovered."' },
+      { nombre: 'Cierre persuasivo / Persuasive closing', definicion: 'Conclusión que refuerza la tesis.', ejemplo: 'Esp: "Por todo lo expuesto, el diseño sostenible es la opción más viable." / Eng: "For all the above, sustainable design is the most viable option."' }
+    ];
+    bloqueI.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 'I', ...t, caligrafia: 'caveat' }));
+
+    // BLOQUE II: Estructura argumentativa
+    const bloqueII = [
+      { nombre: 'Estructura deductiva / Deductive structure', definicion: 'De lo general a lo particular en argumentación.', ejemplo: 'Esp: "La arquitectura debe ser funcional; por tanto, este espacio debe ser práctico." / Eng: "Architecture must be functional; therefore, this space must be practical."' },
+      { nombre: 'Estructura inductiva / Inductive structure', definicion: 'De lo particular a lo general.', ejemplo: 'Esp: "Varios casos exitosos demuestran que la ventilación natural funciona." / Eng: "Several successful cases show that natural ventilation works."' },
+      { nombre: 'Orden de intensidad / Intensity order', definicion: 'De argumentos más débiles a más fuertes.', ejemplo: 'Esp: "Primero, razones menores; luego, la prueba definitiva del diseño." / Eng: "First, minor reasons; then, the definitive proof of the design."' },
+      { nombre: 'Orden de problema-solución / Problem-solution order', definicion: 'Presentación del problema y su solución.', ejemplo: 'Esp: "La contaminación es grave; la solución es el diseño bioclimático." / Eng: "Pollution is serious; the solution is bioclimatic design."' },
+      { nombre: 'Orden de tesis-antítesis-síntesis / Thesis-antithesis-synthesis', definicion: 'Planteamiento, contraste y conciliación.', ejemplo: 'Esp: "Unos defienden la modernidad, otros la tradición; la síntesis es la arquitectura contemporánea." / Eng: "Some defend modernity, others tradition; the synthesis is contemporary architecture."' },
+      { nombre: 'Orden por bloques temáticos / Thematic blocks', definicion: 'Agrupación de argumentos por categorías.', ejemplo: 'Esp: "En lo económico, es viable; en lo social, justo; en lo ambiental, sostenible." / Eng: "Economically, it is viable; socially, fair; environmentally, sustainable."' },
+      { nombre: 'Orden de causa-consecuencia / Cause-consequence order', definicion: 'Exposición de causas y efectos.', ejemplo: 'Esp: "El cambio climático provoca sequías; estas exigen diseños adaptativos." / Eng: "Climate change causes droughts; these require adaptive designs."' },
+      { nombre: 'Orden de contraste / Contrast order', definicion: 'Comparación de posiciones opuestas.', ejemplo: 'Esp: "Mientras unos defienden el hormigón, otros apuestan por la madera." / Eng: "While some defend concrete, others bet on wood."' },
+      { nombre: 'Orden de clasificación / Classification order', definicion: 'Agrupación de elementos por categorías.', ejemplo: 'Esp: "Los materiales se clasifican en estructurales, aislantes y de acabado." / Eng: "Materials are classified as structural, insulating and finishing."' },
+      { nombre: 'Orden cronológico / Chronological order', definicion: 'Secuencia temporal de los argumentos.', ejemplo: 'Esp: "Primero, el análisis del terreno; luego, el diseño conceptual." / Eng: "First, the analysis of the terrain; then, the conceptual design."' }
+    ];
+    bloqueII.forEach((t, i) => TECNICAS.push({ id: 10+i+1, bloque: 'II', ...t, caligrafia: 'greatvibes' }));
+
+    // BLOQUE III: Recursos retóricos argumentativos
+    const bloqueIII = [
+      { nombre: 'Metáfora argumentativa / Argumentative metaphor', definicion: 'Comparación implícita para explicar conceptos.', ejemplo: 'Esp: "La arquitectura es el esqueleto de la ciudad." / Eng: "Architecture is the skeleton of the city."' },
+      { nombre: 'Antítesis argumentativa / Argumentative antithesis', definicion: 'Contraste de ideas para clarificar.', ejemplo: 'Esp: "La luz sin sombra no existe, como la forma sin espacio." / Eng: "Light without shadow does not exist, like form without space."' },
+      { nombre: 'Hipérbole argumentativa / Argumentative hyperbole', definicion: 'Exageración para enfatizar un punto.', ejemplo: 'Esp: "Este diseño cambiará para siempre la forma de habitar." / Eng: "This design will forever change the way we inhabit."' },
+      { nombre: 'Interrogación retórica / Rhetorical question', definicion: 'Pregunta que invita a la reflexión.', ejemplo: 'Esp: "¿Qué pasaría si diseñáramos pensando en las futuras generaciones?" / Eng: "What would happen if we designed thinking about future generations?"' },
+      { nombre: 'Ironía argumentativa / Argumentative irony', definicion: 'Expresión que dice lo contrario para criticar.', ejemplo: 'Esp: "Claro, construir sin planificar es la mejor forma de ahorrar." / Eng: "Of course, building without planning is the best way to save."' },
+      { nombre: 'Paradoja argumentativa / Argumentative paradox', definicion: 'Afirmación que encierra una verdad profunda.', ejemplo: 'Esp: "La estructura más ligera puede ser la más resistente." / Eng: "The lightest structure can be the most resistant."' },
+      { nombre: 'Símil argumentativo / Argumentative simile', definicion: 'Comparación explícita con "como" o "cual".', ejemplo: 'Esp: "La ciudad crece como un organismo vivo." / Eng: "The city grows like a living organism."' },
+      { nombre: 'Eufemismo argumentativo / Argumentative euphemism', definicion: 'Sustitución de una expresión dura por una más suave.', ejemplo: 'Esp: "El edificio tiene un diseño de baja altura" (en lugar de "es pequeño"). / Eng: "The building has a low-height design" (instead of "it is small").' },
+      { nombre: 'Perífrasis argumentativa / Argumentative periphrasis', definicion: 'Expresión más extensa para mayor precisión.', ejemplo: 'Esp: "El conjunto de elementos que constituyen el sistema estructural" (en lugar de "el sistema"). / Eng: "The set of elements that constitute the structural system" (instead of "the system").' },
+      { nombre: 'Prosopopeya argumentativa / Argumentative prosopopoeia', definicion: 'Atribuir cualidades humanas a elementos.', ejemplo: 'Esp: "El edificio respira a través de sus ventanas." / Eng: "The building breathes through its windows."' }
+    ];
+    bloqueIII.forEach((t, i) => TECNICAS.push({ id: 20+i+1, bloque: 'III', ...t, caligrafia: 'tangerine' }));
+
+    // BLOQUE IV: Sintaxis argumentativa español-inglés
+    const bloqueIV = [
+      { nombre: 'Oración temática / Topic sentence', definicion: 'Frase que introduce el argumento principal del párrafo.', ejemplo: 'Esp: "La sostenibilidad es fundamental en el diseño arquitectónico." / Eng: "Sustainability is fundamental in architectural design."' },
+      { nombre: 'Conectores de causa / Cause connectors', definicion: 'Explican la razón de un argumento.', ejemplo: 'Esp: "El diseño es sostenible porque utiliza materiales reciclados." / Eng: "The design is sustainable because it uses recycled materials."' },
+      { nombre: 'Conectores de consecuencia / Consequence connectors', definicion: 'Indican el resultado de un argumento.', ejemplo: 'Esp: "El proyecto fue aprobado; por tanto, se inicia la construcción." / Eng: "The project was approved; therefore, construction begins."' },
+      { nombre: 'Conectores de contraste / Contrast connectors', definicion: 'Introducen una idea opuesta.', ejemplo: 'Esp: "El proyecto es ambicioso; sin embargo, es viable." / Eng: "The project is ambitious; however, it is feasible."' },
+      { nombre: 'Conectores de adición / Addition connectors', definicion: 'Añaden información al argumento.', ejemplo: 'Esp: "Además, se instalará un sistema de ventilación natural." / Eng: "Furthermore, a natural ventilation system will be installed."' },
+      { nombre: 'Conectores de ejemplificación / Exemplification connectors', definicion: 'Introducen ejemplos que apoyan el argumento.', ejemplo: 'Esp: "Varios materiales, como el acero y el hormigón, son esenciales." / Eng: "Several materials, such as steel and concrete, are essential."' },
+      { nombre: 'Conectores de condición / Condition connectors', definicion: 'Establecen condiciones para el argumento.', ejemplo: 'Esp: "Siempre que se cumplan los requisitos, el pago será efectuado." / Eng: "Provided that the requirements are met, the payment will be made."' },
+      { nombre: 'Conectores de concesión / Concession connectors', definicion: 'Reconocen limitaciones en el argumento.', ejemplo: 'Esp: "A pesar de los retrasos, el proyecto avanza." / Eng: "Despite the delays, the project progresses."' },
+      { nombre: 'Conectores de finalidad / Purpose connectors', definicion: 'Expresan el propósito del argumento.', ejemplo: 'Esp: "El estudio se realiza para garantizar la seguridad estructural." / Eng: "The study is conducted to ensure structural safety."' },
+      { nombre: 'Conectores de reformulación / Reformulation connectors', definicion: 'Aclaran una idea argumentativa.', ejemplo: 'Esp: "El material es resistente; es decir, soporta grandes cargas." / Eng: "The material is strong; that is, it supports large loads."' }
+    ];
+    bloqueIV.forEach((t, i) => TECNICAS.push({ id: 30+i+1, bloque: 'IV', ...t, caligrafia: 'cookie' }));
+
+    // BLOQUE V: Tiempos verbales argumentativos
+    const bloqueV = [
+      { nombre: 'Presente en argumentos / Present in arguments', definicion: 'Describe hechos establecidos en la argumentación.', ejemplo: 'Esp: "El acero es un material estructural." / Eng: "Steel is a structural material."' },
+      { nombre: 'Pasado en argumentos / Past in arguments', definicion: 'Describe proyectos o decisiones pasadas.', ejemplo: 'Esp: "El equipo instaló los paneles solares en 2022." / Eng: "The team installed the solar panels in 2022."' },
+      { nombre: 'Presente perfecto en argumentos / Present perfect in arguments', definicion: 'Conecta acciones pasadas con el presente.', ejemplo: 'Esp: "El proyecto ha sido aprobado por el municipio." / Eng: "The project has been approved by the municipality."' },
+      { nombre: 'Futuro en argumentos / Future in arguments', definicion: 'Expresa acciones futuras en la argumentación.', ejemplo: 'Esp: "La construcción finalizará en diciembre de 2024." / Eng: "The construction will finish in December 2024."' },
+      { nombre: 'Condicional en argumentos / Conditional in arguments', definicion: 'Expresa situaciones hipotéticas.', ejemplo: 'Esp: "Si el presupuesto aumentara, se ampliaría el proyecto." / Eng: "If the budget increased, the project would be expanded."' },
+      { nombre: 'Voz pasiva en argumentos / Passive voice in arguments', definicion: 'Enfatiza la acción sobre el agente.', ejemplo: 'Esp: "El material es transportado al sitio de construcción." / Eng: "The material is transported to the construction site."' },
+      { nombre: 'Gerundio en argumentos / Gerund in arguments', definicion: 'Expresa acciones simultáneas.', ejemplo: 'Esp: "El equipo está instalando el sistema eléctrico." / Eng: "The team is installing the electrical system."' },
+      { nombre: 'Infinitivo en argumentos / Infinitive in arguments', definicion: 'Expresa el propósito de una acción.', ejemplo: 'Esp: "Se utiliza para medir la resistencia del material." / Eng: "It is used to measure the resistance of the material."' },
+      { nombre: 'Imperativo en argumentos / Imperative in arguments', definicion: 'Expresa instrucciones o recomendaciones.', ejemplo: 'Esp: "Considere la ventilación natural en el diseño." / Eng: "Consider natural ventilation in the design."' },
+      { nombre: 'Subjuntivo en argumentos / Subjunctive in arguments', definicion: 'Expresa deseo o recomendación en la argumentación.', ejemplo: 'Esp: "Es necesario que el diseño cumpla con la normativa." / Eng: "It is necessary that the design complies with the regulations."' }
+    ];
+    bloqueV.forEach((t, i) => TECNICAS.push({ id: 40+i+1, bloque: 'V', ...t, caligrafia: 'greatvibes' }));
+
+    // BLOQUE VI: Figuras retóricas argumentativas
+    const bloqueVI = [
+      { nombre: 'Metáfora argumentativa / Argumentative metaphor', definicion: 'Comparación implícita para persuadir.', ejemplo: 'Esp: "El edificio es un faro de sostenibilidad." / Eng: "The building is a lighthouse of sustainability."' },
+      { nombre: 'Antítesis argumentativa / Argumentative antithesis', definicion: 'Contraste de ideas para persuadir.', ejemplo: 'Esp: "La arquitectura moderna sin tradición es vacía; la tradición sin modernidad es arcaica." / Eng: "Modern architecture without tradition is empty; tradition without modernity is archaic."' },
+      { nombre: 'Hipérbole argumentativa / Argumentative hyperbole', definicion: 'Exageración para persuadir.', ejemplo: 'Esp: "Este diseño revolucionará la forma de construir." / Eng: "This design will revolutionize the way of building."' },
+      { nombre: 'Interrogación retórica / Rhetorical question', definicion: 'Pregunta para persuadir.', ejemplo: 'Esp: "¿Podemos permitirnos ignorar la sostenibilidad?" / Eng: "Can we afford to ignore sustainability?"' },
+      { nombre: 'Ironía argumentativa / Argumentative irony', definicion: 'Decir lo contrario para persuadir.', ejemplo: 'Esp: "Claro, el hormigón es la única opción viable." / Eng: "Of course, concrete is the only viable option."' },
+      { nombre: 'Paradoja argumentativa / Argumentative paradox', definicion: 'Afirmación contradictoria que persuade.', ejemplo: 'Esp: "La estructura más ligera es la más resistente." / Eng: "The lightest structure is the most resistant."' },
+      { nombre: 'Símil argumentativo / Argumentative simile', definicion: 'Comparación explícita para persuadir.', ejemplo: 'Esp: "El espacio fluye como el agua en un río." / Eng: "Space flows like water in a river."' },
+      { nombre: 'Prosopopeya argumentativa / Argumentative prosopopoeia', definicion: 'Atribuir cualidades humanas para persuadir.', ejemplo: 'Esp: "El edificio respira con la ciudad." / Eng: "The building breathes with the city."' },
+      { nombre: 'Aliteración argumentativa / Argumentative alliteration', definicion: 'Repetición de sonidos para enfatizar.', ejemplo: 'Esp: "El espacio se expande en el horizonte." / Eng: "The space expands on the horizon."' },
+      { nombre: 'Analogía argumentativa / Argumentative analogy', definicion: 'Comparación extensa para persuadir.', ejemplo: 'Esp: "Así como un árbol crece con el tiempo, la ciudad debe crecer de manera orgánica." / Eng: "Just as a tree grows with time, the city must grow organically."' }
+    ];
+    bloqueVI.forEach((t, i) => TECNICAS.push({ id: 50+i+1, bloque: 'VI', ...t, caligrafia: 'tangerine' }));
+
+    // BLOQUE VII: Argumentación en textos de arquitectura
+    const bloqueVII = [
+      { nombre: 'Memoria descriptiva / Descriptive report', definicion: 'Argumentación sobre las características del proyecto.', ejemplo: 'Esp: "El proyecto se desarrolla en un terreno de 500 m² con orientación sur." / Eng: "The project is developed on a 500 m² plot with southern orientation."' },
+      { nombre: 'Justificación de diseño / Design justification', definicion: 'Argumentación sobre las decisiones de diseño.', ejemplo: 'Esp: "Se eligió el acero por su alta resistencia y durabilidad." / Eng: "Steel was chosen for its high strength and durability."' },
+      { nombre: 'Análisis de emplazamiento / Site analysis', definicion: 'Argumentación sobre la ubicación del proyecto.', ejemplo: 'Esp: "El solar se encuentra en una zona de alto valor paisajístico." / Eng: "The plot is located in a high landscape value area."' },
+      { nombre: 'Estudio de impacto ambiental / Environmental impact study', definicion: 'Argumentación sobre el impacto ambiental.', ejemplo: 'Esp: "El proyecto reduce la huella de carbono en un 40%." / Eng: "The project reduces the carbon footprint by 40%."' },
+      { nombre: 'Propuesta de materiales / Material proposal', definicion: 'Argumentación sobre la elección de materiales.', ejemplo: 'Esp: "El uso de madera certificada garantiza la sostenibilidad." / Eng: "The use of certified wood guarantees sustainability."' },
+      { nombre: 'Plan de obra / Construction plan', definicion: 'Argumentación sobre la planificación de la obra.', ejemplo: 'Esp: "La obra se ejecutará en tres fases durante 18 meses." / Eng: "The work will be executed in three phases over 18 months."' },
+      { nombre: 'Presupuesto y viabilidad / Budget and feasibility', definicion: 'Argumentación sobre la viabilidad económica.', ejemplo: 'Esp: "El presupuesto estimado es de 2 millones de euros." / Eng: "The estimated budget is 2 million euros."' },
+      { nombre: 'Normativa aplicable / Applicable regulations', definicion: 'Argumentación sobre el cumplimiento de normas.', ejemplo: 'Esp: "El proyecto cumple con el código técnico de edificación." / Eng: "The project complies with the building technical code."' },
+      { nombre: 'Gestión de residuos / Waste management', definicion: 'Argumentación sobre la gestión de residuos.', ejemplo: 'Esp: "Se implementará un sistema de reciclaje de residuos de obra." / Eng: "A construction waste recycling system will be implemented."' },
+      { nombre: 'Mantenimiento y durabilidad / Maintenance and durability', definicion: 'Argumentación sobre la durabilidad del proyecto.', ejemplo: 'Esp: "Los materiales seleccionados garantizan una vida útil de 50 años." / Eng: "The selected materials guarantee a useful life of 50 years."' }
+    ];
+    bloqueVII.forEach((t, i) => TECNICAS.push({ id: 60+i+1, bloque: 'VII', ...t, caligrafia: 'caveat' }));
+
+    // BLOQUE VIII: Errores comunes en argumentación
+    const bloqueVIII = [
+      { nombre: 'Falacia ad hominem / Ad hominem fallacy', definicion: 'Atacar a la persona en lugar de sus argumentos.', ejemplo: 'Esp: "El arquitecto no tiene experiencia, por eso su diseño no sirve." / Eng: "The architect has no experience, so his design is useless."' },
+      { nombre: 'Falacia de generalización apresurada / Hasty generalization', definicion: 'Concluir a partir de una muestra insuficiente.', ejemplo: 'Esp: "Un proyecto falló, entonces todos los proyectos de madera fallan." / Eng: "One project failed, so all wood projects fail."' },
+      { nombre: 'Falacia de falsa causa / False cause fallacy', definicion: 'Atribuir causalidad a una correlación simple.', ejemplo: 'Esp: "El uso de acero aumentó y también los costes, luego el acero es caro." / Eng: "The use of steel increased and so did costs, so steel is expensive."' },
+      { nombre: 'Falacia de autoridad no pertinente / Irrelevant authority', definicion: 'Usar una autoridad no pertinente.', ejemplo: 'Esp: "Un famoso actor dice que este material es el mejor." / Eng: "A famous actor says this material is the best."' },
+      { nombre: 'Falacia de pendiente resbaladiza / Slippery slope', definicion: 'Un pequeño paso llevará a consecuencias catastróficas.', ejemplo: 'Esp: "Si usamos madera, entonces todos los edificios serán de madera." / Eng: "If we use wood, then all buildings will be made of wood."' },
+      { nombre: 'Falacia de apelación al miedo / Appeal to fear', definicion: 'Usar el miedo para forzar una conclusión.', ejemplo: 'Esp: "Si no usamos acero, el edificio se derrumbará." / Eng: "If we don't use steel, the building will collapse."' },
+      { nombre: 'Falacia de apelación a la compasión / Appeal to pity', definicion: 'Manipular emociones para evitar el debate racional.', ejemplo: 'Esp: "Piensa en los trabajadores que perderían su empleo." / Eng: "Think of the workers who would lose their jobs."' },
+      { nombre: 'Falacia de tu quoque / Tu quoque fallacy', definicion: 'Señalar la hipocresía del oponente.', ejemplo: 'Esp: "¿Cómo vas a hablar de sostenibilidad si contaminas con tu coche?" / Eng: "How can you talk about sustainability if you pollute with your car?"' },
+      { nombre: 'Falacia de apelación a la mayoría / Appeal to majority', definicion: 'Algo es verdad porque mucha gente lo cree.', ejemplo: 'Esp: "Todos los arquitectos usan hormigón, así que es lo mejor." / Eng: "All architects use concrete, so it is the best."' },
+      { nombre: 'Falacia de petición de principio / Begging the question', definicion: 'Dar por sentado lo que se quiere demostrar.', ejemplo: 'Esp: "El diseño es sostenible porque está diseñado para ser sostenible." / Eng: "The design is sustainable because it is designed to be sustainable."' }
+    ];
+    bloqueVIII.forEach((t, i) => TECNICAS.push({ id: 70+i+1, bloque: 'VIII', ...t, caligrafia: 'garabato' }));
+
+    // BLOQUE IX: Técnicas bilingües para argumentación
+    const bloqueIX = [
+      { nombre: 'Expresiones de opinión / Opinion expressions', definicion: 'Frases para expresar opinión en ambos idiomas.', ejemplo: 'Esp: "En mi opinión, el diseño es innovador." / Eng: "In my opinion, the design is innovative."' },
+      { nombre: 'Expresiones de acuerdo / Agreement expressions', definicion: 'Frases para expresar acuerdo.', ejemplo: 'Esp: "Estoy de acuerdo con el planteamiento." / Eng: "I agree with the approach."' },
+      { nombre: 'Expresiones de desacuerdo / Disagreement expressions', definicion: 'Frases para expresar desacuerdo.', ejemplo: 'Esp: "No estoy de acuerdo con esa decisión." / Eng: "I disagree with that decision."' },
+      { nombre: 'Expresiones de probabilidad / Probability expressions', definicion: 'Frases para expresar probabilidad.', ejemplo: 'Esp: "Es probable que el proyecto sea aprobado." / Eng: "It is likely that the project will be approved."' },
+      { nombre: 'Expresiones de certeza / Certainty expressions', definicion: 'Frases para expresar certeza.', ejemplo: 'Esp: "Estoy seguro de que el diseño funcionará." / Eng: "I am sure that the design will work."' },
+      { nombre: 'Expresiones de duda / Doubt expressions', definicion: 'Frases para expresar duda.', ejemplo: 'Esp: "Tengo dudas sobre la viabilidad del proyecto." / Eng: "I have doubts about the feasibility of the project."' },
+      { nombre: 'Expresiones de recomendación / Recommendation expressions', definicion: 'Frases para recomendar.', ejemplo: 'Esp: "Recomiendo utilizar materiales sostenibles." / Eng: "I recommend using sustainable materials."' },
+      { nombre: 'Expresiones de secuencia / Sequence expressions', definicion: 'Frases para organizar argumentos.', ejemplo: 'Esp: "En primer lugar, en segundo lugar, finalmente." / Eng: "First, second, finally."' },
+      { nombre: 'Expresiones de conclusión / Conclusion expressions', definicion: 'Frases para concluir argumentos.', ejemplo: 'Esp: "En conclusión, el diseño es viable." / Eng: "In conclusion, the design is feasible."' },
+      { nombre: 'Expresiones de contraste / Contrast expressions', definicion: 'Frases para contrastar ideas.', ejemplo: 'Esp: "Por un lado... por otro lado." / Eng: "On one hand... on the other hand."' }
+    ];
+    bloqueIX.forEach((t, i) => TECNICAS.push({ id: 80+i+1, bloque: 'IX', ...t, caligrafia: 'cookie' }));
+
+    // Extra para 100
+    const bloqueExtra = [
+      { nombre: 'Falso amigo: "Realizar" vs "Realize"', definicion: '"Realize" = darse cuenta; "realizar" = carry out.', ejemplo: 'Esp: "Realizar el proyecto" / Eng: "Carry out the project" (no "realize").' },
+      { nombre: 'Falso amigo: "Asistir" vs "Attend"', definicion: '"Attend" = ir a; "assist" = ayudar.', ejemplo: 'Esp: "Asistir a la reunión" / Eng: "Attend the meeting" (no "assist").' },
+      { nombre: 'Calco: "Aplicar para" vs "Apply to/for"', definicion: '"Apply to" (a algo) / "Apply for" (solicitar).', ejemplo: 'Esp: "Aplicar a una universidad" / Eng: "Apply to a university."' },
+      { nombre: 'Calco: "Depender de" vs "Depend on"', definicion: 'El verbo "depend" rige la preposición "on".', ejemplo: 'Esp: "Depende de ti" / Eng: "It depends on you."' },
+      { nombre: 'Preposición "en" vs "in/on/at"', definicion: 'Una preposición para varios casos en inglés.', ejemplo: 'Esp: "en la mesa" / Eng: "on the table" / "en Madrid" / "in Madrid".' },
+      { nombre: 'Preposición "por" y "para" vs "for"', definicion: 'Dos preposiciones que se traducen a "for".', ejemplo: 'Esp: "Gracias por" / Eng: "Thanks for" / "Para ti" / "For you."' },
+      { nombre: 'Uso de "ser" y "estar" vs "to be"', definicion: 'Dos verbos para "to be" según cualidad o estado.', ejemplo: 'Esp: "Eres alto" / Eng: "You are tall" vs "Estás cansado" / "You are tired."' },
+      { nombre: 'Subjuntivo vs indicativo en inglés', definicion: 'El subjuntivo español no tiene equivalente exacto.', ejemplo: 'Esp: "Espero que vengas" / Eng: "I hope you come" (sin subjuntivo).' },
+      { nombre: 'Voz pasiva refleja vs pasiva inglesa', definicion: 'El "se" impersonal en español y la pasiva en inglés.', ejemplo: 'Esp: "Se dice que..." / Eng: "It is said that..."' },
+      { nombre: 'Condicionales en español e inglés', definicion: 'Estructuras condicionales con diferencias de tiempo.', ejemplo: 'Esp: "Si tuviera tiempo, iría" / Eng: "If I had time, I would go."' }
+    ];
+    bloqueExtra.forEach((t, i) => TECNICAS.push({ id: 90+i+1, bloque: 'IX', ...t, caligrafia: 'garabato' }));
+
+    // ----------------------------------------------------------------
+    // 2. ESTADO Y ALMACENAMIENTO
+    // ----------------------------------------------------------------
+    const STORAGE_KEY = 'cuadernoArgumentativoArquitectura100';
+    const CUADERNO_KEY = 'cuadernoArgumentativoArquitectura_entradas';
+    const CALIGRAFIA_KEY = 'cuadernoArgumentativoArquitectura_frases';
+    const ESTADISTICAS_KEY = 'cuadernoArgumentativoArquitectura_estadisticas';
+    let progreso = {};
+    let modoActual = 'explorar';
+    let bloqueFiltro = 'todos';
+    let voiceEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let utterance = null;
+    let flashIndex = 0;
+    let flashList = [];
+    let entradasCuaderno = [];
+    let frasesCaligrafia = [];
+    let estadisticas = { racha: 0, aciertos: 0, intentos: 0 };
+    let niveles = {};
+    let caligrafiaActual = 'caveat';
+    let caligrafiaModalActual = 'caveat';
+
+    function cargarProgreso() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) progreso = JSON.parse(data);
+        else progreso = {};
+      } catch (e) { progreso = {}; }
+      try {
+        const data = localStorage.getItem(CUADERNO_KEY);
+        if (data) entradasCuaderno = JSON.parse(data);
+        else entradasCuaderno = [];
+      } catch (e) { entradasCuaderno = []; }
+      try {
+        const data = localStorage.getItem(CALIGRAFIA_KEY);
+        if (data) frasesCaligrafia = JSON.parse(data);
+        else frasesCaligrafia = [];
+      } catch (e) { frasesCaligrafia = []; }
+      try {
+        const data = localStorage.getItem(ESTADISTICAS_KEY);
+        if (data) estadisticas = JSON.parse(data);
+        else estadisticas = { racha: 0, aciertos: 0, intentos: 0 };
+      } catch (e) { estadisticas = { racha: 0, aciertos: 0, intentos: 0 }; }
+      try {
+        const data = localStorage.getItem(STORAGE_KEY + '_niveles');
+        if (data) niveles = JSON.parse(data);
+        else niveles = {};
+      } catch (e) { niveles = {}; }
+    }
+
+    function guardarProgreso() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progreso));
+      localStorage.setItem(CUADERNO_KEY, JSON.stringify(entradasCuaderno));
+      localStorage.setItem(CALIGRAFIA_KEY, JSON.stringify(frasesCaligrafia));
+      localStorage.setItem(ESTADISTICAS_KEY, JSON.stringify(estadisticas));
+      localStorage.setItem(STORAGE_KEY + '_niveles', JSON.stringify(niveles));
+      actualizarContador();
+    }
+
+    function toggleAprendida(id) {
+      if (progreso[id]) {
+        delete progreso[id];
+        estadisticas.racha = 0;
+      } else {
+        progreso[id] = true;
+        estadisticas.racha++;
+        estadisticas.aciertos++;
+        niveles[id] = (niveles[id] || 0) + 1;
+      }
+      estadisticas.intentos++;
+      guardarProgreso();
+      renderizar();
+      if (modoActual === 'flashcards') mostrarFlashcard(flashIndex);
+    }
+
+    function actualizarContador() {
+      const total = TECNICAS.length;
+      const aprendidas = Object.keys(progreso).filter(k => progreso[k]).length;
+      document.getElementById('contadorAprendidas').textContent = `${aprendidas}/${total}`;
+      if (modoActual === 'progreso') actualizarEstadisticas();
+    }
+
+    function getTecnicasFiltradas() {
+      let lista = TECNICAS;
+      if (bloqueFiltro !== 'todos') lista = lista.filter(t => t.bloque === bloqueFiltro);
+      return lista;
+    }
+
+    function leerTexto(texto) {
+      if (!voiceEnabled) return;
+      if (speechSynth.speaking) speechSynth.cancel();
+      utterance = new SpeechSynthesisUtterance(texto);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      speechSynth.speak(utterance);
+    }
+
+    function getClaseCaligrafia(caligrafia) {
+      return clasesCaligrafia[caligrafia] || 'fuente-caveat';
+    }
+
+    function getNombreCaligrafia(caligrafia) {
+      return nombresCaligrafia[caligrafia] || 'Caveat';
+    }
+
+    // ----------------------------------------------------------------
+    // 3. FLASHCARDS
+    // ----------------------------------------------------------------
+    function mostrarFlashcard(index) {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) {
+        document.getElementById('flashcardContainer').style.display = 'none';
+        return;
+      }
+      flashList = lista;
+      if (index >= lista.length) index = 0;
+      if (index < 0) index = lista.length - 1;
+      flashIndex = index;
+
+      const t = lista[index];
+      const aprendida = progreso[t.id] || false;
+
+      document.getElementById('flashBloque').textContent = t.bloque;
+      document.getElementById('flashNombre').textContent = t.nombre;
+      document.getElementById('flashBloqueBack').textContent = t.bloque;
+      document.getElementById('flashNombreBack').textContent = t.nombre;
+      document.getElementById('flashDefinicion').textContent = t.definicion;
+      document.getElementById('flashEjemplo').textContent = t.ejemplo;
+
+      document.getElementById('flashContador').textContent = `${index+1} / ${lista.length}`;
+
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.remove('revelada');
+      document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear';
+
+      const firmarBtn = document.getElementById('flashFirmar');
+      if (aprendida) {
+        firmarBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Firmada';
+        firmarBtn.className = 'btn btn-success';
+      } else {
+        firmarBtn.innerHTML = '<i class="bi bi-pen"></i> Firmar';
+        firmarBtn.className = 'btn btn-outline-warning';
+      }
+      actualizarContador();
+    }
+
+    function flashVoltear() {
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.toggle('revelada');
+      const btn = document.getElementById('flashVoltear');
+      btn.innerHTML = flashcard.classList.contains('revelada') ? '<i class="bi bi-arrow-repeat"></i> Ocultar' : '<i class="bi bi-arrow-repeat"></i> Voltear';
+    }
+
+    function flashNext() { mostrarFlashcard(flashIndex + 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashPrev() { mostrarFlashcard(flashIndex - 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashVoltear').innerHTML = '<i class="bi bi-arrow-repeat"></i> Voltear'; }
+    function flashFirmar() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      toggleAprendida(lista[flashIndex].id);
+      mostrarFlashcard(flashIndex);
+    }
+    function flashVoice() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      const t = lista[flashIndex];
+      leerTexto(`${t.nombre}: ${t.definicion}. Ejemplo: ${t.ejemplo}`);
+    }
+
+    // ----------------------------------------------------------------
+    // 4. BITÁCORA
+    // ----------------------------------------------------------------
+    function renderizarCuaderno() {
+      const container = document.getElementById('miCuadernoLista');
+      if (entradasCuaderno.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-4">
+            <i class="bi bi-journal-text" style="font-size:3rem;color:var(--teal-light);"></i>
+            <p class="mt-2">📖 Aún no has guardado ninguna entrada en tu bitácora.</p>
+            <div class="instruccion-box text-start">
+              <i class="bi bi-lightbulb me-2" style="color:var(--teal);"></i>
+              <strong>¡Es muy fácil!</strong>
+              <span class="d-block mt-1">1. Ve al modo <strong>Practicar</strong> → 2. Haz clic en <strong>"Practicar"</strong> en cualquier tarjeta → 3. Elige tu caligrafía y escribe → 4. Haz clic en <strong>"💾 Guardar en bitácora"</strong></span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      const html = entradasCuaderno.slice().reverse().map((entry, idx) => {
+        const realIndex = entradasCuaderno.length - 1 - idx;
+        const claseCalig = getClaseCaligrafia(entry.caligrafia || 'caveat');
+        return `
+          <div class="cuaderno-entry">
+            <div class="d-flex justify-content-between">
+              <strong>${entry.nombreTecnica}</strong>
+              <span class="fecha">${entry.fecha}</span>
+            </div>
+            <div><span class="text-muted">Tu respuesta:</span> <span class="respuesta">${entry.respuestaUsuario || '(vacío)'}</span></div>
+            <div><span class="text-muted">Caligrafía:</span> <span class="${claseCalig}">${getNombreCaligrafia(entry.caligrafia || 'caveat')}</span></div>
+            <div><span class="text-muted">Firma:</span> <span class="firma">${entry.firma || '(sin firma)'}</span></div>
+            <button class="btn btn-outline-danger btn-sm mt-1" data-borrar="${realIndex}"><i class="bi bi-x-circle"></i> Borrar</button>
+          </div>
+        `;
+      }).join('');
+      container.innerHTML = html;
+      container.querySelectorAll('[data-borrar]').forEach(btn => {
+        btn.addEventListener('click', function() {
+          const idx = parseInt(this.dataset.borrar);
+          entradasCuaderno.splice(idx, 1);
+          guardarProgreso();
+          renderizarCuaderno();
+        });
+      });
+    }
+
+    function guardarEntradaCuaderno(tecnicaId, respuesta, firma, caligrafia) {
+      const tec = TECNICAS.find(t => t.id === tecnicaId);
+      if (!tec) return;
+      const fecha = new Date().toLocaleString();
+      entradasCuaderno.push({
+        tecnicaId: tecnicaId,
+        nombreTecnica: tec.nombre,
+        respuestaUsuario: respuesta.trim(),
+        firma: firma.trim() || '(sin firma)',
+        caligrafia: caligrafia || tec.caligrafia || 'caveat',
+        fecha: fecha
+      });
+      guardarProgreso();
+      renderizarCuaderno();
+    }
+
+    // ----------------------------------------------------------------
+    // 5. CALIGRAFÍA
+    // ----------------------------------------------------------------
+    function renderizarCaligrafia() {
+      document.querySelectorAll('.btn-caligrafia').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.caligrafia === caligrafiaActual);
+      });
+      document.getElementById('caligrafiaNombre').textContent = getNombreCaligrafia(caligrafiaActual);
+      document.getElementById('caligrafiaPreview').style.fontFamily = getClaseCaligrafia(caligrafiaActual);
+      document.getElementById('inputCaligrafia').style.fontFamily = getClaseCaligrafia(caligrafiaActual);
+
+      const container = document.getElementById('frasesCaligrafia');
+      const frasesFiltradas = frasesCaligrafia.filter(f => f.caligrafia === caligrafiaActual);
+      if (frasesFiltradas.length === 0) {
+        container.innerHTML = '<p class="text-muted small">No hay frases guardadas en esta caligrafía.</p>';
+      } else {
+        container.innerHTML = frasesFiltradas.map((f, i) => `
+          <div class="d-flex justify-content-between align-items-center small p-1 border-bottom">
+            <span style="font-family:${getClaseCaligrafia(f.caligrafia)};font-size:1.1rem;">${f.texto}</span>
+            <button class="btn btn-outline-danger btn-sm" data-borrar-frase="${i}"><i class="bi bi-x"></i></button>
+          </div>
+        `).join('');
+        container.querySelectorAll('[data-borrar-frase]').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const idx = parseInt(this.dataset.borrar-frase);
+            frasesCaligrafia.splice(idx, 1);
+            guardarProgreso();
+            renderizarCaligrafia();
+          });
+        });
+      }
+
+      const asociacionContainer = document.getElementById('asociacionCaligrafia');
+      const asociaciones = [
+        { caligrafia: 'caveat', descripcion: 'Argumentación fluida y natural' },
+        { caligrafia: 'tangerine', descripcion: 'Argumentación poética y retórica' },
+        { caligrafia: 'cookie', descripcion: 'Argumentación profesional y formal' },
+        { caligrafia: 'greatvibes', descripcion: 'Argumentación académica y formal' },
+        { caligrafia: 'garabato', descripcion: 'Argumentación creativa y experimental' }
+      ];
+      asociacionContainer.innerHTML = asociaciones.map(a => `
+        <div class="col-6 col-md-4">
+          <div class="stat-card text-center p-2 ${a.caligrafia === caligrafiaActual ? 'border border-teal' : ''}" style="font-family:${getClaseCaligrafia(a.caligrafia)};">
+            <strong>${getNombreCaligrafia(a.caligrafia)}</strong>
+            <div class="small">${a.descripcion}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function guardarFraseCaligrafia() {
+      const input = document.getElementById('inputCaligrafia');
+      const texto = input.value.trim();
+      if (!texto) {
+        alert('Escribe una frase primero.');
+        return;
+      }
+      frasesCaligrafia.push({ caligrafia: caligrafiaActual, texto: texto });
+      guardarProgreso();
+      input.value = '';
+      renderizarCaligrafia();
+    }
+
+    // ----------------------------------------------------------------
+    // 6. ESTADÍSTICAS
+    // ----------------------------------------------------------------
+    function actualizarEstadisticas() {
+      const total = TECNICAS.length;
+      const aprendidas = Object.keys(progreso).filter(k => progreso[k]).length;
+      const pct = Math.round((aprendidas / total) * 100);
+      document.getElementById('statAprendidas').textContent = aprendidas;
+      document.getElementById('statRacha').textContent = estadisticas.racha || 0;
+      document.getElementById('statDominio').textContent = pct + '%';
+      document.getElementById('statEntradas').textContent = entradasCuaderno.length;
+
+      const bloques = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX'];
+      let html = '<h6 class="mt-3">Dominio por bloque</h6><div class="row g-2">';
+      bloques.forEach(b => {
+        const tecBloque = TECNICAS.filter(t => t.bloque === b);
+        const aprendidasBloque = tecBloque.filter(t => progreso[t.id]).length;
+        const pctBloque = tecBloque.length > 0 ? Math.round((aprendidasBloque / tecBloque.length) * 100) : 0;
+        html += `
+          <div class="col-6 col-md-3">
+            <div class="stat-card text-center p-2">
+              <div class="fw-bold">Bloque ${b}</div>
+              <div class="progress" style="height:6px;margin:4px 0;">
+                <div class="progress-fill" style="width:${pctBloque}%;"></div>
+              </div>
+              <small>${aprendidasBloque}/${tecBloque.length} (${pctBloque}%)</small>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+      document.getElementById('estadisticasDetalladas').innerHTML = html;
+    }
+
+    // ----------------------------------------------------------------
+    // 7. EXAMEN
+    // ----------------------------------------------------------------
+    function generarExamen() {
+      const cantidad = parseInt(document.getElementById('examenCantidad').value);
+      const dificultad = document.getElementById('examenDificultad').value;
+      let pool = TECNICAS;
+      if (dificultad === 'facil') pool = TECNICAS.filter(t => !progreso[t.id]);
+      else if (dificultad === 'dificil') pool = TECNICAS.filter(t => progreso[t.id]);
+      if (pool.length === 0) {
+        document.getElementById('examenPreguntas').innerHTML = '<div class="alert alert-warning">No hay técnicas en el rango seleccionado.</div>';
+        return;
+      }
+      const shuffled = pool.sort(() => Math.random() - 0.5);
+      const seleccionadas = shuffled.slice(0, Math.min(cantidad, shuffled.length));
+      let html = '';
+      seleccionadas.forEach((t, idx) => {
+        const opciones = pool.filter(o => o.id !== t.id).sort(() => Math.random() - 0.5).slice(0, 3);
+        const todasOpciones = [t, ...opciones].sort(() => Math.random() - 0.5);
+        html += `
+          <div class="cuaderno-entry mb-2" data-examen="${idx}">
+            <p><strong>${idx+1}.</strong> <span class="definicion-examen">${t.definicion}</span></p>
+            <div class="opciones-examen">
+              ${todasOpciones.map((o, oi) => `
+                <div class="form-check">
+                  <input class="form-check-input opcion-examen" type="radio" name="examen_${idx}" value="${o.id}" id="examen_${idx}_${oi}">
+                  <label class="form-check-label" for="examen_${idx}_${oi}">${o.nombre}</label>
+                </div>
+              `).join('')}
+            </div>
+            <div class="feedback-examen mt-1"></div>
+          </div>
+        `;
+      });
+      document.getElementById('examenPreguntas').innerHTML = html;
+      document.getElementById('examenResultados').innerHTML = '';
+      document.getElementById('btnGenerarExamen').dataset.respuestas = JSON.stringify(seleccionadas.map(t => t.id));
+    }
+
+    function corregirExamen() {
+      const respuestasCorrectas = JSON.parse(document.getElementById('btnGenerarExamen').dataset.respuestas || '[]');
+      let aciertos = 0;
+      document.querySelectorAll('[data-examen]').forEach((div, idx) => {
+        const selected = div.querySelector('input[type="radio"]:checked');
+        const feedback = div.querySelector('.feedback-examen');
+        const correcta = respuestasCorrectas[idx];
+        if (selected) {
+          const valor = parseInt(selected.value);
+          if (valor === correcta) {
+            aciertos++;
+            feedback.innerHTML = '<span class="text-success">✓ Correcto</span>';
+          } else {
+            const nombreCorrecto = TECNICAS.find(t => t.id === correcta)?.nombre || 'desconocida';
+            feedback.innerHTML = `<span class="text-danger">✗ Incorrecto. La respuesta correcta es: ${nombreCorrecto}</span>`;
+          }
+        } else {
+          const nombreCorrecto = TECNICAS.find(t => t.id === correcta)?.nombre || 'desconocida';
+          feedback.innerHTML = `<span class="text-warning">⚠ No respondiste. La respuesta correcta es: ${nombreCorrecto}</span>`;
+        }
+      });
+      document.getElementById('examenResultados').innerHTML = `
+        <div class="alert alert-info">
+          <strong>Resultado:</strong> ${aciertos} de ${respuestasCorrectas.length} correctas 
+          (${Math.round((aciertos/respuestasCorrectas.length)*100)}%)
+        </div>
+        <button class="btn btn-teal" onclick="window.location.reload()"><i class="bi bi-arrow-repeat"></i> Nuevo examen</button>
+      `;
+    }
+
+    // ----------------------------------------------------------------
+    // 8. EXPORTACIÓN
+    // ----------------------------------------------------------------
+    function exportarCSV() {
+      let csv = 'Técnica,Definición,Ejemplo,Bloque,Caligrafía,Estado,Fecha\n';
+      TECNICAS.forEach(t => {
+        const estado = progreso[t.id] ? 'Aprendida' : 'Pendiente';
+        const fecha = entradasCuaderno.find(e => e.tecnicaId === t.id)?.fecha || '';
+        csv += `"${t.nombre}","${t.definicion}","${t.ejemplo}",${t.bloque},${t.caligrafia},${estado},"${fecha}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cuaderno_argumentativo_arquitectura.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function exportarJSON() {
+      const data = {
+        tecnicas: TECNICAS,
+        progreso: progreso,
+        entradas: entradasCuaderno,
+        frasesCaligrafia: frasesCaligrafia,
+        estadisticas: estadisticas,
+        fecha: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'cuaderno_argumentativo_arquitectura.json';
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    // ----------------------------------------------------------------
+    // 9. RENDER PRINCIPAL
+    // ----------------------------------------------------------------
+    function renderizar() {
+      const grid = document.getElementById('gridTecnicas');
+      const flashContainer = document.getElementById('flashcardContainer');
+      const caligrafiaContainer = document.getElementById('caligrafiaContainer');
+      const miCuadernoContainer = document.getElementById('miCuadernoContainer');
+      const progresoContainer = document.getElementById('progresoContainer');
+      const examenContainer = document.getElementById('examenContainer');
+      const lista = getTecnicasFiltradas();
+      document.getElementById('resultCount').textContent = `${lista.length} técnicas`;
+
+      grid.style.display = 'none';
+      flashContainer.style.display = 'none';
+      caligrafiaContainer.style.display = 'none';
+      miCuadernoContainer.style.display = 'none';
+      progresoContainer.style.display = 'none';
+      examenContainer.style.display = 'none';
+
+      if (modoActual === 'flashcards') {
+        flashContainer.style.display = 'block';
+        if (lista.length > 0) mostrarFlashcard(0);
+        else flashContainer.innerHTML = `<div class="alert alert-warning">No hay técnicas en este bloque.</div>`;
+        return;
+      }
+
+      if (modoActual === 'caligrafia') {
+        caligrafiaContainer.style.display = 'block';
+        renderizarCaligrafia();
+        return;
+      }
+
+      if (modoActual === 'cuaderno') {
+        miCuadernoContainer.style.display = 'block';
+        renderizarCuaderno();
+        return;
+      }
+
+      if (modoActual === 'progreso') {
+        progresoContainer.style.display = 'block';
+        actualizarEstadisticas();
+        return;
+      }
+
+      if (modoActual === 'examen') {
+        examenContainer.style.display = 'block';
+        if (!document.getElementById('examenPreguntas').innerHTML) {
+          generarExamen();
+        }
+        return;
+      }
+
+      grid.style.display = 'flex';
+      const caligrafiaClass = getClaseCaligrafia(caligrafiaActual);
+
+      if (modoActual === 'explorar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          const claseCalig = getClaseCaligrafia(t.caligrafia || 'caveat');
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card-cuaderno">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓ Aprendida' : 'Pendiente'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="definicion small">${t.definicion}</p>
+                <p class="ejemplo-cursiva small ${claseCalig}"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <span class="badge bg-info text-dark" style="font-size:0.65rem;">${getNombreCaligrafia(t.caligrafia || 'caveat')}</span>
+                  <div>
+                    <button class="btn btn-outline-teal btn-sm btn-voice" data-id="${t.id}" title="Escuchar"><i class="bi bi-volume-up"></i></button>
+                    <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-teal'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i>' : '<i class="bi bi-pen"></i>'}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'practicar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          const claseCalig = getClaseCaligrafia(t.caligrafia || 'caveat');
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card-cuaderno" data-practica-id="${t.id}">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓' : '?'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="definicion small" style="filter:blur(4px);user-select:none;">${t.definicion}</p>
+                <p class="ejemplo-cursiva small ${claseCalig}" style="filter:blur(4px);user-select:none;"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between mt-2">
+                  <span class="badge bg-info text-dark" style="font-size:0.65rem;">${getNombreCaligrafia(t.caligrafia || 'caveat')}</span>
+                  <div>
+                    <button class="btn btn-outline-teal btn-sm btn-revelar-practica" data-id="${t.id}"><i class="bi bi-eye"></i></button>
+                    <button class="btn btn-sm btn-outline-info btn-practicar-detalle" data-id="${t.id}"><i class="bi bi-pencil"></i></button>
+                    <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-teal'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i>' : '<i class="bi bi-pen"></i>'}</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      asignarEventos();
+      actualizarContador();
+    }
+
+    // ----------------------------------------------------------------
+    // 10. ASIGNACIÓN DE EVENTOS
+    // ----------------------------------------------------------------
+    function asignarEventos() {
+      document.querySelectorAll('.btn-firmar').forEach(btn => {
+        btn.removeEventListener('click', handleFirmar);
+        btn.addEventListener('click', handleFirmar);
+      });
+
+      document.querySelectorAll('.btn-voice').forEach(btn => {
+        btn.removeEventListener('click', handleVoice);
+        btn.addEventListener('click', handleVoice);
+      });
+
+      document.querySelectorAll('.btn-revelar-practica').forEach(btn => {
+        btn.removeEventListener('click', handleRevelarPractica);
+        btn.addEventListener('click', handleRevelarPractica);
+      });
+
+      document.querySelectorAll('.btn-practicar-detalle').forEach(btn => {
+        btn.removeEventListener('click', handlePracticarDetalle);
+        btn.addEventListener('click', handlePracticarDetalle);
+      });
+
+      document.querySelectorAll('.card-cuaderno[data-practica-id]').forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+        card.addEventListener('click', handleCardClick);
+      });
+    }
+
+    function handleFirmar(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      toggleAprendida(id);
+    }
+
+    function handleVoice(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+    }
+
+    function handleRevelarPractica(e) {
+      e.stopPropagation();
+      const card = this.closest('.card-cuaderno');
+      if (card) {
+        card.classList.toggle('revelado');
+        this.innerHTML = card.classList.contains('revelado') ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+      }
+    }
+
+    function handlePracticarDetalle(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (!tec) return;
+      const modal = new bootstrap.Modal(document.getElementById('modalPractica'));
+      document.getElementById('modalDefinicion').textContent = tec.definicion;
+      document.getElementById('modalEjemplo').textContent = tec.ejemplo;
+      document.getElementById('inputRespuesta').value = '';
+      document.getElementById('inputRespuesta').style.fontFamily = getClaseCaligrafia(caligrafiaModalActual);
+      document.getElementById('inputFirma').value = '';
+      document.getElementById('modalFeedback').innerHTML = '';
+      document.getElementById('btnGuardarCuaderno').dataset.id = tec.id;
+      document.getElementById('btnGuardarCuaderno').dataset.caligrafia = caligrafiaModalActual;
+      document.getElementById('btnVoiceModal').dataset.id = tec.id;
+      document.getElementById('vistaPrevia').innerHTML = '<span class="text-muted">Escribe para ver tu caligrafía...</span>';
+      document.getElementById('vistaPrevia').style.fontFamily = getClaseCaligrafia(caligrafiaModalActual);
+      modal.show();
+    }
+
+    function handleCardClick(e) {
+      if (e.target.closest('button')) return;
+      this.classList.toggle('revelado');
+      const btn = this.querySelector('.btn-revelar-practica');
+      if (btn) btn.innerHTML = this.classList.contains('revelado') ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+    }
+
+    // ----------------------------------------------------------------
+    // 11. EVENTOS DEL MODAL MEJORADOS
+    // ----------------------------------------------------------------
+    function initModalEvents() {
+      // Selector de caligrafía en el modal
+      document.querySelectorAll('.caligrafia-modal').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.caligrafia-modal').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          const caligrafia = this.dataset.caligrafia;
+          caligrafiaModalActual = caligrafia;
+          document.getElementById('inputRespuesta').style.fontFamily = getClaseCaligrafia(caligrafia);
+          document.getElementById('vistaPrevia').style.fontFamily = getClaseCaligrafia(caligrafia);
+          // Actualizar vista previa con el texto actual
+          const texto = document.getElementById('inputRespuesta').value;
+          if (texto.trim()) {
+            document.getElementById('vistaPrevia').innerHTML = texto;
+          } else {
+            document.getElementById('vistaPrevia').innerHTML = '<span class="text-muted">Escribe para ver tu caligrafía...</span>';
+          }
+          document.getElementById('btnGuardarCuaderno').dataset.caligrafia = caligrafia;
+        });
+      });
+
+      // Vista previa en tiempo real
+      document.getElementById('inputRespuesta').addEventListener('input', function() {
+        const texto = this.value;
+        const vista = document.getElementById('vistaPrevia');
+        if (texto.trim()) {
+          vista.innerHTML = texto;
+        } else {
+          vista.innerHTML = '<span class="text-muted">Escribe para ver tu caligrafía...</span>';
+        }
+      });
+
+      // Guardar entrada
+      document.getElementById('btnGuardarCuaderno').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const caligrafia = this.dataset.caligrafia || 'caveat';
+        const respuesta = document.getElementById('inputRespuesta').value;
+        const firma = document.getElementById('inputFirma').value;
+        if (!respuesta.trim()) {
+          document.getElementById('modalFeedback').innerHTML = '<div class="alert alert-warning">✏️ Escribe la técnica antes de guardar.</div>';
+          return;
+        }
+        guardarEntradaCuaderno(id, respuesta, firma, caligrafia);
+        document.getElementById('modalFeedback').innerHTML = '<div class="alert alert-success">✅ ¡Guardado en tu bitácora! Revisa la pestaña 📖 Bitácora.</div>';
+        if (!progreso[id]) {
+          toggleAprendida(id);
+        }
+        setTimeout(() => {
+          const modal = bootstrap.Modal.getInstance(document.getElementById('modalPractica'));
+          if (modal) modal.hide();
+        }, 2000);
+      });
+
+      // Voice
+      document.getElementById('btnVoiceModal').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const tec = TECNICAS.find(t => t.id === id);
+        if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+      });
+
+      // Limpiar
+      document.getElementById('btnLimpiarModal').addEventListener('click', function() {
+        document.getElementById('inputRespuesta').value = '';
+        document.getElementById('inputFirma').value = '';
+        document.getElementById('modalFeedback').innerHTML = '';
+        document.getElementById('vistaPrevia').innerHTML = '<span class="text-muted">Escribe para ver tu caligrafía...</span>';
+      });
+    }
+
+    // ----------------------------------------------------------------
+    // 12. NAVEGACIÓN
+    // ----------------------------------------------------------------
+    function setModo(modo) {
+      modoActual = modo;
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => el.classList.remove('active'));
+      const activeLink = document.querySelector(`.navbar-custom .nav-link[data-modo="${modo}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      renderizar();
+    }
+
+    function setBloque(bloque) {
+      bloqueFiltro = bloque;
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => el.classList.remove('active'));
+      const activeBtn = document.querySelector(`.filtro-bloque .btn[data-bloque="${bloque}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderizar();
+    }
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      const status = document.getElementById('voiceStatus');
+      const btn = document.getElementById('btnVoiceToggle');
+      if (voiceEnabled) {
+        status.classList.remove('d-none');
+        btn.classList.add('btn-teal');
+        btn.classList.remove('btn-outline-teal');
+      } else {
+        status.classList.add('d-none');
+        btn.classList.remove('btn-teal');
+        btn.classList.add('btn-outline-teal');
+        if (speechSynth.speaking) speechSynth.cancel();
+      }
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      if (current === 'dark') {
+        document.documentElement.removeAttribute('data-theme');
+        document.getElementById('themeToggle').innerHTML = '<i class="bi bi-moon-fill"></i>';
+      } else {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.getElementById('themeToggle').innerHTML = '<i class="bi bi-sun-fill"></i>';
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // 13. INICIALIZACIÓN
+    // ----------------------------------------------------------------
+    function init() {
+      cargarProgreso();
+      initModalEvents();
+
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          setModo(this.dataset.modo);
+        });
+      });
+
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => {
+        el.addEventListener('click', function() {
+          setBloque(this.dataset.bloque);
+        });
+      });
+
+      document.getElementById('btnVoiceToggle').addEventListener('click', toggleVoice);
+      document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+      // Flashcard eventos
+      document.getElementById('flashVoltear').addEventListener('click', flashVoltear);
+      document.getElementById('flashNext').addEventListener('click', flashNext);
+      document.getElementById('flashPrev').addEventListener('click', flashPrev);
+      document.getElementById('flashFirmar').addEventListener('click', flashFirmar);
+      document.getElementById('flashVoice').addEventListener('click', flashVoice);
+      document.getElementById('flashcard').addEventListener('click', function(e) {
+        if (e.target.closest('button')) return;
+        flashVoltear();
+      });
+
+      // Caligrafía eventos
+      document.querySelectorAll('.btn-caligrafia').forEach(btn => {
+        btn.addEventListener('click', function() {
+          caligrafiaActual = this.dataset.caligrafia;
+          renderizarCaligrafia();
+        });
+      });
+      document.getElementById('btnGuardarCaligrafia').addEventListener('click', guardarFraseCaligrafia);
+      document.getElementById('inputCaligrafia').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') guardarFraseCaligrafia();
+      });
+
+      document.getElementById('borrarTodoCuaderno').addEventListener('click', function() {
+        if (confirm('¿Borrar todas las entradas de tu bitácora?')) {
+          entradasCuaderno = [];
+          guardarProgreso();
+          renderizarCuaderno();
+        }
+      });
+
+      // Examen
+      document.getElementById('btnGenerarExamen').addEventListener('click', function() {
+        generarExamen();
+        if (!document.getElementById('btnCorregirExamen')) {
+          const btnCorregir = document.createElement('button');
+          btnCorregir.id = 'btnCorregirExamen';
+          btnCorregir.className = 'btn btn-teal mt-2';
+          btnCorregir.innerHTML = '<i class="bi bi-check2-circle"></i> Corregir examen';
+          btnCorregir.addEventListener('click', corregirExamen);
+          document.getElementById('examenResultados').parentNode.insertBefore(btnCorregir, document.getElementById('examenResultados'));
+        }
+      });
+
+      document.getElementById('btnExportarCSV').addEventListener('click', exportarCSV);
+      document.getElementById('btnExportarJSON').addEventListener('click', exportarJSON);
+
+      document.getElementById('btnResetearProgreso').addEventListener('click', function() {
+        if (confirm('¿Resetear todo el progreso?')) {
+          progreso = {};
+          entradasCuaderno = [];
+          frasesCaligrafia = [];
+          estadisticas = { racha: 0, aciertos: 0, intentos: 0 };
+          niveles = {};
+          guardarProgreso();
+          renderizar();
+        }
+      });
+
+      setModo('explorar');
+      setBloque('todos');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>

@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Flota Cinemática · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🎬 FLOTA CINEMÁTICA<small>100 TÉCNICAS · GUION Y CINE</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="guion" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Guion <span class="badge-personaje bg-dorado">Escritura</span></a>
+        <a class="nav-link" data-section="direccion" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Dirección <span class="badge-personaje bg-azul">Visión</span></a>
+        <a class="nav-link" data-section="camara" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Cámara <span class="badge-personaje bg-verde">Móvil</span></a>
+        <a class="nav-link" data-section="sonido" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Sonido <span class="badge-personaje bg-purpura">Audio</span></a>
+        <a class="nav-link" data-section="edicion" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Edición <span class="badge-personaje bg-rojo">Post</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🎬</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Cine con móvil</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Guión y cine con teléfono</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área del cine con móvil:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Guion</strong> – Escritura de guiones: estructura, diálogos, personajes, formato.</li>
+                    <li><strong style="color:var(--neon-azul);">Dirección</strong> – Visión del director: planos, movimiento, iluminación, actores.</li>
+                    <li><strong style="color:var(--neon-verde);">Cámara</strong> – Técnicas de móvil: estabilización, lentes, apps, ajustes.</li>
+                    <li><strong style="color:var(--neon-purpura);">Sonido</strong> – Audio: grabación, diseño sonoro, música, efectos.</li>
+                    <li><strong style="color:var(--neon-rojo);">Edición</strong> – Postproducción: montaje, efectos, color, exportación.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-guion" class="section-content" style="display:none;"></div>
+        <div id="section-direccion" class="section-content" style="display:none;"></div>
+        <div id="section-camara" class="section-content" style="display:none;"></div>
+        <div id="section-sonido" class="section-content" style="display:none;"></div>
+        <div id="section-edicion" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    guion: {
+        nombre: "Guion", color: "dorado", icono: "bi-robot",
+        especialidad: "Escritura de guiones: estructura, diálogos, personajes, formato",
+        tecnicas: [
+            { titulo: "La estructura de tres actos", teoria: "Todo guion debe tener un principio, desarrollo y final. El primer acto presenta al personaje y su mundo; el segundo, el conflicto y los obstáculos; el tercero, la resolución.", recurso: "3 actos", ejemplo: "En 'El Padrino', el primer acto presenta a la familia Corleone; el segundo, la guerra entre familias; el tercero, la venganza y el ascenso de Michael.", ejercicio: "Escribe la estructura de una historia en 3 actos.", reto: "Escribe una escena del acto 2 de tu guion." },
+            { titulo: "El viaje del héroe", teoria: "El viaje del héroe es una estructura universal que se repite en las grandes historias: el héroe recibe una llamada, cruza el umbral, enfrenta pruebas y regresa transformado.", recurso: "Viaje del héroe", ejemplo: "En 'Star Wars', Luke recibe la llamada de Obi-Wan, cruza el umbral al salir de Tatooine, enfrenta pruebas y regresa como un Jedi.", ejercicio: "Diseña el viaje del héroe para tu protagonista.", reto: "Escribe una escena del viaje del héroe." },
+            { titulo: "El conflicto como motor", teoria: "El conflicto es el motor de la historia. Puede ser interno (el personaje contra sí mismo), interpersonal (contra otro personaje) o social (contra la sociedad).", recurso: "Conflicto", ejemplo: "En 'El Padrino', el conflicto interno de Michael es entre su familia y su moral; el interpersonal es contra las otras familias; el social es contra la ley.", ejercicio: "Define el conflicto principal de tu historia.", reto: "Escribe una escena de conflicto." },
+            { titulo: "La caracterización del personaje", teoria: "Un personaje se define por sus acciones, diálogos y decisiones. Debe tener motivaciones, defectos y un arco de transformación.", recurro: "Caracterización", ejemplo: "En 'Forrest Gump', Forrest es definido por su inocencia y sus acciones, que lo llevan a través de la historia de Estados Unidos.", ejercicio: "Crea una ficha de personaje.", reto: "Escribe una escena que muestre la personalidad de tu personaje." },
+            { titulo: "El diálogo como acción", teoria: "El diálogo no es solo información, es acción. Cada línea debe avanzar la trama o revelar carácter.", recurso: "Diálogo como acción", ejemplo: "En 'Pulp Fiction', los diálogos de Tarantino son acción: revelan personajes y avanzan la trama.", ejercicio: "Escribe un diálogo que avance la trama.", reto: "Escribe una escena de diálogo puro." },
+            { titulo: "El subtexto en los diálogos", teoria: "El subtexto es lo que se dice sin decirse. Los personajes pueden decir una cosa y significar otra.", recurso: "Subtexto", ejemplo: "En 'El Padrino', cuando Michael dice 'No es personal, son negocios', el subtexto es que la venganza es personal.", ejercicio: "Escribe un diálogo con subtexto.", reto: "Escribe una escena donde el subtexto sea clave." },
+            { titulo: "El formato de guion", teoria: "El formato de guion tiene reglas específicas: encabezado de escena (INT./EXT.), acción, diálogo, transiciones.", recurso: "Formato", ejemplo: "Los guiones profesionales siguen el formato estándar de Hollywood.", ejercicio: "Escribe una escena en formato de guion.", reto: "Escribe una página completa de guion." },
+            { titulo: "El logline", teoria: "El logline es una frase que resume la historia en una línea. Debe capturar el gancho y el conflicto principal.", recurso: "Logline", ejemplo: "'Un joven campesino debe destruir un anillo mágico para salvar el mundo' es el logline de 'El Señor de los Anillos'.", ejercicio: "Escribe el logline de tu historia.", reto: "Escribe un logline que atrape la atención." },
+            { titulo: "El tratamiento", teoria: "El tratamiento es un resumen de la historia en prosa, sin diálogos, que describe la trama y los personajes.", recurso: "Tratamiento", ejemplo: "Los tratamientos se usan para vender una idea antes de escribir el guion completo.", ejercicio: "Escribe un tratamiento de una página.", reto: "Escribe un tratamiento de 3 páginas." },
+            { titulo: "La escaleta", teoria: "La escaleta es una lista de las escenas de la película, con una descripción breve de cada una.", recurso: "Escaleta", ejemplo: "Los guionistas usan escaletas para planificar la estructura.", ejercicio: "Escribe una escaleta de 10 escenas.", reto: "Escribe una escaleta de 20 escenas." },
+            { titulo: "La página como minuto", teoria: "Una página de guion equivale aproximadamente a un minuto de película. Un guion de 90 páginas es una película de 90 minutos.", recurso: "Página = minuto", ejemplo: "La mayoría de los guiones de Hollywood tienen entre 90 y 120 páginas.", ejercicio: "Escribe un guion de 5 páginas.", reto: "Escribe un guion de 10 páginas." },
+            { titulo: "El giro argumental (plot twist)", teoria: "El giro argumental es un cambio inesperado que sorprende al espectador y cambia el curso de la historia.", recurso: "Plot twist", ejemplo: "En 'El sexto sentido', el giro es que el protagonista está muerto.", ejercicio: "Escribe un giro argumental.", reto: "Escribe una escena con un giro argumental." },
+            { titulo: "El arco del personaje", teoria: "El arco del personaje es la transformación que experimenta a lo largo de la historia.", recurso: "Arco del personaje", ejemplo: "En 'El Padrino', Michael pasa de ser un héroe de guerra a ser el jefe de la mafia.", ejercicio: "Diseña el arco de tu personaje.", reto: "Escribe una escena que muestre la transformación." },
+            { titulo: "El clímax", teoria: "El clímax es el momento de máxima tensión, donde se resuelve el conflicto principal.", recurso: "Clímax", ejemplo: "En 'Tiburón', el clímax es la batalla final contra el tiburón.", ejercicio: "Escribe una escena de clímax.", reto: "Escribe el clímax de tu película." },
+            { titulo: "El desenlace", teoria: "El desenlace es la resolución de la historia, donde se atan los cabos sueltos y se muestra el nuevo orden.", recurso: "Desenlace", ejemplo: "En 'El Padrino', el desenlace es la ascensión de Michael al poder.", ejercicio: "Escribe un desenlace.", reto: "Escribe el final de tu historia." },
+            { titulo: "La escena de acción", teoria: "La escena de acción debe ser clara y dinámica, con descripciones visuales que guíen al director.", recurso: "Escena de acción", ejemplo: "En 'Mad Max: Fury Road', las escenas de acción son el centro de la película.", ejercicio: "Escribe una escena de acción.", reto: "Escribe una escena de acción con 3 planos diferentes." },
+            { titulo: "La escena de diálogo", teoria: "La escena de diálogo debe revelar personaje y avanzar la trama. Debe tener un objetivo claro.", recurso: "Escena de diálogo", ejemplo: "En '12 hombres en pugna', la película es una larga escena de diálogo.", ejercicio: "Escribe una escena de diálogo.", reto: "Escribe una escena de diálogo con 3 personajes." },
+            { titulo: "La voz en off", teoria: "La voz en off es un recurso narrativo que permite al personaje contar su historia directamente al espectador.", recurso: "Voz en off", ejemplo: "En 'El club de la lucha', la voz en off de Jack es parte esencial de la narrativa.", ejercicio: "Escribe un monólogo en voz en off.", reto: "Escribe una escena con voz en off." },
+            { titulo: "El flashback", teoria: "El flashback es un salto al pasado que revela información sobre el personaje o la trama.", recurso: "Flashback", ejemplo: "En 'Ciudadano Kane', el flashback es la estructura de toda la película.", ejercicio: "Escribe una escena con flashback.", reto: "Escribe una estructura de flashback." },
+            { titulo: "El montaje", teoria: "El montaje es una secuencia de planos que comprimen el tiempo y avanzan la historia de forma rápida.", recurso: "Montaje", ejemplo: "En 'Rocky', el montaje de entrenamiento es famoso.", ejercicio: "Escribe una secuencia de montaje.", reto: "Escribe un montaje de 5 planos." },
+            { titulo: "El final", teoria: "El final debe ser satisfactorio y cerrar la historia de forma coherente con el tono y el tema.", recurso: "Final", ejemplo: "En 'El club de la lucha', el final es ambiguo y sorprendente.", ejercicio: "Escribe un final.", reto: "Escribe 3 finales alternativos." }
+        ]
+    },
+    direccion: {
+        nombre: "Dirección", color: "azul", icono: "bi-robot",
+        especialidad: "Visión del director: planos, movimiento, iluminación, actores",
+        tecnicas: [
+            { titulo: "El plano general", teoria: "El plano general muestra el entorno completo y la posición de los personajes en él. Establece la escena.", recurso: "Plano general", ejemplo: "En 'El Señor de los Anillos', los planos generales de la Tierra Media establecen el mundo.", ejercicio: "Graba un plano general.", reto: "Graba una escena con plano general." },
+            { titulo: "El plano medio", teoria: "El plano medio encuadra al personaje de la cintura para arriba. Muestra la acción y la expresión.", recurso: "Plano medio", ejemplo: "En 'El Padrino', los planos medios muestran el poder de los personajes.", ejercicio: "Graba un plano medio.", reto: "Graba una conversación con planos medios." },
+            { titulo: "El primer plano", teoria: "El primer plano encuadra el rostro del personaje. Muestra la emoción y la psicología.", recurso: "Primer plano", ejemplo: "En 'El Padrino', el primer plano de Michael al final muestra su transformación.", ejercicio: "Graba un primer plano.", reto: "Graba una escena de emoción con primeros planos." },
+            { titulo: "El plano detalle", teoria: "El plano detalle enfoca un objeto o una parte del cuerpo. Da información clave.", recurso: "Plano detalle", ejemplo: "En 'El Padrino', el plano detalle de la mano de Michael cuando acepta su destino es icónico.", ejercicio: "Graba un plano detalle.", reto: "Graba una escena con planos detalle." },
+            { titulo: "El encuadre", teoria: "El encuadre es lo que se muestra dentro del plano. Debe guiar la mirada del espectador.", recurso: "Encuadre", ejemplo: "En 'El Padrino', el encuadre de las escenas de la boda muestra la jerarquía de la familia.", ejercicio: "Graba una escena con un encuadre cuidado.", reto: "Graba una escena con encuadre simbólico." },
+            { titulo: "El movimiento de cámara", teoria: "El movimiento de cámara puede ser panorámico, travelling o grúa. Cada uno tiene un efecto diferente.", recurso: "Movimiento de cámara", ejemplo: "En 'El Padrino', el travelling hacia atrás en la escena final muestra la soledad de Michael.", ejercicio: "Graba un travelling.", reto: "Graba una escena con movimiento de cámara." },
+            { titulo: "La iluminación", teoria: "La iluminación crea la atmósfera de la escena. Puede ser natural o artificial, dura o suave.", recurso: "Iluminación", ejemplo: "En 'El Padrino', la iluminación es oscura y dramática, creando una atmósfera de poder.", ejercicio: "Graba una escena con iluminación.", reto: "Graba una escena con iluminación de bajo contraste." },
+            { titulo: "La dirección de actores", teoria: "El director guía a los actores para obtener la interpretación deseada.", recurso: "Dirección de actores", ejemplo: "Francis Ford Coppola dirigió a Al Pacino para que Michael fuera frío y calculador.", ejercicio: "Dirige a un actor en una escena.", reto: "Graba una escena con dirección de actores." },
+            { titulo: "La continuidad", teoria: "La continuidad asegura que los detalles de la escena sean consistentes entre tomas.", recurso: "Continuidad", ejemplo: "Los continuistas se aseguran de que la ropa y los objetos no cambien entre tomas.", ejercicio: "Graba una escena con continuidad.", reto: "Graba una escena y revisa la continuidad." },
+            { titulo: "El storyboard", teoria: "El storyboard es una serie de dibujos que planifican los planos de la película.", recurso: "Storyboard", ejemplo: "Los directores usan storyboards para visualizar la película antes de rodar.", ejercicio: "Dibuja un storyboard de 5 planos.", reto: "Dibuja un storyboard de una escena completa." },
+            { titulo: "La profundidad de campo", teoria: "La profundidad de campo es la zona de la imagen que aparece enfocada. Un fondo desenfocado (poca profundidad) aísla al personaje.", recurso: "Profundidad de campo", ejemplo: "En 'El Padrino', los fondos desenfocados aíslan a los personajes.", ejercicio: "Graba una escena con poca profundidad de campo.", reto: "Graba una escena con gran profundidad de campo." },
+            { titulo: "El color como atmósfera", teoria: "El color puede crear una atmósfera específica y transmitir emociones.", recurso: "Color", ejemplo: "En 'El Padrino', los tonos cálidos y oscuros crean una atmósfera de poder y peligro.", ejercicio: "Graba una escena con una paleta de color.", reto: "Graba una escena con color simbólico." },
+            { titulo: "El rodaje con móvil", teoria: "El rodaje con móvil requiere estabilidad y una buena iluminación. Usa estabilizadores y apps de cámara.", recurso: "Rodaje con móvil", ejemplo: "Películas como 'Tangerine' y 'Unsane' han sido rodadas con iPhone.", ejercicio: "Graba una escena con tu móvil.", reto: "Graba una escena con tu móvil y estabilizador." },
+            { titulo: "El plano secuencia", teoria: "El plano secuencia es una toma larga sin cortes que sigue la acción.", recurso: "Plano secuencia", ejemplo: "El plano secuencia de 'El Padrino' en la boda es famoso.", ejercicio: "Graba un plano secuencia de 30 segundos.", reto: "Graba un plano secuencia de 1 minuto." },
+            { titulo: "La composición", teoria: "La composición es la organización de los elementos dentro del encuadre. Debe ser equilibrada y guiar la mirada.", recurso: "Composición", ejemplo: "En 'El Padrino', la composición de los personajes en el encuadre muestra su poder.", ejercicio: "Graba una escena con buena composición.", reto: "Graba una escena con composición asimétrica." },
+            { titulo: "El punto de vista", teoria: "El punto de vista (POV) muestra lo que ve un personaje, creando inmersión.", recurso: "Punto de vista", ejemplo: "En 'El Padrino', el POV de Michael en la escena del restaurante muestra su tensión.", ejercicio: "Graba un plano POV.", reto: "Graba una escena con POV." },
+            { titulo: "La subjetiva", teoria: "La subjetiva es un plano que muestra la perspectiva de un personaje, a menudo con movimiento.", recurso: "Subjetiva", ejemplo: "En 'El Padrino', la subjetiva de Michael en la escena del restaurante es intensa.", ejercicio: "Graba una subjetiva.", reto: "Graba una escena con subjetiva." },
+            { titulo: "El contraplano", teoria: "El contraplano es el plano que muestra a la persona que mira o responde en una conversación.", recurso: "Contraplano", ejemplo: "En 'El Padrino', los contraplanos muestran las reacciones de los personajes.", ejercicio: "Graba una conversación con planos y contraplanos.", reto: "Graba una escena de diálogo con planos y contraplanos." },
+            { titulo: "El plano de inserción", teoria: "El plano de inserción es un plano detalle que se inserta en una escena para dar información.", recurso: "Plano de inserción", ejemplo: "En 'El Padrino', el plano de inserción de la mano de Michael es icónico.", ejercicio: "Graba un plano de inserción.", reto: "Graba una escena con planos de inserción." },
+            { titulo: "El montaje en la dirección", teoria: "El director debe tener en mente el montaje mientras rueda. Cada plano debe servir al montaje final.", recurro: "Montaje en dirección", ejemplo: "Los directores ruedan planos de cobertura para el montaje.", ejercicio: "Rueda una escena pensando en el montaje.", reto: "Rueda una escena con planos de cobertura." }
+        ]
+    },
+    camara: {
+        nombre: "Cámara", color: "verde", icono: "bi-robot",
+        especialidad: "Técnicas de móvil: estabilización, lentes, apps, ajustes",
+        tecnicas: [
+            { titulo: "La estabilización", teoria: "La estabilización evita que el movimiento de la cámara sea brusco. Usa un estabilizador (gimbal) o apoya el teléfono.", recurso: "Estabilización", ejemplo: "Los gimbals para móvil han revolucionado el cine con teléfono.", ejercicio: "Graba una escena con estabilizador.", reto: "Graba una escena sin estabilizador y compárala." },
+            { titulo: "La iluminación natural", teoria: "La luz natural es tu mejor aliada. Aprovecha la luz del sol o de una ventana.", recurso: "Iluminación natural", ejemplo: "Películas como 'Tangerine' usaron luz natural.", ejercicio: "Graba una escena con luz natural.", reto: "Graba una escena con luz natural y contraluz." },
+            { titulo: "La iluminación artificial", teoria: "La luz artificial puede ser creada con lámparas y focos. Usa luz suave para rostros y dura para sombras dramáticas.", recurso: "Iluminación artificial", ejemplo: "Los cineastas usan lámparas de bajo costo para iluminar.", ejercicio: "Graba una escena con luz artificial.", reto: "Graba una escena con luz de tres puntos." },
+            { titulo: "El balance de blancos", teoria: "El balance de blancos ajusta los colores para que el blanco se vea blanco. Puede ser automático o manual.", recurso: "Balance de blancos", ejemplo: "El balance de blancos automático suele fallar; mejor ajustarlo manualmente.", ejercicio: "Ajusta el balance de blancos manualmente.", reto: "Graba una escena con balance de blancos corregido." },
+            { titulo: "La resolución y el formato", teoria: "Graba en la máxima resolución (4K) para tener más flexibilidad en la edición. El formato 16:9 es el estándar.", recurso: "Resolución y formato", ejemplo: "La mayoría de los móviles graban en 4K y 16:9.", ejercicio: "Configura tu cámara en 4K.", reto: "Graba una escena en 4K." },
+            { titulo: "El uso de apps de cámara", teoria: "Las apps de cámara como Filmic Pro o ProMovie dan control manual sobre la exposición, el enfoque y la velocidad de obturación.", recurso: "Apps de cámara", ejemplo: "Filmic Pro es la app más usada por cineastas móviles.", ejercicio: "Descarga una app de cámara.", reto: "Graba una escena con una app de cámara profesional." },
+            { titulo: "La velocidad de obturación", teoria: "La velocidad de obturación controla la cantidad de luz y el desenfoque de movimiento. Para cine, usa 1/48 o 1/50.", recurso: "Velocidad de obturación", ejemplo: "La velocidad de obturación adecuada da un aspecto cinematográfico.", ejercicio: "Ajusta la velocidad de obturación.", reto: "Graba una escena con velocidad de obturación ajustada." },
+            { titulo: "El ISO", teoria: "El ISO controla la sensibilidad a la luz. Un ISO bajo da menos ruido, un ISO alto da más ruido.", recurso: "ISO", ejemplo: "Mantén el ISO lo más bajo posible para evitar ruido.", ejercicio: "Ajusta el ISO manualmente.", reto: "Graba una escena con ISO bajo." },
+            { titulo: "El enfoque", teoria: "El enfoque debe estar en el sujeto principal. Usa el enfoque manual o toca la pantalla para enfocar.", recurso: "Enfoque", ejemplo: "El enfoque manual da más control que el automático.", ejercicio: "Enfoca manualmente.", reto: "Graba una escena con enfoque selectivo." },
+            { titulo: "La lente del móvil", teoria: "Los móviles tienen lentes gran angular. Algunos tienen lentes teleobjetivo o ultra gran angular.", recurso: "Lente del móvil", ejemplo: "El iPhone tiene tres lentes: gran angular, ultra gran angular y teleobjetivo.", ejercicio: "Usa diferentes lentes de tu móvil.", reto: "Graba una escena con cada lente." },
+            { titulo: "Los accesorios para móvil", teoria: "Los accesorios como estabilizadores, trípodes, lentes externas y micrófonos mejoran la calidad.", recurso: "Accesorios", ejemplo: "Un trípode es esencial para tomas fijas.", ejercicio: "Usa un trípode.", reto: "Graba una escena con un accesorio." },
+            { titulo: "La exposición", teoria: "La exposición es la cantidad de luz que entra en la cámara. Puede ajustarse manualmente.", recurso: "Exposición", ejemplo: "Una exposición correcta evita zonas quemadas o demasiado oscuras.", ejercicio: "Ajusta la exposición manualmente.", reto: "Graba una escena con exposición correcta." },
+            { titulo: "El perfil de color", teoria: "Los perfiles de color como 'Plano' o 'Log' dan más flexibilidad en la edición de color.", recurso: "Perfil de color", ejemplo: "El perfil 'Plano' es ideal para la corrección de color.", ejercicio: "Usa un perfil de color plano.", reto: "Graba una escena con perfil plano." },
+            { titulo: "La grabación en 24 fps", teoria: "Los 24 fotogramas por segundo (fps) dan el aspecto cinematográfico. 30 fps es para televisión, 60 fps para cámara lenta.", recurso: "Fotogramas por segundo", ejemplo: "El cine usa 24 fps.", ejercicio: "Graba a 24 fps.", reto: "Graba una escena a 24 fps." },
+            { titulo: "La cámara lenta", teoria: "La cámara lenta (60 fps o más) crea un efecto dramático. Se usa para acciones rápidas.", recurso: "Cámara lenta", ejemplo: "En 'El Padrino', la cámara lenta en la escena del restaurante es icónica.", ejercicio: "Graba una escena en cámara lenta.", reto: "Graba una escena con cámara lenta." },
+            { titulo: "La fotografía fija", teoria: "La fotografía fija con el móvil puede ser una herramienta para planificar planos y composiciones.", recurso: "Fotografía fija", ejemplo: "Los directores usan fotos fijas para planificar el encuadre.", ejercicio: "Toma fotos fijas de tu escena.", reto: "Usa fotos fijas para planificar una escena." },
+            { titulo: "El modo retrato", teoria: "El modo retrato (bokeh) desenfoca el fondo y aísla al sujeto. Da un aspecto cinematográfico.", recurso: "Modo retrato", ejemplo: "El modo retrato del iPhone simula una profundidad de campo cinematográfica.", ejercicio: "Graba una escena con modo retrato.", reto: "Graba una escena con bokeh." },
+            { titulo: "El uso de filtros", teoria: "Los filtros de lente (ND, polarizador) mejoran la calidad de imagen y controlan la luz.", recurso: "Filtros", ejemplo: "Un filtro ND permite usar velocidades de obturación más lentas.", ejercicio: "Usa un filtro ND.", reto: "Graba una escena con filtro ND." },
+            { titulo: "La estabilización digital", teoria: "La estabilización digital (OIS/EIS) reduce el movimiento, pero puede recortar la imagen.", recurso: "Estabilización digital", ejemplo: "El iPhone tiene estabilización digital.", ejercicio: "Prueba la estabilización digital.", reto: "Graba una escena con estabilización digital." },
+            { titulo: "La grabación en HDR", teoria: "El HDR (High Dynamic Range) captura más detalles en las zonas brillantes y oscuras.", recurso: "HDR", ejemplo: "El HDR mejora la calidad de imagen en condiciones de alto contraste.", ejercicio: "Graba en HDR.", reto: "Graba una escena en HDR." }
+        ]
+    },
+    sonido: {
+        nombre: "Sonido", color: "purpura", icono: "bi-robot",
+        especialidad: "Audio: grabación, diseño sonoro, música, efectos",
+        tecnicas: [
+            { titulo: "La grabación de audio", teoria: "El audio es tan importante como la imagen. Usa un micrófono externo para mejorar la calidad.", recurso: "Grabación de audio", ejemplo: "Los micrófonos de los móviles no son suficientes para cine.", ejercicio: "Graba audio con un micrófono externo.", reto: "Graba una escena con audio de calidad." },
+            { titulo: "El micrófono direccional", teoria: "El micrófono direccional capta el sonido de enfrente y reduce el ruido de fondo.", recurso: "Micrófono direccional", ejemplo: "Los micrófonos de cañón son direccionales.", ejercicio: "Usa un micrófono direccional.", reto: "Graba una escena con micrófono direccional." },
+            { titulo: "La prevención del ruido", teoria: "Evita el ruido de fondo grabando en lugares silenciosos y usando protección contra el viento.", recurso: "Prevención del ruido", ejemplo: "Los 'puff' o 'dead cat' reducen el ruido del viento.", ejercicio: "Graba en un lugar silencioso.", reto: "Graba una escena sin ruido de fondo." },
+            { titulo: "El diseño de sonido", teoria: "El diseño de sonido crea la atmósfera sonora de la película: ambientes, efectos, sonidos de fondo.", recurso: "Diseño de sonido", ejemplo: "En 'El Padrino', el diseño de sonido crea una atmósfera de poder.", ejercicio: "Diseña el sonido de una escena.", reto: "Crea una banda sonora para tu escena." },
+            { titulo: "La música y la banda sonora", teoria: "La música refuerza la emoción y la narrativa. Puede ser original o de libre uso.", recurso: "Música", ejemplo: "La música de Nino Rota en 'El Padrino' es icónica.", ejercicio: "Elige música para una escena.", reto: "Graba una escena con música." },
+            { titulo: "Los efectos de sonido (foley)", teoria: "Los efectos de sonido (foley) son sonidos creados en estudio para acompañar la imagen.", recurso: "Foley", ejemplo: "El foley de los pasos o el crujir de una puerta añaden realismo.", ejercicio: "Graba un efecto de sonido.", reto: "Graba una escena con foley." },
+            { titulo: "El diálogo y la mezcla", teoria: "El diálogo debe ser claro y estar por encima de la música y los efectos.", recurso: "Mezcla de diálogos", ejemplo: "La mezcla de diálogos es clave en el cine.", ejercicio: "Mezcla el diálogo de una escena.", reto: "Graba una escena con diálogo claro." },
+            { titulo: "La sincronización de audio", teoria: "El audio debe estar sincronizado con la imagen. Usa un claqueta o un clic para sincronizar.", recurso: "Sincronización", ejemplo: "La claqueta es la herramienta de sincronización clásica.", ejercicio: "Sincroniza audio e imagen.", reto: "Graba una escena con audio sincronizado." },
+            { titulo: "El audio ambiente", teoria: "El audio ambiente es el sonido de fondo de la escena (tráfico, viento, multitud).", recurso: "Audio ambiente", ejemplo: "El audio ambiente da realismo a la escena.", ejercicio: "Graba audio ambiente.", reto: "Graba una escena con audio ambiente." },
+            { titulo: "La ecualización (EQ)", teoria: "La ecualización ajusta las frecuencias del audio para mejorar la claridad y el tono.", recurso: "Ecualización", ejemplo: "La EQ puede eliminar el ruido de fondo.", ejercicio: "Ecualiza una grabación.", reto: "Graba una escena con EQ." },
+            { titulo: "La compresión de audio", teoria: "La compresión reduce el rango dinámico, haciendo que el audio sea más consistente.", recurso: "Compresión", ejemplo: "La compresión es esencial para el diálogo.", ejercicio: "Comprime el audio.", reto: "Graba una escena con compresión." },
+            { titulo: "La reducción de ruido", teoria: "La reducción de ruido elimina el ruido de fondo sin afectar la voz.", recurso: "Reducción de ruido", ejemplo: "Los editores de audio tienen herramientas de reducción de ruido.", ejercicio: "Reduce el ruido de una grabación.", reto: "Graba una escena sin ruido." },
+            { titulo: "El sonido 3D (binaural)", teoria: "El sonido binaural crea una experiencia inmersiva al grabar con dos micrófonos.", recurso: "Sonido binaural", ejemplo: "El sonido binaural se usa en realidad virtual.", ejercicio: "Graba sonido binaural.", reto: "Graba una escena con sonido binaural." },
+            { titulo: "La música de tensión", teoria: "La música de tensión aumenta la ansiedad y el suspense en la escena.", recurso: "Música de tensión", ejemplo: "En 'Tiburón', la música de tensión es famosa.", ejercicio: "Elige música de tensión para una escena.", reto: "Graba una escena con música de tensión." },
+            { titulo: "La música emocional", teoria: "La música emocional refuerza los sentimientos de los personajes.", recurso: "Música emocional", ejemplo: "En 'El Padrino', la música emocional acompaña los momentos clave.", ejercicio: "Elige música emocional para una escena.", reto: "Graba una escena con música emocional." },
+            { titulo: "El silencio como recurso", teoria: "El silencio puede ser más poderoso que cualquier sonido. Crea tensión y expectativa.", recurso: "Silencio", ejemplo: "En 'El Padrino', el silencio antes del clímax es clave.", ejercicio: "Graba una escena con silencio.", reto: "Graba una escena donde el silencio sea el centro." },
+            { titulo: "El sonido diegético", teoria: "El sonido diegético es el que proviene de la escena (diálogos, ruidos).", recurso: "Sonido diegético", ejemplo: "El sonido de un coche que pasa es diegético.", ejercicio: "Graba sonido diegético.", reto: "Graba una escena con sonido diegético." },
+            { titulo: "El sonido no diegético", teoria: "El sonido no diegético es el que no proviene de la escena (música, voz en off).", recurso: "Sonido no diegético", ejemplo: "La música de fondo es no diegética.", ejercicio: "Graba una escena con sonido no diegético.", reto: "Graba una escena con sonido no diegético." },
+            { titulo: "La mezcla final", teoria: "La mezcla final combina diálogos, música, efectos y ambiente en un solo archivo de audio.", recurso: "Mezcla final", ejemplo: "La mezcla final es el último paso del sonido.", ejercicio: "Mezcla el audio de una escena.", reto: "Graba una escena con mezcla final." },
+            { titulo: "La exportación de audio", teoria: "Exporta el audio en alta calidad (WAV o AAC) para una mejor experiencia.", recurso: "Exportación de audio", ejemplo: "El audio de alta calidad mejora la experiencia.", ejercicio: "Exporta audio en alta calidad.", reto: "Graba una escena con audio exportado." }
+        ]
+    },
+    edicion: {
+        nombre: "Edición", color: "rojo", icono: "bi-robot",
+        especialidad: "Postproducción: montaje, efectos, color, exportación",
+        tecnicas: [
+            { titulo: "El montaje", teoria: "El montaje es la selección y el orden de los planos. Da ritmo y significado a la película.", recurso: "Montaje", ejemplo: "El montaje de 'El Padrino' es uno de los más famosos de la historia.", ejercicio: "Monta una escena de 30 segundos.", reto: "Monta una escena de 1 minuto." },
+            { titulo: "La continuidad en el montaje", teoria: "La continuidad asegura que la acción fluya de forma natural entre planos.", recurro: "Continuidad en montaje", ejemplo: "La continuidad es esencial para no confundir al espectador.", ejercicio: "Monta una escena con continuidad.", reto: "Monta una escena con continuidad." },
+            { titulo: "El ritmo en el montaje", teoria: "El ritmo del montaje (rápido o lento) afecta la emoción de la escena.", recurso: "Ritmo en montaje", ejemplo: "Las escenas de acción tienen un ritmo rápido.", ejercicio: "Monta una escena con ritmo rápido.", reto: "Monta una escena con ritmo lento." },
+            { titulo: "La corrección de color", teoria: "La corrección de color ajusta los tonos para dar una atmósfera específica.", recurso: "Corrección de color", ejemplo: "El color de 'El Padrino' es cálido y oscuro.", ejercicio: "Corrige el color de una escena.", reto: "Graba una escena con corrección de color." },
+            { titulo: "El etalonaje", teoria: "El etalonaje es el proceso de dar un estilo de color a toda la película.", recurso: "Etalonaje", ejemplo: "El etalonaje de 'El Padrino' crea una atmósfera de poder.", ejercicio: "Etalona una escena.", reto: "Graba una escena con etalonaje." },
+            { titulo: "Los efectos visuales (VFX)", teoria: "Los efectos visuales añaden elementos que no existen en la realidad: explosiones, criaturas, etc.", recurso: "VFX", ejemplo: "Los VFX son comunes en el cine de ciencia ficción.", ejercicio: "Añade un efecto visual a una escena.", reto: "Graba una escena con VFX." },
+            { titulo: "Los títulos y créditos", teoria: "Los títulos y créditos son parte de la película y deben estar bien diseñados.", recurso: "Títulos y créditos", ejemplo: "Los títulos de 'El Padrino' son icónicos.", ejercicio: "Diseña títulos para tu escena.", reto: "Graba una escena con títulos." },
+            { titulo: "La exportación del video", teoria: "Exporta en la resolución y formato adecuados para la plataforma de destino.", recurso: "Exportación", ejemplo: "YouTube recomienda 1080p y H.264.", ejercicio: "Exporta un video en 1080p.", reto: "Graba una escena y expórtala." },
+            { titulo: "El uso de transiciones", teoria: "Las transiciones (cortes, fundidos, encadenados) unen los planos. Deben ser coherentes con el estilo.", recurso: "Transiciones", ejemplo: "El fundido a negro es una transición clásica.", ejercicio: "Usa una transición en tu montaje.", reto: "Graba una escena con transición." },
+            { titulo: "La edición de audio", teoria: "La edición de audio sincroniza el sonido con la imagen y ajusta los niveles.", recurso: "Edición de audio", ejemplo: "La edición de audio es clave para la calidad del producto final.", ejercicio: "Edita el audio de tu escena.", reto: "Graba una escena con audio editado." },
+            { titulo: "La sincronización de sonido", teoria: "La sincronización de sonido asegura que el diálogo coincida con los movimientos de los labios.", recurso: "Sincronización de sonido", ejemplo: "La sincronización es esencial para el diálogo.", ejercicio: "Sincroniza el audio con la imagen.", reto: "Graba una escena con audio sincronizado." },
+            { titulo: "El montaje paralelo", teoria: "El montaje paralelo muestra dos acciones que ocurren al mismo tiempo en diferentes lugares.", recurso: "Montaje paralelo", ejemplo: "En 'El Padrino', el montaje paralelo del bautizo y los asesinatos es famoso.", ejercicio: "Monta una escena con montaje paralelo.", reto: "Graba una escena con montaje paralelo." },
+            { titulo: "El montaje de acción", teoria: "El montaje de acción es rápido y dinámico, con planos cortos y movimientos de cámara.", recurso: "Montaje de acción", ejemplo: "En 'Mad Max: Fury Road', el montaje de acción es frenético.", ejercicio: "Monta una escena de acción.", reto: "Graba una escena de acción con montaje." },
+            { titulo: "El montaje narrativo", teoria: "El montaje narrativo cuenta la historia de forma clara y emocional.", recurso: "Montaje narrativo", ejemplo: "El montaje narrativo de 'El Padrino' es ejemplar.", ejercicio: "Monta una escena narrativa.", reto: "Graba una escena narrativa con montaje." },
+            { titulo: "El montaje de suspense", teoria: "El montaje de suspense crea tensión a través de planos largos y pausas.", recurso: "Montaje de suspense", ejemplo: "En 'Tiburón', el montaje de suspense es clave.", ejercicio: "Monta una escena de suspense.", reto: "Graba una escena de suspense." },
+            { titulo: "El montaje de ritmo", teoria: "El montaje de ritmo ajusta la duración de los planos para crear un efecto emocional.", recurso: "Montaje de ritmo", ejemplo: "El ritmo del montaje afecta la emoción del espectador.", ejercicio: "Monta una escena con un ritmo específico.", reto: "Graba una escena con ritmo de montaje." },
+            { titulo: "El efecto de cámara lenta", teoria: "La cámara lenta ralentiza la acción para enfatizar un momento.", recurso: "Cámara lenta en edición", ejemplo: "En 'El Padrino', la cámara lenta en la escena del restaurante es famosa.", ejercicio: "Aplica cámara lenta a una escena.", reto: "Graba una escena con cámara lenta." },
+            { titulo: "El efecto de cámara rápida", teoria: "La cámara rápida acelera la acción para crear un efecto cómico o de urgencia.", recurso: "Cámara rápida", ejemplo: "La cámara rápida se usa en comedias.", ejercicio: "Aplica cámara rápida a una escena.", reto: "Graba una escena con cámara rápida." },
+            { titulo: "El color grading", teoria: "El color grading es el proceso de dar un estilo de color a toda la película.", recurso: "Color grading", ejemplo: "El color grading de 'El Padrino' es oscuro y cálido.", ejercicio: "Aplica color grading a tu escena.", reto: "Graba una escena con color grading." },
+            { titulo: "La entrega final", teoria: "La entrega final es el archivo listo para distribuir en plataformas o festivales.", recurso: "Entrega final", ejemplo: "La entrega final debe cumplir con los requisitos de la plataforma.", ejercicio: "Prepara una entrega final.", reto: "Graba una escena y entrégala." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['guion','direccion','camara','sonido','edicion'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_cinematica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

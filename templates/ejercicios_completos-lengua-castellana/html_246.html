@@ -1,0 +1,1839 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · Cartas Familiares</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">cartas familiares · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Estructura: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe un fragmento de carta familiar que aplique esta técnica:</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Querida madre: ...»"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS PARA CARTAS FAMILIARES
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'estructura', label: 'Estructura General' },
+            { id: 'saludos', label: 'Saludos y Apertura' },
+            { id: 'despedidas', label: 'Despedidas y Cierre' },
+            { id: 'tonos', label: 'Tonos y Registros' },
+            { id: 'sentimientos', label: 'Expresión de Sentimientos' },
+            { id: 'noticias', label: 'Noticias y Eventos' },
+            { id: 'consejos', label: 'Consejos y Recomendaciones' },
+            { id: 'peticiones', label: 'Peticiones y Favores' },
+            { id: 'agradecimientos', label: 'Agradecimientos' },
+            { id: 'estilo', label: 'Estilo y Recursos' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: ESTRUCTURA GENERAL (1–10)
+        // ============================================================
+        const b1 = [
+            ['Lugar y fecha', 'Lugar + día/mes/año',
+                'Toda carta familiar debe incluir el lugar desde donde se escribe y la fecha completa. Esto sitúa la carta en un contexto temporal y geográfico.',
+                'Madrid, 15 de mayo de 2026', 'Lugar (Madrid) + fecha (15 de mayo de 2026)',
+                '¿Qué información debe aparecer al inicio de una carta familiar?', ['Lugar y fecha', 'Solo la fecha',
+                    'Solo el lugar', 'Ninguna'
+                ], 0, 'Escribe el encabezado con lugar y fecha para una carta familiar.'
+            ],
+            ['Saludo afectuoso con nombre', 'Querido/a + nombre de pila',
+                'El saludo en cartas familiares es cálido y cercano. Se usa «Querido/a» o «Mi querido/a» seguido del nombre de pila o del parentesco.',
+                'Querida mamá:', 'Querida (adjetivo afectuoso) + mamá (parentesco)',
+                '¿Qué saludo es propio de una carta familiar?', ['Querido/a', 'Estimado/a', 'A quien corresponda',
+                    'Muy señor mío'
+                ], 0, 'Escribe un saludo afectuoso para una carta familiar.'
+            ],
+            ['Cuerpo: noticias, sentimientos y preguntas', 'Noticias + sentimientos + preguntas',
+                'El cuerpo de una carta familiar combina el relato de noticias, la expresión de sentimientos y preguntas sobre la vida del destinatario.',
+                'Te cuento que he empezado un nuevo trabajo. Me siento muy contento. ¿Cómo estás tú?',
+                'noticias (he empezado) + sentimiento (contento) + pregunta (¿Cómo estás?)',
+                '¿Qué tres elementos debe contener el cuerpo de una carta familiar?', ['Noticias, sentimientos y preguntas',
+                    'Solo noticias', 'Solo sentimientos', 'Solo preguntas'
+                ], 0, 'Escribe un párrafo con noticias, sentimientos y una pregunta.'
+            ],
+            ['Despedida afectuosa', 'Un abrazo / Con cariño + firma',
+                'La despedida en cartas familiares es cálida y personal. Se usan fórmulas como «Un abrazo», «Con cariño», «Con todo mi amor».',
+                'Un abrazo fuerte, tu hermana.', 'Un abrazo fuerte (fórmula afectuosa) + tu hermana (parentesco)',
+                '¿Qué despedida es adecuada para una carta familiar?', ['Un abrazo', 'Atentamente', 'Cordialmente',
+                    'Le saluda'
+                ], 0, 'Escribe una despedida afectuosa para una carta familiar.'
+            ],
+            ['Firma con parentesco o nombre', 'Parentesco + nombre (opcional)',
+                'La firma en cartas familiares suele incluir el parentesco (tu hijo, tu hermana) o el nombre de pila.',
+                'Con cariño, tu hijo Juan.', 'tu hijo (parentesco) + Juan (nombre)',
+                '¿Qué se suele incluir en la firma de una carta familiar?', ['El parentesco', 'El cargo profesional',
+                    'El número de teléfono', 'La dirección'
+                ], 0, 'Escribe una firma con parentesco para una carta familiar.'
+            ],
+            ['Estructura completa: lugar-fecha → saludo → cuerpo → despedida → firma',
+                'Lugar/fecha → Saludo → Cuerpo (noticias, sentimientos, preguntas) → Despedida → Firma',
+                'La carta familiar sigue un orden lógico que facilita la comunicación y muestra afecto.',
+                'Madrid, 10 de mayo. Querida hermana: ... Un abrazo, tu hermana.',
+                'lugar/fecha + saludo + cuerpo + despedida + firma',
+                '¿Cuál es el orden correcto de una carta familiar?', ['Lugar/fecha, saludo, cuerpo, despedida, firma',
+                    'Saludo, lugar/fecha, cuerpo, firma, despedida', 'Cuerpo, saludo, despedida, firma, lugar/fecha',
+                    'Firma, despedida, cuerpo, saludo, lugar/fecha'
+                ], 0, 'Escribe una carta familiar completa con todos los elementos.'
+            ],
+            ['Mención del destinatario en el cuerpo', 'Tú / usted (familiar)',
+                'En las cartas familiares se usa el tratamiento de «tú» (confianza) o «usted» (respeto, a veces a abuelos). El verbo se conjuga en consecuencia.',
+                'Espero que estés bien. (tú) / Espero que esté bien. (usted)',
+                'estés (2ª persona tú) / esté (3ª persona usted)',
+                '¿Qué tratamiento se usa en cartas familiares?', ['Tú (confianza) o Usted (respeto)',
+                    'Solo Usted', 'Solo Tú', 'Vos'
+                ], 0, 'Escribe una frase usando el tratamiento «tú» en una carta familiar.'
+            ],
+            ['Referencia al remitente en la carta', 'Yo / nosotros',
+                'En las cartas familiares, el remitente se refiere a sí mismo en primera persona (yo, nosotros). Esto personaliza el mensaje.',
+                'Yo estoy bien. Nosotros estamos contentos.',
+                'Yo (1ª persona singular) / Nosotros (1ª persona plural)',
+                '¿Qué persona gramatical usa el remitente en una carta familiar?', ['Primera persona', 'Segunda persona',
+                    'Tercera persona', 'Impersonal'
+                ], 0, 'Escribe una frase donde el remitente hable de sí mismo en primera persona.'
+            ],
+            ['Preguntas al destinatario', 'Interrogaciones + verbo',
+                'Las preguntas son fundamentales en cartas familiares para mostrar interés por el destinatario y mantener la comunicación.',
+                '¿Cómo estás? ¿Qué tal te va en el trabajo?',
+                '¿Cómo estás? (pregunta sobre estado) + ¿Qué tal te va? (pregunta sobre situación)',
+                '¿Qué tipo de oraciones muestran interés por el destinatario?', ['Interrogativas', 'Exclamativas',
+                    'Imperativas', 'Enunciativas'
+                ], 0, 'Escribe tres preguntas para hacer a un familiar en una carta.'
+            ],
+            ['Transiciones suaves entre temas', 'Conectores: "por cierto", "hablando de", "por otro lado"',
+                'Para cambiar de tema de forma natural, se usan conectores coloquiales que dan fluidez a la carta.',
+                'Por cierto, ¿te acuerdas de...? / Hablando de vacaciones, ...',
+                'Por cierto (cambio de tema) / Hablando de (transición)',
+                '¿Qué recurso se usa para cambiar de tema con naturalidad?', ['Conectores coloquiales', 'Puntos y aparte',
+                    'Números', 'Subrayados'
+                ], 0, 'Escribe una transición entre dos temas en una carta familiar.'
+            ]
+        ];
+        b1.forEach(d => addLesson('estructura', ...d));
+
+        // ============================================================
+        //  BLOQUE 2: SALUDOS Y APERTURA (11–20)
+        // ============================================================
+        const b2 = [
+            ['Saludo con «Querido/a» + nombre', 'Querido/a + nombre de pila',
+                'El saludo más común en cartas familiares. Expresa cariño y cercanía. Se usa con nombre de pila o parentesco.',
+                'Querido papá:', 'Querido (afecto) + papá (parentesco)',
+                '¿Qué saludo expresa cariño en una carta familiar?', ['Querido/a', 'Estimado/a', 'Hola', 'Buenos días'],
+                0, 'Escribe un saludo con «Querido» para un familiar.'
+            ],
+            ['Saludo con «Mi querido/a» + nombre', 'Mi querido/a + nombre',
+                'Añadir «mi» refuerza el afecto y la posesión afectiva. Es más cálido que «querido» solo.',
+                'Mi querida hermana:', 'Mi querida (posesivo afectivo) + hermana (parentesco)',
+                '¿Qué añade «mi» al saludo?', ['Refuerza el afecto', 'Indica posesión material', 'Es más formal',
+                    'Indica distancia'
+                ], 0, 'Escribe un saludo con «Mi querido» para un familiar.'
+            ],
+            ['Saludo con «Queridísimo/a»', 'Queridísimo/a + nombre',
+                '«Queridísimo» es un superlativo que expresa un cariño muy intenso. Se usa en contextos de gran afecto.',
+                'Queridísima abuela:', 'Queridísima (superlativo de cariño) + abuela (parentesco)',
+                '¿Qué expresa el superlativo «Queridísimo/a»?', ['Afecto muy intenso', 'Formalidad', 'Indiferencia',
+                    'Desagrado'
+                ], 0, 'Escribe un saludo con «Queridísimo» para un familiar muy cercano.'
+            ],
+            ['Saludo con «Hola» + nombre (informal)', 'Hola + nombre',
+                'En cartas muy informales o entre hermanos/primos, se puede usar «Hola» como saludo directo y coloquial.',
+                'Hola, primo: ¿Qué tal?', 'Hola (saludo coloquial) + primo (parentesco)',
+                '¿En qué tipo de cartas se usa «Hola» como saludo?', ['Informales', 'Muy formales', 'Académicas',
+                    'Comerciales'
+                ], 0, 'Escribe un saludo coloquial con «Hola» para un primo.'
+            ],
+            ['Saludo con afecto a distancia', 'Aunque estés lejos, ...',
+                'Cuando se escribe a un familiar que vive lejos, se puede expresar el cariño a pesar de la distancia.',
+                'Aunque estés lejos, te escribo con todo el cariño.',
+                'Aunque estés lejos (concesiva) + te escribo (1ª persona)',
+                '¿Qué expresa la frase «Aunque estés lejos»?', ['Afecto a pesar de la distancia', 'Indiferencia',
+                    'Enfado', 'Tristeza'
+                ], 0, 'Escribe un saludo que exprese cariño a pesar de la distancia.'
+            ],
+            ['Saludo con referencia al tiempo sin verse', 'Hace tiempo que no...',
+                'Expresar cuánto tiempo ha pasado desde el último contacto muestra interés y preocupación.',
+                'Hace tanto que no sé de ti...', 'Hace tanto que (tiempo) + no sé (negación)',
+                '¿Qué expresa la referencia al tiempo sin verse?', ['Interés y preocupación', 'Indiferencia',
+                    'Falta de tiempo', 'Olvido'
+                ], 0, 'Escribe un saludo que mencione el tiempo sin verse.'
+            ],
+            ['Saludo con expresión de alegría', 'Me alegra escribirte...',
+                'Mostrar alegría por escribir al destinatario crea un tono positivo desde el principio.',
+                'Me alegra mucho escribirte de nuevo.',
+                'Me alegra (alegría) + escribirte (infinitivo)',
+                '¿Qué emoción se expresa al decir «Me alegra escribirte»?', ['Alegría', 'Tristeza', 'Enojo', 'Miedo'],
+                0, 'Escribe un saludo que exprese alegría por escribir.'
+            ],
+            ['Saludo con recuerdo cariñoso', 'Recuerdo aquel día...',
+                'Empezar con un recuerdo compartido crea un vínculo emocional inmediato.',
+                'Recuerdo aquel verano juntos en la playa...',
+                'Recuerdo (verbo de memoria) + aquel verano (recuerdo compartido)',
+                '¿Qué recurso se usa para crear un vínculo emocional desde el saludo?', ['Un recuerdo compartido',
+                    'Una noticia', 'Una pregunta', 'Un consejo'
+                ], 0, 'Escribe un saludo que comience con un recuerdo compartido.'
+            ],
+            ['Saludo con afecto a todos', 'Un beso para todos...',
+                'Cuando la carta va dirigida a toda la familia, se puede incluir un saludo colectivo.',
+                'Un beso enorme para todos en casa.',
+                'Un beso enorme (afecto) + para todos (colectivo)',
+                '¿Cómo se saluda a toda la familia en una carta?', ['Con un saludo colectivo', 'Con saludos individuales',
+                    'Sin saludo', 'Con un saludo formal'
+                ], 0, 'Escribe un saludo colectivo para toda la familia.'
+            ],
+            ['Saludo con pregunta inicial', '¿Cómo estás? + saludo',
+                'Empezar con una pregunta muestra interés inmediato por el destinatario.',
+                '¿Cómo estás? Hacía tiempo que no escribía.',
+                '¿Cómo estás? (pregunta inicial) + Hacía tiempo (contexto)',
+                '¿Qué ventaja tiene empezar con una pregunta?', ['Muestra interés inmediato', 'Es más formal',
+                    'Es más corto', 'No tiene ventaja'
+                ], 0, 'Escribe un saludo que comience con una pregunta.'
+            ]
+        ];
+        b2.forEach(d => addLesson('saludos', ...d));
+
+        // ============================================================
+        //  BLOQUE 3: DESPEDIDAS Y CIERRE (21–30)
+        // ============================================================
+        const b3 = [
+            ['Despedida con «Un abrazo»', 'Un abrazo + firma',
+                '«Un abrazo» es la despedida más común en cartas familiares. Expresa cercanía y afecto.',
+                'Un abrazo fuerte, tu hermana.',
+                'Un abrazo (fórmula afectuosa) + fuerte (intensidad)',
+                '¿Qué despedida es la más común en cartas familiares?', ['Un abrazo', 'Atentamente', 'Cordialmente',
+                    'Le saluda'
+                ], 0, 'Escribe una despedida con «Un abrazo» para un familiar.'
+            ],
+            ['Despedida con «Con cariño»', 'Con cariño + firma',
+                '«Con cariño» es una despedida cálida, ligeramente más íntima que «un abrazo».',
+                'Con cariño, tu hermana.',
+                'Con cariño (afecto) + tu hermana (parentesco)',
+                '¿Qué expresa «Con cariño» en una despedida?', ['Afecto íntimo', 'Formalidad', 'Distancia',
+                    'Indiferencia'
+                ], 0, 'Escribe una despedida con «Con cariño».'
+            ],
+            ['Despedida con «Con todo mi amor»', 'Con todo mi amor + firma',
+                '«Con todo mi amor» es una despedida muy intensa, reservada para relaciones muy cercanas (pareja, hijos, padres).',
+                'Con todo mi amor, tu madre.',
+                'Con todo mi amor (intensidad máxima) + tu madre (parentesco)',
+                '¿Para quiénes se reserva la despedida «Con todo mi amor»?', ['Relaciones muy cercanas', 'Compañeros de trabajo',
+                    'Jefes', 'Clientes'
+                ], 0, 'Escribe una despedida con «Con todo mi amor».'
+            ],
+            ['Despedida con «Un beso»', 'Un beso + firma',
+                '«Un beso» es una despedida muy afectuosa, común entre mujeres o con niños.',
+                'Un beso grande, para ti.',
+                'Un beso (afecto) + grande (intensidad)',
+                '¿Qué despedida es común entre mujeres o con niños?', ['Un beso', 'Un abrazo', 'Atentamente',
+                    'Cordialmente'
+                ], 0, 'Escribe una despedida con «Un beso».'
+            ],
+            ['Despedida con «Escríbeme pronto»', 'Escríbeme pronto + despedida',
+                'Pedir que el destinatario responda mantiene la comunicación y muestra interés.',
+                'Escríbeme pronto, te echo de menos.',
+                'Escríbeme (imperativo) + pronto (tiempo) + te echo de menos (sentimiento)',
+                '¿Qué se pide al final de una carta para mantener la comunicación?', ['Que responda', 'Que no responda',
+                    'Que olvide la carta', 'Que la guarde'
+                ], 0, 'Escribe una despedida que pida una respuesta.'
+            ],
+            ['Despedida con «Recuerdos a...»', 'Recuerdos a + nombre',
+                'Enviar saludos a otros familiares o amigos muestra consideración y amplía el afecto.',
+                'Recuerdos a todos en casa.',
+                'Recuerdos (saludos) + a todos (colectivo)',
+                '¿Qué se hace al enviar recuerdos a otros en una carta?', ['Ampliar el afecto a más personas',
+                    'Ignorar a los demás', 'Pedir algo', 'Dar una orden'
+                ], 0, 'Escribe una despedida que envíe recuerdos a otros.'
+            ],
+            ['Despedida con «Espero verte pronto»', 'Espero verte pronto + firma',
+                'Expresar el deseo de encontrarse pronto crea expectativa y fortalece el vínculo.',
+                'Espero verte pronto. Un abrazo.',
+                'Espero verte (deseo de reencuentro) + pronto (tiempo)',
+                '¿Qué expresa «Espero verte pronto»?', ['Deseo de reencuentro', 'Indiferencia', 'Enojo',
+                    'Tristeza'
+                ], 0, 'Escribe una despedida con «Espero verte pronto».'
+            ],
+            ['Despedida con «Cuídate»', 'Cuídate + firma',
+                '«Cuídate» es una despedida que muestra preocupación por el bienestar del destinatario.',
+                'Cuídate mucho, te quiero.',
+                'Cuídate (imperativo de cuidado) + mucho (intensidad)',
+                '¿Qué muestra la despedida «Cuídate»?', ['Preocupación por el bienestar', 'Indiferencia',
+                    'Formalidad', 'Distancia'
+                ], 0, 'Escribe una despedida con «Cuídate».'
+            ],
+            ['Despedida con «Te quiero»', 'Te quiero + firma',
+                'Expresar «te quiero» o «te quiero mucho» al final de la carta refuerza el vínculo afectivo.',
+                'Te quiero mucho, tu hermana.',
+                'Te quiero (expresión de amor) + mucho (intensidad)',
+                '¿Qué se expresa con «Te quiero» en una carta familiar?', ['Amor y cariño', 'Formalidad', 'Desinterés',
+                    'Enojo'
+                ], 0, 'Escribe una despedida con «Te quiero».'
+            ],
+            ['Despedida con frase de cierre afectuosa', 'Frase personal + firma',
+                'Una frase personalizada, como «Siempre en mi corazón» o «Con todo mi cariño de siempre», da un toque único.',
+                'Siempre en mi corazón, tu hermana.',
+                'Siempre en mi corazón (frase afectuosa) + tu hermana (parentesco)',
+                '¿Qué añade una frase personalizada a la despedida?', ['Un toque único y personal', 'Formalidad',
+                    'Distancia', 'Indiferencia'
+                ], 0, 'Escribe una frase personalizada para una despedida familiar.'
+            ]
+        ];
+        b3.forEach(d => addLesson('despedidas', ...d));
+
+        // ============================================================
+        //  BLOQUE 4: TONOS Y REGISTROS (31–40)
+        // ============================================================
+        const b4 = [
+            ['Tono afectuoso y cercano', 'Lenguaje cariñoso + pronombres de tú',
+                'El tono afectuoso usa diminutivos, apodos cariñosos y el tratamiento de «tú» para crear cercanía.',
+                'Mi vida, ¿cómo estás? Te echo tanto de menos.',
+                'Mi vida (apodo cariñoso) + estás (tú) + tanto (intensidad)',
+                '¿Qué recursos usa el tono afectuoso?', ['Diminutivos, apodos y tú', 'Formalidad, usted y jerga técnica',
+                    'Distancia, impersonalidad', 'Ironía y sarcasmo'
+                ], 0, 'Escribe una frase en tono afectuoso para un familiar.'
+            ],
+            ['Tono respetuoso (a mayores)', 'Usted + lenguaje formal pero cálido',
+                'A abuelos o tíos mayores se usa «usted» pero con un lenguaje cálido y respetuoso.',
+                'Querida abuela: Espero que se encuentre bien. Le mando un beso grande.',
+                'se encuentre (usted) + Le (OI de usted)',
+                '¿Qué tratamiento se usa con familiares mayores?', ['Usted', 'Tú', 'Vos', 'Él'], 0,
+                'Escribe una frase en tono respetuoso para un abuelo.'
+            ],
+            ['Tono coloquial entre iguales', 'Lenguaje coloquial + tú + expresiones familiares',
+                'Entre hermanos, primos o amigos, se usa un tono coloquial con expresiones cotidianas.',
+                'Oye, ¿qué tal? ¿Te acuerdas de aquella vez...?',
+                'Oye (interjección) + ¿qué tal? (coloquial) + ¿Te acuerdas? (pregunta)',
+                '¿Qué tipo de lenguaje se usa entre hermanos o primos?', ['Coloquial', 'Muy formal', 'Técnico',
+                    'Poético'
+                ], 0, 'Escribe una frase en tono coloquial para un primo.'
+            ],
+            ['Tono festivo (cumpleaños, Navidad)', 'Lenguaje alegre + felicitaciones',
+                'En cartas de celebración, el tono es alegre, con felicitaciones y buenos deseos.',
+                '¡Feliz cumpleaños! Que tengas un día maravilloso lleno de amor.',
+                '¡Feliz cumpleaños! (exclamación festiva) + que tengas (deseo)',
+                '¿Qué tono se usa en cartas de celebración?', ['Festivo y alegre', 'Triste', 'Serio', 'Formal'],
+                0, 'Escribe una frase festiva para una carta de cumpleaños.'
+            ],
+            ['Tono de consuelo (en momentos difíciles)', 'Lenguaje de apoyo + empatía',
+                'En cartas de consuelo, se usa un lenguaje empático, de apoyo y comprensión.',
+                'Sé que estás pasando un mal momento. Aquí estoy para lo que necesites.',
+                'Sé que (comprensión) + estás pasando (empatía) + aquí estoy (apoyo)',
+                '¿Qué tono se usa en cartas de consuelo?', ['Empático y de apoyo', 'Festivo', 'Indiferente', 'Formal'],
+                0, 'Escribe una frase de consuelo para un familiar.'
+            ],
+            ['Tono de añoranza', 'Lenguaje nostálgico + recuerdos',
+                'El tono de añoranza evoca recuerdos y expresa la falta que hace el destinatario.',
+                'Cuánto echo de menos aquellos paseos juntos.',
+                'Cuánto echo de menos (añoranza) + aquellos paseos (recuerdo)',
+                '¿Qué sentimiento expresa el tono de añoranza?', ['Nostalgia', 'Alegría', 'Enojo', 'Miedo'], 0,
+                'Escribe una frase de añoranza para un familiar que vive lejos.'
+            ],
+            ['Tono de preocupación', 'Lenguaje de inquietud + preguntas',
+                'El tono de preocupación expresa inquietud por el bienestar del destinatario y hace preguntas.',
+                'Me preocupa no saber de ti. ¿Estás bien? ¿Necesitas algo?',
+                'Me preocupa (inquietud) + no saber (carencia) + preguntas',
+                '¿Qué expresa el tono de preocupación?', ['Inquietud por el destinatario', 'Alegría', 'Indiferencia',
+                    'Enojo'
+                ], 0, 'Escribe una frase de preocupación para un familiar.'
+            ],
+            ['Tono de reconciliación', 'Lenguaje de disculpa + apertura',
+                'Para reconciliarse, se usa un lenguaje humilde, de disculpa y con apertura al diálogo.',
+                'Sé que cometí un error. Te pido disculpas de corazón.',
+                'Sé que (reconocimiento) + te pido disculpas (disculpa) + de corazón (sinceridad)',
+                '¿Qué tono se usa para pedir disculpas a un familiar?', ['Reconciliador', 'Festivo', 'Irónico',
+                    'Indiferente'
+                ], 0, 'Escribe una frase de reconciliación para un familiar.'
+            ],
+            ['Tono de admiración', 'Lenguaje de elogio + reconocimiento',
+                'Expresar admiración por los logros o cualidades de un familiar refuerza la autoestima y el vínculo.',
+                'Admiro mucho tu fuerza y tu alegría. Eres un ejemplo para todos.',
+                'Admiro (elogio) + tu fuerza (cualidad) + eres un ejemplo (reconocimiento)',
+                '¿Qué se expresa con un tono de admiración?', ['Elogio y reconocimiento', 'Crítica', 'Indiferencia',
+                    'Enojo'
+                ], 0, 'Escribe una frase de admiración para un familiar.'
+            ],
+            ['Tono de esperanza', 'Lenguaje de optimismo + futuro',
+                'El tono de esperanza expresa optimismo y confianza en el futuro, especialmente en momentos difíciles.',
+                'Todo pasará, y saldremos más fuertes. Te quiero mucho.',
+                'Todo pasará (optimismo) + saldremos (futuro) + te quiero (afecto)',
+                '¿Qué expresa el tono de esperanza?', ['Optimismo y confianza', 'Tristeza', 'Enojo', 'Indiferencia'],
+                0, 'Escribe una frase de esperanza para un familiar.'
+            ]
+        ];
+        b4.forEach(d => addLesson('tonos', ...d));
+
+        // ============================================================
+        //  BLOQUE 5: EXPRESIÓN DE SENTIMIENTOS (41–50)
+        // ============================================================
+        const b5 = [
+            ['Expresar alegría', 'Verbos de alegría + intensificadores',
+                'Para expresar alegría se usan verbos como «alegrarse», «contentarse» e intensificadores como «mucho», «enormemente».',
+                'Me alegra muchísimo saber que estás bien.',
+                'Me alegra (alegría) + muchísimo (intensificador) + saber (verbo)',
+                '¿Qué verbo expresa alegría en una carta familiar?', ['Alegrarse', 'Tristarse', 'Enojarse', 'Preocuparse'],
+                0, 'Escribe una frase que exprese alegría por una buena noticia.'
+            ],
+            ['Expresar tristeza', 'Verbos de tristeza + expresiones de dolor',
+                'Para expresar tristeza se usan verbos como «lamentar», «sentir» y expresiones como «me duele», «es una pena».',
+                'Siento mucho lo que ha pasado. Me duele no poder estar allí.',
+                'Siento (tristeza) + me duele (dolor emocional)',
+                '¿Qué verbo expresa tristeza en una carta familiar?', ['Lamentar', 'Alegrarse', 'Enorgullecerse',
+                    'Sorprenderse'
+                ], 0, 'Escribe una frase que exprese tristeza por una situación.'
+            ],
+            ['Expresar preocupación', 'Verbos de inquietud + preguntas',
+                'La preocupación se expresa con verbos como «preocuparse», «inquietarse» y preguntas sobre el destinatario.',
+                'Me preocupa no saber de ti. ¿Estás pasando por algo difícil?',
+                'Me preocupa (inquietud) + no saber (carencia) + pregunta',
+                '¿Qué verbo expresa preocupación?', ['Preocuparse', 'Alegrarse', 'Lamentar', 'Admirar'], 0,
+                'Escribe una frase que exprese preocupación por un familiar.'
+            ],
+            ['Expresar amor', 'Verbos de amor + intensificadores',
+                'El amor se expresa con verbos como «querer», «amar» e intensificadores como «mucho», «con toda mi alma».',
+                'Te quiero con toda mi alma. Eres lo más importante de mi vida.',
+                'Te quiero (amor) + con toda mi alma (intensificador)',
+                '¿Qué verbo expresa amor en una carta familiar?', ['Querer', 'Lamentar', 'Preocuparse', 'Admirar'],
+                0, 'Escribe una frase que exprese amor a un familiar.'
+            ],
+            ['Expresar gratitud', 'Verbos de agradecimiento + motivo',
+                'La gratitud se expresa con verbos como «agradecer», «dar gracias» y se especifica el motivo.',
+                'Te agradezco de corazón todo lo que has hecho por mí.',
+                'Te agradezco (gratitud) + de corazón (intensificador) + todo lo que has hecho (motivo)',
+                '¿Qué verbo expresa gratitud?', ['Agradecer', 'Lamentar', 'Preocuparse', 'Enojarse'], 0,
+                'Escribe una frase que exprese gratitud a un familiar.'
+            ],
+            ['Expresar añoranza', 'Verbos de extrañar + recuerdos',
+                'La añoranza se expresa con verbos como «extrañar», «echar de menos» y se evocan recuerdos.',
+                'Te extraño muchísimo. Echo de menos nuestras charlas de las tardes.',
+                'Te extraño (añoranza) + echo de menos (falta) + recuerdo',
+                '¿Qué verbo expresa añoranza?', ['Extrañar', 'Alegrarse', 'Lamentar', 'Admirar'], 0,
+                'Escribe una frase que exprese añoranza por un familiar lejano.'
+            ],
+            ['Expresar orgullo', 'Verbos de admiración + logros',
+                'El orgullo se expresa con verbos como «enorgullecerse», «admirar» y se mencionan los logros del destinatario.',
+                'Me enorgullece mucho verte triunfar. Eres un gran ejemplo.',
+                'Me enorgullece (orgullo) + verte triunfar (logro) + eres un ejemplo (admiración)',
+                '¿Qué verbo expresa orgullo por un familiar?', ['Enorgullecerse', 'Lamentar', 'Preocuparse', 'Extrañar'],
+                0, 'Escribe una frase que exprese orgullo por un familiar.'
+            ],
+            ['Expresar esperanza', 'Verbos de deseo + futuro',
+                'La esperanza se expresa con verbos como «esperar», «desear» y se proyecta un futuro positivo.',
+                'Espero que todo te vaya bien en esta nueva etapa.',
+                'Espero (deseo) + que todo te vaya bien (futuro positivo)',
+                '¿Qué verbo expresa esperanza?', ['Esperar', 'Lamentar', 'Extrañar', 'Preocuparse'], 0,
+                'Escribe una frase que exprese esperanza para un familiar.'
+            ],
+            ['Expresar apoyo incondicional', 'Ofrecimiento + disponibilidad',
+                'El apoyo se expresa ofreciendo ayuda y mostrando disponibilidad incondicional.',
+                'Cuenta conmigo para lo que necesites. Siempre estaré aquí para ti.',
+                'Cuenta conmigo (ofrecimiento) + siempre estaré (disponibilidad)',
+                '¿Qué se expresa al ofrecer apoyo incondicional?', ['Disponibilidad total', 'Indiferencia',
+                    'Condiciones', 'Distancia'
+                ], 0, 'Escribe una frase que exprese apoyo incondicional a un familiar.'
+            ],
+            ['Expresar comprensión', 'Empatía + reconocimiento',
+                'La comprensión se expresa mostrando empatía y reconociendo los sentimientos del otro.',
+                'Entiendo cómo te sientes. Yo también he pasado por algo parecido.',
+                'Entiendo (comprensión) + cómo te sientes (empatía) + yo también (identificación)',
+                '¿Qué se expresa al mostrar comprensión?', ['Empatía', 'Indiferencia', 'Crítica', 'Enojo'], 0,
+                'Escribe una frase que exprese comprensión hacia un familiar.'
+            ]
+        ];
+        b5.forEach(d => addLesson('sentimientos', ...d));
+
+        // ============================================================
+        //  BLOQUE 6: NOTICIAS Y EVENTOS (51–60)
+        // ============================================================
+        const b6 = [
+            ['Anunciar una noticia positiva', 'Introducción + noticia + reacción',
+                'Para dar una buena noticia, se introduce con un preámbulo, se anuncia y se expresa la reacción.',
+                '¡Tengo una noticia fantástica! He conseguido el trabajo que quería.',
+                '¡Tengo una noticia! (introducción) + He conseguido (noticia)',
+                '¿Cómo se introduce una noticia positiva?', ['Con entusiasmo y preámbulo', 'Con tristeza',
+                    'Con indiferencia', 'Con formalidad'
+                ], 0, 'Escribe un anuncio de una noticia positiva.'
+            ],
+            ['Anunciar una noticia difícil', 'Preparación + noticia + apoyo',
+                'Para dar una noticia difícil, se prepara al destinatario, se da la noticia con delicadeza y se ofrece apoyo.',
+                'Tengo que contarte algo serio. Mi abuelo ha fallecido. Estoy aquí para lo que necesites.',
+                'Tengo que contarte (preparación) + ha fallecido (noticia) + estoy aquí (apoyo)',
+                '¿Cómo se debe dar una noticia difícil?', ['Con delicadeza y ofreciendo apoyo', 'Directamente y sin rodeos',
+                    'Con indiferencia', 'Con enfado'
+                ], 0, 'Escribe un anuncio de una noticia difícil con apoyo.'
+            ],
+            ['Compartir logros personales', 'Logro + orgullo + agradecimiento',
+                'Al compartir un logro, se expresa orgullo y se agradece el apoyo de la familia.',
+                'He terminado la carrera con matrícula de honor. Estoy muy orgulloso y te lo agradezco por tu apoyo.',
+                'He terminado (logro) + orgulloso (orgullo) + agradezco (gratitud)',
+                '¿Qué se debe incluir al compartir un logro?', ['Orgullo y agradecimiento', 'Solo el logro',
+                    'Solo el agradecimiento', 'Crítica a otros'
+                ], 0, 'Escribe un anuncio de un logro personal con agradecimiento.'
+            ],
+            ['Contar un viaje o experiencia', 'Introducción + descripción + sentimiento',
+                'Para contar un viaje, se presenta la experiencia, se describen los lugares y se expresa el sentimiento vivido.',
+                'He vuelto de mi viaje a París. Fue maravilloso, la ciudad es preciosa y me lo pasé genial.',
+                'He vuelto (introducción) + fue maravilloso (descripción) + me lo pasé genial (sentimiento)',
+                '¿Qué elementos debe tener el relato de un viaje?', ['Descripción y sentimiento', 'Solo el destino',
+                    'Solo el sentimiento', 'Solo los precios'
+                ], 0, 'Escribe el relato de un viaje o experiencia.'
+            ],
+            ['Contar un evento familiar (boda, bautizo, etc.)', 'Evento + protagonistas + emociones',
+                'Al contar un evento familiar, se menciona el evento, los protagonistas y las emociones vividas.',
+                'El sábado fue la boda de María. Estaba preciosa y todos lloramos de alegría.',
+                'fue la boda (evento) + estaba preciosa (protagonista) + lloramos de alegría (emoción)',
+                '¿Qué se debe incluir al contar un evento familiar?', ['Evento, protagonistas y emociones',
+                    'Solo el evento', 'Solo los protagonistas', 'Solo las emociones'
+                ], 0, 'Escribe el relato de un evento familiar.'
+            ],
+            ['Contar una enfermedad o dificultad', 'Hechos + estado + esperanza',
+                'Al contar una enfermedad, se explican los hechos, el estado actual y se transmite esperanza.',
+                'He estado enfermo, pero ya estoy mejor. Los médicos dicen que pronto estaré bien.',
+                'He estado enfermo (hecho) + ya estoy mejor (estado) + pronto estaré bien (esperanza)',
+                '¿Qué se debe transmitir al contar una dificultad?', ['Esperanza y mejora', 'Solo el problema',
+                    'Solo la queja', 'Indiferencia'
+                ], 0, 'Escribe una carta contando una dificultad con esperanza.'
+            ],
+            ['Contar cambios importantes (mudanza, nuevo trabajo)', 'Cambio + adaptación + sentimientos',
+                'Al contar un cambio, se explica qué ha cambiado, cómo se está adaptando y qué sentimientos genera.',
+                'Me he mudado a una nueva ciudad. Estoy conociendo gente y me siento ilusionado.',
+                'Me he mudado (cambio) + estoy conociendo (adaptación) + ilusionado (sentimiento)',
+                '¿Qué se debe incluir al contar un cambio importante?', ['Cambio, adaptación y sentimientos',
+                    'Solo el cambio', 'Solo la adaptación', 'Solo los sentimientos'
+                ], 0, 'Escribe una carta contando un cambio importante.'
+            ],
+            ['Compartir una anécdota divertida', 'Introducción + anécdota + desenlace',
+                'Las anécdotas divertidas alegran la carta y crean complicidad.',
+                'Te va a hacer gracia: ayer me encontré a un gato en el tejado y... ¡se puso a bailar!',
+                'Te va a hacer gracia (introducción) + anécdota + desenlace sorprendente',
+                '¿Qué efecto tienen las anécdotas en una carta familiar?', ['Alegran y crean complicidad',
+                    'Entristecen', 'Crean distancia', 'Son innecesarias'
+                ], 0, 'Escribe una anécdota divertida para una carta familiar.'
+            ],
+            ['Hablar de planes futuros', 'Planes + expectativas + participación del destinatario',
+                'Al hablar de planes, se comparten expectativas y se involucra al destinatario en ellos.',
+                'Estamos planeando ir de vacaciones a la playa este verano. ¿Te gustaría venir con nosotros?',
+                'Estamos planeando (planes) + ¿te gustaría? (involucración)',
+                '¿Cómo se involucra al destinatario en los planes?', ['Preguntando su opinión o participación',
+                    'Imponiendo el plan', 'Ignorándolo', 'No mencionándolo'
+                ], 0, 'Escribe una carta hablando de planes futuros con participación del destinatario.'
+            ],
+            ['Dar noticias de otros familiares', 'Nombre + situación + saludo',
+                'Es común incluir noticias de otros miembros de la familia en la carta.',
+                'Tu prima Ana se ha casado y vive en Barcelona. Todos te mandan saludos.',
+                'Ana se ha casado (noticia) + te mandan saludos (saludos de otros)',
+                '¿Qué se debe hacer al dar noticias de otros familiares?', ['Mencionar la situación y enviar saludos',
+                    'Solo mencionar el nombre', 'Solo enviar saludos', 'No mencionarlos'
+                ], 0, 'Escribe un párrafo con noticias de otros familiares.'
+            ]
+        ];
+        b6.forEach(d => addLesson('noticias', ...d));
+
+        // ============================================================
+        //  BLOQUE 7: CONSEJOS Y RECOMENDACIONES (61–70)
+        // ============================================================
+        const b7 = [
+            ['Consejo con cariño (a hijos/sobrinos)', 'Afecto + consejo + motivación',
+                'Los consejos a hijos o sobrinos deben darse con cariño, explicando el motivo y motivando.',
+                'Hijo, estudia con esfuerzo, pero sin agobiarte. Creo en ti y sé que puedes.',
+                'Hijo (afecto) + estudia (consejo) + creo en ti (motivación)',
+                '¿Cómo se debe dar un consejo a un hijo o sobrino?', ['Con cariño y motivación', 'Con exigencia sin cariño',
+                    'Con indiferencia', 'Con enfado'
+                ], 0, 'Escribe un consejo cariñoso para un hijo o sobrino.'
+            ],
+            ['Consejo sobre relaciones personales', 'Reflexión + consejo + apertura',
+                'Para aconsejar sobre relaciones, se reflexiona sobre el tema y se ofrece el consejo con apertura.',
+                'En las relaciones, lo más importante es la comunicación. Habla siempre con sinceridad.',
+                'lo más importante es (reflexión) + habla (consejo)',
+                '¿Qué se debe destacar en un consejo sobre relaciones?', ['La comunicación y sinceridad',
+                    'El dinero', 'El poder', 'La indiferencia'
+                ], 0, 'Escribe un consejo sobre relaciones personales.'
+            ],
+            ['Consejo sobre salud y bienestar', 'Preocupación + consejo + cuidado',
+                'Los consejos sobre salud se dan desde la preocupación y el cuidado.',
+                'Cuida tu alimentación y haz algo de ejercicio. Tu salud es lo más importante.',
+                'Cuida (consejo) + tu salud es lo más importante (justificación)',
+                '¿Desde qué sentimiento se debe dar un consejo sobre salud?', ['Preocupación y cuidado',
+                    'Indiferencia', 'Exigencia', 'Crítica'
+                ], 0, 'Escribe un consejo sobre salud y bienestar.'
+            ],
+            ['Consejo sobre trabajo y estudio', 'Esfuerzo + equilibrio + futuro',
+                'Los consejos sobre trabajo o estudio deben equilibrar el esfuerzo con el descanso y mirar al futuro.',
+                'Trabaja con constancia, pero no olvides descansar. El futuro te lo agradecerá.',
+                'Trabaja (esfuerzo) + no olvides descansar (equilibrio) + el futuro te lo agradecerá (motivación)',
+                '¿Qué equilibrio debe tener un consejo sobre trabajo?', ['Esfuerzo y descanso', 'Solo esfuerzo',
+                    'Solo descanso', 'Indiferencia'
+                ], 0, 'Escribe un consejo sobre trabajo y estudio.'
+            ],
+            ['Consejo sobre finanzas o ahorro', 'Prudencia + consejo + seguridad',
+                'Los consejos financieros se dan con prudencia, recomendando ahorro y previsión.',
+                'Ahorra siempre un poco de cada ingreso. Es mejor prevenir que lamentar.',
+                'Ahorra (consejo) + es mejor prevenir (justificación)',
+                '¿Qué principio se recomienda en consejos financieros?', ['Ahorro y previsión', 'Gastar todo',
+                    'No ahorrar', 'Invertir sin medida'
+                ], 0, 'Escribe un consejo sobre ahorro o finanzas.'
+            ],
+            ['Consejo sobre cuidado de los padres', 'Agradecimiento + consejo + amor',
+                'Los consejos sobre el cuidado de los padres se dan con gratitud y amor.',
+                'Cuida mucho de papá y mamá. Ellos dieron todo por ti. Acompáñalos siempre.',
+                'Cuida (consejo) + ellos dieron todo (agradecimiento) + acompáñalos (amor)',
+                '¿Qué sentimiento debe acompañar a los consejos sobre el cuidado de los padres?', ['Gratitud y amor',
+                    'Indiferencia', 'Exigencia', 'Crítica'
+                ], 0, 'Escribe un consejo sobre el cuidado de los padres.'
+            ],
+            ['Consejo para superar momentos difíciles', 'Empatía + consejo + esperanza',
+                'Para superar dificultades, se ofrece empatía, un consejo práctico y esperanza.',
+                'Sé que no es fácil, pero todo pasa. Respira hondo y sigue adelante. Saldrás más fuerte.',
+                'Sé que no es fácil (empatía) + todo pasa (esperanza) + sigue adelante (consejo)',
+                '¿Qué tres elementos debe tener un consejo para momentos difíciles?', ['Empatía, consejo y esperanza',
+                    'Solo consejo', 'Solo esperanza', 'Solo empatía'
+                ], 0, 'Escribe un consejo para superar un momento difícil.'
+            ],
+            ['Consejo sobre tomar decisiones', 'Reflexión + consejo + confianza',
+                'Para ayudar a tomar decisiones, se reflexiona sobre el proceso, se da un consejo y se transmite confianza.',
+                'Tómate tu tiempo para decidir. Escucha a tu corazón, pero también a tu razón. Confía en ti.',
+                'Tómate tu tiempo (reflexión) + escucha (consejo) + confía en ti (confianza)',
+                '¿Qué se debe transmitir al dar un consejo sobre decisiones?', ['Confianza y reflexión',
+                    'Imposición', 'Indiferencia', 'Crítica'
+                ], 0, 'Escribe un consejo para tomar una decisión.'
+            ],
+            ['Consejo sobre educación de los hijos', 'Valores + consejo + ejemplo',
+                'Los consejos sobre educación se basan en valores y el ejemplo personal.',
+                'Enséñales con el ejemplo. Los valores se aprenden más con hechos que con palabras.',
+                'Enséñales (consejo) + con el ejemplo (método) + los valores (contenido)',
+                '¿Qué es más importante en la educación según la carta?', ['El ejemplo', 'Las palabras',
+                    'Las reglas', 'Los castigos'
+                ], 0, 'Escribe un consejo sobre educación de los hijos.'
+            ],
+            ['Consejo general con cierre afectuoso', 'Resumen + consejo + amor',
+                'Un consejo general se resume con un consejo final y se cierra con afecto.',
+                'En resumen, vive con alegría, ama sin miedo y disfruta de cada día. Te quiero mucho.',
+                'En resumen (cierre) + vive, ama, disfruta (consejos) + te quiero (afecto)',
+                '¿Cómo se cierra un consejo general?', ['Con un resumen y afecto', 'Con una despedida fría',
+                    'Con una crítica', 'Con indiferencia'
+                ], 0, 'Escribe un consejo general con cierre afectuoso.'
+            ]
+        ];
+        b7.forEach(d => addLesson('consejos', ...d));
+
+        // ============================================================
+        //  BLOQUE 8: PETICIONES Y FAVORES (71–80)
+        // ============================================================
+        const b8 = [
+            ['Pedir un favor con cortesía', 'Presentación + petición + agradecimiento previo',
+                'Para pedir un favor, se presenta la necesidad, se pide con cortesía y se agradece de antemano.',
+                'Necesito tu ayuda con algo. ¿Podrías echarme una mano? Te lo agradecería mucho.',
+                'Necesito tu ayuda (presentación) + ¿Podrías? (petición) + te lo agradecería (agradecimiento)',
+                '¿Cómo se debe pedir un favor en una carta familiar?', ['Con cortesía y agradecimiento',
+                    'Exigiendo', 'Con indiferencia', 'Con enfado'
+                ], 0, 'Escribe una petición de favor con cortesía.'
+            ],
+            ['Pedir un consejo', 'Situación + petición de consejo + apertura',
+                'Para pedir un consejo, se explica la situación, se pide opinión y se muestra apertura.',
+                'Estoy dudando entre dos opciones. ¿Qué crees que debería hacer?',
+                'Estoy dudando (situación) + ¿qué crees? (petición de consejo)',
+                '¿Qué se pide al pedir un consejo?', ['Opinión y orientación', 'Dinero', 'Tiempo', 'Un objeto'],
+                0, 'Escribe una petición de consejo para un familiar.'
+            ],
+            ['Pedir disculpas formalmente', 'Reconocimiento + disculpa + reparación',
+                'Para pedir disculpas, se reconoce el error, se pide perdón y se ofrece una reparación.',
+                'Sé que cometí un error. Te pido perdón de corazón. Haré lo posible por enmendarlo.',
+                'Sé que cometí un error (reconocimiento) + te pido perdón (disculpa) + haré lo posible (reparación)',
+                '¿Qué elementos debe tener una disculpa formal?', ['Reconocimiento, disculpa y reparación',
+                    'Solo disculpa', 'Solo reconocimiento', 'Solo reparación'
+                ], 0, 'Escribe una petición de disculpas formal.'
+            ],
+            ['Pedir comprensión', 'Explicación + petición de comprensión + agradecimiento',
+                'Para pedir comprensión, se explica la situación, se pide entendimiento y se agradece.',
+                'Entiendo que esto puede ser difícil de aceptar, pero te pido que comprendas mi decisión.',
+                'Entiendo (empatía) + te pido que comprendas (petición)',
+                '¿Qué se pide al pedir comprensión?', ['Entendimiento y empatía', 'Dinero', 'Un favor',
+                    'Un objeto'
+                ], 0, 'Escribe una petición de comprensión para un familiar.'
+            ],
+            ['Pedir tiempo o espacio', 'Necesidad + petición + reafirmación de afecto',
+                'Para pedir tiempo o espacio, se explica la necesidad, se pide respeto y se reafirma el afecto.',
+                'Necesito un poco de tiempo para mí. No es por ti, es por mí. Te quiero igual.',
+                'Necesito tiempo (necesidad) + no es por ti (reafirmación) + te quiero (afecto)',
+                '¿Qué se debe reafirmar al pedir espacio?', ['El afecto hacia la persona', 'El enfado',
+                    'La indiferencia', 'La distancia'
+                ], 0, 'Escribe una petición de tiempo o espacio con reafirmación de afecto.'
+            ],
+            ['Pedir ayuda económica', 'Situación + petición + compromiso de devolución',
+                'Para pedir ayuda económica, se explica la situación, se pide con claridad y se ofrece un compromiso de devolución.',
+                'Estoy pasando por un apuro económico. ¿Podrías prestarme algo? Te lo devolveré en cuanto pueda.',
+                'Estoy pasando (situación) + ¿podrías prestarme? (petición) + te lo devolveré (compromiso)',
+                '¿Qué se debe ofrecer al pedir ayuda económica?', ['Un compromiso de devolución', 'No devolverlo',
+                    'Un regalo', 'Una disculpa'
+                ], 0, 'Escribe una petición de ayuda económica con compromiso.'
+            ],
+            ['Pedir una visita o encuentro', 'Deseo + propuesta + disponibilidad',
+                'Para pedir una visita, se expresa el deseo de verse, se propone una fecha y se muestra disponibilidad.',
+                'Me encantaría verte. ¿Podríamos quedar este fin de semana? Estoy libre.',
+                'Me encantaría verte (deseo) + ¿podríamos quedar? (propuesta) + estoy libre (disponibilidad)',
+                '¿Qué se debe mostrar al pedir una visita?', ['Disponibilidad', 'Indisponibilidad', 'Indiferencia',
+                    'Enojo'
+                ], 0, 'Escribe una petición de visita o encuentro.'
+            ],
+            ['Pedir perdón por un olvido', 'Reconocimiento + disculpa + enmienda',
+                'Para pedir perdón por un olvido, se reconoce el fallo, se disculpa y se ofrece una enmienda.',
+                'Se me pasó llamarte en tu cumpleaños. Lo siento muchísimo. Te llamo hoy para felicitarte.',
+                'Se me pasó (reconocimiento) + lo siento (disculpa) + te llamo (enmienda)',
+                '¿Qué se ofrece al pedir perdón por un olvido?', ['Una enmienda', 'Una excusa', 'Un regalo',
+                    'Una disculpa sin más'
+                ], 0, 'Escribe una petición de perdón por un olvido.'
+            ],
+            ['Pedir que alguien cuide de alguien', 'Preocupación + petición + confianza',
+                'Para pedir que cuiden de alguien, se expresa preocupación, se hace la petición y se muestra confianza.',
+                'Me preocupo por mamá. ¿Podrías cuidar de ella mientras no estoy? Confío en ti.',
+                'Me preocupo (preocupación) + ¿podrías cuidar? (petición) + confío en ti (confianza)',
+                '¿Qué se transmite al pedir que cuiden de alguien?', ['Confianza y preocupación', 'Indiferencia',
+                    'Enojo', 'Desconfianza'
+                ], 0, 'Escribe una petición para que cuiden de un familiar.'
+            ],
+            ['Pedir una respuesta (solicitar noticias)', 'Interés + petición + afecto',
+                'Para pedir noticias, se expresa interés, se pide una respuesta y se añade afecto.',
+                'Hace tiempo que no sé de ti. Por favor, escríbeme cuando puedas. Te extraño.',
+                'Hace tiempo que no sé (interés) + escríbeme (petición) + te extraño (afecto)',
+                '¿Qué se expresa al pedir noticias?', ['Interés y afecto', 'Indiferencia', 'Enojo', 'Distancia'],
+                0, 'Escribe una petición de respuesta con interés y afecto.'
+            ]
+        ];
+        b8.forEach(d => addLesson('peticiones', ...d));
+
+        // ============================================================
+        //  BLOQUE 9: AGRADECIMIENTOS (81–90)
+        // ============================================================
+        const b9 = [
+            ['Agradecer un regalo', 'Agradecimiento + descripción del regalo + sentimiento',
+                'Para agradecer un regalo, se expresa gratitud, se describe el regalo y el sentimiento que produce.',
+                '¡Muchas gracias por el regalo! La camiseta me encanta, es preciosa. Me siento muy afortunado.',
+                '¡Muchas gracias! (agradecimiento) + me encanta (sentimiento)',
+                '¿Qué se debe incluir al agradecer un regalo?', ['Gratitud, descripción y sentimiento',
+                    'Solo gratitud', 'Solo descripción', 'Solo sentimiento'
+                ], 0, 'Escribe un agradecimiento por un regalo.'
+            ],
+            ['Agradecer una visita', 'Agradecimiento + recuerdo + deseo de repetición',
+                'Para agradecer una visita, se expresa gratitud, se recuerda el momento y se desea que se repita.',
+                'Gracias por venir a verme. Fue genial tenerte aquí. Espero verte pronto de nuevo.',
+                'Gracias (agradecimiento) + fue genial (recuerdo) + espero verte (deseo)',
+                '¿Qué se expresa al agradecer una visita?', ['Gratitud, recuerdo y deseo de repetición',
+                    'Solo gratitud', 'Solo recuerdo', 'Solo deseo'
+                ], 0, 'Escribe un agradecimiento por una visita.'
+            ],
+            ['Agradecer un consejo', 'Agradecimiento + utilidad del consejo + aplicación',
+                'Para agradecer un consejo, se expresa gratitud, se valora su utilidad y se menciona cómo se aplicará.',
+                'Te agradezco muchísimo tu consejo. Me ha sido de gran ayuda. Lo pondré en práctica.',
+                'Te agradezco (agradecimiento) + me ha sido de gran ayuda (utilidad) + lo pondré en práctica (aplicación)',
+                '¿Qué se debe mencionar al agradecer un consejo?', ['Utilidad y aplicación', 'Solo gratitud',
+                    'Solo utilidad', 'Solo aplicación'
+                ], 0, 'Escribe un agradecimiento por un consejo.'
+            ],
+            ['Agradecer un favor recibido', 'Agradecimiento + favor + sentimiento',
+                'Para agradecer un favor, se expresa gratitud, se menciona el favor y el sentimiento que genera.',
+                '¡No sé cómo agradecerte el favor! Me has salvado. Estoy muy agradecido.',
+                'No sé cómo agradecerte (gratitud) + me has salvado (favor) + agradecido (sentimiento)',
+                '¿Qué se expresa al agradecer un favor?', ['Gratitud intensa', 'Indiferencia', 'Enojo', 'Distancia'],
+                0, 'Escribe un agradecimiento por un favor recibido.'
+            ],
+            ['Agradecer el apoyo en momentos difíciles', 'Agradecimiento + apoyo + fortaleza',
+                'Para agradecer el apoyo en momentos difíciles, se expresa gratitud, se valora el apoyo y la fortaleza que da.',
+                'Gracias por estar a mi lado en este momento tan duro. Tu apoyo me da fuerza.',
+                'Gracias (agradecimiento) + estar a mi lado (apoyo) + me da fuerza (fortaleza)',
+                '¿Qué transmite el apoyo en momentos difíciles?', ['Fortaleza', 'Debilidad', 'Indiferencia',
+                    'Distancia'
+                ], 0, 'Escribe un agradecimiento por el apoyo en un momento difícil.'
+            ],
+            ['Agradecer una carta o mensaje', 'Agradecimiento + contenido + sentimiento',
+                'Para agradecer una carta, se expresa gratitud, se comenta el contenido y el sentimiento que despertó.',
+                'Me ha hecho mucha ilusión recibir tu carta. Me encantó saber de ti y leer tus noticias.',
+                'Me ha hecho ilusión (agradecimiento) + me encantó (contenido)',
+                '¿Qué se debe comentar al agradecer una carta?', ['El contenido y el sentimiento', 'Solo el sentimiento',
+                    'Solo el contenido', 'Nada'
+                ], 0, 'Escribe un agradecimiento por una carta recibida.'
+            ],
+            ['Agradecer la confianza', 'Agradecimiento + confianza + responsabilidad',
+                'Para agradecer la confianza, se expresa gratitud, se valora la confianza y el compromiso que conlleva.',
+                'Te agradezco la confianza que depositas en mí. Haré todo lo posible por estar a la altura.',
+                'Te agradezco (agradecimiento) + la confianza (valor) + haré todo lo posible (responsabilidad)',
+                '¿Qué se asume al agradecer la confianza?', ['Responsabilidad', 'Indiferencia', 'Enojo', 'Distancia'],
+                0, 'Escribe un agradecimiento por la confianza depositada.'
+            ],
+            ['Agradecer la paciencia', 'Agradecimiento + paciencia + disculpa',
+                'Para agradecer la paciencia, se expresa gratitud, se valora la paciencia y se ofrece una disculpa si es necesario.',
+                'Gracias por tu paciencia. Sé que he sido pesado. Te lo agradezco de corazón.',
+                'Gracias (agradecimiento) + por tu paciencia (valor) + te lo agradezco (intensidad)',
+                '¿Qué se debe hacer al agradecer la paciencia?', ['Expresar gratitud y, si es necesario, disculparse',
+                    'Solo agradecer', 'Solo disculparse', 'Nada'
+                ], 0, 'Escribe un agradecimiento por la paciencia.'
+            ],
+            ['Agradecer la compañía', 'Agradecimiento + compañía + deseo',
+                'Para agradecer la compañía, se expresa gratitud, se valora el tiempo compartido y el deseo de repetirlo.',
+                'Gracias por acompañarme este fin de semana. Lo he pasado genial. ¡Repetimos pronto!',
+                'Gracias (agradecimiento) + lo he pasado genial (valoración) + repetimos (deseo)',
+                '¿Qué se expresa al agradecer la compañía?', ['Valoración y deseo de repetición', 'Solo gratitud',
+                    'Solo valoración', 'Solo deseo'
+                ], 0, 'Escribe un agradecimiento por la compañía.'
+            ],
+            ['Agradecimiento general en el cierre', 'Agradecimiento + reconocimiento + afecto',
+                'Al final de la carta, se puede incluir un agradecimiento general por todo lo recibido.',
+                'Gracias por todo lo que haces por mí. Eres un pilar en mi vida. Te quiero mucho.',
+                'Gracias por todo (agradecimiento general) + eres un pilar (reconocimiento) + te quiero (afecto)',
+                '¿Qué se incluye en un agradecimiento general al final de la carta?', ['Reconocimiento y afecto',
+                    'Solo afecto', 'Solo reconocimiento', 'Nada'
+                ], 0, 'Escribe un agradecimiento general para el final de una carta.'
+            ]
+        ];
+        b9.forEach(d => addLesson('agradecimientos', ...d));
+
+        // ============================================================
+        //  BLOQUE 10: ESTILO Y RECURSOS (91–100)
+        // ============================================================
+        const b10 = [
+            ['Uso de diminutivos (cariño)', 'Diminutivos: -ito, -cito, -illo',
+                'Los diminutivos son muy comunes en cartas familiares para expresar cariño y cercanía.',
+                'Un besito para ti. Cuídate muchito.',
+                'besito (diminutivo de beso) + muchito (diminutivo de mucho)',
+                '¿Qué recurso expresa cariño en cartas familiares?', ['Los diminutivos', 'Los aumentativos',
+                    'Los adverbios', 'Los sustantivos abstractos'
+                ], 0, 'Escribe una frase usando al menos dos diminutivos.'
+            ],
+            ['Uso de apodos cariñosos', 'Apodos: cariño, vida, cielo, tesoro',
+                'Los apodos cariñosos refuerzan la intimidad y el afecto en la carta.',
+                'Mi vida, ¿cómo estás? Te echo de menos, cielo.',
+                'Mi vida (apodo) + cielo (apodo)',
+                '¿Qué recurso refuerza la intimidad en cartas familiares?', ['Apodos cariñosos', 'Apellidos',
+                    'Títulos profesionales', 'Nombres completos'
+                ], 0, 'Escribe una frase usando dos apodos cariñosos.'
+            ],
+            ['Uso de exclamaciones (alegría, sorpresa)', '¡! + exclamaciones',
+                'Las exclamaciones transmiten emociones intensas como alegría, sorpresa o entusiasmo.',
+                '¡Qué alegría me da saber que estás bien! ¡Felicidades!',
+                '¡Qué alegría! (exclamación de alegría) + ¡Felicidades! (exclamación)',
+                '¿Qué signos se usan para expresar emociones intensas?', ['¡!', '¿?', '...', ';;'], 0,
+                'Escribe una frase con dos exclamaciones para expresar alegría.'
+            ],
+            ['Uso de preguntas retóricas', '¿...? + reflexión',
+                'Las preguntas retóricas invitan a la reflexión y crean complicidad con el lector.',
+                '¿Quién no echa de menos los viejos tiempos?',
+                '¿Quién no...? (pregunta retórica)',
+                '¿Qué tipo de pregunta no espera respuesta sino reflexión?', ['Retórica', 'Directa', 'Indirecta',
+                    'Cerrada'
+                ], 0, 'Escribe una pregunta retórica para una carta familiar.'
+            ],
+            ['Uso de comparaciones afectivas', 'Comparación + afecto',
+                'Las comparaciones con elementos positivos (como un sol, como una estrella) refuerzan el elogio.',
+                'Eres como un sol en mi vida. Siempre iluminas mis días.',
+                'Eres como un sol (comparación positiva)',
+                '¿Qué recurso refuerza los elogios en cartas familiares?', ['Comparaciones afectivas', 'Críticas',
+                    'Indiferencia', 'Negaciones'
+                ], 0, 'Escribe una comparación afectiva para un familiar.'
+            ],
+            ['Uso de metáforas familiares', 'Metáfora + sentimiento',
+                'Las metáforas con elementos del hogar o la naturaleza transmiten calidez y pertenencia.',
+                'Nuestra familia es un árbol cuyas raíces nos unen.',
+                'Nuestra familia es un árbol (metáfora)',
+                '¿Qué recurso literario se usa para expresar la unión familiar?', ['Metáfora', 'Símil', 'Hipérbole',
+                    'Onomatopeya'
+                ], 0, 'Escribe una metáfora sobre la familia.'
+            ],
+            ['Uso de recuerdos compartidos', 'Recuerdo + emoción + vínculo',
+                'Evocar recuerdos compartidos fortalece el vínculo emocional y crea nostalgia positiva.',
+                '¿Te acuerdas de aquel verano en la playa? Qué tiempos aquellos.',
+                '¿Te acuerdas? (recuerdo) + qué tiempos (emoción)',
+                '¿Qué recurso fortalece el vínculo emocional en cartas familiares?', ['Recuerdos compartidos',
+                    'Datos actuales', 'Futuro incierto', 'Hechos fríos'
+                ], 0, 'Escribe un párrafo evocando un recuerdo compartido.'
+            ],
+            ['Uso de refranes o dichos populares', 'Refrán + enseñanza',
+                'Los refranes aportan sabiduría popular y cercanía cultural en la carta.',
+                'Como dice el refrán: «Más vale pájaro en mano que ciento volando».',
+                'Refrán + enseñanza',
+                '¿Qué recurso aporta sabiduría popular?', ['Refranes', 'Palabras técnicas', 'Datos científicos',
+                    'Estadísticas'
+                ], 0, 'Escribe un refrán y su significado para una carta familiar.'
+            ],
+            ['Uso de la primera persona del plural (nosotros)', 'Nosotros + inclusión',
+                'Usar «nosotros» crea un sentido de pertenencia y unidad familiar.',
+                'Juntos, nosotros podemos con todo. Somos una familia fuerte.',
+                'Nosotros (inclusión) + podemos (unidad)',
+                '¿Qué expresa el uso de «nosotros» en cartas familiares?', ['Unidad y pertenencia', 'Individualidad',
+                    'Distancia', 'Egoísmo'
+                ], 0, 'Escribe una frase usando «nosotros» para crear unidad familiar.'
+            ],
+            ['Cierre con frase emotiva', 'Frase final + afecto + despedida',
+                'Una frase emotiva al final de la carta deja un recuerdo duradero y refuerza el vínculo.',
+                'Siempre estarás en mi corazón, pase lo que pase. Te quiero.',
+                'Siempre estarás en mi corazón (frase emotiva) + te quiero (afecto)',
+                '¿Qué efecto tiene una frase emotiva al final de la carta?', ['Deja un recuerdo duradero',
+                    'No tiene efecto', 'Crea distancia', 'Indica indiferencia'
+                ], 0, 'Escribe un cierre con una frase emotiva para una carta familiar.'
+            ]
+        ];
+        b10.forEach(d => addLesson('estilo', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Estructura: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · Cartas Familiares');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Cartas Familiares cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

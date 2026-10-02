@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 técnicas de ortografía avanzada</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.9rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.9rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 técnicas de ortografía avanzada · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'tilde diacrítica', 'b/v', 'paréntesis', 'mayúscula')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 técnicas de ortografía avanzada de la lengua castellana, basadas en la última normativa de la RAE (2023) y los usos estilísticos de los grandes escritores hispánicos.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada técnica se presenta como una corrección al margen sobre el texto, devolviendo al oficio de escribir su dimensión física y artesanal.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas se han organizado en diez familias que cubren la acentuación diacrítica y enfática, la puntuación expresiva, el uso de mayúsculas y minúsculas, los homófonos problemáticos, la escritura de prefijos y sufijos, los latinismos y extranjerismos, las abreviaturas y siglas, la división de palabras y las últimas reformas ortográficas.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia ortográfica</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Acentuación diacrítica",
+                tecnicas: [
+                    {nombre:"Tilde diacrítica en monosílabos", desc:"Diferencia significados: té (bebida) / te (pronombre).", ej:"¿Quieres que te prepare un té?"},
+                    {nombre:"Diferencia entre dé y de", desc:"Dé (verbo dar) lleva tilde; de (preposición) no.", ej:"Espero que me dé el libro de cuentos."},
+                    {nombre:"Uso de sé y se", desc:"Sé (verbo saber o ser) lleva tilde; se (pronombre) no.", ej:"Sé que se lo dijiste."},
+                    {nombre:"Aún / aun", desc:"Aún (todavía) con tilde; aun (incluso, siquiera) sin tilde.", ej:"Aún no ha llegado; aun así, esperaremos."},
+                    {nombre:"Solo / sólo (tilde opcional)", desc:"La RAE admite solo sin tilde, pero puede usarse para desambiguar.", ej:"Estuve solo toda la tarde (sin tilde recomendado)."},
+                    {nombre:"Tilde en interrogativos y exclamativos", desc:"Qué, quién, cuál, dónde, cuándo, cómo, cuánto llevan tilde en preguntas y exclamaciones.", ej:"¡Qué hermoso día! ¿Quién ha llamado?"},
+                    {nombre:"Tilde en interrogativos indirectos", desc:"Llevan tilde aunque no estén entre signos de interrogación.", ej:"No sé cuándo llegará."},
+                    {nombre:"Demostrativos con tilde (opcional)", desc:"Antes obligatoria, hoy solo recomendada si hay ambigüedad.", ej:"Este libro y aquel otro (sin tilde)."},
+                    {nombre:"Adverbio aún vs. adjetivo aun", desc:"Aún (todavía) con tilde; aun (hasta, incluso) sin tilde.", ej:"Aun los más fuertes lloraron; aún no ha terminado."},
+                    {nombre:"Tilde en aún así / aun así", desc:"Aun así (sin tilde) = a pesar de eso; aún así (con tilde) = todavía de ese modo.", ej:"No me invitó; aun así, fui."}
+                ]
+            },
+            {
+                nombre: "B. Acentuación de compuestos y prefijos",
+                tecnicas: [
+                    {nombre:"Palabras compuestas sin guion", desc:"Solo se acentúa la última palabra según las reglas generales.", ej:"Decimoséptimo (sin tilde en decimo), puntapié (tilde en pie)."},
+                    {nombre:"Palabras compuestas con guion", desc:"Cada elemento conserva su tilde original.", ej:"Teórico-práctico, histórico-crítico."},
+                    {nombre:"Adverbios en -mente", desc:"Conservan la tilde del adjetivo base si lo lleva.", ej:"Fácilmente (de fácil), rápidamente (de rápido)."},
+                    {nombre:"Prefijos unidos", desc:"Los prefijos no llevan tilde y la palabra resultante sigue las reglas generales.", ej:"Antirrobo, superbién (tilde por hiato)."},
+                    {nombre:"Ex- como prefijo separable", desc:"Se escribe unido: exmarido, exministro.", ej:"El exmarido de mi hermana."},
+                    {nombre:"Compuestos de verbo + pronombre", desc:"Siguen las reglas de acentuación.", ej:"Dámelo, díselo (esdrújulas, tilde obligatoria)."},
+                    {nombre:"Compuestos de verbo + verbo", desc:"El primer verbo pierde la tilde si la llevaba.", ej:"Vaivén (de va y ven), duermevela."},
+                    {nombre:"Palabras con doble acentuación", desc:"Algunas palabras admiten dos acentuaciones.", ej:"Período / periodo, austríaco / austriaco."},
+                    {nombre:"Hiato acentual en prefijos", desc:"Si hay hiato entre prefijo y raíz, se acentúa.", ej:"Reúne (de re + une), sonríe."},
+                    {nombre:"Tilde en mayúsculas", desc:"Las mayúsculas deben llevar tilde siempre.", ej:"ÁNGEL, ANTÁRTIDA, PÉREZ."}
+                ]
+            },
+            {
+                nombre: "C. Puntuación expresiva",
+                tecnicas: [
+                    {nombre:"Coma vocativa", desc:"Separa el vocativo del resto de la oración.", ej:"Oye, tú, ven aquí."},
+                    {nombre:"Coma elíptica", desc:"Sustituye a un verbo omitido.", ej:"Pedro estudia derecho; Juan, medicina."},
+                    {nombre:"Coma de inciso", desc:"Encierra aclaraciones o incisos.", ej:"El presidente, visiblemente nervioso, tomó la palabra."},
+                    {nombre:"Punto y coma en enumeraciones complejas", desc:"Separa elementos que ya contienen comas.", ej:"Fuimos a París, Francia; Roma, Italia; y Berlín, Alemania."},
+                    {nombre:"Dos puntos de anuncio", desc:"Anuncian una enumeración, cita o explicación.", ej:"Había tres cosas: amor, esperanza y coraje."},
+                    {nombre:"Dos puntos consecutivos", desc:"Expresan causa o consecuencia.", ej:"Llueve: nos quedaremos en casa."},
+                    {nombre:"Guion largo (raya) en diálogos", desc:"Marca el cambio de interlocutor.", ej:"—¿Vienes? —No sé."},
+                    {nombre:"Paréntesis para acotaciones", desc:"Información complementaria o aclaratoria.", ej:"La obra se estrenó en 1927 (año del surrealismo)."},
+                    {nombre:"Comillas españolas", desc:"Las angulares (« ») son las preferidas, luego las inglesas (\" \") y las simples (' ').", ej:"Dijo: «No lo sé»."},
+                    {nombre:"Signos de interrogación y exclamación", desc:"En español se colocan al inicio y al final.", ej:"¿Cómo te llamas? ¡Qué alegría verte!"}
+                ]
+            },
+            {
+                nombre: "D. Homófonos y parónimos problemáticos",
+                tecnicas: [
+                    {nombre:"B / V en palabras homófonas", desc:"Basto (grosero) / Vasto (extenso).", ej:"Es un hombre basto; posee un vasto conocimiento."},
+                    {nombre:"H / sin H", desc:"Hojear (pasar hojas) / Ojear (mirar de reojo).", ej:"Hojeaba el libro mientras ojeaba la sala."},
+                    {nombre:"G / J", desc:"Extranjero (con J), ligero (con G).", ej:"El extranjero era un hombre ligero de equipaje."},
+                    {nombre:"Y / LL", desc:"Cayó (de caer) / Calló (de callar).", ej:"Se cayó del árbol y se calló de vergüenza."},
+                    {nombre:"S / C / Z en homófonos", desc:"Cocer (hervir) / Coser (costura).", ej:"Voy a cocer la verdura y luego a coser la ropa."},
+                    {nombre:"Por qué / porque / porqué / por que", desc:"Cuatro formas: pregunta, respuesta, sustantivo, preposición + relativo.", ej:"¿Por qué has venido? Porque te quiero. Explicó el porqué. Esta es la razón por que vine."},
+                    {nombre:"Con qué / conque / con que", desc:"Interrogativo, consecutivo, preposición + relativo.", ej:"¿Con qué lo harás? Conque te vas... El arma con que luchó."},
+                    {nombre:"A ver / haber", desc:"A ver (mirar), haber (verbo auxiliar).", ej:"Voy a ver si hay comida; debe de haber algo."},
+                    {nombre:"Hay / ahí / ¡ay!", desc:"Hay (haber), ahí (lugar), ¡ay! (exclamación).", ej:"Hay un gato ahí. ¡Ay, cómo asusta!"},
+                    {nombre:"Sino / si no", desc:"Sino (conjunción adversativa), si no (condicional negativa).", ej:"No es azul, sino verde. Si no vienes, me enfado."}
+                ]
+            },
+            {
+                nombre: "E. Mayúsculas y minúsculas",
+                tecnicas: [
+                    {nombre:"Mayúscula en nombres propios", desc:"Personas, lugares, instituciones.", ej:"María, Madrid, Real Academia Española."},
+                    {nombre:"Minúscula en días y meses", desc:"Se escriben con minúscula.", ej:"lunes, 12 de enero de 2026."},
+                    {nombre:"Minúscula en estaciones del año", desc:"Primavera, verano, otoño, invierno van con minúscula.", ej:"La primavera comienza en marzo."},
+                    {nombre:"Mayúscula en siglas", desc:"Las siglas se escriben sin tilde y sin punto.", ej:"ONU, UNESCO, RAE."},
+                    {nombre:"Minúscula en cargos y títulos", desc:"Van con minúscula cuando no se dirigen directamente.", ej:"El rey Felipe VI; el presidente del Gobierno."},
+                    {nombre:"Mayúscula en tratamientos abreviados", desc:"Ud., Sr., D., Dr.", ej:"El Sr. García es Dr. en Física."},
+                    {nombre:"Mayúscula en disciplinas académicas", desc:"Cuando se refieren al nombre oficial de la asignatura.", ej:"Estudio Derecho; me gusta la filosofía."},
+                    {nombre:"Mayúscula en títulos de obras", desc:"Solo la primera palabra y los nombres propios.", ej:"Cien años de soledad, El amor en los tiempos del cólera."},
+                    {nombre:"Minúscula en nacionalidades y religiones", desc:"Van con minúscula.", ej:"mexicano, francés, católico, budista."},
+                    {nombre:"Mayúscula en topónimos compuestos", desc:"Llevan mayúscula los componentes significativos.", ej:"La Habana, Puerto Rico, Buenos Aires."}
+                ]
+            },
+            {
+                nombre: "F. Prefijos y sufijos",
+                tecnicas: [
+                    {nombre:"Prefijo ex-", desc:"Unido a la palabra: exmarido, exdirector.", ej:"El exdirector de la empresa."},
+                    {nombre:"Prefijo anti-", desc:"Unido: antirrobo, antisocial.", ej:"Instaló un sistema antirrobo."},
+                    {nombre:"Prefijo post- / pos-", desc:"Ambas formas aceptadas: posmoderno, postoperatorio.", ej:"La era posmoderna comenzó en el siglo XX."},
+                    {nombre:"Prefijo pre-", desc:"Unido: preinscripción, prehistoria.", ej:"La prehistoria es fascinante."},
+                    {nombre:"Prefijo re-", desc:"Unido: reabrir, rehacer.", ej:"Voy a rehacer el trabajo."},
+                    {nombre:"Sufijo -ción", desc:"Forma sustantivos a partir de verbos.", ej:"De informar: información."},
+                    {nombre:"Sufijo -sión", desc:"Palabras que suelen tener -sión en lugar de -ción.", ej:"De confesar: confesión."},
+                    {nombre:"Sufijo -mente", desc:"Conserva tilde del adjetivo original.", ej:"Rápidamente, cortésmente."},
+                    {nombre:"Prefijo sub-", desc:"Unido: subdirector, submarino.", ej:"El submarino amarillo."},
+                    {nombre:"Prefijos y guion", desc:"Se usa guion cuando la palabra siguiente es una cifra, mayúscula o sigla.", ej:"Sub-21, anti-OTAN."}
+                ]
+            },
+            {
+                nombre: "G. Latinismos, extranjerismos y neologismos",
+                tecnicas: [
+                    {nombre:"Latinismos crudos", desc:"Se escriben en cursiva y sin tilde: ad hoc, curriculum vitae.", ej:"Presentó su curriculum vitae."},
+                    {nombre:"Latinismos adaptados", desc:"Se escriben en redonda y con tilde si es necesario: currículo.", ej:"Actualizó su currículo."},
+                    {nombre:"Extranjerismos crudos", desc:"En cursiva: software, jazz, pizza (ya admitido).", ej:"Instaló el software en su ordenador."},
+                    {nombre:"Extranjerismos adaptados", desc:"En redonda, siguiendo reglas españolas: fútbol, yogur, espagueti.", ej:"Comimos espagueti con yogur."},
+                    {nombre:"Palabras de otras lenguas cooficiales", desc:"Se respeta su ortografía original.", ej:"L'Auditori (en catalán), piragua (taíno)."},
+                    {nombre:"Cursiva para neologismos no asentados", desc:"Las palabras de nuevo cuño van en cursiva la primera vez.", ej:"El ciberacoso es un problema creciente."},
+                    {nombre:"Comillas para anglicismos", desc:"Algunos anglicismos se entrecomillan si no están adaptados.", ej:"Hizo 'running' por el parque."},
+                    {nombre:"Siglas extranjeras", desc:"Se escriben sin tilde y sin punto: USB, DVD.", ej:"Guardé el archivo en un USB."},
+                    {nombre:"Abreviaturas latinas", desc:"etc., ibíd., op. cit.", ej:"Leyó a Platón, Aristóteles, etc."},
+                    {nombre:"Locuciones latinas", desc:"In fraganti, ipso facto, ex aequo.", ej:"Fue sorprendido in fraganti."}
+                ]
+            },
+            {
+                nombre: "H. Abreviaturas, siglas y acrónimos",
+                tecnicas: [
+                    {nombre:"Abreviaturas con punto", desc:"Etc., Sr., Sra., Ud., Dr.", ej:"El Sr. García es Dr. en Medicina."},
+                    {nombre:"Abreviaturas sin punto", desc:"Unidades de medida: m, km, g, l, h.", ej:"Recorrió 10 km en 1 h."},
+                    {nombre:"Siglas", desc:"Se escriben en mayúscula, sin tilde y sin punto.", ej:"RAE, ONU, UE."},
+                    {nombre:"Acrónimos lexicalizados", desc:"Se escriben en minúscula: ovni, sida, láser.", ej:"El láser corrigió su miopía."},
+                    {nombre:"Siglas con número", desc:"Se mantiene el número: G20, 5G.", ej:"La cumbre del G20."},
+                    {nombre:"Siglas con tilde", desc:"Llevan tilde si la palabra que representan la lleva.", ej:"CÍA (Compañía), ANTÁRTIDA."},
+                    {nombre:"Abreviaturas con elevación", desc:"Se usan en fórmulas de tratamiento: D.ª, D.ª.", ej:"D.ª María Pérez."},
+                    {nombre:"Abreviaturas con barra", desc:"c/ (calle), p. ej. (por ejemplo).", ej:"Vive en c/ Mayor, p. ej., cerca del centro."},
+                    {nombre:"Plural de siglas", desc:"No añaden s: las ONG, varios DVD.", ej:"Las ONG colaboraron."},
+                    {nombre:"Abreviaturas bibliográficas", desc:"pág., vol., ed.", ej:"pág. 23, vol. III, 2.ª ed."}
+                ]
+            },
+            {
+                nombre: "I. División de palabras y separación silábica",
+                tecnicas: [
+                    {nombre:"División por sílabas", desc:"No se separan las letras de una sílaba.", ej:"Ca-sa, pe-rro, li-bro."},
+                    {nombre:"Dígrafos inseparables", desc:"Ch, ll, rr no se separan.", ej:"Co-che, ca-lle, pe-rro."},
+                    {nombre:"Vocales contiguas", desc:"Los diptongos no se separan; los hiatos sí.", ej:"Cau-sa (diptongo), pa-ís (hiato)."},
+                    {nombre:"Palabras compuestas", desc:"Se dividen por sus componentes o por sílabas.", ej:"De-sa-ten-ción o de-sa-ten-ción."},
+                    {nombre:"Línea final con guion", desc:"No más de dos líneas consecutivas con guion.", ej:"... (evitar más de dos guiones seguidos)."},
+                    {nombre:"Palabras cortas", desc:"No se parten palabras de una o dos sílabas.", ej:"No se divide: luz, mar."},
+                    {nombre:"Prefijos en división", desc:"Pueden separarse: sub-marino, pre-escolar.", ej:"sub-marino, pre-escolar."},
+                    {nombre:"Separación por componentes etimológicos", desc:"Trans-porte, hiper-activo.", ej:"trans-porte, hiper-activo."},
+                    {nombre:"Vocales dobles", desc:"En palabras con hiato, se separan: re-ú-ne.", ej:"re-ú-ne, so-é-z."},
+                    {nombre:"Palabras con h intercalada", desc:"No se separa la h de la vocal anterior.", ej:"al-co-hol, in-há-bil."}
+                ]
+            },
+            {
+                nombre: "J. Ortografía RAE actualizada y usos estilísticos",
+                tecnicas: [
+                    {nombre:"Tilde en 'solo'", desc:"La RAE recomienda no poner tilde, salvo ambigüedad.", ej:"Estuve solo en casa (sin tilde)."},
+                    {nombre:"Tilde en demostrativos", desc:"Solo si hay ambigüedad.", ej:"Este libro (sin tilde)."},
+                    {nombre:"Tilde en la conjunción 'o'", desc:"Nunca lleva tilde, incluso entre cifras.", ej:"10 o 20, 3 o 4."},
+                    {nombre:"Eliminación de tildes en monosílabos", desc:"'Guió', 'fió', 'lió' ya no llevan tilde.", ej:"Se guio por el mapa."},
+                    {nombre:"Eliminación de tilde en 'truhan'", desc:"Ahora se escribe truhan, sin tilde.", ej:"Era un truhan redomado."},
+                    {nombre:"Eliminación de tilde en 'guion'", desc:"Se admite guion (sin tilde) como monosílabo.", ej:"El guion de la película."},
+                    {nombre:"Tilde en 'aún' en contexto de ambigüedad", desc:"Se recomienda aún para 'todavía' y aun para 'incluso'.", ej:"Aun así, no cambió de opinión."},
+                    {nombre:"Uso de la diéresis", desc:"Obligatoria en güe, güi: antigüedad, pingüino.", ej:"La antigüedad de aquel pingüino."},
+                    {nombre:"Uso de la coma en oraciones largas", desc:"Estilo literario: coma para crear ritmo.", ej:"Llegó, miró, suspiró y, sin decir nada, se fue."},
+                    {nombre:"Puntuación estilística: puntos suspensivos", desc:"Crean suspense o silencio.", ej:"No sé... tal vez debería... dejarlo."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoOrtografia')) {
+                const p = JSON.parse(localStorage.getItem('progresoOrtografia'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoOrtografia', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos emplea la técnica <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

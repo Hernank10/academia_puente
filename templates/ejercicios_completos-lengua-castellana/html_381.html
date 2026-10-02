@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Grammatica Ars | Cuaderno de Gramática del Castellano</title>
+    <!-- Tipografías exquisitas -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Paleta oscura: noche, espresso, pergamino + oro envejecido */
+        :root {
+            --noche: #0a0a0c;
+            --espresso: #1c1713;
+            --pergamino: #ece3d5;
+            --pergamino-oscuro: #d4c9b5;
+            --oro-antiguo: #c9a03d;
+            --oro-pálido: #ddb856;
+            --texto-oscuro: #2c241e;
+            --texto-claro: #f0ebe0;
+        }
+
+        body {
+            background: var(--noche);
+            font-family: 'EB Garamond', 'Cormorant Garamond', Georgia, serif;
+            color: var(--texto-oscuro);
+            line-height: 1.55;
+        }
+
+        /* textura de grano sutil */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400"><filter id="grano"><feTurbulence type="fractalNoise" baseFrequency="0.7" numOctaves="3" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23grano)" opacity="0.06"/></svg>');
+            background-repeat: repeat;
+            opacity: 0.5;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .lms-app {
+            display: flex;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* SIDEBAR desplegable */
+        .sidebar-lux {
+            position: fixed;
+            top: 0;
+            left: -360px;
+            width: 360px;
+            height: 100vh;
+            background: #1a1512;
+            backdrop-filter: blur(6px);
+            border-right: 1px solid var(--oro-antiguo);
+            z-index: 1100;
+            transition: left 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            padding: 2rem 1.2rem;
+            overflow-y: auto;
+            color: var(--pergamino);
+            box-shadow: 6px 0 25px rgba(0,0,0,0.5);
+        }
+
+        .sidebar-lux.open {
+            left: 0;
+        }
+
+        .sidebar-header {
+            border-bottom: 1px solid var(--oro-antiguo);
+            padding-bottom: 1rem;
+            margin-bottom: 1.8rem;
+            font-size: 1.6rem;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            letter-spacing: 2px;
+        }
+
+        .close-sidebar {
+            background: none;
+            border: none;
+            color: var(--oro-pálido);
+            font-size: 1.8rem;
+            cursor: pointer;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 0.8rem;
+            background: #2d2620;
+            border: 1px solid var(--oro-antiguo);
+            color: var(--pergamino);
+            font-family: 'EB Garamond', serif;
+            margin-bottom: 2rem;
+            border-radius: 6px;
+        }
+
+        .tech-index {
+            list-style: none;
+        }
+        .tech-index li {
+            margin-bottom: 0.7rem;
+            border-left: 2px solid transparent;
+            padding-left: 0.8rem;
+            transition: 0.2s;
+        }
+        .tech-index li a {
+            color: var(--pergamino);
+            text-decoration: none;
+            display: block;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .tech-index li:hover {
+            border-left-color: var(--oro-antiguo);
+        }
+
+        .main-lux {
+            flex: 1;
+            background: var(--pergamino);
+            background-image: radial-gradient(circle at 20% 35%, rgba(160, 130, 80, 0.05) 1.5%, transparent 2%);
+            background-size: 35px 35px;
+        }
+
+        .gold-progress {
+            position: sticky;
+            top: 0;
+            width: 100%;
+            height: 4px;
+            background: #2a221d;
+            z-index: 1020;
+        }
+        .gold-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--oro-antiguo), #f2da8f, var(--oro-antiguo));
+            transition: width 0.3s;
+        }
+
+        .hero-welcome {
+            padding: 2rem 3rem 1rem 3rem;
+            border-bottom: 1px solid var(--oro-antiguo);
+            background: rgba(245, 238, 225, 0.4);
+            margin-bottom: 1.8rem;
+        }
+        .hero-welcome h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3.2rem;
+            font-weight: 600;
+            color: var(--espresso);
+        }
+        .ornament-line {
+            font-size: 1.8rem;
+            color: var(--oro-antiguo);
+            letter-spacing: 8px;
+            margin: 0.4rem 0;
+        }
+        .stats-mini {
+            display: flex;
+            gap: 2rem;
+            margin-top: 0.8rem;
+            font-size: 0.9rem;
+        }
+
+        .menu-toggle {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: var(--espresso);
+            border: 1px solid var(--oro-antiguo);
+            color: var(--oro-pálido);
+            font-size: 1.9rem;
+            padding: 0.2rem 0.8rem;
+            cursor: pointer;
+            z-index: 1120;
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .tech-layout {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 1rem 2.5rem 4rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+        .tech-primary {
+            flex: 3;
+            min-width: 260px;
+        }
+        .tech-aside {
+            flex: 1;
+            min-width: 230px;
+            background: #f4ede2;
+            padding: 1.5rem;
+            border-left: 3px solid var(--oro-antiguo);
+            box-shadow: -2px 0 10px rgba(0,0,0,0.02);
+        }
+
+        .capitular {
+            font-size: 4.2rem;
+            font-weight: 700;
+            float: left;
+            line-height: 0.8;
+            padding-right: 0.6rem;
+            color: var(--oro-antiguo);
+            font-family: 'Cormorant Garamond', serif;
+        }
+        .tech-title {
+            font-size: 2rem;
+            font-weight: 600;
+            border-left: 5px solid var(--oro-antiguo);
+            padding-left: 1rem;
+            margin-bottom: 1rem;
+        }
+        .numero-gigante {
+            font-size: 9rem;
+            font-weight: 800;
+            color: rgba(201, 160, 61, 0.1);
+            position: absolute;
+            right: 15px;
+            top: -15px;
+            pointer-events: none;
+            user-select: none;
+            font-family: 'EB Garamond', serif;
+        }
+        .card {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            font-size: 1.5rem;
+            border-bottom: 1px dashed var(--oro-antiguo);
+            display: inline-block;
+            margin-bottom: 0.7rem;
+        }
+        textarea {
+            width: 100%;
+            background: #fffef7;
+            border: 1px solid #cfc3ad;
+            padding: 0.9rem;
+            font-family: 'EB Garamond', serif;
+            margin-top: 0.6rem;
+            border-radius: 8px;
+        }
+        .btn-nav {
+            background: none;
+            border: 1px solid var(--oro-antiguo);
+            padding: 0.5rem 1.2rem;
+            margin-right: 1rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--espresso);
+            color: var(--pergamino);
+            transition: 0.2s;
+        }
+        .btn-nav:hover {
+            background: var(--oro-antiguo);
+            color: var(--espresso);
+        }
+        .btn-complete {
+            background: var(--oro-antiguo);
+            color: #1f1a16;
+            border: none;
+        }
+        .btn-complete:hover {
+            background: #b88a2a;
+        }
+        .btn-show-answer {
+            background: #2c2620;
+            border-color: var(--oro-antiguo);
+            margin-left: 0.5rem;
+        }
+        .progress-unit {
+            background: #cfc2ae;
+            border-radius: 30px;
+            height: 6px;
+            margin: 0.7rem 0;
+        }
+        .respuesta-correcta {
+            background: #e8ddcc;
+            border-left: 3px solid var(--oro-antiguo);
+            padding: 0.8rem;
+            margin-top: 0.5rem;
+            font-style: italic;
+            display: none;
+        }
+        .respuesta-correcta.visible {
+            display: block;
+        }
+
+        @media (max-width: 780px) {
+            .tech-layout { flex-direction: column; padding: 1rem; }
+            .hero-welcome h1 { font-size: 2rem; }
+            .sidebar-lux { width: 280px; left: -280px; }
+        }
+    </style>
+</head>
+<body>
+<button class="menu-toggle" id="menuToggleBtn">≡</button>
+
+<div class="sidebar-lux" id="luxSidebar">
+    <div class="sidebar-header">
+        <span>⚜ Índice Gramatical</span>
+        <button class="close-sidebar" id="closeSidebarBtn">✕</button>
+    </div>
+    <input type="text" id="searchTech" class="search-box" placeholder="🔎 Buscar técnica gramatical...">
+    <ul class="tech-index" id="techIndexList"></ul>
+    <div style="margin-top: 2rem; text-align: center; opacity: 0.5;">⁂ § ⚜</div>
+</div>
+
+<div class="main-lux">
+    <div class="gold-progress"><div class="gold-fill" id="globalGoldFill"></div></div>
+    <div class="hero-welcome">
+        <div class="ornament-line">⁂ § ⚜</div>
+        <h1>Grammatica Ars <span style="font-size: 1.2rem;">morfosintaxis · semántica · pragmática</span></h1>
+        <div class="stats-mini" id="statsPreview">Progreso: 0% · Técnicas completadas: 0/100</div>
+        <div class="ornament-line" style="font-size: 0.9rem;">⎯ el arte de la gramática castellana ⎯</div>
+    </div>
+    <div id="dynamicTechView" class="tech-layout"></div>
+</div>
+
+<script>
+    // ========== JSON COMPLETO DE 100 TÉCNICAS DE GRAMÁTICA ==========
+    const tecnicasGramatica = [
+        {id:1, nombre:"Sujeto y predicado: núcleos y concordancia", teoria:"La concordancia entre sujeto y verbo es obligatoria. El sujeto puede ser agente o paciente. El núcleo del sujeto es un sustantivo o pronombre; el núcleo del predicado es un verbo conjugado.", ejemplo:"Ejemplo: 'El profesor (sujeto) explicó (núcleo) la lección.'", ejercicio:"Analiza la concordancia: 'Los estudiantes presentaron sus proyectos'", respuesta:"Sujeto plural 'estudiantes', verbo plural 'presentaron' - concordancia correcta."},
+        {id:2, nombre:"Complemento directo (CD)", teoria:"El CD recibe directamente la acción del verbo. Responde a '¿qué?' o '¿a quién?'. Se reemplaza por 'lo, la, los, las'.", ejemplo:"Ejemplo: 'Veo la casa' → 'La veo'", ejercicio:"Identifica el CD: 'María compró un libro'", respuesta:"CD: 'un libro' → pronominalización: 'lo compró'"},
+        {id:3, nombre:"Complemento indirecto (CI)", teoria:"El CI indica el destinatario o beneficiario. Responde a '¿a quién?' o '¿para quién?'. Se reemplaza por 'le, les'.", ejemplo:"Ejemplo: 'Di el libro a Juan' → 'Le di el libro'", ejercicio:"Identifica el CI: 'El profesor explicó la lección a los alumnos'", respuesta:"CI: 'a los alumnos' → pronominalización: 'les explicó la lección'"},
+        {id:4, nombre:"Complemento de régimen preposicional (CRég)", teoria:"El CRég es un sintagma preposicional exigido por el verbo. Verbos como 'confiar en', 'arrepentirse de' rigen una preposición específica.", ejemplo:"Ejemplo: 'Confío en ti' → 'en ti' es CRég", ejercicio:"Identifica el CRég: 'El éxito depende del esfuerzo'", respuesta:"CRég: 'del esfuerzo' (depender de)"},
+        {id:5, nombre:"Complemento circunstancial (CC)", teoria:"El CC expresa circunstancias de lugar, tiempo, modo, causa, etc. No es seleccionado por el verbo.", ejemplo:"Ejemplo: 'Vive en Madrid' (CC lugar)", ejercicio:"Clasifica los CC: 'Llegó ayer a casa cansado'", respuesta:"CC tiempo: 'ayer', CC lugar: 'a casa', CC modo: 'cansado'"},
+        {id:6, nombre:"Atributo y verbos copulativos", teoria:"Los verbos copulativos (ser, estar, parecer) + atributo. El atributo concuerda con el sujeto.", ejemplo:"Ejemplo: 'La casa es grande' → 'grande' es atributo", ejercicio:"Identifica el atributo: 'María está cansada'", respuesta:"Atributo: 'cansada' (concuerda con 'María')"},
+        {id:7, nombre:"Predicativo subjetivo y objetivo", teoria:"El predicativo modifica al sujeto (subjetivo) o al CD (objetivo).", ejemplo:"Ejemplo subjetivo: 'Los niños corren felices'; objetivo: 'Pintaron la casa blanca'", ejercicio:"Clasifica: 'Nombraron presidente a López'", respuesta:"Predicativo objetivo (modifica a 'López')"},
+        {id:8, nombre:"Aposición explicativa y especificativa", teoria:"Aposición explicativa (entre comas) añade información; especificativa (sin comas) restringe.", ejemplo:"Ejemplo especificativa: 'El poeta Neruda'; explicativa: 'Neruda, el poeta chileno'", ejercicio:"Distingue: 'Mi amigo Juan' y 'Mi amigo, Juan'", respuesta:"Primera: especificativa; segunda: explicativa"},
+        {id:9, nombre:"Vocativo e interjección", teoria:"El vocativo llama al interlocutor (entre comas). La interjección expresa emociones.", ejemplo:"Ejemplo: 'Juan, ven aquí' (vocativo); '¡Ay!' (interjección)", ejercicio:"Identifica vocativo: 'Señores, escuchen'", respuesta:"Vocativo: 'Señores'"},
+        {id:10, nombre:"Sujeto tácito y explícito", teoria:"El castellano permite omitir el sujeto cuando es recuperable por la morfología verbal.", ejemplo:"Ejemplo: 'Llegué tarde' (sujeto tácito 'yo')", ejercicio:"Identifica el sujeto: 'Comieron pizza'", respuesta:"Sujeto tácito: 'ellos'"},
+        {id:11, nombre:"Sujeto paciente y oraciones pasivas", teoria:"En pasiva, el sujeto gramatical es paciente (recibe la acción).", ejemplo:"Ejemplo: 'El libro fue escrito por Borges'", ejercicio:"Transforma a pasiva: 'El autor escribió el ensayo'", respuesta:"'El ensayo fue escrito por el autor'"},
+        {id:12, nombre:"Pasiva refleja con 'se'", teoria:"Se + verbo activo en 3ª persona, sin agente explícito.", ejemplo:"Ejemplo: 'Se venden casas'", ejercicio:"Corrige: 'Se vende libros'", respuesta:"'Se venden libros' (concordancia en plural)"},
+        {id:13, nombre:"Sintagma nominal (SN)", teoria:"SN con núcleo sustantivo o pronombre, con determinantes y complementos.", ejemplo:"'Los tres jóvenes estudiantes de filosofía'", ejercicio:"Analiza: 'Aquellas dos bellas casas'", respuesta:"Det: 'Aquellas', 'dos'; Adj: 'bellas'; Núcleo: 'casas'"},
+        {id:14, nombre:"Sintagma verbal (SV)", teoria:"SV con núcleo verbal y sus complementos.", ejemplo:"'Escribió una carta a su madre'", ejercicio:"Analiza: 'El profesor explicó la lección'", respuesta:"Núcleo: 'explicó'; CD: 'la lección'"},
+        {id:15, nombre:"Sintagma preposicional (SP)", teoria:"SP = preposición + término (SN).", ejemplo:"'en la casa'", ejercicio:"Descompón: 'para los estudiantes'", respuesta:"Enlace: 'para'; Término: 'los estudiantes'"},
+        {id:16, nombre:"Determinantes", teoria:"Artículos, demostrativos, posesivos, cuantificadores.", ejemplo:"'el libro', 'esta casa', 'mi coche'", ejercicio:"Clasifica: 'Aquellas dos fotos suyas'", respuesta:"Demostrativo 'Aquellas', numeral 'dos', posesivo 'suyas'"},
+        {id:17, nombre:"Pronombres personales", teoria:"Átonos (me, te, se, lo, la, le) y tónicos (mí, ti, él).", ejemplo:"'Lo vi', 'para mí'", ejercicio:"Corrige si hay leísmo: 'A Juan le vi'", respuesta:"'A Juan lo vi' (leísmo de persona corregido)"},
+        {id:18, nombre:"Perífrasis verbales", teoria:"Auxiliar + verboide. Aspectuales: 'estar + gerundio'; modales: 'deber + inf'.", ejemplo:"'Estoy leyendo', 'Debes estudiar'", ejercicio:"Clasifica: 'Lleva dos horas esperando'", respuesta:"Perífrasis durativa (llevar + gerundio)"},
+        {id:19, nombre:"Gerundio: usos correctos", teoria:"Expresa acción simultánea o anterior. Evitar gerundio de posterioridad.", ejemplo:"Correcto: 'Lloviendo, se mojó'", ejercicio:"Corrige: '*Salió, muriendo al día siguiente'", respuesta:"'Murió al día siguiente' (eliminar gerundio)"},
+        {id:20, nombre:"Infinitivo", teoria:"Función nominal o verbal. Con determinante, es sustantivo.", ejemplo:"'Quiero viajar' (CD), 'El saber no ocupa lugar' (sujeto)", ejercicio:"Analiza: 'El correr es saludable'", respuesta:"Sujeto (infinitivo con artículo)"},
+        {id:21, nombre:"Participio", teoria:"Forma tiempos compuestos (he cantado) o funciona como adjetivo.", ejemplo:"'He escrito', 'puerta cerrada'", ejercicio:"Distingue: 'La carta fue escrita'", respuesta:"Participio en pasiva perifrástica"},
+        {id:22, nombre:"Conectores y nexos", teoria:"Unen palabras u oraciones: coordinantes y subordinantes.", ejemplo:"'Juan y Pedro', 'aunque llueva'", ejercicio:"Clasifica: 'llegaré cuando pueda, pero si no avisaré'", respuesta:"'cuando' (subordinante), 'pero' (coordinante adversativo), 'si' (subordinante)"},
+        {id:23, nombre:"Análisis de constituyentes", teoria:"División jerárquica de la oración en SN y SV.", ejemplo:"O(SN, SV)", ejercicio:"Analiza: 'El niño come manzanas'", respuesta:"SN: 'El niño', SV: 'come manzanas'"},
+        {id:24, nombre:"Oraciones enunciativas", teoria:"Afirman o niegan un hecho. Entonación neutra.", ejemplo:"'La Tierra gira alrededor del Sol'", ejercicio:"Convierte a negativa: 'El examen fue difícil'", respuesta:"'El examen no fue difícil'"},
+        {id:25, nombre:"Interrogativas totales y parciales", teoria:"Totales (sí/no); parciales (con interrogativos).", ejemplo:"'¿Vienes?' (total); '¿Dónde vives?' (parcial)", ejercicio:"Transforma: 'Tú estudias' en total y parcial", respuesta:"'¿Estudias?' y '¿Qué estudias?'"},
+        {id:26, nombre:"Exclamativas", teoria:"Expresan emoción con signos ¡!", ejemplo:"'¡Qué bonito!'", ejercicio:"Escribe una exclamativa sobre la gramática", respuesta:"'¡Qué importante es la gramática!'"},
+        {id:27, nombre:"Imperativas", teoria:"Expresan orden, ruego o consejo. Modo imperativo o subjuntivo.", ejemplo:"'Cierra la puerta', 'No fumes'", ejercicio:"Convierte a imperativa negativa: 'Estudias'", respuesta:"'No estudies'"},
+        {id:28, nombre:"Dubitativas", teoria:"Expresan duda con adverbios (quizás) o perífrasis.", ejemplo:"'Quizás venga mañana'", ejercicio:"Convierte a dubitativa: 'Él viene'", respuesta:"'Quizás venga'"},
+        {id:29, nombre:"Coordinación copulativa", teoria:"Une elementos con 'y', 'e', 'ni'.", ejemplo:"'Juan y Pedro', 'ni estudia ni trabaja'", ejercicio:"Reescribe con 'e': 'Padre y hijo'", respuesta:"'Padre e hijo'"},
+        {id:30, nombre:"Coordinación disyuntiva", teoria:"Expresa alternancia con 'o', 'u'.", ejemplo:"'¿Vienes o te quedas?'", ejercicio:"Escribe con 'u': 'Siete o ocho'", respuesta:"'Siete u ocho'"},
+        {id:31, nombre:"Coordinación adversativa", teoria:"Contrapone ideas con 'pero', 'sino', 'sin embargo'.", ejemplo:"'Es tarde pero iré'", ejercicio:"Completa: 'No vino __ llamó'", respuesta:"'sino' (No vino sino llamó)"},
+        {id:32, nombre:"Yuxtaposición", teoria:"Une oraciones sin nexo con comas o punto y coma.", ejemplo:"'Llegué, vi, vencí'", ejercicio:"Convierte: 'Llegó y se fue'", respuesta:"'Llegó, se fue'"},
+        {id:33, nombre:"Subordinadas sustantivas", teoria:"Funcionan como SN: sujeto, CD, CI, etc.", ejemplo:"'Quiero que vengas' (CD)", ejercicio:"Analiza: 'Me alegra que estudies'", respuesta:"Subordinada sujeto de 'me alegra'"},
+        {id:34, nombre:"Interrogativas indirectas", teoria:"No llevan signos de interrogación.", ejemplo:"'Me preguntó dónde vivía'", ejercicio:"Convierte: '¿Dónde está?'", respuesta:"'Me preguntó dónde estaba'"},
+        {id:35, nombre:"Dequeísmo y queísmo", teoria:"Dequeísmo: añadir 'de' innecesario; queísmo: omitir 'de' necesario.", ejemplo:"Error: '*Pienso de que sí'; '*Estoy seguro que vendrá'", ejercicio:"Corrige: 'Confío que aprobarás'", respuesta:"'Confío en que aprobarás'"},
+        {id:36, nombre:"Estilo indirecto", teoria:"Reproduce palabras ajenas con cambios de tiempo y persona.", ejemplo:"'Dijo que venía' (de 'Dijo: 'Vengo'')", ejercicio:"Convierte: 'Dijo: 'He terminado''", respuesta:"'Dijo que había terminado'"},
+        {id:37, nombre:"Subordinadas adjetivas", teoria:"Modifican a un nombre antecedente. Relativos: que, quien, cuyo.", ejemplo:"'El libro que leí es bueno'", ejercicio:"Identifica el antecedente: 'La casa donde vivo'", respuesta:"Antecedente: 'La casa'"},
+        {id:38, nombre:"Especificativas y explicativas", teoria:"Especificativas sin comas (restringen); explicativas con comas (añaden info).", ejemplo:"'Los niños que estudian aprueban' vs 'Los niños, que estudian, aprueban'", ejercicio:"Explica la diferencia", respuesta:"Primera: solo los que estudian; segunda: todos estudian"},
+        {id:39, nombre:"Relativo 'cuyo'", teoria:"Expresa posesión y concuerda con el poseído.", ejemplo:"'El autor cuyo libro leí'", ejercicio:"Completa: 'La escritora ___ novela ganó'", respuesta:"'cuya' (novela femenino singular)"},
+        {id:40, nombre:"Subordinadas adverbiales", teoria:"Funcionan como CC: temporales, causales, finales, condicionales, concesivas.", ejemplo:"'Cuando llegue, avísame' (temporal)", ejercicio:"Clasifica: 'No salgo porque llueve'", respuesta:"Causal"},
+        {id:41, nombre:"Condicionales", teoria:"Expresan condición con 'si', 'como'. Tipos: reales, potenciales, irreales.", ejemplo:"'Si estudias, apruebas' (real)", ejercicio:"Convierte a potencial: 'Si viene, lo veo'", respuesta:"'Si viniera, lo vería'"},
+        {id:42, nombre:"Concesivas", teoria:"Expresan obstáculo con 'aunque', 'a pesar de'.", ejemplo:"'Aunque llueva, saldré'", ejercicio:"Completa: 'Aunque está cansado, ___'", respuesta:"'trabaja' (indicativo, hecho real)"},
+        {id:43, nombre:"Consecutivas", teoria:"Expresan consecuencia con 'tan... que', 'tanto... que'.", ejemplo:"'Corrió tan rápido que ganó'", ejercicio:"Completa: 'Hace ___ frío que me congelo'", respuesta:"'tanto'"},
+        {id:44, nombre:"Perífrasis en subordinadas", teoria:"'Al + infinitivo' equivale a 'cuando'.", ejemplo:"'Al llegar, saludó'", ejercicio:"Reemplaza: 'Cuando llegó, saludó'", respuesta:"'Al llegar, saludó'"},
+        {id:45, nombre:"Análisis de oración simple", teoria:"Identificar sujeto, predicado, complementos.", ejemplo:"'María compró un regalo para su madre'", ejercicio:"Analiza: 'El perro ladró toda la noche'", respuesta:"Sujeto: 'El perro'; Predicado: 'ladró toda la noche'; CC tiempo: 'toda la noche'"},
+        {id:46, nombre:"Análisis de oración coordinada", teoria:"Identificar proposiciones y nexo coordinante.", ejemplo:"'Estudiaba, pero no aprobó'", ejercicio:"Analiza: 'Llegó tarde y perdió el examen'", respuesta:"Proposición1: 'Llegó tarde'; nexo: 'y'; proposición2: 'perdió el examen'"},
+        {id:47, nombre:"Análisis de subordinada sustantiva", teoria:"Identificar función de la subordinada (CD, sujeto, etc.).", ejemplo:"'Espero que vengas' (CD)", ejercicio:"Analiza: 'Me alegra que hayas estudiado'", respuesta:"Subordinada sujeto de 'me alegra'"},
+        {id:48, nombre:"Análisis de subordinada adjetiva", teoria:"Identificar antecedente, nexo relativo y función.", ejemplo:"'El libro que compré es caro'", ejercicio:"Analiza: 'La casa donde vivo es grande'", respuesta:"Antecedente: 'La casa'; relativo 'donde' (CC lugar)"},
+        {id:49, nombre:"Análisis de subordinada adverbial", teoria:"Identificar tipo (temporal, causal, etc.).", ejemplo:"'Si estudias, apruebas' (condicional)", ejercicio:"Analiza: 'Aunque llueva, saldré'", respuesta:"Concesiva, nexo 'aunque', subjuntivo 'llueva'"},
+        {id:50, nombre:"Construcciones absolutas", teoria:"Gerundio o participio con sujeto propio.", ejemplo:"'Terminada la reunión, se fueron'", ejercicio:"Analiza: 'Llegado el momento, decidiremos'", respuesta:"Participio absoluto 'Llegado el momento'"},
+        {id:51, nombre:"Oraciones hendidas", teoria:"'Ser + foco + que/ quien' para focalizar.", ejemplo:"'Fue Juan quien vino'", ejercicio:"Convierte: 'Juan vino' en hendida", respuesta:"'Fue Juan quien vino'"},
+        {id:52, nombre:"Análisis del 'se'", teoria:"Valores: reflexivo, recíproco, pasivo reflejo, impersonal, aspectual, medio, pronominal.", ejemplo:"'Se lava' (reflexivo); 'se venden casas' (pasiva refleja)", ejercicio:"Analiza: 'Se rompió el florero'", respuesta:"Se medio (proceso sin agente)"},
+        {id:53, nombre:"Ser y estar", teoria:"Ser: esencia; estar: estado.", ejemplo:"'Es inteligente' (cualidad) vs 'Está inteligente' (estado)", ejercicio:"Elige: 'La manzana ___ verde' (variedad/inmadurez)", respuesta:"'es' (variedad) / 'está' (inmadurez)"},
+        {id:54, nombre:"Orden de palabras", teoria:"Topicalización para enfocar.", ejemplo:"'Eso no lo sé' (CD antepuesto)", ejercicio:"Reescribe topicalizando el CD: 'Compré el libro'", respuesta:"'El libro lo compré'"},
+        {id:55, nombre:"Impersonales", teoria:"Sin sujeto: meteorológicas, 'haber', 'hacer', 'se' impersonal.", ejemplo:"'Llueve', 'Hay problemas', 'Se vive bien'", ejercicio:"Corrige: '*Hubieron problemas'", respuesta:"'Hubo problemas'"},
+        {id:56, nombre:"Concordancia", teoria:"Sujeto y verbo en número y persona.", ejemplo:"'Los niños juegan'", ejercicio:"Corrige: '*Los niños juega'", respuesta:"'Los niños juegan'"},
+        {id:57, nombre:"Oraciones reflexivas", teoria:"El sujeto realiza y recibe la acción.", ejemplo:"'Juan se lava'", ejercicio:"Analiza: 'Ella se peina'", respuesta:"Reflexiva (peina a sí misma)"},
+        {id:58, nombre:"Oraciones recíprocas", teoria:"Dos o más sujetos intercambian la acción.", ejemplo:"'Ellos se abrazan'", ejercicio:"Analiza: 'Se saludaron'", respuesta:"Recíproca (el uno al otro)"},
+        {id:59, nombre:"Verbos inacusativos", teoria:"Sujeto paciente ('caer', 'llegar', 'nacer').", ejemplo:"'La flor cayó'", ejercicio:"Clasifica: 'morir'", respuesta:"Inacusativo"},
+        {id:60, nombre:"Verbos inergativos", teoria:"Sujeto agente ('trabajar', 'nadar', 'hablar').", ejemplo:"'Juan trabajó'", ejercicio:"Clasifica: 'bailar'", respuesta:"Inergativo"},
+        {id:61, nombre:"Valencia verbal", teoria:"Número de argumentos que exige el verbo.", ejemplo:"'Dar' (valencia 3): sujeto, CD, CI", ejercicio:"Determina la valencia de 'llover'", respuesta:"Valencia 0 (impersonal)"},
+        {id:62, nombre:"Predicados eventivos", teoria:"Acciones con límite temporal.", ejemplo:"'Correr', 'construir'", ejercicio:"Clasifica: 'saber'", respuesta:"Estativo (no eventivo)"},
+        {id:63, nombre:"Aspecto léxico", teoria:"Télico (con meta) vs atélico (sin meta).", ejemplo:"'Leer un libro' (télico) vs 'leer' (atélico)", ejercicio:"Clasifica: 'llegar a la cima'", respuesta:"Télico"},
+        {id:64, nombre:"Modalidad epistémica", teoria:"Certeza, posibilidad, duda.", ejemplo:"'Quizás venga', 'Seguramente vendrá'", ejercicio:"Distingue: 'Puede llegar tarde' (¿epistémico o deóntico?)", respuesta:"Puede ser epistémico (posibilidad) o deóntico (permiso)"},
+        {id:65, nombre:"Modalidad deóntica", teoria:"Obligación, permiso, prohibición.", ejemplo:"'Debes estudiar', 'Puedes salir'", ejercicio:"Distingue: 'Tiene que ser así'", respuesta:"Deóntica (obligación)"},
+        {id:66, nombre:"Actos de habla", teoria:"Locutivo, ilocutivo, perlocutivo.", ejemplo:"'Te prometo que estudiaré' (ilocutivo: promesa)", ejercicio:"Identifica el ilocutivo: '¡Cállate!'", respuesta:"Directivo (orden)"},
+        {id:67, nombre:"Cortesía verbal", teoria:"Positiva (solidaridad) y negativa (respeto, distancia).", ejemplo:"'¿Podrías cerrar la puerta?' (cortesía negativa)", ejercicio:"Convierte orden en petición cortés: 'Hazlo'", respuesta:"'¿Podrías hacerlo?'"},
+        {id:68, nombre:"Imagen pública (face)", teoria:"Imagen positiva (aprecio) y negativa (autonomía).", ejemplo:"Crítica amenaza imagen positiva; orden amenaza negativa", ejercicio:"¿Qué imagen amenaza 'Llegaste tarde'?", respuesta:"Imagen positiva (desaprobación)"},
+        {id:69, nombre:"Ironía verbal", teoria:"Decir lo contrario de lo que se quiere expresar.", ejemplo:"'Qué puntual eres' a quien llega tarde", ejercicio:"Escribe una oración irónica sobre el silencio", respuesta:"'Qué bien, todo el mundo respeta el silencio' (en un lugar ruidoso)"},
+        {id:70, nombre:"Sarcasmo", teoria:"Ironía con intención hiriente.", ejemplo:"'Tu inteligencia me abruma' (tras un error)", ejercicio:"Diferencia ironía y sarcasmo", respuesta:"El sarcasmo busca herir; la ironía puede ser lúdica"},
+        {id:71, nombre:"Presuposición", teoria:"Información que se da por supuesta.", ejemplo:"'El rey de Francia es calvo' presupone existencia del rey", ejercicio:"Identifica presuposición: 'Deja de fumar'", respuesta:"Presupone que el oyente fuma"},
+        {id:72, nombre:"Implicatura conversacional", teoria:"Significado no dicho pero comunicado (Grice).", ejemplo:"'¿Qué tal el ensayo?' 'La tipografía es bonita' (implicatura: el contenido es malo)", ejercicio:"Explica la implicatura en 'Tengo que estudiar' ante una invitación", respuesta:"Implicatura: no va a aceptar la invitación"},
+        {id:73, nombre:"Máximas de Grice", teoria:"Cantidad, calidad, relación, modo.", ejemplo:"Violar la cantidad: dar menos información de la esperada", ejercicio:"¿Qué máxima se viola en respuesta no relevante?", respuesta:"Relación (o relevancia)"},
+        {id:74, nombre:"Tópico y foco", teoria:"Tópico: información conocida; foco: información nueva.", ejemplo:"'El libro (tópico) lo compré ayer (foco)'", ejercicio:"Identifica tópico y foco: 'Ayer viajé a Madrid'", respuesta:"Tópico: 'ayer'; foco: 'viajé a Madrid'"},
+        {id:75, nombre:"Progresión temática", teoria:"Organización de temas y remas en el texto.", ejemplo:"Lineal: T1→R1, T2=R1→R2", ejercicio:"Analiza la progresión en un texto breve", respuesta:"(Ejemplo: cadena referencial mantenida)"},
+        {id:76, nombre:"Cohesión léxica", teoria:"Repetición, sinonimia, hiperonimia.", ejemplo:"'El coche... el automóvil... el vehículo'", ejercicio:"Mejora la cohesión: 'Compré un libro. El libro es grueso'", respuesta:"'Compré un libro. Es grueso' o 'La obra es gruesa'"},
+        {id:77, nombre:"Elipsis", teoria:"Omisión de elementos recuperables por contexto.", ejemplo:"'Unos estudian; otros, trabajan' (elipsis verbal)", ejercicio:"Reescribe con elipsis: 'María estudia y Juan estudia'", respuesta:"'María estudia y Juan también'"},
+        {id:78, nombre:"Sustitución por proformas", teoria:"'Uno', 'eso', 'hacerlo' reemplazan sintagmas.", ejemplo:"'No tengo bolígrafo, ¿me prestas uno?'", ejercicio:"Sustituye: 'El análisis semántico es complejo'", respuesta:"'Eso es complejo'"},
+        {id:79, nombre:"Marcadores del discurso", teoria:"Organizan el discurso: 'bueno', 'o sea', 'entonces'.", ejemplo:"'Bueno, pues, entonces, dicho esto...'", ejercicio:"Identifica marcadores: 'Pues... la verdad es que...'", respuesta:"'Pues' (vacilación), 'la verdad es que' (sinceridad)"},
+        {id:80, nombre:"Polifonía", teoria:"Múltiples voces en el discurso (Bajtín).", ejemplo:"Estilo indirecto libre: '¿Dónde estaría? Se preguntaba'", ejercicio:"Escribe un ejemplo con voz del narrador y del personaje", respuesta:"'Ana estaba preocupada. ¿Habría cerrado la puerta? No recordaba.'"},
+        {id:81, nombre:"Deixis personal", teoria:"Pronombres y formas de tratamiento (tú, usted, vos).", ejemplo:"'Yo te digo', 'Usted ordena'", ejercicio:"Cambia a 'usted': '¿Tú puedes ayudarme?'", respuesta:"'¿Usted puede ayudarme?'"},
+        {id:82, nombre:"Deixis espacial", teoria:"Aquí, ahí, allí; este, ese, aquel.", ejemplo:"'Este libro (cerca mío), ese (cerca tuyo), aquel (lejos)'", ejercicio:"Elige: 'Ponlo ___ (cerca del hablante)'", respuesta:"'aquí'"},
+        {id:83, nombre:"Deixis temporal", teoria:"Ahora, hoy, mañana; tiempos verbales.", ejemplo:"'Ayer llovió', 'Mañana viajaré'", ejercicio:"Interpreta 'hoy' si el texto se lee al día siguiente", respuesta:"El significado cambia; hoy será otro día"},
+        {id:84, nombre:"Deixis discursiva", teoria:"Remite a partes del texto.", ejemplo:"'Como veremos más adelante'", ejercicio:"Escribe un ejemplo catafórico", respuesta:"'Esto diré: la gramática importa'"},
+        {id:85, nombre:"Anáfora y catáfora", teoria:"Anáfora: remite a algo anterior; catáfora: anticipa.", ejemplo:"'Juan llegó. Él estaba cansado' (anáfora)", ejercicio:"Identifica: 'Esto te digo: no vuelvas'", respuesta:"Catáfora ('esto' anticipa 'no vuelvas')"},
+        {id:86, nombre:"Denotación y connotación", teoria:"Denotación: significado objetivo; connotación: subjetivo/cultural.", ejemplo:"'Perro' denota 'cánido'; connota 'fidelidad' o 'agresividad'", ejercicio:"Analiza la connotación de 'tormenta' en un discurso político", respuesta:"Connota crisis, caos, urgencia de cambio"},
+        {id:87, nombre:"Campo semántico", teoria:"Palabras que comparten un núcleo de significado.", ejemplo:"Campo de 'justicia': juez, ley, tribunal, sentencia", ejercicio:"Construye un campo semántico de 'identidad cultural'", respuesta:"Tradición, lengua, costumbre, patrimonio, memoria, pertenencia"},
+        {id:88, nombre:"Sinonimia", teoria:"Palabras con significado similar pero matices diferentes.", ejemplo:"'Comenzar' e 'iniciar' (registro)", ejercicio:"Propón sinónimos de 'importante' según contexto", respuesta:"'Relevante' (formal), 'clave' (neutro), 'trascendental' (enfático)"},
+        {id:89, nombre:"Antonimia", teoria:"Opuestos: gradual (alto/bajo), complementario (vivo/muerto), recíproco (comprar/vender).", ejemplo:"'Grande/pequeño' (gradual)", ejercicio:"Clasifica 'dar/recibir'", respuesta:"Recíproco"},
+        {id:90, nombre:"Polisemia", teoria:"Múltiples significados relacionados.", ejemplo:"'Banco': entidad, asiento, cardumen", ejercicio:"Enumera significados de 'cabeza'", respuesta:"Parte del cuerpo, inteligencia, extremo, fuente, líder"},
+        {id:91, nombre:"Homonimia", teoria:"Palabras con misma forma, origen distinto.", ejemplo:"'Vino' (bebida/verbo venir)", ejercicio:"Distingue 'sabana' y 'sábana'", respuesta:"Sabana: vegetación; sábana: ropa de cama"},
+        {id:92, nombre:"Eufemismo y disfemismo", teoria:"Eufemismo: suaviza; disfemismo: crudeza.", ejemplo:"'Falleció' (eufemismo), 'estiró la pata' (disfemismo)", ejercicio:"Reemplaza 'despedir' por eufemismo", respuesta:"'Reestructurar personal'"},
+        {id:93, nombre:"Metáfora conceptual", teoria:"Entender un concepto en términos de otro.", ejemplo:"'El amor es un viaje' (callejón sin salida, juntos en el camino)", ejercicio:"Identifica la metáfora en 'No puedo digerir esa idea'", respuesta:"Entender es digerir (asimilar conocimiento como alimento)"},
+        {id:94, nombre:"Metonimia", teoria:"Relación contigua (autor-obra, lugar-institución).", ejemplo:"'Leer a Borges' (autor por obra)", ejercicio:"Interpreta: 'La Casa Blanca anunció medidas'", respuesta:"Lugar por gobierno de EE.UU."},
+        {id:95, nombre:"Paradoja", teoria:"Contradicción aparente que encierra una verdad.", ejemplo:"'Solo sé que no sé nada'", ejercicio:"Construye una paradoja sobre el silencio", respuesta:"'El silencio es la palabra más elocuente'"},
+        {id:96, nombre:"Oxímoron", teoria:"Unión de términos opuestos.", ejemplo:"'Oscuridad luminosa', 'silencio atronador'", ejercicio:"Crea un oxímoron sobre tecnología", respuesta:"'Conexión aislada'"},
+        {id:97, nombre:"Hipérbole", teoria:"Exageración para enfatizar.", ejemplo:"'Te lo he dicho mil veces'", ejercicio:"Transforma 'El libro es interesante' en hipérbole", respuesta:"'El libro es tan interesante que me olvidé de comer'"},
+        {id:98, nombre:"Lítotes", teoria:"Atenuación por negación del contrario.", ejemplo:"'No está mal' (está bien)", ejercicio:"Reescribe 'Es excelente' como lítotes", respuesta:"'No carece de méritos'"},
+        {id:99, nombre:"Personificación", teoria:"Atribuir cualidades humanas a objetos.", ejemplo:"'El viento susurraba'", ejercicio:"Personifica el silencio", respuesta:"'El silencio invadió la sala'"},
+        {id:100, nombre:"Antítesis", teoria:"Contraste de ideas opuestas en paralelo.", ejemplo:"'El hombre propone, Dios dispone'", ejercicio:"Construye una antítesis sobre conocimiento/ignorancia", respuesta:"'El sabio sabe que no sabe; el ignorante cree que todo lo sabe'"}
+    ];
+
+    let tecnicas = tecnicasGramatica;
+    let currentTechIdx = 0;
+
+    // Añadir campos necesarios
+    tecnicas.forEach(t => {
+        t.completada = false;
+        t.respuestaUsuario = "";
+    });
+
+    // localStorage
+    function guardarProgreso() {
+        let data = tecnicas.map(t => ({ completada: t.completada, respuestaUsuario: t.respuestaUsuario || "" }));
+        localStorage.setItem("gramatica_lux_progreso", JSON.stringify(data));
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function cargarProgreso() {
+        let saved = localStorage.getItem("gramatica_lux_progreso");
+        if (saved) {
+            let data = JSON.parse(saved);
+            for (let i = 0; i < tecnicas.length; i++) {
+                if (data[i]) {
+                    tecnicas[i].completada = data[i].completada || false;
+                    tecnicas[i].respuestaUsuario = data[i].respuestaUsuario || "";
+                }
+            }
+        }
+        actualizarEstadisticas();
+        actualizarBarraOro();
+        renderIndiceLateral();
+    }
+
+    function actualizarEstadisticas() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let porcentaje = Math.round((completadas / 100) * 100);
+        const statsDiv = document.getElementById("statsPreview");
+        if (statsDiv) statsDiv.innerHTML = `Progreso: ${porcentaje}% · Técnicas completadas: ${completadas}/100 · ⚜ gramática`;
+        const goldFill = document.getElementById("globalGoldFill");
+        if (goldFill) goldFill.style.width = porcentaje + "%";
+    }
+
+    function actualizarBarraOro() {
+        let completadas = tecnicas.filter(t => t.completada).length;
+        let pct = (completadas / 100) * 100;
+        document.getElementById("globalGoldFill").style.width = pct + "%";
+    }
+
+    function renderIndiceLateral() {
+        const busqueda = document.getElementById("searchTech")?.value.toLowerCase() || "";
+        let filtradas = tecnicas.filter(t => t.nombre.toLowerCase().includes(busqueda) || (t.teoria && t.teoria.toLowerCase().includes(busqueda)));
+        const listaUl = document.getElementById("techIndexList");
+        if (!listaUl) return;
+        listaUl.innerHTML = "";
+        filtradas.forEach(tech => {
+            let li = document.createElement("li");
+            let a = document.createElement("a");
+            a.innerHTML = `${tech.nombre.substring(0, 52)}${tech.nombre.length > 52 ? "…" : ""} ${tech.completada ? "✓" : "○"}`;
+            a.addEventListener("click", (e) => {
+                e.preventDefault();
+                currentTechIdx = tech.id - 1;
+                renderVistaTecnica();
+                if (window.innerWidth <= 800) document.getElementById("luxSidebar").classList.remove("open");
+            });
+            li.appendChild(a);
+            listaUl.appendChild(li);
+        });
+    }
+
+    function renderVistaTecnica() {
+        const t = tecnicas[currentTechIdx];
+        const container = document.getElementById("dynamicTechView");
+        if (!container) return;
+        const letraInicial = t.nombre.charAt(0);
+        container.innerHTML = `
+            <div class="tech-primary">
+                <div class="numero-gigante">${t.id}</div>
+                <div class="tech-title"><span class="capitular">${letraInicial}</span>${t.nombre.substring(1)}</div>
+                <div class="card"><h3>📜 Teoría gramatical</h3><p>${t.teoria || "Teoría no disponible."}</p></div>
+                <div class="card"><h3>❧ Ejemplo de uso</h3><p>${t.ejemplo || "Ejemplo no disponible."}</p></div>
+                <div class="card"><h3>✍️ Ejercicio práctico</h3><p>${t.ejercicio || "Ejercicio no disponible."}</p>
+                    <textarea id="respuestaTextAreaLux" rows="4" placeholder="Escribe aquí tu respuesta...">${t.respuestaUsuario || ""}</textarea>
+                    <div style="margin-top: 0.5rem;">
+                        <button class="btn-nav btn-show-answer" id="btnMostrarRespuesta">📖 Ver respuesta correcta</button>
+                    </div>
+                    <div id="respuestaCorrectaPanel" class="respuesta-correcta">
+                        <strong>✓ Respuesta modelo:</strong><br>${t.respuesta || "Respuesta no disponible."}
+                    </div>
+                </div>
+                <div style="margin: 2rem 0;">
+                    <button class="btn-nav" id="btnAnterior">← anterior</button>
+                    <button class="btn-nav btn-complete" id="btnCompletar">${t.completada ? "✓ Completada" : "◌ Marcar completada"}</button>
+                    <button class="btn-nav" id="btnSiguiente">siguiente →</button>
+                </div>
+            </div>
+            <div class="tech-aside">
+                <div><strong>⚜ Progreso global</strong><div class="progress-unit"><div style="width:${(tecnicas.filter(tc=>tc.completada).length/100)*100}%; height:6px; background:var(--oro-antiguo); border-radius:30px;"></div></div>
+                <p>${tecnicas.filter(tc=>tc.completada).length} de 100 técnicas</p>
+                <hr style="margin:1rem 0; border-color:#cfc3ad;">
+                <p><strong>📖 Técnica actual</strong><br>${t.nombre.split(':')[0]}</p>
+                <p><strong>🎨 Categoría</strong><br>Gramática del castellano</p>
+                <div class="ornament-line" style="font-size:1.2rem;">⁂ § ⚜</div>
+                <p style="margin-top:1rem; font-size:0.8rem;">“La gramática es el esqueleto de la lengua.”</p>
+            </div>
+        `;
+        const textarea = document.getElementById("respuestaTextAreaLux");
+        if (textarea) {
+            textarea.addEventListener("input", (e) => {
+                tecnicas[currentTechIdx].respuestaUsuario = e.target.value;
+                guardarProgreso();
+            });
+        }
+        const btnRespuesta = document.getElementById("btnMostrarRespuesta");
+        const panelRespuesta = document.getElementById("respuestaCorrectaPanel");
+        if (btnRespuesta && panelRespuesta) {
+            btnRespuesta.addEventListener("click", () => {
+                panelRespuesta.classList.toggle("visible");
+            });
+        }
+        document.getElementById("btnAnterior")?.addEventListener("click", () => {
+            if (currentTechIdx > 0) { currentTechIdx--; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnSiguiente")?.addEventListener("click", () => {
+            if (currentTechIdx < 99) { currentTechIdx++; renderVistaTecnica(); window.scrollTo(0, 0); }
+        });
+        document.getElementById("btnCompletar")?.addEventListener("click", () => {
+            tecnicas[currentTechIdx].completada = !tecnicas[currentTechIdx].completada;
+            guardarProgreso();
+            renderVistaTecnica();
+            renderIndiceLateral();
+        });
+    }
+
+    // Sidebar y buscador
+    const menuBtn = document.getElementById("menuToggleBtn");
+    const sidebar = document.getElementById("luxSidebar");
+    const closeBtn = document.getElementById("closeSidebarBtn");
+    menuBtn?.addEventListener("click", () => sidebar.classList.toggle("open"));
+    closeBtn?.addEventListener("click", () => sidebar.classList.remove("open"));
+    const searchInput = document.getElementById("searchTech");
+    searchInput?.addEventListener("input", () => renderIndiceLateral());
+
+    function inicializar() {
+        cargarProgreso();
+        renderVistaTecnica();
+        window.addEventListener("beforeunload", () => guardarProgreso());
+    }
+    inicializar();
+</script>
+</body>
+</html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎨 Flota Graphica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .recurso-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🎨 FLOTA GRAPHICA<small>100 TÉCNICAS · NOVELA GRÁFICA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="lenguaje" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Lenguaje <span class="badge-personaje bg-dorado">Palabra</span></a>
+        <a class="nav-link" data-section="imagen" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Imagen <span class="badge-personaje bg-azul">Dibujo</span></a>
+        <a class="nav-link" data-section="viñeta" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Viñeta <span class="badge-personaje bg-verde">Página</span></a>
+        <a class="nav-link" data-section="color" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Color <span class="badge-personaje bg-purpura">Cromatismo</span></a>
+        <a class="nav-link" data-section="narrativa" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Narrativa <span class="badge-personaje bg-rojo">Historia</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🎨</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Novela gráfica</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Novela gráfica</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la novela gráfica:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Lenguaje</strong> – La palabra: globos, cartelas, onomatopeyas, diálogos.</li>
+                    <li><strong style="color:var(--neon-azul);">Imagen</strong> – El dibujo: línea, trazo, encuadre, perspectiva, anatomía.</li>
+                    <li><strong style="color:var(--neon-verde);">Viñeta</strong> – La página: diseño, ritmo, composición, flujo.</li>
+                    <li><strong style="color:var(--neon-purpura);">Color</strong> – Cromatismo: paleta, tono, atmósfera, simbolismo.</li>
+                    <li><strong style="color:var(--neon-rojo);">Narrativa</strong> – La historia: estructura, ritmo, personajes, arco.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-lenguaje" class="section-content" style="display:none;"></div>
+        <div id="section-imagen" class="section-content" style="display:none;"></div>
+        <div id="section-viñeta" class="section-content" style="display:none;"></div>
+        <div id="section-color" class="section-content" style="display:none;"></div>
+        <div id="section-narrativa" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    lenguaje: {
+        nombre: "Lenguaje", color: "dorado", icono: "bi-robot",
+        especialidad: "La palabra: globos, cartelas, onomatopeyas, diálogos",
+        tecnicas: [
+            { titulo: "El globo de diálogo", teoria: "El globo de diálogo es el elemento que contiene las palabras de los personajes. Su forma y estilo comunican el tono de la voz.", recurso: "Globo de diálogo", ejemplo: "En 'Maus' de Art Spiegelman, los globos de diálogo son sobrios y directos, reflejando la gravedad de la historia.", ejercicio: "Diseña 3 globos de diálogo con diferentes estilos.", reto: "Crea una página de cómic con diálogos." },
+            { titulo: "El globo de pensamiento", teoria: "El globo de pensamiento contiene los pensamientos del personaje, no sus palabras. Su forma es diferente al globo de diálogo.", recurso: "Globo de pensamiento", ejemplo: "En 'Calvin y Hobbes' de Bill Watterson, los globos de pensamiento de Calvin tienen forma de nube.", ejercicio: "Diseña un globo de pensamiento.", reto: "Crea una página usando globos de pensamiento." },
+            { titulo: "La cartela", teoria: "La cartela es el recuadro que contiene la voz del narrador. Suele estar fuera de la viñeta y proporciona contexto.", recurso: "Cartela", ejemplo: "En 'Watchmen' de Alan Moore, las cartelas son fundamentales para la narrativa.", ejercicio: "Escribe una cartela para una página.", reto: "Crea una página con cartelas narrativas." },
+            { titulo: "La onomatopeya", teoria: "La onomatopeya es la representación gráfica de un sonido: ¡BANG!, ¡CRASH!, ¡SUSURRO!.", recurso: "Onomatopeya", ejemplo: "En 'El Eternauta' de Oesterheld, las onomatopeyas son parte esencial de la acción.", ejercicio: "Crea 5 onomatopeyas para diferentes sonidos.", reto: "Diseña una página con onomatopeyas." },
+            { titulo: "El diálogo y el subtexto", teoria: "El diálogo en la novela gráfica debe tener subtexto: lo que se dice y lo que se oculta.", recurso: "Subtexto en diálogo", ejemplo: "En 'Persépolis' de Marjane Satrapi, los diálogos tienen un profundo subtexto político.", ejercicio: "Escribe un diálogo con subtexto.", reto: "Crea una página donde el diálogo tenga subtexto." },
+            { titulo: "El estilo de la letra", teoria: "La tipografía en la novela gráfica puede variar según el personaje, el tono o la emoción.", recurso: "Estilo de letra", ejemplo: "En 'El Eternauta' de Oesterheld, la letra tiene un estilo reconocible.", ejercicio: "Diseña 3 estilos de letra para diferentes personajes.", reto: "Crea una página con diferentes estilos de letra." },
+            { titulo: "El tamaño de la letra", teoria: "El tamaño de la letra en el globo comunica el volumen de la voz: letra pequeña para susurros, letra grande para gritos.", recurso: "Tamaño de letra", ejemplo: "En 'El Eternauta' de Oesterheld, el tamaño de la letra varía según la intensidad.", ejercicio: "Escribe un diálogo con variación de tamaño de letra.", reto: "Crea una página con variación de tamaño de letra." },
+            { titulo: "La dirección de la cola del globo", teoria: "La cola del globo apunta al personaje que habla. Su dirección y forma pueden indicar emoción.", recurso: "Cola del globo", ejemplo: "En 'Maus' de Art Spiegelman, la cola del globo es simple y directa.", ejercicio: "Diseña diferentes colas para globos.", reto: "Crea una página con diferentes colas de globos." },
+            { titulo: "El globo compartido", teoria: "El globo compartido conecta a dos personajes que hablan al mismo tiempo o que comparten una misma voz.", recurso: "Globo compartido", ejemplo: "En 'Calvin y Hobbes' de Bill Watterson, los globos compartidos son comunes.", ejercicio: "Diseña un globo compartido.", reto: "Crea una página con globos compartidos." },
+            { titulo: "La cartela como voz interior", teoria: "La cartela puede representar la voz interior del personaje, sus pensamientos más profundos.", recurso: "Cartela interior", ejemplo: "En 'Watchmen' de Alan Moore, las cartelas son la voz interior de Rorschach.", ejercicio: "Escribe una cartela de voz interior.", reto: "Crea una página con cartelas de voz interior." },
+            { titulo: "El diálogo y la imagen", teoria: "La relación entre diálogo e imagen debe ser complementaria: la imagen muestra lo que el diálogo sugiere.", recurso: "Diálogo e imagen", ejemplo: "En 'Persépolis' de Marjane Satrapi, el diálogo y la imagen trabajan juntos.", ejercicio: "Escribe un diálogo que complemente una imagen.", reto: "Crea una página donde diálogo e imagen se complementen." },
+            { titulo: "La elipsis en el diálogo", teoria: "La elipsis (...) en el diálogo indica pausa, duda o silencio significativo.", recurso: "Elipsis", ejemplo: "En 'El Eternauta' de Oesterheld, las elipsis son frecuentes.", ejercicio: "Escribe un diálogo con elipsis.", reto: "Crea una página con elipsis." },
+            { titulo: "La cursiva en el diálogo", teoria: "La cursiva en el diálogo enfatiza una palabra o expresa un pensamiento.", recurso: "Cursiva", ejemplo: "En 'Maus' de Art Spiegelman, la cursiva se usa para enfatizar.", ejercicio: "Escribe un diálogo con cursivas.", reto: "Crea una página con cursivas." },
+            { titulo: "El globo de grito", teoria: "El globo de grito tiene bordes dentados y letra grande, indicando un grito o un grito.", recurso: "Globo de grito", ejemplo: "En 'El Eternauta' de Oesterheld, los globos de grito son explosivos.", ejercicio: "Diseña un globo de grito.", reto: "Crea una página con globos de grito." },
+            { titulo: "El globo de susurro", teoria: "El globo de susurro tiene bordes punteados y letra pequeña, indicando un susurro.", recurso: "Globo de susurro", ejemplo: "En 'Calvin y Hobbes' de Bill Watterson, los globos de susurro son comunes.", ejercicio: "Diseña un globo de susurro.", reto: "Crea una página con globos de susurro." },
+            { titulo: "El diálogo y la entonación", teoria: "La entonación del diálogo se expresa a través de la forma del globo, el tamaño de la letra y los signos de puntuación.", recurso: "Entonación", ejemplo: "En 'Watchmen' de Alan Moore, la entonación es clave.", ejercicio: "Escribe un diálogo con entonación marcada.", reto: "Crea una página con entonación." },
+            { titulo: "El diálogo y la emoción", teoria: "El diálogo debe transmitir la emoción del personaje. El globo, la letra y el contenido deben trabajar juntos.", recurso: "Emoción en diálogo", ejemplo: "En 'Persépolis' de Marjane Satrapi, el diálogo transmite emociones.", ejercicio: "Escribe un diálogo emocional.", reto: "Crea una página con diálogo emocional." },
+            { titulo: "La cartela de tiempo", teoria: "La cartela puede indicar el tiempo ('Un año después', 'Mientras tanto').", recurso: "Cartela de tiempo", ejemplo: "En 'El Eternauta' de Oesterheld, las cartelas de tiempo son comunes.", ejercicio: "Escribe una cartela de tiempo.", reto: "Crea una página con cartela de tiempo." },
+            { titulo: "La cartela de lugar", teoria: "La cartela puede indicar el lugar ('En la ciudad', 'En la casa de Bernarda').", recurso: "Cartela de lugar", ejemplo: "En 'Maus' de Art Spiegelman, las cartelas de lugar son frecuentes.", ejercicio: "Escribe una cartela de lugar.", reto: "Crea una página con cartela de lugar." },
+            { titulo: "El silencio en la palabra", teoria: "El silencio en la novela gráfica se expresa a través de globos vacíos o la ausencia de texto.", recurso: "Silencio", ejemplo: "En 'Watchmen' de Alan Moore, el silencio es un recurso poderoso.", ejercicio: "Crea una página de silencio.", reto: "Crea una página donde el silencio sea el centro." }
+        ]
+    },
+    imagen: {
+        nombre: "Imagen", color: "azul", icono: "bi-robot",
+        especialidad: "El dibujo: línea, trazo, encuadre, perspectiva, anatomía",
+        tecnicas: [
+            { titulo: "La línea como expresión", teoria: "La línea es el elemento fundamental del dibujo. Su grosor, dirección y calidad transmiten emociones.", recurso: "Línea", ejemplo: "En 'El Eternauta' de Oesterheld, la línea es expresiva y dinámica.", ejercicio: "Dibuja una secuencia con diferentes tipos de línea.", reto: "Crea una página con variación de línea." },
+            { titulo: "El trazo y la textura", teoria: "El trazo crea textura y atmósfera. Un trazo suelto da ligereza; un trazo firme da solidez.", recurso: "Trazo", ejemplo: "En 'Maus' de Art Spiegelman, el trazo es sobrio y contenido.", ejercicio: "Dibuja una escena con diferentes tipos de trazo.", reto: "Crea una página con textura de trazo." },
+            { titulo: "El encuadre", teoria: "El encuadre es la elección de lo que se muestra en la viñeta. El encuadre dirige la mirada del lector.", recurso: "Encuadre", ejemplo: "En 'Watchmen' de Alan Moore, los encuadres son simétricos y calculados.", ejercicio: "Dibuja una secuencia con diferentes encuadres.", reto: "Crea una página con encuadres variados." },
+            { titulo: "La perspectiva", teoria: "La perspectiva crea profundidad y tridimensionalidad en la imagen.", recurso: "Perspectiva", ejemplo: "En 'El Eternauta' de Oesterheld, la perspectiva es dinámica.", ejercicio: "Dibuja una escena con perspectiva.", reto: "Crea una página con perspectiva." },
+            { titulo: "La anatomía humana", teoria: "El conocimiento de la anatomía es fundamental para dibujar personajes creíbles y dinámicos.", recurso: "Anatomía", ejemplo: "En 'Persépolis' de Marjane Satrapi, la anatomía es estilizada.", ejercicio: "Dibuja una figura humana en movimiento.", reto: "Crea una página con figuras humanas." },
+            { titulo: "La anatomía expresiva", teoria: "La anatomía no solo es estructural, sino expresiva. La postura del cuerpo comunica emociones.", recurso: "Anatomía expresiva", ejemplo: "En 'Calvin y Hobbes' de Bill Watterson, la anatomía es expresiva.", ejercicio: "Dibuja una figura humana expresando una emoción.", reto: "Crea una página con anatomía expresiva." },
+            { titulo: "El fondo y la atmósfera", teoria: "El fondo crea la atmósfera de la escena. Puede ser detallado o sugerido.", recurso: "Fondo", ejemplo: "En 'Watchmen' de Alan Moore, el fondo es detallado y atmosférico.", ejercicio: "Dibuja un fondo para una escena.", reto: "Crea una página con fondo." },
+            { titulo: "La luz y la sombra", teoria: "La luz y la sombra crean volumen, profundidad y atmósfera.", recurso: "Luz y sombra", ejemplo: "En 'El Eternauta' de Oesterheld, la luz y la sombra son dramáticas.", ejercicio: "Dibuja una escena con luz y sombra.", reto: "Crea una página con luz y sombra." },
+            { titulo: "La composición de la viñeta", teoria: "La composición es la organización de los elementos dentro de la viñeta. Una buena composición guía la mirada.", recurso: "Composición", ejemplo: "En 'Maus' de Art Spiegelman, la composición es equilibrada.", ejercicio: "Dibuja una viñeta con buena composición.", reto: "Crea una página con composición." },
+            { titulo: "El punto de vista", teoria: "El punto de vista (pica, contrapicado, cenital) determina la relación del lector con la escena.", recurso: "Punto de vista", ejemplo: "En 'Watchmen' de Alan Moore, el punto de vista es variado.", ejercicio: "Dibuja una escena desde diferentes puntos de vista.", reto: "Crea una página con puntos de vista variados." },
+            { titulo: "El movimiento y el dinamismo", teoria: "El movimiento se logra a través de líneas de acción, desenfoque y posturas dinámicas.", recurso: "Movimiento", ejemplo: "En 'El Eternauta' de Oesterheld, el movimiento es dinámico.", ejercicio: "Dibuja una escena de acción.", reto: "Crea una página con movimiento." },
+            { titulo: "El detalle y la simplificación", teoria: "El detalle puede ser abrumador; la simplificación puede ser más efectiva. El equilibrio es clave.", recurso: "Detalle / Simplificación", ejemplo: "En 'Persépolis' de Marjane Satrapi, la simplificación es estilística.", ejercicio: "Dibuja una escena con detalle y otra simplificada.", reto: "Crea una página con equilibrio." },
+            { titulo: "El estilo del dibujo", teoria: "El estilo del dibujo (realista, caricaturesco, expresionista, minimalista) define el tono de la novela.", recurso: "Estilo de dibujo", ejemplo: "En 'Maus' de Art Spiegelman, el estilo es sobrio y contenido.", ejercicio: "Elige un estilo y dibuja una escena.", reto: "Crea una página con un estilo definido." },
+            { titulo: "La proporción y la escala", teoria: "La proporción y la escala de los elementos en la viñeta afectan el significado y el impacto.", recurso: "Proporción", ejemplo: "En 'Calvin y Hobbes' de Bill Watterson, la proporción es caricaturesca.", ejercicio: "Dibuja una escena con proporciones variadas.", reto: "Crea una página con proporción." },
+            { titulo: "La perspectiva forzada", teoria: "La perspectiva forzada crea un efecto dramático, distorsionando la realidad.", recurso: "Perspectiva forzada", ejemplo: "En 'El Eternauta' de Oesterheld, la perspectiva forzada es común.", ejercicio: "Dibuja una escena con perspectiva forzada.", reto: "Crea una página con perspectiva forzada." },
+            { titulo: "La línea de acción", teoria: "La línea de acción es una línea imaginaria que guía el movimiento del personaje.", recurso: "Línea de acción", ejemplo: "En 'Watchmen' de Alan Moore, la línea de acción es dinámica.", ejercicio: "Dibuja una figura con línea de acción.", reto: "Crea una página con línea de acción." },
+            { titulo: "El encuadre y la emoción", teoria: "El encuadre puede expresar emoción: un primer plano para intimidad, un plano general para soledad.", recurso: "Encuadre emocional", ejemplo: "En 'Persépolis' de Marjane Satrapi, el encuadre es emocional.", ejercicio: "Dibuja una escena con encuadre emocional.", reto: "Crea una página con encuadre emocional." },
+            { titulo: "El espacio negativo", teoria: "El espacio negativo es el área vacía que rodea a los objetos. Puede ser tan importante como el objeto.", recurso: "Espacio negativo", ejemplo: "En 'Maus' de Art Spiegelman, el espacio negativo es significativo.", ejercicio: "Dibuja una escena usando espacio negativo.", reto: "Crea una página con espacio negativo." },
+            { titulo: "La figura y el fondo", teoria: "La relación entre figura y fondo define la composición. La figura es el sujeto; el fondo es el contexto.", recurso: "Figura y fondo", ejemplo: "En 'Watchmen' de Alan Moore, la figura y el fondo son equilibrados.", ejercicio: "Dibuja una escena con figura y fondo.", reto: "Crea una página con figura y fondo." },
+            { titulo: "La repetición y el ritmo visual", teoria: "La repetición de elementos visuales crea ritmo y estructura en la página.", recurso: "Repetición", ejemplo: "En 'El Eternauta' de Oesterheld, la repetición es un recurso.", ejercicio: "Dibuja una secuencia con repetición.", reto: "Crea una página con ritmo visual." }
+        ]
+    },
+    viñeta: {
+        nombre: "Viñeta", color: "verde", icono: "bi-robot",
+        especialidad: "La página: diseño, ritmo, composición, flujo",
+        tecnicas: [
+            { titulo: "El diseño de la página", teoria: "El diseño de la página es la disposición de las viñetas en la página. Afecta el ritmo y la lectura.", recurso: "Diseño de página", ejemplo: "En 'Watchmen' de Alan Moore, el diseño de página es simétrico.", ejercicio: "Diseña una página de 6 viñetas.", reto: "Crea una página con diseño de página." },
+            { titulo: "El ritmo de la página", teoria: "El ritmo de la página es la velocidad con la que el lector avanza. Viñetas grandes dan más tiempo; viñetas pequeñas aceleran.", recurso: "Ritmo de página", ejemplo: "En 'El Eternauta' de Oesterheld, el ritmo es dinámico.", ejercicio: "Diseña una página con ritmo lento y otra con ritmo rápido.", reto: "Crea una página con ritmo variado." },
+            { titulo: "La composición de la página", teoria: "La composición de la página es la organización de las viñetas en el espacio. Debe guiar la mirada del lector.", recurso: "Composición de página", ejemplo: "En 'Persépolis' de Marjane Satrapi, la composición es clara.", ejercicio: "Diseña una página con buena composición.", reto: "Crea una página con composición." },
+            { titulo: "El flujo de lectura", teoria: "El flujo de lectura es la dirección en la que el lector avanza por la página (normalmente de izquierda a derecha y de arriba a abajo).", recurso: "Flujo de lectura", ejemplo: "En 'Maus' de Art Spiegelman, el flujo de lectura es natural.", ejercicio: "Diseña una página con un flujo de lectura claro.", reto: "Crea una página con flujo de lectura." },
+            { titulo: "La viñeta como unidad", teoria: "Cada viñeta es una unidad de significado que contribuye al todo.", recurso: "Viñeta", ejemplo: "En 'Watchmen' de Alan Moore, cada viñeta es significativa.", ejercicio: "Diseña una viñeta única.", reto: "Crea una página con viñetas significativas." },
+            { titulo: "La transición entre viñetas", teoria: "La transición entre viñetas crea continuidad narrativa. Puede ser de acción a acción, de sujeto a sujeto, etc.", recurso: "Transición", ejemplo: "En 'El Eternauta' de Oesterheld, las transiciones son fluidas.", ejercicio: "Diseña una secuencia de transiciones.", reto: "Crea una página con transiciones." },
+            { titulo: "La página splash", teoria: "La página splash es una viñeta que ocupa toda la página, creando un impacto visual.", recurso: "Splash", ejemplo: "En 'Watchmen' de Alan Moore, las splash son impactantes.", ejercicio: "Diseña una página splash.", reto: "Crea una página splash." },
+            { titulo: "La doble página", teoria: "La doble página es el uso de dos páginas para una sola imagen, creando un efecto panorámico.", recurso: "Doble página", ejemplo: "En 'El Eternauta' de Oesterheld, las dobles páginas son épicas.", ejercicio: "Diseña una doble página.", reto: "Crea una doble página." },
+            { titulo: "La viñeta sin bordes", teoria: "La viñeta sin bordes crea una sensación de continuidad y fluidez.", recurso: "Viñeta sin bordes", ejemplo: "En 'Persépolis' de Marjane Satrapi, las viñetas sin bordes son comunes.", ejercicio: "Diseña una viñeta sin bordes.", reto: "Crea una página con viñetas sin bordes." },
+            { titulo: "El blanco y el negro", teoria: "El blanco y el negro en la página pueden ser utilizados para crear atmósfera y contraste.", recurso: "Blanco y negro", ejemplo: "En 'Maus' de Art Spiegelman, el blanco y negro es fundamental.", ejercicio: "Diseña una página en blanco y negro.", reto: "Crea una página en blanco y negro." },
+            { titulo: "El espacio entre viñetas", teoria: "El espacio entre viñetas (el gutter) es el espacio donde el lector completa la acción.", recurso: "Gutter", ejemplo: "En 'Watchmen' de Alan Moore, el gutter es significativo.", ejercicio: "Diseña una página con gutters variados.", reto: "Crea una página con gutters." },
+            { titulo: "La viñeta como tiempo", teoria: "La viñeta no solo representa espacio, también tiempo. El tamaño de la viñeta puede indicar duración.", recurso: "Viñeta y tiempo", ejemplo: "En 'El Eternauta' de Oesterheld, la viñeta expresa tiempo.", ejercicio: "Diseña una viñeta que exprese tiempo.", reto: "Crea una página con tiempo." },
+            { titulo: "La viñeta como emoción", teoria: "La viñeta puede expresar emoción a través de su forma, tamaño y contenido.", recurso: "Viñeta y emoción", ejemplo: "En 'Persépolis' de Marjane Satrapi, la viñeta expresa emoción.", ejercicio: "Diseña una viñeta que exprese una emoción.", reto: "Crea una página con emoción." },
+            { titulo: "La página como lienzo", teoria: "La página es el lienzo del autor. Su diseño es tan importante como el dibujo.", recurso: "Página como lienzo", ejemplo: "En 'Maus' de Art Spiegelman, la página es un lienzo.", ejercicio: "Diseña una página como lienzo.", reto: "Crea una página como lienzo." },
+            { titulo: "La repetición de viñetas", teoria: "La repetición de una misma viñeta crea un efecto de ritmo o de énfasis.", recurso: "Repetición de viñetas", ejemplo: "En 'Watchmen' de Alan Moore, la repetición de viñetas es un recurso.", ejercicio: "Diseña una secuencia con repetición de viñetas.", reto: "Crea una página con repetición." },
+            { titulo: "La viñeta en off", teoria: "La viñeta en off muestra lo que está fuera de la acción principal, creando contraste.", recurso: "Viñeta en off", ejemplo: "En 'El Eternauta' de Oesterheld, las viñetas en off son comunes.", ejercicio: "Diseña una viñeta en off.", reto: "Crea una página con viñetas en off." },
+            { titulo: "La viñeta y la perspectiva", teoria: "La perspectiva de la viñeta determina la posición del lector frente a la escena.", recurso: "Viñeta y perspectiva", ejemplo: "En 'Persépolis' de Marjane Satrapi, la perspectiva es variada.", ejercicio: "Diseña una viñeta con perspectiva.", reto: "Crea una página con perspectiva." },
+            { titulo: "La viñeta y la luz", teoria: "La luz en la viñeta crea atmósfera y dirigir la atención.", recurso: "Viñeta y luz", ejemplo: "En 'Maus' de Art Spiegelman, la luz es simbólica.", ejercicio: "Diseña una viñeta con luz.", reto: "Crea una página con luz." },
+            { titulo: "La viñeta y el color", teoria: "El color en la viñeta puede ser realista o simbólico.", recurso: "Viñeta y color", ejemplo: "En 'Watchmen' de Alan Moore, el color es simbólico.", ejercicio: "Diseña una viñeta con color.", reto: "Crea una página con color." },
+            { titulo: "La viñeta y el movimiento", teoria: "El movimiento en la viñeta se logra a través de líneas de acción y posturas dinámicas.", recurso: "Viñeta y movimiento", ejemplo: "En 'El Eternauta' de Oesterheld, el movimiento es dinámico.", ejercicio: "Diseña una viñeta con movimiento.", reto: "Crea una página con movimiento." }
+        ]
+    },
+    color: {
+        nombre: "Color", color: "purpura", icono: "bi-robot",
+        especialidad: "Cromatismo: paleta, tono, atmósfera, simbolismo",
+        tecnicas: [
+            { titulo: "La paleta de colores", teoria: "La paleta de colores es la selección de colores que se usan en la novela gráfica. Define el tono y la atmósfera.", recurso: "Paleta de colores", ejemplo: "En 'Watchmen' de Alan Moore, la paleta es limitada y simbólica.", ejercicio: "Elige una paleta de colores para una escena.", reto: "Crea una página con una paleta definida." },
+            { titulo: "El color y la atmósfera", teoria: "El color crea la atmósfera de la escena. Los tonos cálidos crean calidez; los fríos crean distancia.", recurso: "Color y atmósfera", ejemplo: "En 'Persépolis' de Marjane Satrapi, el color es parte de la atmósfera.", ejercicio: "Crea una atmósfera con color.", reto: "Crea una página con atmósfera de color." },
+            { titulo: "El color y el simbolismo", teoria: "El color puede tener un significado simbólico: rojo para pasión, azul para tristeza, etc.", recurso: "Color y simbolismo", ejemplo: "En 'El Eternauta' de Oesterheld, el color es simbólico.", ejercicio: "Elige un color simbólico para una escena.", reto: "Crea una página con simbolismo de color." },
+            { titulo: "El color y la emoción", teoria: "El color expresa emociones: colores brillantes para alegría, colores oscuros para tristeza.", recurso: "Color y emoción", ejemplo: "En 'Maus' de Art Spiegelman, el color es mínimo y emocional.", ejercicio: "Expresa una emoción con color.", reto: "Crea una página con emoción de color." },
+            { titulo: "La monocromía", teoria: "La monocromía es el uso de un solo color en diferentes tonos. Crea unidad y atmósfera.", recurso: "Monocromía", ejemplo: "En 'Sin City' de Frank Miller, la monocromía es el estilo.", ejercicio: "Crea una página monocromática.", reto: "Crea una página en monocromía." },
+            { titulo: "El contraste cromático", teoria: "El contraste cromático es la oposición entre colores complementarios. Crea tensión y dinamismo.", recurso: "Contraste cromático", ejemplo: "En 'Watchmen' de Alan Moore, el contraste es clave.", ejercicio: "Crea una página con contraste cromático.", reto: "Crea una página de contraste." },
+            { titulo: "La gama de colores", teoria: "La gama de colores es la variedad de colores utilizados. Una gama limitada crea unidad; una amplia crea diversidad.", recurso: "Gama de colores", ejemplo: "En 'Persépolis' de Marjane Satrapi, la gama es limitada.", ejercicio: "Elige una gama de colores.", reto: "Crea una página con gama de colores." },
+            { titulo: "El color y la luz", teoria: "El color y la luz trabajan juntos para crear volumen y atmósfera.", recurso: "Color y luz", ejemplo: "En 'El Eternauta' de Oesterheld, la luz y el color son dramáticos.", ejercicio: "Crea una página con color y luz.", reto: "Crea una página de color y luz." },
+            { titulo: "El color y la textura", teoria: "El color puede crear textura visual, simulando materiales y superficies.", recurso: "Color y textura", ejemplo: "En 'Maus' de Art Spiegelman, la textura es mínima.", ejercicio: "Crea una textura con color.", reto: "Crea una página con textura de color." },
+            { titulo: "El color y la profundidad", teoria: "El color crea profundidad: los colores cálidos avanzan, los fríos retroceden.", recurso: "Color y profundidad", ejemplo: "En 'Watchmen' de Alan Moore, la profundidad es clave.", ejercicio: "Crea profundidad con color.", reto: "Crea una página con profundidad de color." },
+            { titulo: "El color y el movimiento", teoria: "El color puede sugerir movimiento a través de la vibración cromática.", recurso: "Color y movimiento", ejemplo: "En 'El Eternauta' de Oesterheld, el color sugiere movimiento.", ejercicio: "Crea movimiento con color.", reto: "Crea una página con movimiento de color." },
+            { titulo: "El color y el tiempo", teoria: "El color puede indicar el paso del tiempo: colores más vivos para el presente, sepia para el pasado.", recurso: "Color y tiempo", ejemplo: "En 'Persépolis' de Marjane Satrapi, el color indica el tiempo.", ejercicio: "Crea una página con color y tiempo.", reto: "Crea una página de tiempo." },
+            { titulo: "El color y el espacio", teoria: "El color define el espacio: colores cálidos para primer plano, fríos para fondo.", recurso: "Color y espacio", ejemplo: "En 'Maus' de Art Spiegelman, el espacio es definido.", ejercicio: "Crea una página con color y espacio.", reto: "Crea una página de espacio." },
+            { titulo: "El color y la composición", teoria: "El color puede guiar la mirada del lector en la composición de la viñeta.", recurso: "Color y composición", ejemplo: "En 'Watchmen' de Alan Moore, la composición es guiada.", ejercicio: "Crea una página con color y composición.", reto: "Crea una página de composición." },
+            { titulo: "El color y el personaje", teoria: "El color puede identificar a los personajes: cada personaje tiene su propia paleta.", recurso: "Color y personaje", ejemplo: "En 'El Eternauta' de Oesterheld, los personajes tienen colores.", ejercicio: "Crea una paleta para un personaje.", reto: "Crea una página con personaje y color." },
+            { titulo: "El color y la emoción del personaje", teoria: "El color puede reflejar la emoción del personaje en un momento dado.", recurso: "Color y emoción del personaje", ejemplo: "En 'Persépolis' de Marjane Satrapi, el color refleja la emoción.", ejercicio: "Crea una página donde el color refleje una emoción.", reto: "Crea una página de emoción de personaje." },
+            { titulo: "El color y la atmósfera de la escena", teoria: "El color define la atmósfera de la escena: colores oscuros para el miedo, colores claros para la alegría.", recurso: "Color y atmósfera de la escena", ejemplo: "En 'Maus' de Art Spiegelman, la atmósfera es definida.", ejercicio: "Crea una atmósfera de escena con color.", reto: "Crea una página de atmósfera." },
+            { titulo: "El color y la narración", teoria: "El color puede ser parte de la narración: cambios de color indican cambios en la historia.", recurso: "Color y narración", ejemplo: "En 'Watchmen' de Alan Moore, el color narra.", ejercicio: "Crea una página donde el color narre.", reto: "Crea una página de narración de color." },
+            { titulo: "El color y el lector", teoria: "El color influye en la respuesta emocional del lector. El autor debe ser consciente de esto.", recurso: "Color y lector", ejemplo: "En 'El Eternauta' de Oesterheld, el color impacta al lector.", ejercicio: "Crea una página que impacte con el color.", reto: "Crea una página de impacto de color." },
+            { titulo: "El color y la edición", teoria: "El color se aplica en la edición de la novela gráfica, con técnicas como el entintado y el coloreado.", recurso: "Color y edición", ejemplo: "En 'Persépolis' de Marjane Satrapi, el color es parte de la edición.", ejercicio: "Crea una página con edición de color.", reto: "Crea una página de edición." }
+        ]
+    },
+    narrativa: {
+        nombre: "Narrativa", color: "rojo", icono: "bi-robot",
+        especialidad: "La historia: estructura, ritmo, personajes, arco",
+        tecnicas: [
+            { titulo: "La estructura de la historia", teoria: "La estructura de la historia en la novela gráfica sigue el arco narrativo clásico: planteamiento, nudo, desenlace.", recurso: "Estructura", ejemplo: "En 'Watchmen' de Alan Moore, la estructura es compleja y fragmentada.", ejercicio: "Diseña una estructura para tu historia.", reto: "Crea una página de estructura." },
+            { titulo: "El ritmo narrativo", teoria: "El ritmo narrativo es la velocidad con la que avanza la historia. Se logra a través del número de viñetas y su tamaño.", recurso: "Ritmo narrativo", ejemplo: "En 'El Eternauta' de Oesterheld, el ritmo es dinámico.", ejercicio: "Diseña una página con ritmo narrativo.", reto: "Crea una página de ritmo." },
+            { titulo: "Los personajes", teoria: "Los personajes son el centro de la historia. Deben tener motivaciones, conflictos y evolución.", recurso: "Personajes", ejemplo: "En 'Persépolis' de Marjane Satrapi, los personajes son complejos.", ejercicio: "Crea un personaje para tu historia.", reto: "Crea una página con personajes." },
+            { titulo: "El arco del personaje", teoria: "El arco del personaje es la transformación que experimenta el personaje a lo largo de la historia.", recurso: "Arco del personaje", ejemplo: "En 'Maus' de Art Spiegelman, el arco de Art es central.", ejercicio: "Diseña el arco de un personaje.", reto: "Crea una página con arco de personaje." },
+            { titulo: "El conflicto", teoria: "El conflicto es el motor de la historia. Puede ser interno, interpersonal, social o cósmico.", recurso: "Conflicto", ejemplo: "En 'Watchmen' de Alan Moore, el conflicto es múltiple.", ejercicio: "Define el conflicto de tu historia.", reto: "Crea una página de conflicto." },
+            { titulo: "El diálogo como acción", teoria: "El diálogo en la novela gráfica es acción: impulsa la trama y revela personajes.", recurso: "Diálogo como acción", ejemplo: "En 'El Eternauta' de Oesterheld, el diálogo impulsa la trama.", ejercicio: "Escribe un diálogo que impulse la trama.", reto: "Crea una página de diálogo como acción." },
+            { titulo: "La imagen como narración", teoria: "La imagen en la novela gráfica no solo ilustra, también narra. Una imagen puede contar una historia por sí misma.", recurso: "Imagen como narración", ejemplo: "En 'Persépolis' de Marjane Satrapi, la imagen narra.", ejercicio: "Crea una página donde la imagen narre.", reto: "Crea una página de narración visual." },
+            { titulo: "El ritmo visual", teoria: "El ritmo visual es la variación de tamaño y forma de las viñetas para crear un ritmo narrativo.", recurso: "Ritmo visual", ejemplo: "En 'Maus' de Art Spiegelman, el ritmo visual es clave.", ejercicio: "Crea una página con ritmo visual.", reto: "Crea una página de ritmo visual." },
+            { titulo: "La elipsis narrativa", teoria: "La elipsis narrativa es la omisión de eventos que el lector puede inferir. Acelera el ritmo.", recurso: "Elipsis narrativa", ejemplo: "En 'Watchmen' de Alan Moore, la elipsis es frecuente.", ejercicio: "Crea una página con elipsis narrativa.", reto: "Crea una página de elipsis." },
+            { titulo: "La metáfora visual", teoria: "La metáfora visual es una imagen que representa una idea abstracta. Es un recurso poético.", recurso: "Metáfora visual", ejemplo: "En 'El Eternauta' de Oesterheld, la metáfora visual es común.", ejercicio: "Crea una metáfora visual.", reto: "Crea una página de metáfora visual." },
+            { titulo: "El símbolo visual", teoria: "El símbolo visual es un objeto o imagen que tiene un significado más allá de su apariencia.", recurso: "Símbolo visual", ejemplo: "En 'Persépolis' de Marjane Satrapi, el velo es un símbolo.", ejercicio: "Crea un símbolo visual para tu historia.", reto: "Crea una página de símbolo visual." },
+            { titulo: "La narración y el tiempo", teoria: "El tiempo narrativo en la novela gráfica se controla a través del número de viñetas y su tamaño.", recurso: "Narración y tiempo", ejemplo: "En 'Maus' de Art Spiegelman, el tiempo es controlado.", ejercicio: "Crea una página con tiempo narrativo.", reto: "Crea una página de tiempo." },
+            { titulo: "La narración y el espacio", teoria: "El espacio narrativo en la novela gráfica es el lugar donde se desarrolla la historia. Debe ser coherente.", recurso: "Narración y espacio", ejemplo: "En 'Watchmen' de Alan Moore, el espacio es coherente.", ejercicio: "Crea una página con espacio narrativo.", reto: "Crea una página de espacio." },
+            { titulo: "La narración y el punto de vista", teoria: "El punto de vista narrativo determina qué sabe el lector y qué no. Puede ser omnisciente o limitado.", recurso: "Punto de vista", ejemplo: "En 'El Eternauta' de Oesterheld, el punto de vista es limitado.", ejercicio: "Elige un punto de vista para tu historia.", reto: "Crea una página de punto de vista." },
+            { titulo: "La narración y el tono", teoria: "El tono narrativo es la actitud del narrador hacia la historia. Puede ser serio, irónico, humorístico, etc.", recurso: "Tono", ejemplo: "En 'Persépolis' de Marjane Satrapi, el tono es serio.", ejercicio: "Define el tono de tu historia.", reto: "Crea una página de tono." },
+            { titulo: "La narración y el género", teoria: "El género narrativo (superhéroes, histórico, autobiográfico, etc.) define las expectativas del lector.", recurso: "Género", ejemplo: "En 'Maus' de Art Spiegelman, el género es autobiográfico.", ejercicio: "Elige un género para tu historia.", reto: "Crea una página de género." },
+            { titulo: "La narración y el estilo", teoria: "El estilo narrativo es la forma de contar la historia. Puede ser directo, poético, fragmentado, etc.", recurso: "Estilo narrativo", ejemplo: "En 'Watchmen' de Alan Moore, el estilo es fragmentado.", ejercicio: "Define el estilo de tu historia.", reto: "Crea una página de estilo narrativo." },
+            { titulo: "La narración y el tema", teoria: "El tema es el mensaje central de la historia. Debe ser coherente con la narración.", recurso: "Tema", ejemplo: "En 'El Eternauta' de Oesterheld, el tema es la lucha.", ejercicio: "Define el tema de tu historia.", reto: "Crea una página de tema." },
+            { titulo: "La narración y el lector", teoria: "El lector es el destinatario de la narración. El autor debe considerar su respuesta.", recurso: "Narración y lector", ejemplo: "En 'Persépolis' de Marjane Satrapi, el lector es considerado.", ejercicio: "Crea una página que considere al lector.", reto: "Crea una página de lector." },
+            { titulo: "La narración y el legado", teoria: "La narración en la novela gráfica puede tener un legado: influir en otros autores y en la cultura.", recurso: "Legado", ejemplo: "En 'Maus' de Art Spiegelman, el legado es enorme.", ejercicio: "Reflexiona sobre el legado de tu historia.", reto: "Crea una página de legado." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['lenguaje','imagen','viñeta','color','narrativa'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="recurso-clave">
+                        <span>${t.recurso}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_graphica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

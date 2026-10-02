@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔤 Flota Verbum · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .verbo-modelo { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .verbo-modelo span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .conjugacion { background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; font-family: monospace; color: var(--texto-muted); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🔤 FLOTA VERBUM<small>100 TÉCNICAS · CONJUGACIÓN</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="indicativus" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Indicativus <span class="badge-personaje bg-dorado">Indicativo</span></a>
+        <a class="nav-link" data-section="subjunctivus" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Subjunctivus <span class="badge-personaje bg-azul">Subjuntivo</span></a>
+        <a class="nav-link" data-section="imperativus" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Imperativus <span class="badge-personaje bg-verde">Imperativo</span></a>
+        <a class="nav-link" data-section="temporalis" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Temporalis <span class="badge-personaje bg-purpura">Tiempos</span></a>
+        <a class="nav-link" data-section="irregularis" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Irregularis <span class="badge-personaje bg-rojo">Irregulares</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🔤</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Conjugación verbal</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> La conjugación verbal</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la conjugación verbal:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Indicativus</strong> – Modo indicativo: presente, pretéritos, futuros, condicional.</li>
+                    <li><strong style="color:var(--neon-azul);">Subjunctivus</strong> – Modo subjuntivo: presente, pretéritos, futuros.</li>
+                    <li><strong style="color:var(--neon-verde);">Imperativus</strong> – Modo imperativo: afirmativo, negativo, formas de cortesía.</li>
+                    <li><strong style="color:var(--neon-purpura);">Temporalis</strong> – Tiempos compuestos y aspectos: perfecto, pluscuamperfecto, futuro compuesto.</li>
+                    <li><strong style="color:var(--neon-rojo);">Irregularis</strong> – Verbos irregulares y sus conjugaciones.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-indicativus" class="section-content" style="display:none;"></div>
+        <div id="section-subjunctivus" class="section-content" style="display:none;"></div>
+        <div id="section-imperativus" class="section-content" style="display:none;"></div>
+        <div id="section-temporalis" class="section-content" style="display:none;"></div>
+        <div id="section-irregularis" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    indicativus: {
+        nombre: "Indicativus", color: "dorado", icono: "bi-robot",
+        especialidad: "Modo indicativo: presente, pretéritos, futuros, condicional",
+        tecnicas: [
+            { titulo: "Presente de indicativo", teoria: "El presente de indicativo expresa acciones que ocurren en el momento actual, hábitos o verdades universales.", verbo: "amar (1ª conjugación)", conjugacion: "amo, amas, ama, amamos, amáis, aman", ejemplo: "Cervantes: 'Amo la libertad sobre todas las cosas.'", ejercicio: "Conjuga el verbo 'comer' en presente de indicativo.", reto: "Escribe 3 oraciones en presente de indicativo." },
+            { titulo: "Pretérito perfecto simple (indefinido)", teoria: "El pretérito perfecto simple (indefinido) expresa acciones pasadas y terminadas, sin conexión con el presente.", verbo: "amar", conjugacion: "amé, amaste, amó, amamos, amasteis, amaron", ejemplo: "Bécquer: 'Amé y fui amado.'", ejercicio: "Conjuga el verbo 'vivir' en pretérito perfecto simple.", reto: "Escribe 3 oraciones en pretérito perfecto simple." },
+            { titulo: "Pretérito imperfecto de indicativo", teoria: "El pretérito imperfecto expresa acciones pasadas habituales o en progreso, sin indicar su inicio o fin.", verbo: "amar", conjugacion: "amaba, amabas, amaba, amábamos, amabais, amaban", ejemplo: "Proust: 'Amaba los atardeceres junto al mar.'", ejercicio: "Conjuga el verbo 'leer' en pretérito imperfecto.", reto: "Escribe 3 oraciones en pretérito imperfecto." },
+            { titulo: "Pretérito pluscuamperfecto de indicativo", teoria: "El pretérito pluscuamperfecto expresa una acción pasada anterior a otra acción pasada.", verbo: "amar", conjugacion: "había amado, habías amado, había amado, habíamos amado, habíais amado, habían amado", ejemplo: "Shakespeare: 'Ya había amado antes de conocerte.'", ejercicio: "Conjuga el verbo 'escribir' en pretérito pluscuamperfecto.", reto: "Escribe 3 oraciones en pretérito pluscuamperfecto." },
+            { titulo: "Pretérito anterior de indicativo", teoria: "El pretérito anterior expresa una acción pasada inmediatamente anterior a otra acción pasada. Es un tiempo literario.", verbo: "amar", conjugacion: "hube amado, hubiste amado, hubo amado, hubimos amado, hubisteis amado, hubieron amado", ejemplo: "Cervantes: 'Cuando hubo amado, partió.'", ejercicio: "Conjuga el verbo 'partir' en pretérito anterior.", reto: "Escribe 2 oraciones en pretérito anterior." },
+            { titulo: "Futuro simple de indicativo", teoria: "El futuro simple expresa acciones que ocurrirán en el futuro.", verbo: "amar", conjugacion: "amaré, amarás, amará, amaremos, amaréis, amarán", ejemplo: "Neruda: 'Amaré hasta el último de mis días.'", ejercicio: "Conjuga el verbo 'cantar' en futuro simple.", reto: "Escribe 3 oraciones en futuro simple." },
+            { titulo: "Futuro perfecto de indicativo", teoria: "El futuro perfecto expresa una acción futura que habrá terminado antes de otra acción futura.", verbo: "amar", conjugacion: "habré amado, habrás amado, habrá amado, habremos amado, habréis amado, habrán amado", ejemplo: "Borges: 'Habré amado en todos los tiempos.'", ejercicio: "Conjuga el verbo 'escribir' en futuro perfecto.", reto: "Escribe 3 oraciones en futuro perfecto." },
+            { titulo: "Condicional simple de indicativo", teoria: "El condicional simple expresa acciones hipotéticas o futuras en relación con el pasado.", verbo: "amar", conjugacion: "amaría, amarías, amaría, amaríamos, amaríais, amarían", ejemplo: "Machado: 'Amaría la tierra de mis abuelos.'", ejercicio: "Conjuga el verbo 'viajar' en condicional simple.", reto: "Escribe 3 oraciones en condicional simple." },
+            { titulo: "Condicional perfecto de indicativo", teoria: "El condicional perfecto expresa una acción hipotética que ya habría ocurrido en el pasado.", verbo: "amar", conjugacion: "habría amado, habrías amado, habría amado, habríamos amado, habríais amado, habrían amado", ejemplo: "Márquez: 'Habría amado más si me hubieras dejado.'", ejercicio: "Conjuga el verbo 'luchar' en condicional perfecto.", reto: "Escribe 3 oraciones en condicional perfecto." },
+            { titulo: "Verbos de la 1ª conjugación (-ar)", teoria: "Los verbos de la 1ª conjugación terminan en -ar y siguen un patrón regular en indicativo.", verbo: "amar (modelo)", conjugacion: "Presente: amo, amas, ama...; Pretérito: amé, amaste, amó...", ejemplo: "La regularidad de 'amar' es la base de la conjugación en español.", ejercicio: "Conjuga 'hablar' en presente y pretérito.", reto: "Escribe 3 oraciones con verbos de la 1ª conjugación." },
+            { titulo: "Verbos de la 2ª conjugación (-er)", teoria: "Los verbos de la 2ª conjugación terminan en -er y tienen un patrón regular en indicativo.", verbo: "comer (modelo)", conjugacion: "Presente: como, comes, come...; Pretérito: comí, comiste, comió...", ejemplo: "García Lorca: 'Como naranjas y recuerdo tu piel.'", ejercicio: "Conjuga 'beber' en presente y pretérito.", reto: "Escribe 3 oraciones con verbos de la 2ª conjugación." },
+            { titulo: "Verbos de la 3ª conjugación (-ir)", teoria: "Los verbos de la 3ª conjugación terminan en -ir y tienen un patrón regular en indicativo.", verbo: "vivir (modelo)", conjugacion: "Presente: vivo, vives, vive...; Pretérito: viví, viviste, vivió...", ejemplo: "Lorca: 'Vivo en la casa de la memoria.'", ejercicio: "Conjuga 'escribir' en presente y pretérito.", reto: "Escribe 3 oraciones con verbos de la 3ª conjugación." },
+            { titulo: "Uso del presente con valor de futuro", teoria: "El presente de indicativo puede usarse para expresar un futuro inmediato o cierto.", verbo: "ir", conjugacion: "voy, vas, va, vamos, vais, van", ejemplo: "Cervantes: 'Mañana voy a la ciudad.'", ejercicio: "Escribe 3 oraciones con presente de futuro.", reto: "Escribe un diálogo usando presente de futuro." },
+            { titulo: "Uso del pretérito imperfecto para cortesía", teoria: "El pretérito imperfecto se usa para expresar cortesía o peticiones suaves.", verbo: "querer", conjugacion: "quería, querías, quería...", ejemplo: "Lope de Vega: 'Quería pedirte un favor.'", ejercicio: "Escribe 3 oraciones con imperfecto de cortesía.", reto: "Escribe una conversación cortés en imperfecto." },
+            { titulo: "Uso del condicional para hipótesis", teoria: "El condicional expresa hipótesis, deseos o acciones futuras en el pasado.", verbo: "desear", conjugacion: "desearía, desearías, desearía...", ejemplo: "Pérez Galdós: 'Desearía estar en tu lugar.'", ejercicio: "Escribe 3 oraciones con condicional de hipótesis.", reto: "Escribe un texto con condicionales." },
+            { titulo: "Uso del futuro para probabilidad", teoria: "El futuro de indicativo se usa para expresar probabilidad o conjetura en el presente.", verbo: "ser", conjugacion: "será, serás, será...", ejemplo: "Galdós: 'Serán las nueve de la noche.'", ejercicio: "Escribe 3 oraciones con futuro de probabilidad.", reto: "Escribe un texto con futuro de probabilidad." },
+            { titulo: "Uso del pretérito perfecto para acciones recientes", teoria: "El pretérito perfecto (he amado) expresa acciones pasadas recientes con conexión con el presente.", verbo: "amar", conjugacion: "he amado, has amado, ha amado...", ejemplo: "Bécquer: 'He amado en silencio.'", ejercicio: "Conjuga 'leer' en pretérito perfecto.", reto: "Escribe 3 oraciones en pretérito perfecto." },
+            { titulo: "Uso del pretérito pluscuamperfecto para anterioridad", teoria: "El pretérito pluscuamperfecto (había amado) expresa anterioridad respecto a otra acción pasada.", verbo: "amar", conjugacion: "había amado, habías amado, había amado...", ejemplo: "Shakespeare: 'Había amado antes de conocerte.'", ejercicio: "Conjuga 'escribir' en pretérito pluscuamperfecto.", reto: "Escribe 3 oraciones en pretérito pluscuamperfecto." },
+            { titulo: "Uso del futuro perfecto para conjetura pasada", teoria: "El futuro perfecto (habrá amado) expresa conjetura sobre una acción pasada.", verbo: "amar", conjugacion: "habrá amado, habrás amado, habrá amado...", ejemplo: "Borges: 'Habrá amado en otros tiempos.'", ejercicio: "Conjuga 'vivir' en futuro perfecto.", reto: "Escribe 3 oraciones con futuro perfecto de conjetura." },
+            { titulo: "Uso del condicional perfecto para hipótesis pasadas", teoria: "El condicional perfecto (habría amado) expresa hipótesis sobre acciones pasadas.", verbo: "amar", conjugacion: "habría amado, habrías amado, habría amado...", ejemplo: "Márquez: 'Habría amado más si me hubieras dejado.'", ejercicio: "Conjuga 'luchar' en condicional perfecto.", reto: "Escribe 3 oraciones en condicional perfecto." }
+        ]
+    },
+    subjunctivus: {
+        nombre: "Subjunctivus", color: "azul", icono: "bi-robot",
+        especialidad: "Modo subjuntivo: presente, pretéritos, futuros",
+        tecnicas: [
+            { titulo: "Presente de subjuntivo", teoria: "El presente de subjuntivo expresa duda, deseo, posibilidad o emoción en el presente.", verbo: "amar", conjugacion: "ame, ames, ame, amemos, améis, amen", ejemplo: "Cervantes: 'Espero que ames la libertad.'", ejercicio: "Conjuga 'comer' en presente de subjuntivo.", reto: "Escribe 3 oraciones en presente de subjuntivo." },
+            { titulo: "Pretérito imperfecto de subjuntivo (-ra)", teoria: "El pretérito imperfecto de subjuntivo en -ra expresa deseos, dudas o hipótesis en el pasado.", verbo: "amar", conjugacion: "amara, amaras, amara, amáramos, amarais, amaran", ejemplo: "Bécquer: 'Si te amara, no te lo diría.'", ejercicio: "Conjuga 'vivir' en pretérito imperfecto de subjuntivo (-ra).", reto: "Escribe 3 oraciones en pretérito imperfecto de subjuntivo (-ra)." },
+            { titulo: "Pretérito imperfecto de subjuntivo (-se)", teoria: "El pretérito imperfecto de subjuntivo en -se es una variante literaria del -ra.", verbo: "amar", conjugacion: "amase, amases, amase, amásemos, amaseis, amasen", ejemplo: "Garcilaso: 'Si te amase, todo sería diferente.'", ejercicio: "Conjuga 'escribir' en pretérito imperfecto de subjuntivo (-se).", reto: "Escribe 2 oraciones en pretérito imperfecto de subjuntivo (-se)." },
+            { titulo: "Futuro simple de subjuntivo", teoria: "El futuro simple de subjuntivo expresa acciones futuras hipotéticas. Es un tiempo literario en desuso.", verbo: "amar", conjugacion: "amare, amares, amare, amáremos, amareis, amaren", ejemplo: "Cervantes: 'Si te amare, seré feliz.'", ejercicio: "Conjuga 'partir' en futuro simple de subjuntivo.", reto: "Escribe 2 oraciones en futuro simple de subjuntivo." },
+            { titulo: "Pretérito perfecto de subjuntivo", teoria: "El pretérito perfecto de subjuntivo expresa una acción pasada en relación con el presente.", verbo: "amar", conjugacion: "haya amado, hayas amado, haya amado...", ejemplo: "Lorca: 'No creo que te haya amado como mereces.'", ejercicio: "Conjuga 'leer' en pretérito perfecto de subjuntivo.", reto: "Escribe 3 oraciones en pretérito perfecto de subjuntivo." },
+            { titulo: "Pretérito pluscuamperfecto de subjuntivo", teoria: "El pretérito pluscuamperfecto de subjuntivo expresa una acción pasada anterior a otra acción pasada.", verbo: "amar", conjugacion: "hubiera/hubiese amado, hubieras/hubieses amado...", ejemplo: "Shakespeare: 'Si te hubiera amado, te lo habría dicho.'", ejercicio: "Conjuga 'escribir' en pretérito pluscuamperfecto de subjuntivo.", reto: "Escribe 3 oraciones en pretérito pluscuamperfecto de subjuntivo." },
+            { titulo: "Futuro perfecto de subjuntivo", teoria: "El futuro perfecto de subjuntivo expresa una acción futura anterior a otra acción futura. Es literario.", verbo: "amar", conjugacion: "hubiere amado, hubieres amado, hubiere amado...", ejemplo: "Calderón: 'Si te hubiere amado, te lo diré.'", ejercicio: "Conjuga 'vivir' en futuro perfecto de subjuntivo.", reto: "Escribe 2 oraciones en futuro perfecto de subjuntivo." },
+            { titulo: "Uso del subjuntivo en oraciones desiderativas", teoria: "El subjuntivo expresa deseos con 'ojalá' o 'que'.", verbo: "amar", conjugacion: "Ojalá te ame siempre.", ejemplo: "Bécquer: 'Ojalá que te ame con locura.'", ejercicio: "Escribe 3 oraciones con 'ojalá' + subjuntivo.", reto: "Escribe un texto con oraciones desiderativas." },
+            { titulo: "Uso del subjuntivo en oraciones de duda", teoria: "El subjuntivo se usa con verbos de duda (dudar, no creer, no pensar).", verbo: "amar", conjugacion: "Dudo que te ame de verdad.", ejemplo: "Baroja: 'Dudo que te ame como mereces.'", ejercicio: "Escribe 3 oraciones con 'dudo que' + subjuntivo.", reto: "Escribe un texto con oraciones de duda." },
+            { titulo: "Uso del subjuntivo en oraciones de emoción", teoria: "El subjuntivo se usa con verbos de emoción (alegrarse, temer, sorprenderse).", verbo: "amar", conjugacion: "Me alegra que te amen.", ejemplo: "García Lorca: 'Me alegra que te ame la vida.'", ejercicio: "Escribe 3 oraciones con emoción + subjuntivo.", reto: "Escribe un texto con oraciones de emoción." },
+            { titulo: "Uso del subjuntivo en oraciones de voluntad", teoria: "El subjuntivo se usa con verbos de voluntad (querer, desear, ordenar, prohibir).", verbo: "amar", conjugacion: "Quiero que te ame.", ejemplo: "Lope de Vega: 'Quiero que me ames siempre.'", ejercicio: "Escribe 3 oraciones con voluntad + subjuntivo.", reto: "Escribe un texto con oraciones de voluntad." },
+            { titulo: "Uso del subjuntivo en oraciones condicionales", teoria: "El subjuntivo se usa en la prótasis de las oraciones condicionales (si + subjuntivo).", verbo: "amar", conjugacion: "Si te amara, no te dejaría.", ejemplo: "Unamuno: 'Si te amase, sería más feliz.'", ejercicio: "Escribe 3 oraciones con 'si' + subjuntivo.", reto: "Escribe un texto con condicionales." },
+            { titulo: "Uso del subjuntivo en oraciones concesivas", teoria: "El subjuntivo se usa en oraciones concesivas (aunque, por más que).", verbo: "amar", conjugacion: "Aunque no te ame, te respetaré.", ejemplo: "Pérez Galdós: 'Aunque no te ame, te recordaré.'", ejercicio: "Escribe 3 oraciones con concesivas + subjuntivo.", reto: "Escribe un texto con oraciones concesivas." },
+            { titulo: "Uso del subjuntivo en oraciones finales", teoria: "El subjuntivo se usa en oraciones finales (para que).", verbo: "amar", conjugacion: "Para que te amen, debes amar.", ejemplo: "Márquez: 'Para que te ame, debes ser auténtico.'", ejercicio: "Escribe 3 oraciones con finales + subjuntivo.", reto: "Escribe un texto con oraciones finales." },
+            { titulo: "Uso del subjuntivo en oraciones de relativo con antecedente desconocido", teoria: "El subjuntivo se usa en oraciones de relativo con antecedente desconocido o indefinido.", verbo: "amar", conjugacion: "Busco a quien me ame de verdad.", ejemplo: "Cervantes: 'Busco a quien me ame sin condiciones.'", ejercicio: "Escribe 3 oraciones con relativo + subjuntivo.", reto: "Escribe un texto con oraciones de relativo." },
+            { titulo: "Uso del subjuntivo en oraciones de tiempo futuro", teoria: "El subjuntivo se usa en oraciones de tiempo que indican futuro (cuando, después de que).", verbo: "amar", conjugacion: "Cuando te ame, te lo diré.", ejemplo: "Lorca: 'Cuando te ame, será para siempre.'", ejercicio: "Escribe 3 oraciones con tiempo + subjuntivo.", reto: "Escribe un texto con oraciones de tiempo." },
+            { titulo: "Uso del subjuntivo en oraciones de lugar indefinido", teoria: "El subjuntivo se usa en oraciones de lugar con antecedente indefinido (donde).", verbo: "amar", conjugacion: "Iré donde me amen.", ejemplo: "Unamuno: 'Iré donde me amen sin condiciones.'", ejercicio: "Escribe 3 oraciones con lugar + subjuntivo.", reto: "Escribe un texto con oraciones de lugar." },
+            { titulo: "Uso del subjuntivo en oraciones de modo indefinido", teoria: "El subjuntivo se usa en oraciones de modo con antecedente indefinido (como).", verbo: "amar", conjugacion: "Haré como me amen.", ejemplo: "Pérez Galdós: 'Haré como me amen con sinceridad.'", ejercicio: "Escribe 3 oraciones con modo + subjuntivo.", reto: "Escribe un texto con oraciones de modo." },
+            { titulo: "Uso del subjuntivo con verbos de opinión en negativo", teoria: "El subjuntivo se usa con verbos de opinión en negativo (no creo, no pienso).", verbo: "amar", conjugacion: "No creo que te ame.", ejemplo: "Baroja: 'No creo que te ame de verdad.'", ejercicio: "Escribe 3 oraciones con opinión negativa + subjuntivo.", reto: "Escribe un texto con opinión negativa." },
+            { titulo: "Uso del subjuntivo con verbos de percepción", teoria: "El subjuntivo se usa con verbos de percepción emocional (sentir, notar).", verbo: "amar", conjugacion: "Siento que te ame.", ejemplo: "García Lorca: 'Siento que te ame y no te lo diga.'", ejercicio: "Escribe 3 oraciones con percepción + subjuntivo.", reto: "Escribe un texto con percepción emocional." },
+            { titulo: "Uso del subjuntivo en fórmulas de cortesía", teoria: "El subjuntivo se usa en fórmulas de cortesía (quiera, pueda, permítame).", verbo: "amar", conjugacion: "Permítame que le ame.", ejemplo: "Cervantes: 'Permítame que le ame en silencio.'", ejercicio: "Escribe 3 oraciones con cortesía + subjuntivo.", reto: "Escribe un diálogo cortés." }
+        ]
+    },
+    imperativus: {
+        nombre: "Imperativus", color: "verde", icono: "bi-robot",
+        especialidad: "Modo imperativo: afirmativo, negativo, formas de cortesía",
+        tecnicas: [
+            { titulo: "Imperativo afirmativo (tú)", teoria: "El imperativo afirmativo para 'tú' es la forma de dar órdenes directas a una persona cercana.", verbo: "amar", conjugacion: "ama", ejemplo: "Bécquer: 'Ama y no te arrepientas.'", ejercicio: "Escribe el imperativo afirmativo de 'comer' para 'tú'.", reto: "Escribe 3 oraciones imperativas afirmativas para 'tú'." },
+            { titulo: "Imperativo afirmativo (vosotros)", teoria: "El imperativo afirmativo para 'vosotros' se usa para dar órdenes a un grupo en España.", verbo: "amar", conjugacion: "amad", ejemplo: "Cervantes: 'Amad la libertad.'", ejercicio: "Escribe el imperativo afirmativo de 'vivir' para 'vosotros'.", reto: "Escribe 3 oraciones imperativas afirmativas para 'vosotros'." },
+            { titulo: "Imperativo afirmativo (usted)", teoria: "El imperativo afirmativo para 'usted' es la forma de cortesía para dar órdenes.", verbo: "amar", conjugacion: "ame", ejemplo: "Garcilaso: 'Ame, señora, sin temor.'", ejercicio: "Escribe el imperativo afirmativo de 'leer' para 'usted'.", reto: "Escribe 3 oraciones imperativas afirmativas para 'usted'." },
+            { titulo: "Imperativo afirmativo (ustedes)", teoria: "El imperativo afirmativo para 'ustedes' se usa en América para dar órdenes a un grupo con cortesía.", verbo: "amar", conjugacion: "amen", ejemplo: "Neruda: 'Amen la vida.'", ejercicio: "Escribe el imperativo afirmativo de 'escribir' para 'ustedes'.", reto: "Escribe 3 oraciones imperativas afirmativas para 'ustedes'." },
+            { titulo: "Imperativo negativo (tú)", teoria: "El imperativo negativo para 'tú' se forma con 'no' + presente de subjuntivo.", verbo: "amar", conjugacion: "no ames", ejemplo: "Lorca: 'No ames en vano.'", ejercicio: "Escribe el imperativo negativo de 'comer' para 'tú'.", reto: "Escribe 3 oraciones imperativas negativas para 'tú'." },
+            { titulo: "Imperativo negativo (vosotros)", teoria: "El imperativo negativo para 'vosotros' se forma con 'no' + presente de subjuntivo.", verbo: "amar", conjugacion: "no améis", ejemplo: "Unamuno: 'No améis la mentira.'", ejercicio: "Escribe el imperativo negativo de 'vivir' para 'vosotros'.", reto: "Escribe 3 oraciones imperativas negativas para 'vosotros'." },
+            { titulo: "Imperativo negativo (usted)", teoria: "El imperativo negativo para 'usted' se forma con 'no' + presente de subjuntivo.", verbo: "amar", conjugacion: "no ame", ejemplo: "Márquez: 'No ame sin razón.'", ejercicio: "Escribe el imperativo negativo de 'leer' para 'usted'.", reto: "Escribe 3 oraciones imperativas negativas para 'usted'." },
+            { titulo: "Imperativo negativo (ustedes)", teoria: "El imperativo negativo para 'ustedes' se forma con 'no' + presente de subjuntivo.", verbo: "amar", conjugacion: "no amen", ejemplo: "Borges: 'No amen la oscuridad.'", ejercicio: "Escribe el imperativo negativo de 'escribir' para 'ustedes'.", reto: "Escribe 3 oraciones imperativas negativas para 'ustedes'." },
+            { titulo: "Imperativo con pronombres (afirmativo)", teoria: "En el imperativo afirmativo, los pronombres se colocan después del verbo y se unen a él.", verbo: "amar", conjugacion: "ámame, ámalo, ámame", ejemplo: "Bécquer: 'Ámame y no me olvides.'", ejercicio: "Escribe 'amar' + pronombre en imperativo afirmativo.", reto: "Escribe 3 oraciones con imperativo + pronombres." },
+            { titulo: "Imperativo con pronombres (negativo)", teoria: "En el imperativo negativo, los pronombres se colocan antes del verbo.", verbo: "amar", conjugacion: "no me ames, no lo ames", ejemplo: "Lorca: 'No me ames si no es sincero.'", ejercicio: "Escribe 'amar' + pronombre en imperativo negativo.", reto: "Escribe 3 oraciones con imperativo negativo + pronombres." },
+            { titulo: "Imperativo irregular (decir)", teoria: "El verbo 'decir' tiene un imperativo irregular: di, decid, diga, digan.", verbo: "decir", conjugacion: "di (tú), decid (vosotros), diga (usted), digan (ustedes)", ejemplo: "Cervantes: 'Di la verdad siempre.'", ejercicio: "Conjuga 'decir' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'decir'." },
+            { titulo: "Imperativo irregular (hacer)", teoria: "El verbo 'hacer' tiene un imperativo irregular: haz, haced, haga, hagan.", verbo: "hacer", conjugacion: "haz (tú), haced (vosotros), haga (usted), hagan (ustedes)", ejemplo: "Lorca: 'Haz lo que debes.'", ejercicio: "Conjuga 'hacer' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'hacer'." },
+            { titulo: "Imperativo irregular (ir)", teoria: "El verbo 'ir' tiene un imperativo irregular: ve, id, vaya, vayan.", verbo: "ir", conjugacion: "ve (tú), id (vosotros), vaya (usted), vayan (ustedes)", ejemplo: "Machado: 'Ve y no mires atrás.'", ejercicio: "Conjuga 'ir' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'ir'." },
+            { titulo: "Imperativo irregular (ser)", teoria: "El verbo 'ser' tiene un imperativo irregular: sé, sed, sea, sean.", verbo: "ser", conjugacion: "sé (tú), sed (vosotros), sea (usted), sean (ustedes)", ejemplo: "Neruda: 'Sé feliz.'", ejercicio: "Conjuga 'ser' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'ser'." },
+            { titulo: "Imperativo irregular (tener)", teoria: "El verbo 'tener' tiene un imperativo irregular: ten, tened, tenga, tengan.", verbo: "tener", conjugacion: "ten (tú), tened (vosotros), tenga (usted), tengan (ustedes)", ejemplo: "Cervantes: 'Ten paciencia.'", ejercicio: "Conjuga 'tener' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'tener'." },
+            { titulo: "Imperativo irregular (venir)", teoria: "El verbo 'venir' tiene un imperativo irregular: ven, venid, venga, vengan.", verbo: "venir", conjugacion: "ven (tú), venid (vosotros), venga (usted), vengan (ustedes)", ejemplo: "Lorca: 'Ven a mi casa.'", ejercicio: "Conjuga 'venir' en imperativo.", reto: "Escribe 3 oraciones con imperativo de 'venir'." },
+            { titulo: "Imperativo de cortesía", teoria: "El imperativo de cortesía se expresa con 'usted' o con fórmulas como 'por favor' + subjuntivo.", verbo: "amar", conjugacion: "ame (usted), por favor, ame", ejemplo: "Garcilaso: 'Ame, señor, sin temor.'", ejercicio: "Escribe 3 oraciones de cortesía en imperativo.", reto: "Escribe un diálogo cortés." },
+            { titulo: "Imperativo en recetas y manuales", teoria: "El imperativo se usa en recetas y manuales para dar instrucciones paso a paso.", verbo: "cortar", conjugacion: "corta, cortad, corte, corten", ejemplo: "Receta: 'Corta las cebollas en juliana.'", ejercicio: "Escribe 3 instrucciones en imperativo.", reto: "Escribe una receta con imperativos." },
+            { titulo: "Imperativo en letreros y señales", teoria: "El imperativo se usa en letreros y señales para indicar acciones obligatorias.", verbo: "prohibir", conjugacion: "prohibido (participio)", ejemplo: "Letrero: 'No estacionar.'", ejercicio: "Escribe 3 letreros en imperativo.", reto: "Diseña un letrero con imperativos." },
+            { titulo: "Imperativo en la poesía", teoria: "El imperativo se usa en poesía para dar órdenes líricas, invocaciones o exclamaciones.", verbo: "cantar", conjugacion: "canta, cantad, cante, canten", ejemplo: "Neruda: 'Canta, pájaro, canta.'", ejercicio: "Escribe 3 versos con imperativo.", reto: "Escribe un poema con imperativos." }
+        ]
+    },
+    temporalis: {
+        nombre: "Temporalis", color: "purpura", icono: "bi-robot",
+        especialidad: "Tiempos compuestos y aspectos: perfecto, pluscuamperfecto, futuro compuesto",
+        tecnicas: [
+            { titulo: "Pretérito perfecto compuesto (he amado)", teoria: "El pretérito perfecto compuesto expresa una acción pasada reciente o con relevancia en el presente.", verbo: "amar", conjugacion: "he amado, has amado, ha amado, hemos amado, habéis amado, han amado", ejemplo: "Bécquer: 'He amado en silencio.'", ejercicio: "Conjuga 'leer' en pretérito perfecto compuesto.", reto: "Escribe 3 oraciones en pretérito perfecto compuesto." },
+            { titulo: "Pretérito pluscuamperfecto (había amado)", teoria: "El pretérito pluscuamperfecto expresa una acción pasada anterior a otra acción pasada.", verbo: "amar", conjugacion: "había amado, habías amado, había amado, habíamos amado, habíais amado, habían amado", ejemplo: "Shakespeare: 'Había amado antes de conocerte.'", ejercicio: "Conjuga 'escribir' en pretérito pluscuamperfecto.", reto: "Escribe 3 oraciones en pretérito pluscuamperfecto." },
+            { titulo: "Pretérito anterior (hube amado)", teoria: "El pretérito anterior expresa una acción pasada inmediatamente anterior a otra acción pasada. Es literario.", verbo: "amar", conjugacion: "hube amado, hubiste amado, hubo amado, hubimos amado, hubisteis amado, hubieron amado", ejemplo: "Cervantes: 'Cuando hubo amado, partió.'", ejercicio: "Conjuga 'partir' en pretérito anterior.", reto: "Escribe 2 oraciones en pretérito anterior." },
+            { titulo: "Futuro perfecto (habré amado)", teoria: "El futuro perfecto expresa una acción futura que habrá terminado antes de otra acción futura.", verbo: "amar", conjugacion: "habré amado, habrás amado, habrá amado, habremos amado, habréis amado, habrán amado", ejemplo: "Borges: 'Habré amado en todos los tiempos.'", ejercicio: "Conjuga 'vivir' en futuro perfecto.", reto: "Escribe 3 oraciones en futuro perfecto." },
+            { titulo: "Condicional perfecto (habría amado)", teoria: "El condicional perfecto expresa una acción hipotética que ya habría ocurrido en el pasado.", verbo: "amar", conjugacion: "habría amado, habrías amado, habría amado, habríamos amado, habríais amado, habrían amado", ejemplo: "Márquez: 'Habría amado más si me hubieras dejado.'", ejercicio: "Conjuga 'luchar' en condicional perfecto.", reto: "Escribe 3 oraciones en condicional perfecto." },
+            { titulo: "Pretérito perfecto de subjuntivo (haya amado)", teoria: "El pretérito perfecto de subjuntivo expresa una acción pasada en relación con el presente.", verbo: "amar", conjugacion: "haya amado, hayas amado, haya amado, hayamos amado, hayáis amado, hayan amado", ejemplo: "Lorca: 'No creo que te haya amado como mereces.'", ejercicio: "Conjuga 'leer' en pretérito perfecto de subjuntivo.", reto: "Escribe 3 oraciones en pretérito perfecto de subjuntivo." },
+            { titulo: "Pretérito pluscuamperfecto de subjuntivo (hubiera amado)", teoria: "El pretérito pluscuamperfecto de subjuntivo expresa una acción pasada anterior a otra acción pasada.", verbo: "amar", conjugacion: "hubiera amado, hubieras amado, hubiera amado, hubiéramos amado, hubierais amado, hubieran amado", ejemplo: "Shakespeare: 'Si te hubiera amado, te lo habría dicho.'", ejercicio: "Conjuga 'escribir' en pretérito pluscuamperfecto de subjuntivo.", reto: "Escribe 3 oraciones en pretérito pluscuamperfecto de subjuntivo." },
+            { titulo: "Futuro perfecto de subjuntivo (hubiere amado)", teoria: "El futuro perfecto de subjuntivo expresa una acción futura anterior a otra acción futura. Es literario.", verbo: "amar", conjugacion: "hubiere amado, hubieres amado, hubiere amado, hubiéremos amado, hubiereis amado, hubieren amado", ejemplo: "Calderón: 'Si te hubiere amado, te lo diré.'", ejercicio: "Conjuga 'vivir' en futuro perfecto de subjuntivo.", reto: "Escribe 2 oraciones en futuro perfecto de subjuntivo." },
+            { titulo: "Aspecto perfectivo vs imperfectivo", teoria: "El aspecto perfectivo indica acción terminada, el imperfectivo indica acción en proceso o habitual.", verbo: "amar", conjugacion: "Perfectivo: amé; Imperfectivo: amaba", ejemplo: "Bécquer: 'Amé y fui amado' (perfectivo) vs 'Amaba los atardeceres' (imperfectivo).", ejercicio: "Escribe 3 oraciones con aspecto perfectivo e imperfectivo.", reto: "Escribe un texto con ambos aspectos." },
+            { titulo: "Aspecto durativo", teoria: "El aspecto durativo indica una acción que se prolonga en el tiempo.", verbo: "amar", conjugacion: "estoy amando (gerundio)", ejemplo: "García Lorca: 'Estoy amando la vida.'", ejercicio: "Escribe 3 oraciones con aspecto durativo.", reto: "Escribe un texto con aspecto durativo." },
+            { titulo: "Aspecto incoativo", teoria: "El aspecto incoativo indica el inicio de una acción.", verbo: "amar", conjugacion: "empezar a amar, comenzar a amar", ejemplo: "Cervantes: 'Empezó a amar en silencio.'", ejercicio: "Escribe 3 oraciones con aspecto incoativo.", reto: "Escribe un texto con aspecto incoativo." },
+            { titulo: "Aspecto terminativo", teoria: "El aspecto terminativo indica el final de una acción.", verbo: "amar", conjugacion: "dejar de amar, terminar de amar", ejemplo: "Lorca: 'Dejó de amar en silencio.'", ejercicio: "Escribe 3 oraciones con aspecto terminativo.", reto: "Escribe un texto con aspecto terminativo." },
+            { titulo: "Aspecto reiterativo", teoria: "El aspecto reiterativo indica una acción que se repite.", verbo: "amar", conjugacion: "volver a amar, amar de nuevo", ejemplo: "Neruda: 'Volvió a amar como si fuera la primera vez.'", ejercicio: "Escribe 3 oraciones con aspecto reiterativo.", reto: "Escribe un texto con aspecto reiterativo." },
+            { titulo: "Perífrasis verbales de obligación", teoria: "Las perífrasis de obligación expresan deber o necesidad: tener que + infinitivo, deber + infinitivo.", verbo: "amar", conjugacion: "tengo que amar, debo amar", ejemplo: "Unamuno: 'Debo amar sin condiciones.'", ejercicio: "Escribe 3 oraciones con perífrasis de obligación.", reto: "Escribe un texto con perífrasis de obligación." },
+            { titulo: "Perífrasis verbales de probabilidad", teoria: "Las perífrasis de probabilidad expresan conjetura: deber de + infinitivo, venir a + infinitivo.", verbo: "amar", conjugacion: "debe de amar, viene a amar", ejemplo: "Galdós: 'Debe de amar a esa mujer.'", ejercicio: "Escribe 3 oraciones con perífrasis de probabilidad.", reto: "Escribe un texto con perífrasis de probabilidad." },
+            { titulo: "Perífrasis verbales de futuro", teoria: "Las perífrasis de futuro expresan intención: ir a + infinitivo, estar a punto de + infinitivo.", verbo: "amar", conjugacion: "voy a amar, estoy a punto de amar", ejemplo: "Lorca: 'Voy a amar hasta el final.'", ejercicio: "Escribe 3 oraciones con perífrasis de futuro.", reto: "Escribe un texto con perífrasis de futuro." },
+            { titulo: "Perífrasis verbales de gerundio", teoria: "Las perífrasis de gerundio expresan acción en proceso: estar + gerundio, ir + gerundio.", verbo: "amar", conjugacion: "estoy amando, voy amando", ejemplo: "Neruda: 'Voy amando cada día más.'", ejercicio: "Escribe 3 oraciones con perífrasis de gerundio.", reto: "Escribe un texto con perífrasis de gerundio." },
+            { titulo: "Perífrasis verbales de participio", teoria: "Las perífrasis de participio expresan resultado: tener + participio, dejar + participio.", verbo: "amar", conjugacion: "tengo amado, dejo amado", ejemplo: "Cervantes: 'Tengo amado en silencio.'", ejercicio: "Escribe 3 oraciones con perífrasis de participio.", reto: "Escribe un texto con perífrasis de participio." },
+            { titulo: "Uso del presente con valor de pasado", teoria: "El presente histórico se usa para dar actualidad a hechos pasados.", verbo: "amar", conjugacion: "Amo, y siempre amé.", ejemplo: "Bécquer: 'Amo y amaré siempre.'", ejercicio: "Escribe 3 oraciones con presente histórico.", reto: "Escribe un texto con presente histórico." },
+            { titulo: "Uso del imperfecto con valor de presente", teoria: "El imperfecto se usa para expresar cortesía o deseos.", verbo: "amar", conjugacion: "amaba (cortesía)", ejemplo: "Lope de Vega: 'Quería pedirte un favor.'", ejercicio: "Escribe 3 oraciones con imperfecto de cortesía.", reto: "Escribe un diálogo con imperfecto de cortesía." }
+        ]
+    },
+    irregularis: {
+        nombre: "Irregularis", color: "rojo", icono: "bi-robot",
+        especialidad: "Verbos irregulares y sus conjugaciones",
+        tecnicas: [
+            { titulo: "Verbo 'ser' (irregularidad total)", teoria: "El verbo 'ser' es completamente irregular en todos sus tiempos.", verbo: "ser", conjugacion: "soy, eres, es, somos, sois, son (presente); fui, fuiste, fue, fuimos, fuisteis, fueron (pretérito)", ejemplo: "Cervantes: 'Ser o no ser, esa es la cuestión.'", ejercicio: "Conjuga 'ser' en presente y pretérito.", reto: "Escribe 3 oraciones con 'ser' en diferentes tiempos." },
+            { titulo: "Verbo 'estar' (irregularidad en presente)", teoria: "El verbo 'estar' es irregular en presente (estoy, estás, está) y en pretérito (estuve, estuviste).", verbo: "estar", conjugacion: "estoy, estás, está, estamos, estáis, están", ejemplo: "Lorca: 'Estoy en la casa de la memoria.'", ejercicio: "Conjuga 'estar' en presente y pretérito.", reto: "Escribe 3 oraciones con 'estar' en diferentes tiempos." },
+            { titulo: "Verbo 'haber' (irregularidad en presente)", teoria: "El verbo 'haber' es irregular en presente (he, has, ha) y en pretérito (hube, hubiste).", verbo: "haber", conjugacion: "he, has, ha, hemos, habéis, han", ejemplo: "Bécquer: 'He amado en silencio.'", ejercicio: "Conjuga 'haber' en presente y pretérito.", reto: "Escribe 3 oraciones con 'haber' en diferentes tiempos." },
+            { titulo: "Verbo 'tener' (cambio radical e->ie)", teoria: "El verbo 'tener' cambia la raíz e->ie en presente (tengo, tienes, tiene).", verbo: "tener", conjugacion: "tengo, tienes, tiene, tenemos, tenéis, tienen", ejemplo: "Garcilaso: 'Tengo una esperanza que no muere.'", ejercicio: "Conjuga 'tener' en presente.", reto: "Escribe 3 oraciones con 'tener' en presente." },
+            { titulo: "Verbo 'venir' (cambio radical e->ie)", teoria: "El verbo 'venir' cambia la raíz e->ie en presente (vengo, vienes, viene).", verbo: "venir", conjugacion: "vengo, vienes, viene, venimos, venís, vienen", ejemplo: "Neruda: 'Vengo de la tierra del amor.'", ejercicio: "Conjuga 'venir' en presente.", reto: "Escribe 3 oraciones con 'venir' en presente." },
+            { titulo: "Verbo 'decir' (cambio radical e->i)", teoria: "El verbo 'decir' cambia la raíz e->i en presente (digo, dices, dice).", verbo: "decir", conjugacion: "digo, dices, dice, decimos, decís, dicen", ejemplo: "Cervantes: 'Digo la verdad siempre.'", ejercicio: "Conjuga 'decir' en presente.", reto: "Escribe 3 oraciones con 'decir' en presente." },
+            { titulo: "Verbo 'hacer' (cambio radical e->i)", teoria: "El verbo 'hacer' cambia la raíz e->i en presente (hago, haces, hace).", verbo: "hacer", conjugacion: "hago, haces, hace, hacemos, hacéis, hacen", ejemplo: "Lorca: 'Hago lo que debo.'", ejercicio: "Conjuga 'hacer' en presente.", reto: "Escribe 3 oraciones con 'hacer' en presente." },
+            { titulo: "Verbo 'poder' (cambio radical o->ue)", teoria: "El verbo 'poder' cambia la raíz o->ue en presente (puedo, puedes, puede).", verbo: "poder", conjugacion: "puedo, puedes, puede, podemos, podéis, pueden", ejemplo: "Unamuno: 'Puedo amar sin condiciones.'", ejercicio: "Conjuga 'poder' en presente.", reto: "Escribe 3 oraciones con 'poder' en presente." },
+            { titulo: "Verbo 'querer' (cambio radical e->ie)", teoria: "El verbo 'querer' cambia la raíz e->ie en presente (quiero, quieres, quiere).", verbo: "querer", conjugacion: "quiero, quieres, quiere, queremos, queréis, quieren", ejemplo: "Bécquer: 'Quiero amarte siempre.'", ejercicio: "Conjuga 'querer' en presente.", reto: "Escribe 3 oraciones con 'querer' en presente." },
+            { titulo: "Verbo 'saber' (cambio radical e->ie)", teoria: "El verbo 'saber' cambia la raíz e->ie en presente (sé, sabes, sabe).", verbo: "saber", conjugacion: "sé, sabes, sabe, sabemos, sabéis, saben", ejemplo: "García Lorca: 'Sé que te amo.'", ejercicio: "Conjuga 'saber' en presente.", reto: "Escribe 3 oraciones con 'saber' en presente." },
+            { titulo: "Verbo 'ver' (irregularidad en presente)", teoria: "El verbo 'ver' es irregular en presente (veo, ves, ve) y en pretérito (vi, viste, vio).", verbo: "ver", conjugacion: "veo, ves, ve, vemos, veis, ven", ejemplo: "Neruda: 'Veo el amor en tus ojos.'", ejercicio: "Conjuga 'ver' en presente y pretérito.", reto: "Escribe 3 oraciones con 'ver' en diferentes tiempos." },
+            { titulo: "Verbo 'ir' (irregularidad total)", teoria: "El verbo 'ir' es completamente irregular en todos sus tiempos.", verbo: "ir", conjugacion: "voy, vas, va, vamos, vais, van (presente); fui, fuiste, fue, fuimos, fuisteis, fueron (pretérito)", ejemplo: "Machado: 'Voy caminando sin prisas.'", ejercicio: "Conjuga 'ir' en presente y pretérito.", reto: "Escribe 3 oraciones con 'ir' en diferentes tiempos." },
+            { titulo: "Verbo 'dar' (irregularidad en presente)", teoria: "El verbo 'dar' es irregular en presente (doy, das, da) y en pretérito (di, diste, dio).", verbo: "dar", conjugacion: "doy, das, da, damos, dais, dan", ejemplo: "Garcilaso: 'Doy todo por ti.'", ejercicio: "Conjuga 'dar' en presente y pretérito.", reto: "Escribe 3 oraciones con 'dar' en diferentes tiempos." },
+            { titulo: "Verbo 'conocer' (irregularidad en presente)", teoria: "El verbo 'conocer' cambia la raíz e->ie en presente (conozco, conoces, conoce).", verbo: "conocer", conjugacion: "conozco, conoces, conoce, conocemos, conocéis, conocen", ejemplo: "Cervantes: 'Conozco el amor verdadero.'", ejercicio: "Conjuga 'conocer' en presente.", reto: "Escribe 3 oraciones con 'conocer' en presente." },
+            { titulo: "Verbo 'salir' (irregularidad en presente)", teoria: "El verbo 'salir' cambia la raíz e->ie en presente (salgo, sales, sale).", verbo: "salir", conjugacion: "salgo, sales, sale, salimos, salís, salen", ejemplo: "Lorca: 'Salgo a buscar el amor.'", ejercicio: "Conjuga 'salir' en presente.", reto: "Escribe 3 oraciones con 'salir' en presente." },
+            { titulo: "Verbo 'poner' (irregularidad en presente)", teoria: "El verbo 'poner' cambia la raíz e->ie en presente (pongo, pones, pone).", verbo: "poner", conjugacion: "pongo, pones, pone, ponemos, ponéis, ponen", ejemplo: "Neruda: 'Pongo mi corazón en tus manos.'", ejercicio: "Conjuga 'poner' en presente.", reto: "Escribe 3 oraciones con 'poner' en presente." },
+            { titulo: "Verbo 'caer' (irregularidad en presente)", teoria: "El verbo 'caer' cambia la raíz e->ie en presente (caigo, caes, cae).", verbo: "caer", conjugacion: "caigo, caes, cae, caemos, caéis, caen", ejemplo: "Unamuno: 'Caigo y me levanto.'", ejercicio: "Conjuga 'caer' en presente.", reto: "Escribe 3 oraciones con 'caer' en presente." },
+            { titulo: "Verbo 'traer' (irregularidad en presente)", teoria: "El verbo 'traer' cambia la raíz e->ie en presente (traigo, traes, trae).", verbo: "traer", conjugacion: "traigo, traes, trae, traemos, traéis, traen", ejemplo: "Cervantes: 'Traigo el amor en el alma.'", ejercicio: "Conjuga 'traer' en presente.", reto: "Escribe 3 oraciones con 'traer' en presente." },
+            { titulo: "Verbo 'oir' (irregularidad en presente)", teoria: "El verbo 'oir' cambia la raíz e->ie en presente (oigo, oyes, oye).", verbo: "oir", conjugacion: "oigo, oyes, oye, oímos, oís, oyen", ejemplo: "Lorca: 'Oigo tu voz en el viento.'", ejercicio: "Conjuga 'oir' en presente.", reto: "Escribe 3 oraciones con 'oir' en presente." },
+            { titulo: "Verbo 'conducir' (irregularidad en presente)", teoria: "El verbo 'conducir' cambia la raíz e->ie en presente (conduzco, conduces, conduce).", verbo: "conducir", conjugacion: "conduzco, conduces, conduce, conducimos, conducís, conducen", ejemplo: "Neruda: 'Conduzco el amor hacia ti.'", ejercicio: "Conjuga 'conducir' en presente.", reto: "Escribe 3 oraciones con 'conducir' en presente." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['indicativus','subjunctivus','imperativus','temporalis','irregularis'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="verbo-modelo">
+                        <span>${t.verbo}</span>
+                    </div>
+                    <div class="conjugacion">
+                        <strong>Conjugación:</strong> ${t.conjugacion}
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_verbum_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

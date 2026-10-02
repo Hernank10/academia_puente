@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏍️ Flota Mecánica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🏍️ FLOTA MECÁNICA<small>100 TÉCNICAS · MOTOS</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="motorio" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Motorio <span class="badge-personaje bg-dorado">Motor</span></a>
+        <a class="nav-link" data-section="transmi" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Transmi <span class="badge-personaje bg-azul">Transmisión</span></a>
+        <a class="nav-link" data-section="freno" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Freno <span class="badge-personaje bg-verde">Frenos</span></a>
+        <a class="nav-link" data-section="suspenso" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Suspenso <span class="badge-personaje bg-purpura">Suspensión</span></a>
+        <a class="nav-link" data-section="electrimoto" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> ElectroMoto <span class="badge-personaje bg-rojo">Eléctrico</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🏍️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Mecánica de motos</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Mecánica de motos en Colombia</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de la mecánica de motos:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Motorio</strong> – Motores y componentes internos.</li>
+                    <li><strong style="color:var(--neon-azul);">Transmi</strong> – Transmisión, embrague, cadena y cambios.</li>
+                    <li><strong style="color:var(--neon-verde);">Freno</strong> – Frenos y seguridad.</li>
+                    <li><strong style="color:var(--neon-purpura);">Suspenso</strong> – Suspensión, dirección y chasis.</li>
+                    <li><strong style="color:var(--neon-rojo);">ElectroMoto</strong> – Sistema eléctrico y mantenimiento preventivo.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-motorio" class="section-content" style="display:none;"></div>
+        <div id="section-transmi" class="section-content" style="display:none;"></div>
+        <div id="section-freno" class="section-content" style="display:none;"></div>
+        <div id="section-suspenso" class="section-content" style="display:none;"></div>
+        <div id="section-electrimoto" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    motorio: {
+        nombre: "Motorio", color: "dorado", icono: "bi-robot",
+        especialidad: "Motores y componentes internos",
+        tecnicas: [
+            { titulo: "Motor de combustión interna", teoria: "El motor de combustión interna es el corazón de la moto. Convierte la energía química del combustible en energía mecánica mediante la combustión dentro de los cilindros.", ejemplo: "Los motores de 4 tiempos son los más comunes en motos de calle.", ejercicio: "¿Qué es un motor de combustión interna?", reto: "Investiga la diferencia entre motores de 2 y 4 tiempos." },
+            { titulo: "Cilindro y pistón", teoria: "El cilindro es la cámara donde se produce la combustión. El pistón se mueve dentro del cilindro, comprimiendo la mezcla y transmitiendo la fuerza a la biela.", ejemplo: "Un cilindro de 150 cc tiene un diámetro y carrera específicos.", ejercicio: "¿Qué función tienen el cilindro y el pistón?", reto: "Investiga la relación entre el diámetro y la carrera del pistón." },
+            { titulo: "Culata y válvulas", teoria: "La culata cierra la parte superior del cilindro y contiene las válvulas de admisión y escape, que controlan la entrada de mezcla y la salida de gases.", ejemplo: "Las válvulas se abren y cierran en momentos precisos del ciclo del motor.", ejercicio: "¿Qué es la culata y qué función tienen las válvulas?", reto: "Investiga el sistema de distribución de válvulas." },
+            { titulo: "Biela y cigüeñal", teoria: "La biela conecta el pistón al cigüeñal, transformando el movimiento lineal del pistón en movimiento rotatorio.", ejemplo: "El cigüeñal convierte el movimiento alternativo en rotación para mover la rueda.", ejercicio: "¿Qué función tienen la biela y el cigüeñal?", reto: "Investiga cómo funciona el mecanismo de biela-manivela." },
+            { titulo: "Ciclo de 4 tiempos (Admisión, Compresión, Explosión, Escape)", teoria: "El motor de 4 tiempos realiza cuatro fases: admisión (entra mezcla), compresión (se comprime), explosión (combustión) y escape (salen gases).", ejemplo: "Este ciclo se repite constantemente para generar potencia.", ejercicio: "¿Cuáles son las cuatro fases del ciclo de 4 tiempos?", reto: "Dibuja y explica el ciclo de 4 tiempos." },
+            { titulo: "Ciclo de 2 tiempos", teoria: "El motor de 2 tiempos completa el ciclo en dos fases: compresión y explosión, combinando admisión y escape. Es más simple pero menos eficiente.", ejemplo: "Los motores de 2 tiempos se usan en motos de campo y pequeñas cilindradas.", ejercicio: "¿Cómo funciona un motor de 2 tiempos?", reto: "Investiga las ventajas y desventajas del motor de 2 tiempos." },
+            { titulo: "Sistema de lubricación", teoria: "El sistema de lubricación reduce la fricción entre las piezas móviles, dispersa el calor y limpia el motor. Puede ser por cárter húmedo o seco.", ejemplo: "La mayoría de las motos usan lubricación por cárter húmedo.", ejercicio: "¿Qué función tiene el sistema de lubricación?", reto: "Investiga los tipos de lubricación en motos." },
+            { titulo: "Sistema de refrigeración", teoria: "El sistema de refrigeración mantiene la temperatura del motor dentro de un rango seguro. Puede ser por aire (aletas) o por líquido (radiador).", ejemplo: "Las motos de alta cilindrada usan refrigeración líquida.", ejercicio: "¿Qué tipos de refrigeración existen?", reto: "Investiga el sistema de refrigeración de tu moto." },
+            { titulo: "Sistema de combustible", teoria: "El sistema de combustible suministra la mezcla de aire y combustible al motor. Incluye el tanque, la bomba de combustible, el carburador o la inyección electrónica.", ejemplo: "La inyección electrónica es más precisa y eficiente que el carburador.", ejercicio: "¿Qué componentes tiene el sistema de combustible?", reto: "Investiga la diferencia entre carburador e inyección." },
+            { titulo: "Sistema de encendido", teoria: "El sistema de encendido produce la chispa que enciende la mezcla en el cilindro en el momento preciso. Incluye la batería, la bobina y las bujías.", ejemplo: "Una bujía en mal estado puede causar fallos de encendido.", ejercicio: "¿Qué componentes tiene el sistema de encendido?", reto: "Investiga cómo funciona la bobina de encendido." },
+            { titulo: "Motor monocilíndrico", teoria: "El motor monocilíndrico tiene un solo cilindro. Es simple, ligero y fácil de mantener. Común en motos de baja y media cilindrada.", ejemplo: "La mayoría de las motos de 125 cc y 250 cc son monocilíndricas.", ejercicio: "¿Qué ventajas tiene un motor monocilíndrico?", reto: "Investiga las motos monocilíndricas más populares." },
+            { titulo: "Motor bicilíndrico", teoria: "El motor bicilíndrico tiene dos cilindros. Ofrece más potencia y suavidad que un monocilíndrico. Pueden ser en línea o en V.", ejemplo: "Las motos de 500 cc suelen ser bicilíndricas.", ejercicio: "¿Qué ventajas tiene un motor bicilíndrico?", reto: "Investiga la diferencia entre motores en línea y en V." },
+            { titulo: "Motor multicilíndrico", teoria: "Los motores multicilíndricos (3, 4 o más cilindros) ofrecen alta potencia y suavidad, pero son más complejos y costosos.", ejemplo: "Las motos deportivas de alta cilindrada suelen tener 4 cilindros.", ejercicio: "¿Qué ventajas tienen los motores multicilíndricos?", reto: "Investiga el motor de la moto más rápida del mundo." },
+            { titulo: "Compresión del motor", teoria: "La compresión es la presión que se genera en el cilindro durante la fase de compresión. Una baja compresión indica desgaste del motor.", ejemplo: "Una compresión baja puede ser causada por anillos de pistón desgastados.", ejercicio: "¿Qué es la compresión del motor?", reto: "Investiga cómo se mide la compresión." },
+            { titulo: "Relación de compresión", teoria: "La relación de compresión es la relación entre el volumen del cilindro cuando el pistón está en el punto muerto inferior y el punto muerto superior.", ejemplo: "Una relación de compresión de 10:1 es común en motos modernas.", ejercicio: "¿Qué es la relación de compresión?", reto: "Investiga cómo afecta la relación de compresión al rendimiento." },
+            { titulo: "Carburador", teoria: "El carburador mezcla el aire con el combustible en la proporción adecuada para la combustión. Es un componente mecánico ajustable.", ejemplo: "Los carburadores necesitan ajustes periódicos.", ejercicio: "¿Qué función tiene el carburador?", reto: "Investiga cómo ajustar un carburador." },
+            { titulo: "Inyección electrónica", teoria: "La inyección electrónica controla la cantidad de combustible que se inyecta en el motor mediante sensores y una unidad de control (ECU).", ejemplo: "La inyección electrónica mejora la eficiencia y reduce emisiones.", ejercicio: "¿Qué ventajas tiene la inyección electrónica?", reto: "Investiga cómo funciona la ECU." },
+            { titulo: "Bujías", teoria: "La bujía produce la chispa que enciende la mezcla en el cilindro. Debe tener el calor adecuado y el electrodo en buen estado.", ejemplo: "Una bujía debe reemplazarse según el manual del fabricante.", ejercicio: "¿Qué función tienen las bujías?", reto: "Investiga cómo interpretar el color de una bujía." },
+            { titulo: "Filtro de aire", teoria: "El filtro de aire limpia el aire que entra al motor, evitando que partículas de polvo y suciedad dañen el motor.", ejemplo: "Un filtro de aire sucio reduce la potencia del motor.", ejercicio: "¿Qué función tiene el filtro de aire?", reto: "Investiga cómo limpiar o reemplazar el filtro de aire." },
+            { titulo: "Filtro de combustible", teoria: "El filtro de combustible retiene las impurezas del combustible antes de que llegue al motor. Debe reemplazarse periódicamente.", ejemplo: "Un filtro de combustible tapado puede causar fallos de suministro.", ejercicio: "¿Qué función tiene el filtro de combustible?", reto: "Investiga cómo reemplazar el filtro de combustible." },
+            { titulo: "Aceite de motor", teoria: "El aceite de motor lubrica, limpia y enfría el motor. Debe cambiarse según el manual del fabricante, generalmente cada 3000-5000 km.", ejemplo: "El aceite debe tener la viscosidad adecuada (ej. 10W-40).", ejercicio: "¿Qué función tiene el aceite de motor?", reto: "Investiga cómo cambiar el aceite de motor." }
+        ]
+    },
+    transmi: {
+        nombre: "Transmi", color: "azul", icono: "bi-robot",
+        especialidad: "Transmisión, embrague, cadena y cambios",
+        tecnicas: [
+            { titulo: "Sistema de transmisión", teoria: "El sistema de transmisión transmite la potencia del motor a la rueda trasera. Incluye el embrague, la caja de cambios, el piñón, la cadena y el coronó.", ejemplo: "La transmisión de una moto puede ser por cadena, correa o eje.", ejercicio: "¿Qué componentes forman el sistema de transmisión?", reto: "Investiga los tipos de transmisión en motos." },
+            { titulo: "Embrague", teoria: "El embrague conecta y desconecta el motor de la transmisión para permitir cambios de velocidad y detener la moto sin apagar el motor.", ejemplo: "El embrague se acciona con la maneta izquierda.", ejercicio: "¿Qué función tiene el embrague?", reto: "Investiga los tipos de embrague en motos." },
+            { titulo: "Caja de cambios", teoria: "La caja de cambios permite seleccionar diferentes relaciones de velocidad entre el motor y la rueda. Las motos suelen tener 4, 5 o 6 velocidades.", ejemplo: "Una moto de 6 velocidades ofrece mayor versatilidad.", ejercicio: "¿Qué función tiene la caja de cambios?", reto: "Investiga cómo funciona una caja de cambios manual." },
+            { titulo: "Cadena de transmisión", teoria: "La cadena transmite la potencia del piñón al coronó. Debe mantenerse limpia, lubricada y con la tensión adecuada.", ejemplo: "Una cadena mal mantenida puede romperse y causar accidentes.", ejercicio: "¿Qué función tiene la cadena de transmisión?", reto: "Investiga cómo ajustar la tensión de la cadena." },
+            { titulo: "Piñón y coronó", teoria: "El piñón es el engranaje pequeño en la salida de la caja de cambios, y el coronó es el engranaje grande en la rueda trasera. La relación de dientes determina la aceleración y la velocidad máxima.", ejemplo: "Un piñón más pequeño y un coronó más grande dan más aceleración.", ejercicio: "¿Qué función tienen el piñón y el coronó?", reto: "Investiga cómo afecta la relación de transmisión al rendimiento." },
+            { titulo: "Lubricación de cadena", teoria: "La cadena debe lubricarse regularmente con aceite específico para cadena para reducir el desgaste y la fricción.", ejemplo: "Lubricar la cadena cada 500-1000 km.", ejercicio: "¿Cómo se lubrica la cadena de una moto?", reto: "Investiga los tipos de lubricantes para cadena." },
+            { titulo: "Tensión de la cadena", teoria: "La cadena debe tener una tensión adecuada (unos 2-3 cm de juego). Una cadena demasiado tensa o floja puede dañar la transmisión.", ejemplo: "La tensión se ajusta con los tensores de la rueda trasera.", ejercicio: "¿Cómo se ajusta la tensión de la cadena?", reto: "Investiga cómo medir el juego de la cadena." },
+            { titulo: "Kit de transmisión", teoria: "El kit de transmisión incluye el piñón, el coronó y la cadena. Debe reemplazarse cuando los dientes están desgastados o la cadena está estirada.", ejemplo: "Un kit de transmisión desgastado puede saltar o romperse.", ejercicio: "¿Cuándo se debe reemplazar el kit de transmisión?", reto: "Investiga cómo identificar el desgaste de un kit de transmisión." },
+            { titulo: "Transmisión por correa", teoria: "Algunas motos usan una correa de transmisión en lugar de cadena. La correa es más silenciosa y requiere menos mantenimiento, pero es menos duradera.", ejemplo: "Las motos Harley-Davidson usan transmisión por correa.", ejercicio: "¿Qué ventajas y desventajas tiene la transmisión por correa?", reto: "Investiga las motos con transmisión por correa." },
+            { titulo: "Transmisión por eje", teoria: "La transmisión por eje (cardán) usa un eje de transmisión en lugar de cadena o correa. Es duradera y de bajo mantenimiento, pero más pesada.", ejemplo: "Las motos BMW GS usan transmisión por eje.", ejercicio: "¿Qué ventajas tiene la transmisión por eje?", reto: "Investiga las motos con transmisión por eje." },
+            { titulo: "Relación de transmisión", teoria: "La relación de transmisión es la relación entre el número de dientes del piñón y el coronó. Determina la aceleración y la velocidad máxima.", ejemplo: "Un piñón de 14 dientes y un coronó de 45 dientes da una relación de 3.21:1.", ejercicio: "¿Qué es la relación de transmisión?", reto: "Investiga cómo calcular la relación de transmisión." },
+            { titulo: "Cambios de velocidad", teoria: "Los cambios de velocidad se realizan con el pie izquierdo (en la mayoría de las motos). La secuencia suele ser: N (neutral) - 1 - 2 - 3 - 4 - 5 - 6.", ejemplo: "Para cambiar de 2da a 3ra se sube la palanca.", ejercicio: "¿Cómo funciona el sistema de cambios en una moto?", reto: "Investiga el sistema de cambios de tu moto." },
+            { titulo: "Embrague centrífugo", teoria: "El embrague centrífugo se usa en motos automáticas (scooters). Se activa automáticamente con la velocidad del motor.", ejemplo: "Los scooters no tienen maneta de embrague.", ejercicio: "¿Cómo funciona un embrague centrífugo?", reto: "Investiga el funcionamiento de un scooter." },
+            { titulo: "Transmisión CVT (Variador continuo)", teoria: "La transmisión CVT (Variador Continuo) se usa en scooters y motos automáticas. Permite un cambio de relación continuo sin escalones.", ejemplo: "Las motos automáticas tienen un variador en lugar de una caja de cambios tradicional.", ejercicio: "¿Qué es la transmisión CVT?", reto: "Investiga cómo funciona un variador CVT." },
+            { titulo: "Caja de cambios secuencial", teoria: "La caja de cambios secuencial (típica de motos) requiere que los cambios se realicen en orden (1-2-3-4...). No se puede pasar de 1ra a 3ra directamente.", ejemplo: "Se debe pasar por todas las velocidades en orden.", ejercicio: "¿Qué es una caja de cambios secuencial?", reto: "Investiga la diferencia con una caja de cambios H." },
+            { titulo: "Sistema de embrague hidráulico", teoria: "El embrague hidráulico usa un sistema de líquido para accionar el embrague, en lugar de un cable. Ofrece un tacto más suave y preciso.", ejemplo: "Las motos de alta gama suelen tener embrague hidráulico.", ejercicio: "¿Qué ventajas tiene el embrague hidráulico?", reto: "Investiga el mantenimiento del sistema hidráulico." },
+            { titulo: "Cable de embrague", teoria: "El cable de embrague conecta la maneta al mecanismo del embrague. Debe estar ajustado y lubricado para un buen funcionamiento.", ejemplo: "Un cable de embrague desgastado puede romperse.", ejercicio: "¿Cómo se ajusta el cable de embrague?", reto: "Investiga cómo lubricar un cable de embrague." },
+            { titulo: "Desgaste de la cadena", teoria: "La cadena se estira con el uso y los dientes de los piñones se desgastan. Una cadena desgastada puede saltar o romperse.", ejemplo: "Revisar el desgaste de la cadena cada 5000 km.", ejercicio: "¿Cómo se identifica el desgaste de la cadena?", reto: "Investiga cómo medir el estiramiento de la cadena." },
+            { titulo: "Limpieza de la cadena", teoria: "La cadena debe limpiarse con un cepillo y un desengrasante específico para eliminar la suciedad y el polvo acumulado.", ejemplo: "Limpiar la cadena antes de lubricarla.", ejercicio: "¿Cómo se limpia la cadena de una moto?", reto: "Investiga los productos para limpieza de cadena." },
+            { titulo: "Ajuste de la transmisión", teoria: "El ajuste de la transmisión incluye la tensión de la cadena y la alineación de la rueda trasera. Una transmisión bien ajustada mejora la eficiencia y la durabilidad.", ejemplo: "La rueda trasera debe estar alineada con la rueda delantera.", ejercicio: "¿Cómo se ajusta la transmisión de una moto?", reto: "Investiga cómo alinear la rueda trasera." }
+        ]
+    },
+    freno: {
+        nombre: "Freno", color: "verde", icono: "bi-robot",
+        especialidad: "Frenos y seguridad",
+        tecnicas: [
+            { titulo: "Sistema de frenos de disco", teoria: "El freno de disco utiliza una pinza que aprieta las pastillas contra un disco metálico para detener la moto. Ofrece mayor potencia de frenado y mejor disipación del calor.", ejemplo: "La mayoría de las motos modernas tienen frenos de disco en ambas ruedas.", ejercicio: "¿Qué es un freno de disco?", reto: "Investiga la diferencia entre frenos de disco y de tambor." },
+            { titulo: "Sistema de frenos de tambor", teoria: "El freno de tambor utiliza zapatas que se expanden contra el interior de un tambor para detener la moto. Es menos potente pero más económico.", ejemplo: "Algunas motos de baja cilindrada tienen freno de tambor trasero.", ejercicio: "¿Qué es un freno de tambor?", reto: "Investiga las ventajas y desventajas del freno de tambor." },
+            { titulo: "Pastillas de freno", teoria: "Las pastillas de freno son los elementos de fricción que presionan el disco para detener la moto. Se desgastan con el uso y deben reemplazarse periódicamente.", ejemplo: "Las pastillas deben cambiarse cuando el material de fricción es inferior a 2 mm.", ejercicio: "¿Qué función tienen las pastillas de freno?", reto: "Investiga cómo reemplazar las pastillas de freno." },
+            { titulo: "Líquido de frenos", teoria: "El líquido de frenos transmite la presión de la maneta al caliper. Debe cambiarse cada 2 años porque absorbe humedad y pierde eficiencia.", ejemplo: "El líquido de frenos se clasifica por su punto de ebullición (DOT 3, 4, 5.1).", ejercicio: "¿Qué función tiene el líquido de frenos?", reto: "Investiga cómo cambiar el líquido de frenos." },
+            { titulo: "Sistema ABS (Anti-lock Braking System)", teoria: "El sistema ABS evita que las ruedas se bloqueen durante el frenado, manteniendo el control de la moto. Es obligatorio en motos de más de 125 cc en la UE.", ejemplo: "El ABS mejora la seguridad en frenadas de emergencia.", ejercicio: "¿Qué es el sistema ABS?", reto: "Investiga cómo funciona el sistema ABS." },
+            { titulo: "Sistema CBS (Combined Braking System)", teoria: "El CBS distribuye la fuerza de frenado entre las ruedas delantera y trasera cuando se acciona un solo freno. Mejora la estabilidad.", ejemplo: "El CBS es común en motos de baja cilindrada.", ejercicio: "¿Qué es el sistema CBS?", reto: "Investiga la diferencia entre ABS y CBS." },
+            { titulo: "Caliper de freno", teoria: "El caliper es la pinza que sujeta las pastillas y las presiona contra el disco. Puede ser de pistón simple o múltiple.", ejemplo: "Los calipers de 4 pistones ofrecen mayor potencia de frenado.", ejercicio: "¿Qué función tiene el caliper de freno?", reto: "Investiga los tipos de calipers." },
+            { titulo: "Disco de freno", teoria: "El disco de freno es el elemento que gira con la rueda y es presionado por las pastillas. Puede ser de disco fijo o flotante.", ejemplo: "Los discos flotantes ofrecen mejor disipación del calor.", ejercicio: "¿Qué función tiene el disco de freno?", reto: "Investiga cómo identificar un disco de freno desgastado." },
+            { titulo: "Maneta de freno", teoria: "La maneta de freno (delantera) se acciona con la mano derecha. El freno trasero se acciona con el pie derecho.", ejemplo: "La maneta debe tener un juego adecuado para una respuesta rápida.", ejercicio: "¿Cómo se accionan los frenos en una moto?", reto: "Investiga la técnica de frenado correcta." },
+            { titulo: "Técnica de frenado", teoria: "La técnica de frenado correcta implica utilizar ambos frenos simultáneamente, aplicando más fuerza al delantero (70%) que al trasero (30%).", ejemplo: "En una frenada de emergencia, se debe aplicar el freno delantero con progresividad.", ejercicio: "¿Cómo se debe frenar correctamente?", reto: "Investiga la técnica de frenado en curvas." },
+            { titulo: "Mantenimiento de frenos", teoria: "El mantenimiento de frenos incluye revisar pastillas, discos, líquido de frenos y el sistema de mangueras. Debe realizarse periódicamente.", ejemplo: "Revisar el sistema de frenos cada 5000 km.", ejercicio: "¿Qué mantenimiento necesitan los frenos?", reto: "Investiga cómo purgar el sistema de frenos." },
+            { titulo: "Pastillas de freno sinterizadas", teoria: "Las pastillas sinterizadas ofrecen mayor rendimiento en condiciones de calor extremo. Son ideales para conducción deportiva.", ejemplo: "Las pastillas sinterizadas son más duraderas que las orgánicas.", ejercicio: "¿Qué ventajas tienen las pastillas sinterizadas?", reto: "Investiga la diferencia entre pastillas orgánicas y sinterizadas." },
+            { titulo: "Pastillas de freno orgánicas", teoria: "Las pastillas orgánicas son más suaves y silenciosas, pero se desgastan más rápido. Son ideales para conducción urbana.", ejemplo: "Las pastillas orgánicas son más económicas que las sinterizadas.", ejercicio: "¿Qué ventajas tienen las pastillas orgánicas?", reto: "Investiga las pastillas de freno para tu tipo de conducción." },
+            { titulo: "Sistema de frenos de alto rendimiento", teoria: "Los sistemas de frenos de alto rendimiento incluyen discos flotantes, calipers de múltiples pistones y mangueras trenzadas.", ejemplo: "Las motos deportivas suelen tener frenos de alto rendimiento.", ejercicio: "¿Qué componentes mejoran el rendimiento de los frenos?", reto: "Investiga cómo mejorar los frenos de tu moto." },
+            { titulo: "Frenado en curvas", teoria: "El frenado en curvas debe realizarse antes de entrar en la curva, no durante. Frenar en curva puede desestabilizar la moto.", ejemplo: "Se debe frenar en la fase de aproximación a la curva.", ejercicio: "¿Cómo se frena correctamente en curvas?", reto: "Investiga la técnica de frenado en curvas." },
+            { titulo: "Distancia de frenado", teoria: "La distancia de frenado depende de la velocidad, el estado de los neumáticos, el sistema de frenos y la superficie de la carretera.", ejemplo: "A 60 km/h, la distancia de frenado puede ser de 15-20 metros.", ejercicio: "¿Qué factores afectan la distancia de frenado?", reto: "Investiga la distancia de frenado de tu moto." },
+            { titulo: "Frenado de emergencia", teoria: "En una frenada de emergencia, se debe aplicar el freno delantero con progresividad y el trasero con firmeza, manteniendo el control de la moto.", ejemplo: "El ABS ayuda a evitar el bloqueo de las ruedas durante la frenada de emergencia.", ejercicio: "¿Cómo se realiza una frenada de emergencia?", reto: "Investiga las técnicas de frenada de emergencia." },
+            { titulo: "Mangueras de freno trenzadas", teoria: "Las mangueras trenzadas (acero) ofrecen una respuesta más firme y directa que las mangueras de goma, mejorando la sensación de frenado.", ejemplo: "Las mangueras trenzadas son una mejora común en motos deportivas.", ejercicio: "¿Qué ventajas tienen las mangueras de freno trenzadas?", reto: "Investiga cómo instalar mangueras trenzadas." },
+            { titulo: "Purgado del sistema de frenos", teoria: "El purgado elimina el aire del sistema de frenos, mejorando la respuesta y la sensación de frenado.", ejemplo: "Purgar el sistema de frenos cada 2 años.", ejercicio: "¿Qué es el purgado del sistema de frenos?", reto: "Investiga cómo purgar el sistema de frenos." },
+            { titulo: "Normativas de seguridad", teoria: "En Colombia, los frenos deben cumplir con las normativas de seguridad del RUNT y el Código Nacional de Tránsito. El sistema de frenos debe estar en perfecto estado.", ejercicio: "¿Qué normativas aplican a los frenos en Colombia?", reto: "Investiga el Código Nacional de Tránsito sobre frenos." }
+        ]
+    },
+    suspenso: {
+        nombre: "Suspenso", color: "purpura", icono: "bi-robot",
+        especialidad: "Suspensión, dirección y chasis",
+        tecnicas: [
+            { titulo: "Sistema de suspensión", teoria: "La suspensión absorbe los impactos y mantiene el contacto de las ruedas con el suelo, mejorando la estabilidad y la comodidad.", ejemplo: "Las suspensiones delanteras y traseras trabajan en conjunto.", ejercicio: "¿Qué función tiene el sistema de suspensión?", reto: "Investiga los tipos de suspensión en motos." },
+            { titulo: "Horquilla delantera", teoria: "La horquilla delantera es el elemento de suspensión delantera. Consta de dos tubos que deslizan dentro de otros, con resortes y aceite para absorber impactos.", ejemplo: "La horquilla telescópica es la más común en motos.", ejercicio: "¿Qué es la horquilla delantera?", reto: "Investiga el funcionamiento de una horquilla telescópica." },
+            { titulo: "Amortiguador trasero", teoria: "El amortiguador trasero (o monoamortiguador) absorbe los impactos de la rueda trasera. Puede ser regulable en precarga y amortiguación.", ejemplo: "El monoamortiguador es común en motos modernas.", ejercicio: "¿Qué función tiene el amortiguador trasero?", reto: "Investiga los tipos de amortiguadores traseros." },
+            { titulo: "Ajuste de la suspensión", teoria: "La suspensión debe ajustarse según el peso del conductor, el tipo de conducción y la carga de la moto. Los ajustes incluyen precarga, compresión y rebote.", ejemplo: "Aumentar la precarga para un conductor pesado.", ejercicio: "¿Cómo se ajusta la suspensión?", reto: "Investiga cómo ajustar la suspensión de tu moto." },
+            { titulo: "Precarga de la suspensión", teoria: "La precarga ajusta la altura de la moto y la respuesta de la suspensión. Aumentar la precarga endurece la suspensión.", ejemplo: "Ajustar la precarga para mejorar la estabilidad.", ejercicio: "¿Qué es la precarga de la suspensión?", reto: "Investiga cómo ajustar la precarga." },
+            { titulo: "Amortiguación de compresión", teoria: "La amortiguación de compresión controla la velocidad a la que la suspensión se comprime. Aumentarla endurece la suspensión.", ejemplo: "Aumentar la compresión para conducción deportiva.", ejercicio: "¿Qué es la amortiguación de compresión?", reto: "Investiga cómo ajustar la compresión." },
+            { titulo: "Amortiguación de rebote", teoria: "La amortiguación de rebote controla la velocidad a la que la suspensión se extiende después de comprimirse. Un rebote rápido puede desestabilizar la moto.", ejemplo: "Ajustar el rebote para una conducción más estable.", ejercicio: "¿Qué es la amortiguación de rebote?", reto: "Investiga cómo ajustar el rebote." },
+            { titulo: "Suspensión invertida", teoria: "La suspensión invertida (USD) tiene los tubos más gruesos en la parte superior y los más delgados en la inferior. Ofrece mayor rigidez y mejor respuesta.", ejemplo: "Las motos deportivas suelen tener suspensión invertida.", ejercicio: "¿Qué ventajas tiene la suspensión invertida?", reto: "Investiga la diferencia entre suspensión convencional e invertida." },
+            { titulo: "Suspensión con horquilla convencional", teoria: "La suspensión convencional tiene los tubos más delgados en la parte superior y los más gruesos en la inferior. Es más económica y fácil de mantener.", ejemplo: "La horquilla convencional es común en motos de baja cilindrada.", ejercicio: "¿Qué es la suspensión convencional?", reto: "Investiga el mantenimiento de la suspensión convencional." },
+            { titulo: "Suspensión monoamortiguador", teoria: "El monoamortiguador es un solo amortiguador que centraliza la suspensión trasera. Mejora la estabilidad y el comportamiento de la moto.", ejemplo: "El monoamortiguador es común en motos deportivas y de calle.", ejercicio: "¿Qué ventajas tiene el monoamortiguador?", reto: "Investiga el funcionamiento del monoamortiguador." },
+            { titulo: "Suspensión con doble amortiguador", teoria: "La suspensión con doble amortiguador tiene dos amortiguadores traseros, uno a cada lado. Es más económica y sencilla.", ejemplo: "Las motos de baja cilindrada suelen tener doble amortiguador.", ejercicio: "¿Qué es la suspensión con doble amortiguador?", reto: "Investiga las ventajas y desventajas." },
+            { titulo: "Sistema de dirección", teoria: "El sistema de dirección incluye el manillar, la tija y la horquilla. Permite controlar la dirección de la moto.", ejemplo: "La dirección debe tener un juego adecuado.", ejercicio: "¿Qué componentes tiene el sistema de dirección?", reto: "Investiga cómo ajustar el juego de la dirección." },
+            { titulo: "Amortiguador de dirección (steering damper)", teoria: "El amortiguador de dirección reduce las vibraciones y los movimientos bruscos en la dirección, mejorando la estabilidad.", ejemplo: "El steering damper es común en motos deportivas y de alta velocidad.", ejercicio: "¿Qué es el amortiguador de dirección?", reto: "Investiga los tipos de amortiguadores de dirección." },
+            { titulo: "Chasis", teoria: "El chasis es la estructura que soporta todos los componentes de la moto. Puede ser de diamante, de doble viga o monocasco.", ejemplo: "El chasis de doble viga es común en motos deportivas.", ejercicio: "¿Qué tipos de chasis existen?", reto: "Investiga los tipos de chasis de motos." },
+            { titulo: "Basculante trasero", teoria: "El basculante es la pieza que conecta el chasis a la rueda trasera. Puede ser de sección rectangular, ovalada o de aluminio.", ejemplo: "Un basculante de aluminio ofrece ligereza y rigidez.", ejercicio: "¿Qué función tiene el basculante?", reto: "Investiga los tipos de basculantes." },
+            { titulo: "Neumáticos", teoria: "Los neumáticos son el punto de contacto entre la moto y la carretera. Deben tener la presión y el dibujo adecuados para la conducción.", ejemplo: "La presión de los neumáticos debe revisarse regularmente.", ejercicio: "¿Qué función tienen los neumáticos?", reto: "Investiga la presión adecuada de los neumáticos." },
+            { titulo: "Ruedas y llantas", teoria: "Las ruedas están compuestas por la llanta (metal) y el neumático. Las llantas pueden ser de aleación o de radios.", ejemplo: "Las llantas de aleación son más ligeras que las de radios.", ejercicio: "¿Qué tipos de llantas existen?", reto: "Investiga las ventajas de las llantas de aleación." },
+            { titulo: "Alineación de la rueda trasera", teoria: "La alineación de la rueda trasera es crucial para el manejo de la moto. Debe estar alineada con la rueda delantera.", ejemplo: "La alineación se ajusta con los tensores de cadena.", ejercicio: "¿Cómo se alinea la rueda trasera?", reto: "Investiga cómo alinear la rueda trasera." },
+            { titulo: "Mantenimiento de la suspensión", teoria: "La suspensión requiere mantenimiento periódico: cambio de aceite de la horquilla, revisión de los sellos y ajuste de la precarga.", ejemplo: "Cambiar el aceite de la horquilla cada 20,000 km.", ejercicio: "¿Qué mantenimiento necesita la suspensión?", reto: "Investiga cómo cambiar el aceite de la horquilla." },
+            { titulo: "Reglaje de la suspensión para cada conductor", teoria: "La suspensión debe ajustarse según el peso del conductor y el tipo de conducción. Un reglaje correcto mejora la seguridad y el confort.", ejemplo: "Un conductor pesado necesita más precarga.", ejercicio: "¿Cómo se regla la suspensión según el conductor?", reto: "Investiga el reglaje de la suspensión para tu peso." }
+        ]
+    },
+    electrimoto: {
+        nombre: "ElectroMoto", color: "rojo", icono: "bi-robot",
+        especialidad: "Sistema eléctrico y mantenimiento preventivo",
+        tecnicas: [
+            { titulo: "Sistema eléctrico de la moto", teoria: "El sistema eléctrico incluye la batería, el alternador, el regulador de voltaje, el arranque eléctrico, las luces y los sensores.", ejemplo: "La batería suministra energía para el arranque y los sistemas eléctricos.", ejercicio: "¿Qué componentes tiene el sistema eléctrico?", reto: "Investiga cómo funciona el sistema eléctrico de una moto." },
+            { titulo: "Batería de moto", teoria: "La batería almacena energía eléctrica para el arranque y los sistemas eléctricos. Puede ser de plomo-ácido o de litio.", ejemplo: "Una batería de 12V con 8Ah es común en motos de baja cilindrada.", ejercicio: "¿Qué tipos de baterías existen?", reto: "Investiga cómo mantener la batería de una moto." },
+            { titulo: "Alternador / Estator", teoria: "El alternador (estator) genera electricidad para cargar la batería y alimentar los sistemas eléctricos mientras el motor está en marcha.", ejemplo: "El estator produce corriente alterna que el regulador convierte a corriente continua.", ejercicio: "¿Qué función tiene el alternador?", reto: "Investiga cómo funciona el sistema de carga." },
+            { titulo: "Regulador de voltaje", teoria: "El regulador de voltaje controla la tensión generada por el alternador para evitar sobrecargar la batería y los componentes eléctricos.", ejemplo: "Un regulador defectuoso puede dañar la batería y las luces.", ejercicio: "¿Qué función tiene el regulador de voltaje?", reto: "Investiga cómo probar el regulador de voltaje." },
+            { titulo: "Arranque eléctrico", teoria: "El arranque eléctrico utiliza un motor eléctrico (bobin) para girar el motor y ponerlo en marcha. Se activa con el botón de arranque.", ejemplo: "El bobin de arranque debe tener suficiente potencia para girar el motor.", ejercicio: "¿Cómo funciona el arranque eléctrico?", reto: "Investiga cómo probar el bobin de arranque." },
+            { titulo: "Sistema de iluminación", teoria: "El sistema de iluminación incluye el faro delantero, las luces traseras, los intermitentes y las luces de freno. Deben estar en perfecto estado.", ejemplo: "Un faro fundido debe ser reemplazado inmediatamente.", ejercicio: "¿Qué componentes tiene el sistema de iluminación?", reto: "Investiga cómo cambiar una bombilla de la moto." },
+            { titulo: "Bujía", teoria: "La bujía produce la chispa que enciende la mezcla en el cilindro. Debe tener el calor adecuado y el electrodo en buen estado.", ejemplo: "Una bujía debe reemplazarse según el manual del fabricante.", ejercicio: "¿Qué función tienen las bujías?", reto: "Investiga cómo interpretar el color de una bujía." },
+            { titulo: "Bobina de encendido", teoria: "La bobina de encendido transforma la tensión de la batería (12V) en alta tensión (miles de voltios) para producir la chispa en la bujía.", ejemplo: "Una bobina defectuosa puede causar fallos de encendido.", ejercicio: "¿Qué función tiene la bobina de encendido?", reto: "Investiga cómo probar la bobina de encendido." },
+            { titulo: "Sistema de inyección electrónica (ECU)", teoria: "La ECU (Unidad de Control Electrónico) controla la inyección de combustible y el encendido, optimizando el rendimiento y las emisiones.", ejemplo: "La ECU utiliza sensores para ajustar la mezcla en tiempo real.", ejercicio: "¿Qué función tiene la ECU?", reto: "Investiga los sensores del sistema de inyección." },
+            { titulo: "Sensores del motor", teoria: "Los sensores (Temperatura, Oxígeno, Posición del cigüeñal, MAP) proporcionan información a la ECU para ajustar la mezcla.", ejemplo: "El sensor de oxígeno mide la cantidad de oxígeno en los gases de escape.", ejercicio: "¿Qué tipos de sensores existen?", reto: "Investiga los sensores de tu moto." },
+            { titulo: "Sistema de carga (prueba)", teoria: "La prueba del sistema de carga verifica que el alternador y el regulador estén funcionando correctamente y cargando la batería.", ejemplo: "Se mide el voltaje en la batería con el motor en marcha.", ejercicio: "¿Cómo se prueba el sistema de carga?", reto: "Investiga cómo probar el sistema de carga." },
+            { titulo: "Mantenimiento preventivo", teoria: "El mantenimiento preventivo incluye cambios de aceite, filtros, ajuste de la cadena, limpieza del filtro de aire, etc. Según el manual del fabricante.", ejemplo: "Cambiar el aceite cada 3000-5000 km.", ejercicio: "¿Qué es el mantenimiento preventivo?", reto: "Investiga el plan de mantenimiento de tu moto." },
+            { titulo: "Cambio de aceite", teoria: "El cambio de aceite debe realizarse con el motor caliente y siguiendo las especificaciones del fabricante. Incluye el filtro de aceite.", ejemplo: "El aceite debe tener la viscosidad adecuada (ej. 10W-40).", ejercicio: "¿Cómo se cambia el aceite de una moto?", reto: "Investiga cómo cambiar el aceite y el filtro." },
+            { titulo: "Filtro de aceite", teoria: "El filtro de aceite retiene las impurezas del aceite. Debe reemplazarse en cada cambio de aceite.", ejemplo: "Un filtro de aceite limpio prolonga la vida del motor.", ejercicio: "¿Qué función tiene el filtro de aceite?", reto: "Investiga cómo reemplazar el filtro de aceite." },
+            { titulo: "Filtro de aire", teoria: "El filtro de aire limpia el aire que entra al motor. Debe limpiarse o reemplazarse periódicamente.", ejemplo: "Un filtro de aire sucio reduce la potencia y la eficiencia.", ejercicio: "¿Cómo se limpia el filtro de aire?", reto: "Investiga cómo reemplazar el filtro de aire." },
+            { titulo: "Revisión de la cadena y transmisión", teoria: "La cadena y el kit de transmisión deben revisarse periódicamente para detectar desgaste y ajustar la tensión.", ejemplo: "Revisar la cadena cada 1000 km.", ejercicio: "¿Cómo se revisa la cadena de una moto?", reto: "Investiga cómo revisar el desgaste de la cadena." },
+            { titulo: "Revisión de los frenos", teoria: "Los frenos deben revisarse periódicamente: pastillas, discos, líquido de frenos y mangueras.", ejemplo: "Revisar los frenos cada 5000 km.", ejercicio: "¿Cómo se revisan los frenos?", reto: "Investiga cómo revisar las pastillas y el líquido de frenos." },
+            { titulo: "Revisión de la suspensión", teoria: "La suspensión debe revisarse para detectar fugas de aceite y desgaste de los sellos.", ejemplo: "Revisar la horquilla y el amortiguador trasero.", ejercicio: "¿Cómo se revisa la suspensión?", reto: "Investiga cómo detectar fugas en la suspensión." },
+            { titulo: "Normativa RUNT para motos", teoria: "El RUNT (Registro Único Nacional de Tránsito) regula la propiedad y el estado de las motos en Colombia. Las motos deben pasar la revisión técnico-mecánica.", ejemplo: "La revisión técnico-mecánica verifica el estado de frenos, luces y emisiones.", ejercicio: "¿Qué es el RUNT y qué exige?", reto: "Investiga la revisión técnico-mecánica en Colombia." },
+            { titulo: "Seguridad vial para motos", teoria: "La seguridad vial para motos incluye el uso del casco, guantes, chaqueta, botas y la conducción defensiva.", ejemplo: "El casco debe ser certificado y estar en buen estado.", ejercicio: "¿Qué elementos de seguridad son obligatorios?", reto: "Investiga los elementos de seguridad para motos en Colombia." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['motorio','transmi','freno','suspenso','electrimoto'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_mecanica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

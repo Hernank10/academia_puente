@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Planteamiento de problema científico en ciencia ficción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(20, 40, 70, 0.8) 0%, transparent 60%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #d0dbe8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #4a7a9c;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #8bc4e0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 20px rgba(80, 160, 220, 0.2);
+        }
+        .header h1 span {
+            background: #3a6a8c;
+            color: #e0f0ff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            border: 1px solid #5a8aaa;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #7a9ab0;
+            background: rgba(60, 120, 180, 0.15);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #4a7a9c;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #141c26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #8bb0c8;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #1a2a3a; color: #c0dcee; }
+        .block-nav button.active {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border-color: #4a8aaa;
+            box-shadow: 0 0 20px rgba(60, 140, 220, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 500px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a4a5c;
+        }
+        .card-front {
+            background: #121c26;
+            background-image: linear-gradient(145deg, #0e1820 0%, #1a2a36 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 3px solid #3a7a9c;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #4a8aaa;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6a9ab0;
+            background: #1a2a3a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            border: 1px solid #3a5a6a;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #8bc4e0;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #9ab8d0;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #5a7a8a;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #2a4a5c;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #0e1820;
+            background-image: linear-gradient(160deg, #0c1620 0%, #16222e 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #4a8aaa;
+            border-bottom: 1px solid #3a6a8c;
+        }
+        .card-back .definicion {
+            background: rgba(60, 140, 220, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .sintaxis {
+            background: rgba(60, 180, 120, 0.10);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #5a8a7a;
+            margin-bottom: 0.3rem;
+            color: #a0c8b8;
+            font-family: monospace;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(60, 140, 220, 0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #4a8aaa;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #8bc4e0;
+        }
+        .card-back .ejercicio {
+            background: #1a2a3a;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #b0c8d8;
+            border: 1px solid #2a4a5c;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2a4a5c;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #0a141c;
+            color: #d0dbe8;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #4a8aaa;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #3a7a9c; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #6abe6a; }
+        .card-back .feedback-msg.incorrecto { color: #d46a6a; }
+        .card-back .respuesta-correcta {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5a7a8a;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #121c26;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #8bc4e0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6a9ab0;
+        }
+        .quiz-pregunta {
+            background: #0c1620;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #1a2a3a;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: #c0dcee;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #0e1820;
+            border: 1px solid #2a4a5c;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #b0c8d8;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #1a2a3a; }
+        .quiz-opciones button.correct {
+            background: #1a5a3a;
+            border-color: #3a8a5a;
+            color: #b0e8c0;
+        }
+        .quiz-opciones button.incorrect {
+            background: #5a2a2a;
+            border-color: #8a4a4a;
+            color: #e8b0b0;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #1a2a3a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            color: #b0c8d8;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #2a5a7a;
+            border: none;
+            color: #e0f0ff;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #3a7a9c; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5a7a8a;
+            border-top: 1px solid #1a2a3a;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>🔬 Planteamiento de problema científico <span>100 técnicas</span></h1>
+        <div class="sub">ciencia ficción · teoría · sintaxis · ejemplos</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>planteamiento de problemas en ciencia ficción</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">Escribe tu respuesta en cada tarjeta y verifica · Explora el arte de investigar el cosmos</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS DE PLANTEAMIENTO DE PROBLEMA CIENTÍFICO EN CIENCIA FICCIÓN
+    // Cada técnica: nombre, definición/teoría, fórmula morfosintáctica,
+    // ejemplo, ejercicio y respuesta.
+    // Distribuidas en 4 bloques: Físico, Biológico, Tecnológico, Sociológico.
+    // ================================================================
+    const TECNICAS = [];
+
+    // =================== BLOQUE 1: PROBLEMAS FÍSICO-COSMOLÓGICOS (25) ===================
+    const fisicos = [
+        { nombre: "Problema de la expansión acelerada", definicion: "Investiga por qué el universo se expande a un ritmo creciente.", sintaxis: "¿Cuál es la causa de la [expansión acelerada] del [universo] y cómo afecta a la [materia oscura]?", ejemplo: "¿Por qué la expansión del universo se acelera en lugar de desacelerarse, y qué papel juega la energía oscura en este proceso?", ejercicio: "¿Qué problema físico investiga la aceleración del universo?", respuesta: "problema de la expansión acelerada" },
+        { nombre: "Problema de la materia oscura", definicion: "Investiga la naturaleza de la materia que no emite luz.", sintaxis: "¿Qué es la [materia oscura] y cómo se detecta en el [cosmos]?", ejemplo: "¿Qué compone la materia oscura que constituye el 85% de la masa del universo y cómo podemos observarla indirectamente?", ejercicio: "¿Qué problema investiga la materia invisible del universo?", respuesta: "problema de la materia oscura" },
+        { nombre: "Problema de la energía oscura", definicion: "Investiga la fuerza que acelera la expansión cósmica.", sintaxis: "¿Cuál es la [naturaleza] de la [energía oscura] y cómo afecta al [destino del universo]?", ejemplo: "¿Qué es la energía oscura que impulsa la expansión acelerada y cómo determinará el futuro del cosmos?", ejercicio: "¿Qué problema estudia la fuerza que acelera el universo?", respuesta: "problema de la energía oscura" },
+        { nombre: "Problema de la singularidad", definicion: "Investiga los puntos donde las leyes físicas se rompen.", sintaxis: "¿Qué ocurre en una [singularidad] y cómo se puede [describir] con la [física cuántica]?", ejemplo: "¿Cómo se comporta la materia en la singularidad de un agujero negro y qué leyes físicas la gobiernan?", ejercicio: "¿Qué problema estudia los puntos donde la física falla?", respuesta: "problema de la singularidad" },
+        { nombre: "Problema de la radiación de Hawking", definicion: "Investiga la emisión de partículas por agujeros negros.", sintaxis: "¿Cómo se genera la [radiación de Hawking] y qué implica para la [evaporación] de los [agujeros negros]?", ejemplo: "¿Cuál es el mecanismo exacto de la radiación de Hawking y cómo afecta la información atrapada en un agujero negro?", ejercicio: "¿Qué problema estudia la emisión de agujeros negros?", respuesta: "problema de la radiación de Hawking" },
+        { nombre: "Problema de la paradoja de la información", definicion: "Investiga si la información se pierde en los agujeros negros.", sintaxis: "¿La [información] se [pierde] en un [agujero negro] o se [preserva]?", ejemplo: "¿La información de la materia que cae en un agujero negro se destruye o se conserva en la radiación de Hawking?", ejercicio: "¿Qué problema cuestiona la pérdida de información en agujeros negros?", respuesta: "problema de la paradoja de la información" },
+        { nombre: "Problema del Big Bang", definicion: "Investiga el origen del universo.", sintaxis: "¿Qué [causó] el [Big Bang] y qué [ocurrió] en los primeros [instantes] del [universo]?", ejemplo: "¿Qué evento desencadenó el Big Bang y cómo evolucionó el universo en los primeros microsegundos?", ejercicio: "¿Qué problema investiga el origen del universo?", respuesta: "problema del Big Bang" },
+        { nombre: "Problema del multiverso", definicion: "Investiga la existencia de múltiples universos.", sintaxis: "¿Existen [otros universos] más allá del [nuestro] y cómo se [relacionan]?", ejemplo: "¿Es real el multiverso y cómo podríamos detectar la influencia de otros universos en el nuestro?", ejercicio: "¿Qué problema explora la existencia de otros universos?", respuesta: "problema del multiverso" },
+        { nombre: "Problema de la gravedad cuántica", definicion: "Investiga la unificación de la gravedad y la mecánica cuántica.", sintaxis: "¿Cómo se [unifica] la [gravedad] con la [mecánica cuántica] en una [teoría del todo]?", ejemplo: "¿Qué teoría puede unificar la gravedad con la mecánica cuántica para explicar el comportamiento del universo a escalas extremas?", ejercicio: "¿Qué problema busca unificar la física?", respuesta: "problema de la gravedad cuántica" },
+        { nombre: "Problema de la constante cosmológica", definicion: "Investiga la discrepancia entre la teoría y la observación.", sintaxis: "¿Por qué el [valor] de la [constante cosmológica] es tan [pequeño] y qué [implica] para el [universo]?", ejemplo: "¿Por qué la constante cosmológica es 120 órdenes de magnitud menor de lo que predice la teoría cuántica?", ejercicio: "¿Qué problema estudia la discrepancia en la energía del vacío?", respuesta: "problema de la constante cosmológica" },
+        { nombre: "Problema de la materia y antimateria", definicion: "Investiga la asimetría entre materia y antimateria.", sintaxis: "¿Por qué hay [más materia] que [antimateria] en el [universo] y qué [proceso] lo [explica]?", ejemplo: "¿Qué mecanismo causó la asimetría entre materia y antimateria en el universo primitivo?", ejercicio: "¿Qué problema investiga la falta de antimateria?", respuesta: "problema de la materia y antimateria" },
+        { nombre: "Problema de la inflación cósmica", definicion: "Investiga la expansión exponencial del universo primitivo.", sintaxis: "¿Qué [causó] la [inflación cósmica] y cómo [afectó] la [estructura] del [universo]?", ejemplo: "¿Qué campo inflacionario impulsó la expansión exponencial del universo en sus primeros instantes?", ejercicio: "¿Qué problema estudia la expansión rápida del universo primitivo?", respuesta: "problema de la inflación cósmica" },
+        { nombre: "Problema de la radiación de fondo", definicion: "Investiga el eco del Big Bang.", sintaxis: "¿Qué [información] contiene la [radiación de fondo] y cómo [revela] el [origen] del [universo]?", ejemplo: "¿Qué nos dice la radiación cósmica de fondo sobre las condiciones del universo primitivo?", ejercicio: "¿Qué problema estudia el eco del Big Bang?", respuesta: "problema de la radiación de fondo" },
+        { nombre: "Problema de la estructura a gran escala", definicion: "Investiga la formación de galaxias y cúmulos.", sintaxis: "¿Cómo se [formaron] las [estructuras] a [gran escala] del [universo] y qué [fuerzas] las [moldean]?", ejemplo: "¿Cómo se formaron las galaxias y los cúmulos a partir de las fluctuaciones cuánticas primitivas?", ejercicio: "¿Qué problema estudia la formación de estructuras cósmicas?", respuesta: "problema de la estructura a gran escala" },
+        { nombre: "Problema de la materia oscura fría", definicion: "Investiga la materia oscura no relativista.", sintaxis: "¿Qué [partículas] componen la [materia oscura fría] y cómo [interactúan] con la [materia normal]?", ejemplo: "¿Qué partículas masivas de interacción débil (WIMPs) podrían ser la materia oscura fría?", ejercicio: "¿Qué problema investiga las partículas de materia oscura?", respuesta: "problema de la materia oscura fría" },
+        { nombre: "Problema de la energía oscura dinámica", definicion: "Investiga si la energía oscura varía en el tiempo.", sintaxis: "¿Es la [energía oscura] [constante] o [variable] en el [tiempo] y cómo [afecta] al [cosmos]?", ejemplo: "¿La energía oscura es una constante cosmológica o un campo dinámico que evoluciona con el tiempo?", ejercicio: "¿Qué problema estudia la variación de la energía oscura?", respuesta: "problema de la energía oscura dinámica" },
+        { nombre: "Problema de los agujeros negros primordiales", definicion: "Investiga los agujeros negros formados en el Big Bang.", sintaxis: "¿Existen [agujeros negros] [primordiales] y cómo [detectarlos] en el [universo]?", ejemplo: "¿Los agujeros negros formados en el Big Bang pueden explicar parte de la materia oscura?", ejercicio: "¿Qué problema investiga los agujeros negros primitivos?", respuesta: "problema de los agujeros negros primordiales" },
+        { nombre: "Problema de las ondas gravitacionales", definicion: "Investiga las perturbaciones del espacio-tiempo.", sintaxis: "¿Qué [fenómenos] [generan] [ondas gravitacionales] y cómo [detectarlas]?", ejemplo: "¿Cómo se generan las ondas gravitacionales y qué información aportan sobre eventos cósmicos?", ejercicio: "¿Qué problema estudia las ondas en el espacio-tiempo?", respuesta: "problema de las ondas gravitacionales" },
+        { nombre: "Problema de la constante de Hubble", definicion: "Investiga la tasa de expansión del universo.", sintaxis: "¿Cuál es el [valor] exacto de la [constante de Hubble] y por qué [varía] según la [medición]?", ejemplo: "¿Por qué las mediciones de la constante de Hubble dan resultados diferentes dependiendo del método utilizado?", ejercicio: "¿Qué problema estudia la tasa de expansión del universo?", respuesta: "problema de la constante de Hubble" },
+        { nombre: "Problema de la lente gravitacional", definicion: "Investiga la curvatura de la luz por la gravedad.", sintaxis: "¿Cómo [desvía] la [gravedad] la [luz] y qué [información] [revela] sobre la [materia oscura]?", ejemplo: "¿Cómo el efecto de lente gravitacional puede mapear la distribución de materia oscura?", ejercicio: "¿Qué problema estudia la curvatura de la luz por gravedad?", respuesta: "problema de la lente gravitacional" },
+        { nombre: "Problema de la nucleosíntesis primordial", definicion: "Investiga la formación de elementos en el Big Bang.", sintaxis: "¿Qué [elementos] se [formaron] en la [nucleosíntesis primordial] y qué [abundancias] [predice]?", ejemplo: "¿Cómo la nucleosíntesis primordial explica las abundancias de hidrógeno, helio y litio en el universo?", ejercicio: "¿Qué problema estudia la formación de elementos primitivos?", respuesta: "problema de la nucleosíntesis primordial" },
+        { nombre: "Problema de la reionización cósmica", definicion: "Investiga la época en que el universo se volvió transparente.", sintaxis: "¿Qué [fuentes] [ionizaron] el [universo] y cómo [afectó] la [formación] de [estructuras]?", ejemplo: "¿Qué objetos (estrellas, cuásares) reionizaron el universo y cómo cambió la formación de galaxias?", ejercicio: "¿Qué problema estudia la transparencia del universo?", respuesta: "problema de la reionización cósmica" },
+        { nombre: "Problema de la formación de estrellas", definicion: "Investiga el nacimiento de las estrellas.", sintaxis: "¿Qué [condiciones] [desencadenan] la [formación] de [estrellas] y cómo [evolucionan]?", ejemplo: "¿Cómo se forman las estrellas en las nubes moleculares y qué factores determinan su masa?", ejercicio: "¿Qué problema estudia el nacimiento de las estrellas?", respuesta: "problema de la formación de estrellas" },
+        { nombre: "Problema de la evolución estelar", definicion: "Investiga el ciclo de vida de las estrellas.", sintaxis: "¿Cómo [evolucionan] las [estrellas] desde su [nacimiento] hasta su [muerte] y qué [productos] [dejan]?", ejemplo: "¿Cómo evolucionan las estrellas a lo largo de su vida y qué elementos crean en su interior?", ejercicio: "¿Qué problema estudia el ciclo de vida estelar?", respuesta: "problema de la evolución estelar" },
+        { nombre: "Problema de la supernova", definicion: "Investiga las explosiones estelares.", sintaxis: "¿Qué [mecanismos] [desencadenan] una [supernova] y cómo [afectan] al [entorno] [cósmico]?", ejemplo: "¿Cómo ocurren las explosiones de supernova y qué impacto tienen en la formación de elementos pesados?", ejercicio: "¿Qué problema estudia las explosiones de estrellas?", respuesta: "problema de la supernova" },
+        { nombre: "Problema de la formación planetaria", definicion: "Investiga el origen de los planetas.", sintaxis: "¿Cómo [se forman] los [planetas] alrededor de las [estrellas] y qué [condiciones] [requieren]?", ejemplo: "¿Cómo los discos protoplanetarios dan origen a planetas y qué condiciones favorecen la formación de sistemas solares?", ejercicio: "¿Qué problema estudia el origen de los planetas?", respuesta: "problema de la formación planetaria" },
+    ];
+    fisicos.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "físico", ...t }));
+
+    // =================== BLOQUE 2: PROBLEMAS BIOLÓGICO-ASTROBIOLÓGICOS (25) ===================
+    const biologicos = [
+        { nombre: "Problema del origen de la vida", definicion: "Investiga cómo surgió la vida en la Tierra.", sintaxis: "¿Qué [procesos] [químicos] [dieron] origen a la [vida] en la [Tierra] y cómo [replicarlos]?", ejemplo: "¿Cómo se formaron las primeras moléculas orgánicas y qué condiciones permitieron la aparición de la vida?", ejercicio: "¿Qué problema investiga el inicio de la vida?", respuesta: "problema del origen de la vida" },
+        { nombre: "Problema de la vida extraterrestre", definicion: "Investiga la existencia de vida fuera de la Tierra.", sintaxis: "¿Existe [vida] en otros [planetas] y cómo [detectarla] en el [cosmos]?", ejemplo: "¿Qué evidencias podrían indicar la presencia de vida en exoplanetas y cómo interpretarlas?", ejercicio: "¿Qué problema investiga la vida más allá de la Tierra?", respuesta: "problema de la vida extraterrestre" },
+        { nombre: "Problema de la panspermia", definicion: "Investiga la propagación de vida por el espacio.", sintaxis: "¿Es la [vida] capaz de [viajar] entre [planetas] y [estrellas] a través del [espacio]?", ejemplo: "¿Pueden los microorganismos sobrevivir a viajes interestelares y sembrar vida en otros mundos?", ejercicio: "¿Qué problema estudia el viaje de la vida por el espacio?", respuesta: "problema de la panspermia" },
+        { nombre: "Problema de la habitabilidad planetaria", definicion: "Investiga qué hace un planeta habitable.", sintaxis: "¿Qué [condiciones] [hacen] un [planeta] [habitable] y cómo [identificarlas]?", ejemplo: "¿Qué factores determinan la zona habitable de una estrella y la capacidad de un planeta para albergar vida?", ejercicio: "¿Qué problema investiga la capacidad de un planeta para albergar vida?", respuesta: "problema de la habitabilidad planetaria" },
+        { nombre: "Problema de los extremófilos", definicion: "Investiga organismos que viven en condiciones extremas.", sintaxis: "¿Qué [adaptaciones] [permiten] a los [extremófilos] [sobrevivir] en [ambientes] [hostiles]?", ejemplo: "¿Cómo pueden los extremófilos sobrevivir en ambientes de alta presión, temperatura o radiación, y qué implica para la vida extraterrestre?", ejercicio: "¿Qué problema estudia los organismos de ambientes extremos?", respuesta: "problema de los extremófilos" },
+        { nombre: "Problema de la biofirma", definicion: "Investiga las huellas de vida en otros mundos.", sintaxis: "¿Qué [marcadores] [biológicos] [indican] la [presencia] de [vida] en un [planeta]?", ejemplo: "¿Qué moléculas o patrones podrían ser firmas de vida pasada o presente en Marte o Europa?", ejercicio: "¿Qué problema estudia las huellas de vida en otros planetas?", respuesta: "problema de la biofirma" },
+        { nombre: "Problema de la evolución extraterrestre", definicion: "Investiga cómo podría evolucionar la vida en otros mundos.", sintaxis: "¿Qué [trayectorias] [evolutivas] podría [seguir] la [vida] en [diferentes] [entornos]?", ejemplo: "¿Cómo podría la evolución en un planeta con diferente gravedad o atmósfera generar formas de vida únicas?", ejercicio: "¿Qué problema investiga la evolución fuera de la Tierra?", respuesta: "problema de la evolución extraterrestre" },
+        { nombre: "Problema del ADN en el espacio", definicion: "Investiga la estabilidad del ADN en el espacio.", sintaxis: "¿Cómo [afecta] la [radiación] [cósmica] al [ADN] y qué [mecanismos] de [reparación] existen?", ejemplo: "¿Cómo sobrevive el ADN a la radiación del espacio y qué implicaciones tiene para la panspermia?", ejercicio: "¿Qué problema estudia la estabilidad del ADN en el espacio?", respuesta: "problema del ADN en el espacio" },
+        { nombre: "Problema de la biosfera subterránea", definicion: "Investiga la vida bajo la superficie planetaria.", sintaxis: "¿Qué [formas] de [vida] podrían [existir] en [subsuelos] [planetarios] y cómo [detectarlas]?", ejemplo: "¿Qué ecosistemas microbianos podrían habitar en los océanos subterráneos de Europa o Encélado?", ejercicio: "¿Qué problema investiga la vida bajo la superficie?", respuesta: "problema de la biosfera subterránea" },
+        { nombre: "Problema de la evolución química", definicion: "Investiga la formación de moléculas orgánicas en el espacio.", sintaxis: "¿Qué [moléculas] [orgánicas] se [forman] en el [espacio] y cómo [participan] en el [origen] de la [vida]?", ejemplo: "¿Cómo se forman aminoácidos y bases nitrogenadas en las nubes interestelares?", ejercicio: "¿Qué problema estudia la química prebiótica en el espacio?", respuesta: "problema de la evolución química" },
+        { nombre: "Problema de la vida en ambientes extremos", definicion: "Investiga la vida en condiciones límite.", sintaxis: "¿Qué [límites] de [temperatura], [presión] y [radiación] puede [soportar] la [vida] y [cómo]?", ejemplo: "¿Cuál es el límite de supervivencia de la vida en ambientes de alta acidez, salinidad o radiación?", ejercicio: "¿Qué problema estudia los límites de la vida?", respuesta: "problema de la vida en ambientes extremos" },
+        { nombre: "Problema de la transferencia genética horizontal", definicion: "Investiga el intercambio de genes entre especies.", sintaxis: "¿Cómo [influye] la [transferencia] [genética] [horizontal] en la [evolución] de los [microorganismos] en el [espacio]?", ejemplo: "¿Cómo el intercambio de genes entre bacterias podría afectar la evolución de la vida en otros planetas?", ejercicio: "¿Qué problema estudia el intercambio genético?", respuesta: "problema de la transferencia genética horizontal" },
+        { nombre: "Problema de la astrobiología", definicion: "Investiga la relación entre la vida y el universo.", sintaxis: "¿Cómo [influye] el [entorno] [cósmico] en el [origen], la [evolución] y la [distribución] de la [vida]?", ejemplo: "¿Qué papel juegan las supernovas y los rayos cósmicos en la evolución de la vida?", ejercicio: "¿Qué problema estudia la relación vida-universo?", respuesta: "problema de la astrobiología" },
+        { nombre: "Problema de la biosfera en otros planetas", definicion: "Investiga la posibilidad de ecosistemas extraterrestres.", sintaxis: "¿Qué [ecosistemas] podrían [existir] en [planetas] con [diferentes] [atmósferas] y [gravedades]?", ejemplo: "¿Cómo sería un ecosistema en un planeta con metano líquido o con una gravedad muy baja?", ejercicio: "¿Qué problema estudia los ecosistemas extraterrestres?", respuesta: "problema de la biosfera en otros planetas" },
+        { nombre: "Problema de la evolución de la inteligencia", definicion: "Investiga el desarrollo de la inteligencia en el cosmos.", sintaxis: "¿Qué [factores] [favorecen] la [aparición] de la [inteligencia] en un [planeta] y cómo [reconocerla]?", ejemplo: "¿Qué condiciones planetarias y evolutivas podrían dar lugar a inteligencias similares o diferentes a la humana?", ejercicio: "¿Qué problema investiga el desarrollo de la inteligencia extraterrestre?", respuesta: "problema de la evolución de la inteligencia" },
+        { nombre: "Problema de la comunicación interestelar", definicion: "Investiga cómo comunicarse con otras civilizaciones.", sintaxis: "¿Qué [lenguajes] o [señales] podrían [usar] las [civilizaciones] [extraterrestres] para [comunicarse]?", ejemplo: "¿Qué tipo de señales (radio, ópticas, gravitacionales) serían más efectivas para la comunicación interestelar?", ejercicio: "¿Qué problema estudia la comunicación con alienígenas?", respuesta: "problema de la comunicación interestelar" },
+        { nombre: "Problema de la detección de civilizaciones", definicion: "Investiga cómo encontrar evidencia de otras civilizaciones.", sintaxis: "¿Qué [firmas] [tecnológicas] podrían [revelar] la [existencia] de [civilizaciones] en otros [mundos]?", ejemplo: "¿Qué rastros tecnológicos (megastructuras, contaminación atmosférica) podrían detectarse desde la Tierra?", ejercicio: "¿Qué problema estudia la búsqueda de civilizaciones extraterrestres?", respuesta: "problema de la detección de civilizaciones" },
+        { nombre: "Problema de la ética del contacto", definicion: "Investiga las implicaciones éticas del contacto alienígena.", sintaxis: "¿Qué [principios] [éticos] deben [guiar] el [contacto] con [civilizaciones] [extraterrestres]?", ejemplo: "¿Cómo debería la humanidad prepararse para el contacto con una civilización más avanzada?", ejercicio: "¿Qué problema estudia la ética del contacto alienígena?", respuesta: "problema de la ética del contacto" },
+        { nombre: "Problema de la conservación de la vida", definicion: "Investiga cómo proteger la vida en el espacio.", sintaxis: "¿Cómo [proteger] la [vida] [terrestre] de la [contaminación] [espacial] y [viceversa]?", ejemplo: "¿Qué protocolos deben seguirse para evitar la contaminación biológica entre planetas?", ejercicio: "¿Qué problema estudia la protección de la vida en el espacio?", respuesta: "problema de la conservación de la vida" },
+        { nombre: "Problema de la evolución de la vida en el tiempo", definicion: "Investiga cómo cambia la vida a lo largo del tiempo cósmico.", sintaxis: "¿Cómo [evoluciona] la [vida] en [escalas] de [tiempo] [cósmicas] y qué [factores] la [afectan]?", ejemplo: "¿Cómo los cambios en el entorno cósmico (supernovas, radiación) afectan la evolución de la vida?", ejercicio: "¿Qué problema estudia la evolución de la vida a gran escala temporal?", respuesta: "problema de la evolución de la vida en el tiempo" },
+        { nombre: "Problema de la vida en planetas errantes", definicion: "Investiga la vida en planetas sin estrella.", sintaxis: "¿Podría [existir] [vida] en [planetas] [errantes] y cómo [sobreviviría] sin [luz] [estelar]?", ejemplo: "¿Qué fuentes de energía (calor interno, actividad geotérmica) podrían sustentar la vida en planetas sin estrella?", ejercicio: "¿Qué problema investiga la vida en planetas huérfanos?", respuesta: "problema de la vida en planetas errantes" },
+        { nombre: "Problema de la vida en nubes interestelares", definicion: "Investiga la posibilidad de vida en nubes de gas.", sintaxis: "¿Podría [existir] [vida] en [nubes] [interestelares] y qué [formas] [tomaría]?", ejemplo: "¿Qué tipo de química orgánica podría ocurrir en las nubes moleculares y dar lugar a formas de vida?", ejercicio: "¿Qué problema estudia la vida en nubes interestelares?", respuesta: "problema de la vida en nubes interestelares" },
+        { nombre: "Problema de la vida en ambientes de alta radiación", definicion: "Investiga la resistencia a la radiación.", sintaxis: "¿Qué [mecanismos] de [resistencia] a la [radiación] tienen los [organismos] y cómo [podrían] [usarse] en el [espacio]?", ejemplo: "¿Cómo los organismos extremófilos pueden sobrevivir a la radiación del espacio y qué aplicaciones tiene para la astrobiología?", ejercicio: "¿Qué problema investiga la resistencia a la radiación?", respuesta: "problema de la vida en ambientes de alta radiación" },
+        { nombre: "Problema de la evolución de la conciencia", definicion: "Investiga el origen de la conciencia en el cosmos.", sintaxis: "¿Qué [condiciones] [favorecen] la [aparición] de la [conciencia] y cómo [podría] [manifestarse] en otros [mundos]?", ejemplo: "¿Qué factores evolutivos y ambientales podrían dar lugar a formas de conciencia diferentes a la humana?", ejercicio: "¿Qué problema estudia el origen de la conciencia en el cosmos?", respuesta: "problema de la evolución de la conciencia" },
+        { nombre: "Problema de la vida en el tiempo profundo", definicion: "Investiga la vida en escalas de tiempo geológico.", sintaxis: "¿Cómo [ha] [cambiado] la [vida] en la [Tierra] a lo largo del [tiempo] [geológico] y qué [lecciones] [aporta] para el [espacio]?", ejemplo: "¿Qué patrones de extinción y evolución en la Tierra pueden aplicarse a la búsqueda de vida en otros planetas?", ejercicio: "¿Qué problema estudia la vida a lo largo del tiempo geológico?", respuesta: "problema de la vida en el tiempo profundo" },
+    ];
+    biologicos.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "biológico", ...t }));
+
+    // =================== BLOQUE 3: PROBLEMAS TECNOLÓGICOS (25) ===================
+    const tecnologicos = [
+        { nombre: "Problema del viaje interestelar", definicion: "Investiga cómo viajar entre estrellas.", sintaxis: "¿Qué [tecnologías] [permitirían] el [viaje] [interestelar] y qué [desafíos] [plantean]?", ejemplo: "¿Qué sistemas de propulsión (velas solares, motores de fusión, antimateria) son viables para viajar a otras estrellas?", ejercicio: "¿Qué problema investiga los viajes entre estrellas?", respuesta: "problema del viaje interestelar" },
+        { nombre: "Problema de la comunicación interestelar", definicion: "Investiga cómo comunicarse a través del espacio.", sintaxis: "¿Qué [métodos] de [comunicación] [permitirían] [enviar] [mensajes] a [distancias] [interestelares]?", ejemplo: "¿Cómo se pueden enviar y recibir señales de radio, ópticas o de neutrinos a través de años luz?", ejercicio: "¿Qué problema estudia la comunicación a larga distancia en el espacio?", respuesta: "problema de la comunicación interestelar" },
+        { nombre: "Problema de la colonización espacial", definicion: "Investiga el establecimiento de asentamientos en el espacio.", sintaxis: "¿Qué [desafíos] [plantea] la [colonización] de [Marte] y otros [cuerpos] [celestes]?", ejemplo: "¿Cómo se pueden construir hábitats autosuficientes en Marte o en órbita?", ejercicio: "¿Qué problema investiga los asentamientos humanos en el espacio?", respuesta: "problema de la colonización espacial" },
+        { nombre: "Problema de la terraformación", definicion: "Investiga la transformación de planetas para hacerlos habitables.", sintaxis: "¿Cómo [transformar] un [planeta] en un [mundo] [habitable] y qué [consecuencias] [tendría]?", ejemplo: "¿Qué procesos serían necesarios para terraformar Marte y hacerlo apto para la vida humana?", ejercicio: "¿Qué problema estudia la modificación de planetas para la vida?", respuesta: "problema de la terraformación" },
+        { nombre: "Problema de la energía en el espacio", definicion: "Investiga fuentes de energía para misiones espaciales.", sintaxis: "¿Qué [fuentes] de [energía] son [viables] para [misiones] [espaciales] [prolongadas]?", ejemplo: "¿Cómo se puede generar energía en el espacio usando energía solar, nuclear o de antimateria?", ejercicio: "¿Qué problema investiga el suministro de energía en el espacio?", respuesta: "problema de la energía en el espacio" },
+        { nombre: "Problema de la minería espacial", definicion: "Investiga la extracción de recursos en el espacio.", sintaxis: "¿Qué [recursos] [minerales] se pueden [extraer] de [asteroides] y [cómo] [hacerlo]?", ejemplo: "¿Cómo se pueden extraer metales y agua de los asteroides para uso en el espacio?", ejercicio: "¿Qué problema estudia la extracción de recursos en el espacio?", respuesta: "problema de la minería espacial" },
+        { nombre: "Problema de la propulsión espacial", definicion: "Investiga sistemas de propulsión avanzados.", sintaxis: "¿Qué [nuevos] [sistemas] de [propulsión] podrían [revolucionar] los [viajes] [espaciales]?", ejemplo: "¿Qué sistemas de propulsión (iónica, de fusión, de antimateria) son más prometedores para el futuro?", ejercicio: "¿Qué problema investiga los sistemas de propulsión espacial?", respuesta: "problema de la propulsión espacial" },
+        { nombre: "Problema de la inteligencia artificial en el espacio", definicion: "Investiga el uso de IA en misiones espaciales.", sintaxis: "¿Cómo [puede] la [inteligencia] [artificial] [mejorar] las [misiones] [espaciales] y qué [riesgos] [plantea]?", ejemplo: "¿Qué sistemas autónomos de IA se necesitan para explorar planetas lejanos?", ejercicio: "¿Qué problema estudia el uso de IA en el espacio?", respuesta: "problema de la inteligencia artificial en el espacio" },
+        { nombre: "Problema de la robótica espacial", definicion: "Investiga robots para exploración espacial.", sintaxis: "¿Qué [robots] [autónomos] son [necesarios] para [explorar] [entornos] [hostiles]?", ejemplo: "¿Cómo se pueden diseñar robots para explorar la superficie de Venus o los océanos de Europa?", ejercicio: "¿Qué problema investiga la robótica en el espacio?", respuesta: "problema de la robótica espacial" },
+        { nombre: "Problema de la habitabilidad en el espacio profundo", definicion: "Investiga la supervivencia humana en el espacio profundo.", sintaxis: "¿Qué [condiciones] [deben] [cumplirse] para [mantener] la [vida] humana en [viajes] [largos]?", ejemplo: "¿Cómo se pueden diseñar sistemas de soporte vital para misiones de años de duración?", ejercicio: "¿Qué problema estudia la supervivencia en el espacio profundo?", respuesta: "problema de la habitabilidad en el espacio profundo" },
+        { nombre: "Problema de la protección contra radiación", definicion: "Investiga cómo proteger a los astronautas de la radiación.", sintaxis: "¿Qué [materiales] o [campos] [magnéticos] pueden [proteger] a los [astronautas] de la [radiación] [cósmica]?", ejemplo: "¿Cómo se puede crear un escudo efectivo contra la radiación para naves espaciales?", ejercicio: "¿Qué problema investiga la protección contra radiación?", respuesta: "problema de la protección contra radiación" },
+        { nombre: "Problema de la gravedad artificial", definicion: "Investiga cómo crear gravedad en el espacio.", sintaxis: "¿Cómo [crear] [gravedad] [artificial] en [naves] [espaciales] y qué [impacto] [tiene] en la [salud]?", ejemplo: "¿Qué tecnologías (naves giratorias, campos magnéticos) podrían generar gravedad artificial?", ejercicio: "¿Qué problema estudia la creación de gravedad en el espacio?", respuesta: "problema de la gravedad artificial" },
+        { nombre: "Problema de la agricultura espacial", definicion: "Investiga cómo cultivar alimentos en el espacio.", sintaxis: "¿Cómo [cultivar] [alimentos] en el [espacio] y qué [cultivos] son [más] [adecuados]?", ejemplo: "¿Qué sistemas hidropónicos o aeropónicos son viables para cultivar en la Estación Espacial o en Marte?", ejercicio: "¿Qué problema investiga la producción de alimentos en el espacio?", respuesta: "problema de la agricultura espacial" },
+        { nombre: "Problema de la fabricación en el espacio", definicion: "Investiga la producción de materiales en el espacio.", sintaxis: "¿Qué [productos] se pueden [fabricar] en [microgravedad] y qué [ventajas] [ofrece]?", ejemplo: "¿Cómo la microgravedad permite fabricar cristales, aleaciones o tejidos de alta pureza?", ejercicio: "¿Qué problema estudia la fabricación en el espacio?", respuesta: "problema de la fabricación en el espacio" },
+        { nombre: "Problema de la basura espacial", definicion: "Investiga la gestión de desechos en órbita.", sintaxis: "¿Cómo [gestionar] la [basura] [espacial] y qué [riesgos] [plantea] para las [misiones] [futuras]?", ejemplo: "¿Qué métodos (láseres, redes, reciclaje) son efectivos para limpiar la órbita terrestre?", ejercicio: "¿Qué problema investiga la acumulación de basura en el espacio?", respuesta: "problema de la basura espacial" },
+        { nombre: "Problema de la defensa planetaria", definicion: "Investiga cómo proteger la Tierra de asteroides.", sintaxis: "¿Qué [sistemas] se pueden [desarrollar] para [desviar] [asteroides] [peligrosos]?", ejemplo: "¿Qué técnicas (impacto cinético, gravedad, explosión nuclear) son viables para desviar un asteroide?", ejercicio: "¿Qué problema estudia la protección contra asteroides?", respuesta: "problema de la defensa planetaria" },
+        { nombre: "Problema de la telecomunicación espacial", definicion: "Investiga la transmisión de datos en el espacio.", sintaxis: "¿Cómo [mejorar] la [transmisión] de [datos] en el [espacio] y qué [tecnologías] se [necesitan]?", ejemplo: "¿Qué sistemas de comunicación (láser, neutrinos, enlaces cuánticos) son más eficientes para el espacio profundo?", ejercicio: "¿Qué problema investiga la transmisión de datos en el espacio?", respuesta: "problema de la telecomunicación espacial" },
+        { nombre: "Problema de la navegación interestelar", definicion: "Investiga cómo navegar entre estrellas.", sintaxis: "¿Qué [sistemas] de [navegación] son [necesarios] para [viajar] entre [estrellas] y qué [desafíos] [presentan]?", ejemplo: "¿Cómo se puede navegar en el espacio interestelar usando púlsares o sistemas de referencia estelar?", ejercicio: "¿Qué problema estudia la navegación interestelar?", respuesta: "problema de la navegación interestelar" },
+        { nombre: "Problema de la supervivencia en planetas hostiles", definicion: "Investiga la adaptación a entornos extremos.", sintaxis: "¿Qué [tecnologías] y [protocolos] son [necesarios] para [sobrevivir] en [planetas] [hostiles]?", ejemplo: "¿Cómo se pueden diseñar hábitats para soportar temperaturas extremas, atmósferas tóxicas o alta radiación?", ejercicio: "¿Qué problema investiga la supervivencia en planetas extremos?", respuesta: "problema de la supervivencia en planetas hostiles" },
+        { nombre: "Problema de la exploración de agujeros negros", definicion: "Investiga cómo explorar agujeros negros.", sintaxis: "¿Qué [tecnologías] se [necesitarían] para [explorar] un [agujero negro] y qué [información] se [obtendría]?", ejemplo: "¿Cómo se podría enviar una sonda a las proximidades de un agujero negro sin ser destruida?", ejercicio: "¿Qué problema estudia la exploración de agujeros negros?", respuesta: "problema de la exploración de agujeros negros" },
+        { nombre: "Problema de la comunicación cuántica en el espacio", definicion: "Investiga el uso de la comunicación cuántica.", sintaxis: "¿Cómo [puede] la [comunicación] [cuántica] [mejorar] la [transmisión] de [información] en el [espacio]?", ejemplo: "¿Qué ventajas ofrece la comunicación cuántica para la seguridad y velocidad en el espacio?", ejercicio: "¿Qué problema investiga la comunicación cuántica espacial?", respuesta: "problema de la comunicación cuántica en el espacio" },
+        { nombre: "Problema de la sostenibilidad en el espacio", definicion: "Investiga la sostenibilidad de las actividades espaciales.", sintaxis: "¿Cómo [hacer] [sostenibles] las [actividades] [espaciales] y qué [recursos] [optimizar]?", ejemplo: "¿Qué estrategias (reciclaje, energía renovable) son necesarias para una presencia humana sostenible en el espacio?", ejercicio: "¿Qué problema investiga la sostenibilidad en el espacio?", respuesta: "problema de la sostenibilidad en el espacio" },
+        { nombre: "Problema de la colonización de otros sistemas", definicion: "Investiga la colonización de sistemas estelares lejanos.", sintaxis: "¿Qué [desafíos] [plantea] la [colonización] de [sistemas] [estelares] [lejanos] y cómo [superarlos]?", ejemplo: "¿Qué tecnologías (naves generacionales, criogénicas) permitirían la colonización de sistemas a años luz?", ejercicio: "¿Qué problema estudia la colonización de otros sistemas estelares?", respuesta: "problema de la colonización de otros sistemas" },
+        { nombre: "Problema de la detección de vida inteligente", definicion: "Investiga cómo detectar señales de inteligencia.", sintaxis: "¿Qué [señales] [tecnológicas] podrían [indicar] la [presencia] de [inteligencia] en otros [mundos]?", ejemplo: "¿Qué tipo de ondas de radio, láser o megastructuras podrían ser evidencia de civilizaciones avanzadas?", ejercicio: "¿Qué problema investiga la detección de inteligencia extraterrestre?", respuesta: "problema de la detección de vida inteligente" },
+        { nombre: "Problema de la ética tecnológica en el espacio", definicion: "Investiga las implicaciones éticas de la tecnología espacial.", sintaxis: "¿Qué [principios] [éticos] deben [guiar] el [desarrollo] [tecnológico] en el [espacio]?", ejemplo: "¿Cómo se deben regular las armas espaciales o la explotación de recursos extraterrestres?", ejercicio: "¿Qué problema estudia la ética de la tecnología espacial?", respuesta: "problema de la ética tecnológica en el espacio" },
+    ];
+    tecnologicos.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "tecnológico", ...t }));
+
+    // =================== BLOQUE 4: PROBLEMAS SOCIOLÓGICOS Y FILOSÓFICOS (25) ===================
+    const sociologicos = [
+        { nombre: "Problema de la sociedad espacial", definicion: "Investiga la organización social en el espacio.", sintaxis: "¿Cómo [organizar] una [sociedad] en el [espacio] y qué [estructuras] [sociales] [surgirían]?", ejemplo: "¿Qué modelos de gobierno y organización social serían viables en una colonia espacial?", ejercicio: "¿Qué problema investiga la organización social en el espacio?", respuesta: "problema de la sociedad espacial" },
+        { nombre: "Problema de la justicia en el espacio", definicion: "Investiga la distribución de recursos en el espacio.", sintaxis: "¿Cómo [garantizar] la [justicia] y la [equidad] en la [distribución] de [recursos] [espaciales]?", ejemplo: "¿Cómo se deben repartir los recursos de los asteroides entre las naciones?", ejercicio: "¿Qué problema investiga la justicia en la explotación espacial?", respuesta: "problema de la justicia en el espacio" },
+        { nombre: "Problema de la identidad en el espacio", definicion: "Investiga cómo cambia la identidad humana en el espacio.", sintaxis: "¿Cómo [afecta] el [espacio] a la [identidad] [cultural] y [personal] de los [humanos]?", ejemplo: "¿Cómo la vida en una colonia marciana cambiaría la percepción de la identidad humana?", ejercicio: "¿Qué problema estudia el cambio de identidad en el espacio?", respuesta: "problema de la identidad en el espacio" },
+        { nombre: "Problema de la gobernanza interestelar", definicion: "Investiga cómo gobernar una civilización interestelar.", sintaxis: "¿Qué [modelos] de [gobernanza] son [viables] para una [civilización] [interestelar] y qué [desafíos] [plantean]?", ejemplo: "¿Cómo se podría gobernar un imperio de múltiples sistemas estelares?", ejercicio: "¿Qué problema investiga la gobernanza en el espacio interestelar?", respuesta: "problema de la gobernanza interestelar" },
+        { nombre: "Problema de la ética del contacto", definicion: "Investiga las implicaciones éticas del contacto alienígena.", sintaxis: "¿Qué [principios] [éticos] deben [guiar] el [contacto] con [civilizaciones] [extraterrestres]?", ejemplo: "¿Cómo debería la humanidad prepararse para el contacto con una civilización más avanzada?", ejercicio: "¿Qué problema estudia la ética del contacto alienígena?", respuesta: "problema de la ética del contacto" },
+        { nombre: "Problema de la diversidad cultural en el espacio", definicion: "Investiga la diversidad cultural en colonias espaciales.", sintaxis: "¿Cómo [preservar] la [diversidad] [cultural] en [colonias] [espaciales] y qué [nuevas] [culturas] [surgirían]?", ejemplo: "¿Cómo las distintas culturas terrestres se fusionarían en una colonia espacial?", ejercicio: "¿Qué problema investiga la diversidad cultural en el espacio?", respuesta: "problema de la diversidad cultural en el espacio" },
+        { nombre: "Problema de la psicología espacial", definicion: "Investiga el impacto psicológico del espacio.", sintaxis: "¿Cómo [afecta] el [espacio] a la [psique] [humana] y qué [medidas] [tomar] para [mitigar] los [efectos]?", ejemplo: "¿Qué trastornos psicológicos son comunes en misiones espaciales prolongadas?", ejercicio: "¿Qué problema estudia la psicología en el espacio?", respuesta: "problema de la psicología espacial" },
+        { nombre: "Problema de la educación en el espacio", definicion: "Investiga cómo educar en colonias espaciales.", sintaxis: "¿Qué [sistemas] [educativos] son [necesarios] para [formar] a las [futuras] [generaciones] en el [espacio]?", ejemplo: "¿Cómo se debe educar a los niños nacidos en una colonia espacial?", ejercicio: "¿Qué problema investiga la educación en el espacio?", respuesta: "problema de la educación en el espacio" },
+        { nombre: "Problema de la salud en el espacio", definicion: "Investiga los efectos de la microgravedad en la salud.", sintaxis: "¿Cómo [afecta] la [microgravedad] a la [salud] [humana] y qué [contramedidas] [desarrollar]?", ejemplo: "¿Qué efectos tiene la microgravedad en los huesos, músculos y sistema cardiovascular?", ejercicio: "¿Qué problema estudia la salud en el espacio?", respuesta: "problema de la salud en el espacio" },
+        { nombre: "Problema de la reproducción en el espacio", definicion: "Investiga la reproducción humana en el espacio.", sintaxis: "¿Cómo [afecta] el [espacio] a la [reproducción] [humana] y qué [implicaciones] [tiene]?", ejemplo: "¿Es posible el embarazo y el parto en condiciones de microgravedad?", ejercicio: "¿Qué problema investiga la reproducción en el espacio?", respuesta: "problema de la reproducción en el espacio" },
+        { nombre: "Problema de la religión en el espacio", definicion: "Investiga cómo la religión se adapta al espacio.", sintaxis: "¿Cómo [influye] el [espacio] en las [creencias] [religiosas] y qué [nuevas] [religiones] [surgen]?", ejemplo: "¿Cómo las religiones terrestres se adaptan a la exploración y colonización del espacio?", ejercicio: "¿Qué problema estudia la religión en el espacio?", respuesta: "problema de la religión en el espacio" },
+        { nombre: "Problema de la política en el espacio", definicion: "Investiga las relaciones políticas en el espacio.", sintaxis: "¿Qué [conflictos] [políticos] podrían [surgir] en el [espacio] y cómo [resolverlos]?", ejemplo: "¿Cómo se pueden gestionar las disputas territoriales en la Luna o Marte?", ejercicio: "¿Qué problema investiga la política en el espacio?", respuesta: "problema de la política en el espacio" },
+        { nombre: "Problema de la economía en el espacio", definicion: "Investiga cómo será la economía en el espacio.", sintaxis: "¿Qué [modelos] [económicos] son [viables] en el [espacio] y qué [industrias] [surgirán]?", ejemplo: "¿Cómo funcionará el comercio interplanetario y qué recursos serán más valiosos?", ejercicio: "¿Qué problema estudia la economía en el espacio?", respuesta: "problema de la economía en el espacio" },
+        { nombre: "Problema de la comunicación intercultural en el espacio", definicion: "Investiga la comunicación entre culturas en el espacio.", sintaxis: "¿Cómo [facilitar] la [comunicación] [intercultural] en [colonias] [espaciales] y qué [barreras] [superar]?", ejemplo: "¿Cómo se pueden superar las barreras lingüísticas y culturales en una colonia internacional?", ejercicio: "¿Qué problema investiga la comunicación intercultural en el espacio?", respuesta: "problema de la comunicación intercultural en el espacio" },
+        { nombre: "Problema de la ética de la explotación espacial", definicion: "Investiga la ética de la explotación de recursos.", sintaxis: "¿Qué [principios] [éticos] deben [regular] la [explotación] de [recursos] [espaciales]?", ejemplo: "¿Cómo se debe gestionar la minería de asteroides para evitar la desigualdad?", ejercicio: "¿Qué problema estudia la ética de la explotación espacial?", respuesta: "problema de la ética de la explotación espacial" },
+        { nombre: "Problema de la filosofía del espacio", definicion: "Investiga el significado del espacio para la humanidad.", sintaxis: "¿Qué [significado] [filosófico] tiene el [espacio] para la [humanidad] y cómo [transforma] su [visión] del [mundo]?", ejemplo: "¿Cómo cambia la perspectiva humana al contemplar la Tierra desde el espacio?", ejercicio: "¿Qué problema investiga la filosofía del espacio?", respuesta: "problema de la filosofía del espacio" },
+        { nombre: "Problema de la creatividad en el espacio", definicion: "Investiga cómo el espacio afecta la creatividad.", sintaxis: "¿Cómo [influye] el [espacio] en la [creatividad] [humana] y qué [nuevas] [formas] de [arte] [surgen]?", ejemplo: "¿Qué tipo de arte y literatura podría surgir de la experiencia espacial?", ejercicio: "¿Qué problema estudia la creatividad en el espacio?", respuesta: "problema de la creatividad en el espacio" },
+        { nombre: "Problema de la memoria en el espacio", definicion: "Investiga cómo el espacio afecta la memoria.", sintaxis: "¿Cómo [afecta] el [espacio] a la [memoria] [humana] y qué [mecanismos] [existen] para [preservarla]?", ejemplo: "¿Cómo la vida en el espacio podría alterar los recuerdos y la percepción del tiempo?", ejercicio: "¿Qué problema investiga la memoria en el espacio?", respuesta: "problema de la memoria en el espacio" },
+        { nombre: "Problema de la evolución social en el espacio", definicion: "Investiga cómo evolucionan las sociedades en el espacio.", sintaxis: "¿Cómo [evolucionan] las [sociedades] en el [espacio] y qué [nuevas] [estructuras] [sociales] [surgen]?", ejemplo: "¿Qué cambios sociales podrían ocurrir en una colonia espacial autosuficiente?", ejercicio: "¿Qué problema estudia la evolución social en el espacio?", respuesta: "problema de la evolución social en el espacio" },
+        { nombre: "Problema de la libertad en el espacio", definicion: "Investiga cómo se manifiesta la libertad en el espacio.", sintaxis: "¿Qué [significa] la [libertad] en el [espacio] y cómo [garantizarla] en [colonias] [espaciales]?", ejemplo: "¿Cómo se pueden garantizar las libertades individuales en una colonia espacial?", ejercicio: "¿Qué problema investiga la libertad en el espacio?", respuesta: "problema de la libertad en el espacio" },
+        { nombre: "Problema de la igualdad en el espacio", definicion: "Investiga cómo lograr la igualdad en el espacio.", sintaxis: "¿Qué [políticas] [sociales] son [necesarias] para [garantizar] la [igualdad] en [colonias] [espaciales]?", ejemplo: "¿Cómo se puede evitar la discriminación en una colonia espacial?", ejercicio: "¿Qué problema estudia la igualdad en el espacio?", respuesta: "problema de la igualdad en el espacio" },
+        { nombre: "Problema de la sostenibilidad social en el espacio", definicion: "Investiga la sostenibilidad social de las colonias.", sintaxis: "¿Qué [condiciones] [sociales] son [necesarias] para la [sostenibilidad] de una [colonia] [espacial]?", ejemplo: "¿Qué factores sociales (cohesión, participación, justicia) son clave para la supervivencia de una colonia?", ejercicio: "¿Qué problema investiga la sostenibilidad social en el espacio?", respuesta: "problema de la sostenibilidad social en el espacio" },
+        { nombre: "Problema de la resistencia en el espacio", definicion: "Investiga la resistencia en el espacio.", sintaxis: "¿Cómo [resistir] la [opresión] en el [espacio] y qué [movimientos] [sociales] [surgirían]?", ejemplo: "¿Qué movimientos de resistencia podrían surgir en colonias espaciales autoritarias?", ejercicio: "¿Qué problema estudia la resistencia en el espacio?", respuesta: "problema de la resistencia en el espacio" },
+        { nombre: "Problema de la esperanza en el espacio", definicion: "Investiga el papel de la esperanza en el espacio.", sintaxis: "¿Qué [papel] [juega] la [esperanza] en la [exploración] y [colonización] del [espacio]?", ejemplo: "¿Cómo la esperanza impulsa la exploración y colonización del espacio?", ejercicio: "¿Qué problema investiga la esperanza en el espacio?", respuesta: "problema de la esperanza en el espacio" },
+        { nombre: "Problema del destino humano en el espacio", definicion: "Investiga el destino de la humanidad en el espacio.", sintaxis: "¿Cuál es el [destino] de la [humanidad] en el [espacio] y qué [futuro] [le] [espera]?", ejemplo: "¿Qué futuro le espera a la humanidad en el espacio: expansión, colapso o transformación?", ejercicio: "¿Qué problema investiga el destino humano en el espacio?", respuesta: "problema del destino humano en el espacio" },
+    ];
+    sociologicos.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "sociológico", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Problemas físico-cosmológicos', 'Problemas biológico-astrobiológicos', 'Problemas tecnológicos', 'Problemas sociológicos y filosóficos'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.definicion}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejemplo y ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#8bc4e0;margin-bottom:0.2rem;">🔬 ${t.nombre}</div>
+                            <div class="definicion"><strong>📘 Teoría:</strong> ${t.definicion}</div>
+                            <div class="sintaxis"><strong>📐 Fórmula:</strong> ${t.sintaxis}</div>
+                            <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#2a5a7a;color:#e0f0ff;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

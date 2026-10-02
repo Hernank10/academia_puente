@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔗 Flota Prepositiva · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .preposicion-clave { background: rgba(0,0,0,0.2); padding: 0.4rem 0.8rem; border-radius: 0.5rem; display: inline-block; margin-bottom: 0.6rem; border: 1px solid var(--neon-dorado); }
+        .tecnica-card .contenido .preposicion-clave span { color: var(--neon-dorado); font-weight: 700; font-size: 1.1rem; }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">🔗 FLOTA PREPOSITIVA<small>100 TÉCNICAS · PREPOSICIONES</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="lugar" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Lugar <span class="badge-personaje bg-dorado">Espacio</span></a>
+        <a class="nav-link" data-section="tiempo" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Tiempo <span class="badge-personaje bg-azul">Tiempo</span></a>
+        <a class="nav-link" data-section="modo" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Modo <span class="badge-personaje bg-verde">Manera</span></a>
+        <a class="nav-link" data-section="causa" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Causa <span class="badge-personaje bg-purpura">Origen</span></a>
+        <a class="nav-link" data-section="relacion" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Relación <span class="badge-personaje bg-rojo">Vínculo</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🔗</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Preposiciones literarias</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> La preposición en la literatura</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un tipo de preposición:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Lugar</strong> – Preposiciones de espacio: en, sobre, bajo, entre, ante, tras.</li>
+                    <li><strong style="color:var(--neon-azul);">Tiempo</strong> – Preposiciones de tiempo: desde, hasta, durante, tras, a, en.</li>
+                    <li><strong style="color:var(--neon-verde);">Modo</strong> – Preposiciones de manera: con, sin, según, como, por.</li>
+                    <li><strong style="color:var(--neon-purpura);">Causa</strong> – Preposiciones de origen: de, desde, por, para, a causa de.</li>
+                    <li><strong style="color:var(--neon-rojo);">Relación</strong> – Preposiciones de vínculo: contra, hacia, hasta, mediante, vía.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-lugar" class="section-content" style="display:none;"></div>
+        <div id="section-tiempo" class="section-content" style="display:none;"></div>
+        <div id="section-modo" class="section-content" style="display:none;"></div>
+        <div id="section-causa" class="section-content" style="display:none;"></div>
+        <div id="section-relacion" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    lugar: {
+        nombre: "Lugar", color: "dorado", icono: "bi-robot",
+        especialidad: "Preposiciones de espacio: en, sobre, bajo, entre, ante, tras",
+        tecnicas: [
+            { titulo: "En (posición interior)", teoria: "Indica posición dentro de un espacio o lugar. Es la preposición de lugar más usada.", preposicion: "en", ejemplo: "García Márquez: 'En el amor, todo es posible.'", ejercicio: "Escribe 3 oraciones con 'en' indicando lugar.", reto: "Escribe un texto donde 'en' sea la preposición central." },
+            { titulo: "Sobre (posición superior)", teoria: "Indica posición encima de algo. También puede indicar tema o asunto.", preposicion: "sobre", ejemplo: "Neruda: 'Sobre la mesa, el mundo se despliega como un mapa.'", ejercicio: "Escribe 3 oraciones con 'sobre' indicando lugar.", reto: "Escribe un texto sobre un tema usando 'sobre'." },
+            { titulo: "Bajo (posición inferior)", teoria: "Indica posición debajo de algo. También puede indicar dependencia o sujeción.", preposicion: "bajo", ejemplo: "Borges: 'Bajo el cielo, el laberinto se extiende sin fin.'", ejercicio: "Escribe 3 oraciones con 'bajo' indicando lugar.", reto: "Escribe un texto sobre lo que hay 'bajo' la superficie." },
+            { titulo: "Entre (posición intermedia)", teoria: "Indica posición en medio de dos o más elementos. También puede indicar relación.", preposicion: "entre", ejemplo: "Lorca: 'Entre la sombra y la luz, el amor se balancea.'", ejercicio: "Escribe 3 oraciones con 'entre' indicando lugar.", reto: "Escribe un texto sobre el espacio 'entre'." },
+            { titulo: "Ante (posición delantera)", teoria: "Indica posición delante de algo o alguien. También puede indicar presencia o consideración.", preposicion: "ante", ejemplo: "Machado: 'Ante el mar, el hombre es un susurro.'", ejercicio: "Escribe 3 oraciones con 'ante' indicando lugar.", reto: "Escribe un texto sobre la presencia 'ante' el mundo." },
+            { titulo: "Tras (posición posterior)", teoria: "Indica posición detrás de algo. También puede indicar búsqueda o persecución.", preposicion: "tras", ejemplo: "Cernuda: 'Tras la noche, la luz renace en la memoria.'", ejercicio: "Escribe 3 oraciones con 'tras' indicando lugar.", reto: "Escribe un texto sobre lo que queda 'tras'." },
+            { titulo: "Delante de (posición anterior)", teoria: "Locución preposicional que indica posición por delante de algo o alguien.", preposicion: "delante de", ejemplo: "Paz: 'Delante del espejo, el tiempo se detiene.'", ejercicio: "Escribe 3 oraciones con 'delante de'.", reto: "Escribe un texto sobre lo que está 'delante'." },
+            { titulo: "Detrás de (posición posterior)", teoria: "Locución preposicional que indica posición por detrás de algo o alguien.", preposicion: "detrás de", ejemplo: "García Márquez: 'Detrás de la lluvia, el sol espera su turno.'", ejercicio: "Escribe 3 oraciones con 'detrás de'.", reto: "Escribe un texto sobre lo que se oculta 'detrás'." },
+            { titulo: "Encima de (posición superior)", teoria: "Locución preposicional que indica posición encima de algo, a menudo con contacto.", preposicion: "encima de", ejemplo: "Neruda: 'Encima de la mesa, el amor se escribe en la arena.'", ejercicio: "Escribe 3 oraciones con 'encima de'.", reto: "Escribe un texto sobre lo que hay 'encima'." },
+            { titulo: "Debajo de (posición inferior)", teoria: "Locución preposicional que indica posición debajo de algo, a menudo con contacto.", preposicion: "debajo de", ejemplo: "Borges: 'Debajo de la corteza, el árbol guarda su historia.'", ejercicio: "Escribe 3 oraciones con 'debajo de'.", reto: "Escribe un texto sobre lo que se esconde 'debajo'." },
+            { titulo: "Dentro de (interior)", teoria: "Locución preposicional que indica posición en el interior de un espacio.", preposicion: "dentro de", ejemplo: "Lorca: 'Dentro de la caja, el tiempo se guarda en un suspiro.'", ejercicio: "Escribe 3 oraciones con 'dentro de'.", reto: "Escribe un texto sobre el interior de un objeto." },
+            { titulo: "Fuera de (exterior)", teoria: "Locución preposicional que indica posición en el exterior de un espacio.", preposicion: "fuera de", ejemplo: "Cervantes: 'Fuera de la razón, solo habita la locura.'", ejercicio: "Escribe 3 oraciones con 'fuera de'.", reto: "Escribe un texto sobre el exterior." },
+            { titulo: "Al lado de (posición lateral)", teoria: "Locución preposicional que indica posición al costado de algo.", preposicion: "al lado de", ejemplo: "Paz: 'Al lado del amor, la soledad es un espejo.'", ejercicio: "Escribe 3 oraciones con 'al lado de'.", reto: "Escribe un texto sobre la cercanía." },
+            { titulo: "Enfrente de (posición frontal)", teoria: "Locución preposicional que indica posición frente a algo.", preposicion: "enfrente de", ejemplo: "García Márquez: 'Enfrente del mar, el viento cuenta sus secretos.'", ejercicio: "Escribe 3 oraciones con 'enfrente de'.", reto: "Escribe un texto sobre la vista desde enfrente." },
+            { titulo: "Alrededor de (posición circundante)", teoria: "Locución preposicional que indica posición en el entorno de algo.", preposicion: "alrededor de", ejemplo: "Neruda: 'Alrededor del amor, la vida gira como un sol.'", ejercicio: "Escribe 3 oraciones con 'alrededor de'.", reto: "Escribe un texto sobre el entorno." },
+            { titulo: "Lejos de (posición distante)", teoria: "Locución preposicional que indica posición a gran distancia.", preposicion: "lejos de", ejemplo: "Machado: 'Lejos de la patria, el alma se vuelve nostalgia.'", ejercicio: "Escribe 3 oraciones con 'lejos de'.", reto: "Escribe un texto sobre la distancia." },
+            { titulo: "Cerca de (posición próxima)", teoria: "Locución preposicional que indica posición a poca distancia.", preposicion: "cerca de", ejemplo: "Borges: 'Cerca del laberinto, la salida es un sueño.'", ejercicio: "Escribe 3 oraciones con 'cerca de'.", reto: "Escribe un texto sobre la cercanía." },
+            { titulo: "Frente a (posición frontal)", teoria: "Locución preposicional que indica posición frente a algo o alguien.", preposicion: "frente a", ejemplo: "Lorca: 'Frente al mar, el amor se desnuda de palabras.'", ejercicio: "Escribe 3 oraciones con 'frente a'.", reto: "Escribe un texto sobre el encuentro frente a." },
+            { titulo: "Junto a (posición contigua)", teoria: "Locución preposicional que indica posición al lado de algo, con cercanía física.", preposicion: "junto a", ejemplo: "Cernuda: 'Junto al fuego, la sombra baila con el viento.'", ejercicio: "Escribe 3 oraciones con 'junto a'.", reto: "Escribe un texto sobre la compañía." },
+            { titulo: "En medio de (posición central)", teoria: "Locución preposicional que indica posición en el centro de algo.", preposicion: "en medio de", ejemplo: "Paz: 'En medio del caos, el amor encuentra su orden.'", ejercicio: "Escribe 3 oraciones con 'en medio de'.", reto: "Escribe un texto sobre el centro." }
+        ]
+    },
+    tiempo: {
+        nombre: "Tiempo", color: "azul", icono: "bi-robot",
+        especialidad: "Preposiciones de tiempo: desde, hasta, durante, tras, a, en",
+        tecnicas: [
+            { titulo: "Desde (origen temporal)", teoria: "Indica el punto de partida en el tiempo. Se usa con 'hasta' para marcar el final.", preposicion: "desde", ejemplo: "Neruda: 'Desde la infancia, el mar me ha llamado.'", ejercicio: "Escribe 3 oraciones con 'desde' indicando tiempo.", reto: "Escribe un texto sobre el origen temporal." },
+            { titulo: "Hasta (límite temporal)", teoria: "Indica el punto final en el tiempo. Se usa con 'desde' para marcar el inicio.", preposicion: "hasta", ejemplo: "Lorca: 'Hasta el último suspiro, el amor se resiste.'", ejercicio: "Escribe 3 oraciones con 'hasta' indicando tiempo.", reto: "Escribe un texto sobre el límite temporal." },
+            { titulo: "Durante (duración)", teoria: "Indica el período de tiempo en que ocurre algo. Tiene valor de simultaneidad.", preposicion: "durante", ejemplo: "Machado: 'Durante la noche, los sueños tejen sus redes.'", ejercicio: "Escribe 3 oraciones con 'durante' indicando tiempo.", reto: "Escribe un texto sobre la duración." },
+            { titulo: "Tras (posterioridad temporal)", teoria: "Indica que algo ocurre después de otra cosa. Tiene valor de secuencia temporal.", preposicion: "tras", ejemplo: "Borges: 'Tras el invierno, la primavera renace en la memoria.'", ejercicio: "Escribe 3 oraciones con 'tras' indicando tiempo.", reto: "Escribe un texto sobre la secuencia temporal." },
+            { titulo: "A (momento específico)", teoria: "Indica una hora o momento específico en el tiempo. Se usa con las horas.", preposicion: "a", ejemplo: "García Márquez: 'A las seis, el amor se despide en el atardecer.'", ejercicio: "Escribe 3 oraciones con 'a' indicando hora.", reto: "Escribe un texto sobre momentos específicos." },
+            { titulo: "En (estación/tiempo)", teoria: "Indica una estación del año, un mes o un año. También indica un período.", preposicion: "en", ejemplo: "Neruda: 'En primavera, el amor florece en el jardín.'", ejercicio: "Escribe 3 oraciones con 'en' indicando tiempo.", reto: "Escribe un texto sobre una estación del año." },
+            { titulo: "Por (tiempo aproximado)", teoria: "Indica un período de tiempo aproximado o una duración no exacta.", preposicion: "por", ejemplo: "Cervantes: 'Por aquellos años, el amor era un misterio.'", ejercicio: "Escribe 3 oraciones con 'por' indicando tiempo.", reto: "Escribe un texto sobre el tiempo aproximado." },
+            { titulo: "Para (fecha límite)", teoria: "Indica una fecha límite o un plazo. Tiene valor de futuro próximo.", preposicion: "para", ejemplo: "Paz: 'Para el amanecer, el amor ya habrá llegado.'", ejercicio: "Escribe 3 oraciones con 'para' indicando tiempo.", reto: "Escribe un texto sobre una fecha límite." },
+            { titulo: "Antes de (anterioridad)", teoria: "Locución preposicional que indica que algo ocurre antes de otra cosa.", preposicion: "antes de", ejemplo: "Lorca: 'Antes de la noche, el sol se despide en el horizonte.'", ejercicio: "Escribe 3 oraciones con 'antes de'.", reto: "Escribe un texto sobre la anterioridad." },
+            { titulo: "Después de (posterioridad)", teoria: "Locución preposicional que indica que algo ocurre después de otra cosa.", preposicion: "después de", ejemplo: "Machado: 'Después de la tormenta, la calma es un susurro.'", ejercicio: "Escribe 3 oraciones con 'después de'.", reto: "Escribe un texto sobre la posterioridad." },
+            { titulo: "Desde... hasta (intervalo)", teoria: "Locución preposicional que indica un intervalo temporal entre dos puntos.", preposicion: "desde... hasta", ejemplo: "Borges: 'Desde el alba hasta el ocaso, el tiempo se desliza en la arena.'", ejercicio: "Escribe 3 oraciones con 'desde... hasta'.", reto: "Escribe un texto sobre un intervalo de tiempo." },
+            { titulo: "A lo largo de (transcurso)", teoria: "Locución preposicional que indica que algo ocurre a lo largo de un período de tiempo.", preposicion: "a lo largo de", ejemplo: "Neruda: 'A lo largo de los años, el amor se vuelve memoria.'", ejercicio: "Escribe 3 oraciones con 'a lo largo de'.", reto: "Escribe un texto sobre el transcurso del tiempo." },
+            { titulo: "En el transcurso de (durante)", teoria: "Locución preposicional que indica que algo ocurre durante el desarrollo de algo.", preposicion: "en el transcurso de", ejemplo: "Cervantes: 'En el transcurso de la vida, el amor es el único mapa.'", ejercicio: "Escribe 3 oraciones con 'en el transcurso de'.", reto: "Escribe un texto sobre el desarrollo del tiempo." },
+            { titulo: "A primera hora (temprano)", teoria: "Locución preposicional que indica un momento temprano del día.", preposicion: "a primera hora", ejemplo: "Lorca: 'A primera hora, el amor se despierta en la luz.'", ejercicio: "Escribe 3 oraciones con 'a primera hora'.", reto: "Escribe un texto sobre el amanecer." },
+            { titulo: "A última hora (tarde)", teoria: "Locución preposicional que indica un momento tardío del día.", preposicion: "a última hora", ejemplo: "Paz: 'A última hora, el amor se esconde en la sombra.'", ejercicio: "Escribe 3 oraciones con 'a última hora'.", reto: "Escribe un texto sobre el atardecer." },
+            { titulo: "Con el tiempo (gradualmente)", teoria: "Locución preposicional que indica que algo ocurre de manera gradual con el paso del tiempo.", preposicion: "con el tiempo", ejemplo: "García Márquez: 'Con el tiempo, el amor se vuelve más profundo.'", ejercicio: "Escribe 3 oraciones con 'con el tiempo'.", reto: "Escribe un texto sobre la gradualidad del tiempo." },
+            { titulo: "Al cabo de (transcurso)", teoria: "Locución preposicional que indica que algo ocurre después de un período de tiempo.", preposicion: "al cabo de", ejemplo: "Machado: 'Al cabo de los años, el amor es un río que nunca se seca.'", ejercicio: "Escribe 3 oraciones con 'al cabo de'.", reto: "Escribe un texto sobre el transcurso." },
+            { titulo: "Dentro de (futuro próximo)", teoria: "Locución preposicional que indica que algo ocurrirá dentro de un período de tiempo.", preposicion: "dentro de", ejemplo: "Borges: 'Dentro de unos días, el amor será una pregunta.'", ejercicio: "Escribe 3 oraciones con 'dentro de' indicando tiempo.", reto: "Escribe un texto sobre el futuro próximo." },
+            { titulo: "En el momento de (puntualidad)", teoria: "Locución preposicional que indica que algo ocurre en un momento preciso.", preposicion: "en el momento de", ejemplo: "Neruda: 'En el momento de la verdad, el amor se desnuda.'", ejercicio: "Escribe 3 oraciones con 'en el momento de'.", reto: "Escribe un texto sobre un momento preciso." },
+            { titulo: "A la hora de (momento específico)", teoria: "Locución preposicional que indica que algo ocurre en una hora o momento específico.", preposicion: "a la hora de", ejemplo: "Lorca: 'A la hora de la siesta, el amor se duerme en la sombra.'", ejercicio: "Escribe 3 oraciones con 'a la hora de'.", reto: "Escribe un texto sobre un momento del día." }
+        ]
+    },
+    modo: {
+        nombre: "Modo", color: "verde", icono: "bi-robot",
+        especialidad: "Preposiciones de manera: con, sin, según, como, por",
+        tecnicas: [
+            { titulo: "Con (compañía/instrumento)", teoria: "Indica compañía, instrumento o manera. Es una de las preposiciones más versátiles.", preposicion: "con", ejemplo: "Neruda: 'Con el amor, el mundo se vuelve habitable.'", ejercicio: "Escribe 3 oraciones con 'con' indicando manera.", reto: "Escribe un texto sobre la compañía del amor." },
+            { titulo: "Sin (ausencia)", teoria: "Indica carencia o ausencia de algo. Se opone a 'con'.", preposicion: "sin", ejemplo: "Lorca: 'Sin el amor, la vida es un desierto de sombras.'", ejercicio: "Escribe 3 oraciones con 'sin' indicando ausencia.", reto: "Escribe un texto sobre la ausencia." },
+            { titulo: "Según (conformidad)", teoria: "Indica conformidad con algo o alguien. Expresa acuerdo o referencia.", preposicion: "según", ejemplo: "Cervantes: 'Según el amor, así es la vida.'", ejercicio: "Escribe 3 oraciones con 'según'.", reto: "Escribe un texto sobre la conformidad." },
+            { titulo: "Como (comparación/modo)", teoria: "Indica comparación o modo. Es una preposición que también funciona como conjunción.", preposicion: "como", ejemplo: "Borges: 'Como el río que fluye, así el amor se desliza.'", ejercicio: "Escribe 3 oraciones con 'como' indicando modo.", reto: "Escribe un texto con comparaciones." },
+            { titulo: "Por (causa/modo)", teoria: "Indica causa, motivo o modo. Es una preposición muy polisémica.", preposicion: "por", ejemplo: "Machado: 'Por el amor, todo se transforma.'", ejercicio: "Escribe 3 oraciones con 'por' indicando modo.", reto: "Escribe un texto sobre la causa del amor." },
+            { titulo: "Mediante (instrumento)", teoria: "Indica el medio o instrumento a través del cual se realiza algo.", preposicion: "mediante", ejemplo: "Paz: 'Mediante el amor, el mundo se vuelve comprensible.'", ejercicio: "Escribe 3 oraciones con 'mediante'.", reto: "Escribe un texto sobre el medio del amor." },
+            { titulo: "A través de (medio)", teoria: "Indica el medio o instrumento a través del cual se realiza algo.", preposicion: "a través de", ejemplo: "García Márquez: 'A través del amor, la vida se vuelve eterna.'", ejercicio: "Escribe 3 oraciones con 'a través de'.", reto: "Escribe un texto sobre el medio del amor." },
+            { titulo: "Por medio de (instrumento)", teoria: "Indica el medio o instrumento a través del cual se realiza algo.", preposicion: "por medio de", ejemplo: "Neruda: 'Por medio del amor, el alma se descubre.'", ejercicio: "Escribe 3 oraciones con 'por medio de'.", reto: "Escribe un texto sobre el instrumento del amor." },
+            { titulo: "Con arreglo a (conformidad)", teoria: "Indica conformidad con algo o alguien. Es una locución formal.", preposicion: "con arreglo a", ejemplo: "Cervantes: 'Con arreglo al amor, así es la vida.'", ejercicio: "Escribe 3 oraciones con 'con arreglo a'.", reto: "Escribe un texto formal sobre la conformidad." },
+            { titulo: "De acuerdo con (conformidad)", teoria: "Indica conformidad con algo o alguien. Es una locución muy usada.", preposicion: "de acuerdo con", ejemplo: "Borges: 'De acuerdo con el amor, el mundo es un laberinto.'", ejercicio: "Escribe 3 oraciones con 'de acuerdo con'.", reto: "Escribe un texto sobre el acuerdo." },
+            { titulo: "En comparación con (comparación)", teoria: "Indica comparación entre dos elementos.", preposicion: "en comparación con", ejemplo: "Lorca: 'En comparación con el amor, todo es pequeño.'", ejercicio: "Escribe 3 oraciones con 'en comparación con'.", reto: "Escribe un texto comparativo." },
+            { titulo: "Frente a (oposición)", teoria: "Indica oposición o comparación frente a algo.", preposicion: "frente a", ejemplo: "Machado: 'Frente al amor, la muerte es un susurro.'", ejercicio: "Escribe 3 oraciones con 'frente a' indicando oposición.", reto: "Escribe un texto sobre la oposición." },
+            { titulo: "En lugar de (sustitución)", teoria: "Indica sustitución de algo por otra cosa.", preposicion: "en lugar de", ejemplo: "Paz: 'En lugar del miedo, el amor se instala en el alma.'", ejercicio: "Escribe 3 oraciones con 'en lugar de'.", reto: "Escribe un texto sobre la sustitución." },
+            { titulo: "En vez de (sustitución)", teoria: "Indica sustitución de algo por otra cosa. Es más coloquial que 'en lugar de'.", preposicion: "en vez de", ejemplo: "García Márquez: 'En vez de palabras, el amor usa susurros.'", ejercicio: "Escribe 3 oraciones con 'en vez de'.", reto: "Escribe un texto coloquial sobre la sustitución." },
+            { titulo: "A la manera de (modo)", teoria: "Indica que algo se hace de la manera de algo o alguien.", preposicion: "a la manera de", ejemplo: "Neruda: 'A la manera del viento, el amor se desliza.'", ejercicio: "Escribe 3 oraciones con 'a la manera de'.", reto: "Escribe un texto sobre el modo." },
+            { titulo: "Al estilo de (modo)", teoria: "Indica que algo se hace al estilo de algo o alguien.", preposicion: "al estilo de", ejemplo: "Borges: 'Al estilo de los laberintos, el amor se enreda.'", ejercicio: "Escribe 3 oraciones con 'al estilo de'.", reto: "Escribe un texto sobre el estilo." },
+            { titulo: "A partir de (origen)", teoria: "Indica el punto de partida o el origen de algo.", preposicion: "a partir de", ejemplo: "Lorca: 'A partir del amor, el mundo se ilumina.'", ejercicio: "Escribe 3 oraciones con 'a partir de'.", reto: "Escribe un texto sobre el origen del amor." },
+            { titulo: "En base a (base)", teoria: "Indica la base o fundamento de algo.", preposicion: "en base a", ejemplo: "Machado: 'En base al amor, la vida se construye.'", ejercicio: "Escribe 3 oraciones con 'en base a'.", reto: "Escribe un texto sobre la base del amor." },
+            { titulo: "Con vista a (objetivo)", teoria: "Indica el objetivo o finalidad de algo.", preposicion: "con vista a", ejemplo: "Cervantes: 'Con vista al amor, la vida se hace camino.'", ejercicio: "Escribe 3 oraciones con 'con vista a'.", reto: "Escribe un texto sobre el objetivo." },
+            { titulo: "De cara a (dirección/objetivo)", teoria: "Indica dirección o objetivo de algo.", preposicion: "de cara a", ejemplo: "Paz: 'De cara al amor, el miedo se desvanece.'", ejercicio: "Escribe 3 oraciones con 'de cara a'.", reto: "Escribe un texto sobre la dirección del amor." }
+        ]
+    },
+    causa: {
+        nombre: "Causa", color: "purpura", icono: "bi-robot",
+        especialidad: "Preposiciones de origen: de, desde, por, para, a causa de",
+        tecnicas: [
+            { titulo: "De (origen/procedencia)", teoria: "Indica el origen, procedencia o causa de algo. Es la preposición más usada para expresar origen.", preposicion: "de", ejemplo: "Neruda: 'De la tierra, el amor brota como una flor.'", ejercicio: "Escribe 3 oraciones con 'de' indicando origen.", reto: "Escribe un texto sobre el origen del amor." },
+            { titulo: "Desde (origen espacial/temporal)", teoria: "Indica el punto de partida en el espacio o en el tiempo.", preposicion: "desde", ejemplo: "Lorca: 'Desde el mar, el amor llega con la marea.'", ejercicio: "Escribe 3 oraciones con 'desde' indicando origen.", reto: "Escribe un texto sobre el punto de partida." },
+            { titulo: "Por (causa)", teoria: "Indica la causa o el motivo de algo. Es una preposición muy versátil.", preposicion: "por", ejemplo: "Machado: 'Por amor, todo se soporta.'", ejercicio: "Escribe 3 oraciones con 'por' indicando causa.", reto: "Escribe un texto sobre la causa del amor." },
+            { titulo: "Para (finalidad/destino)", teoria: "Indica el destino, la finalidad o el propósito de algo.", preposicion: "para", ejemplo: "Borges: 'Para el amor, no hay fronteras.'", ejercicio: "Escribe 3 oraciones con 'para' indicando destino.", reto: "Escribe un texto sobre el destino del amor." },
+            { titulo: "A causa de (causa)", teoria: "Locución preposicional que indica la causa de algo. Es más formal que 'por'.", preposicion: "a causa de", ejemplo: "Cervantes: 'A causa del amor, el mundo se vuelve irracional.'", ejercicio: "Escribe 3 oraciones con 'a causa de'.", reto: "Escribe un texto formal sobre la causa." },
+            { titulo: "Debido a (causa)", teoria: "Locución preposicional que indica la causa de algo. Es muy usada en contextos formales.", preposicion: "debido a", ejemplo: "García Márquez: 'Debido al amor, la vida se transforma.'", ejercicio: "Escribe 3 oraciones con 'debido a'.", reto: "Escribe un texto formal sobre la causa del amor." },
+            { titulo: "Gracias a (causa positiva)", teoria: "Indica una causa positiva o favorable. Expresa gratitud o reconocimiento.", preposicion: "gracias a", ejemplo: "Neruda: 'Gracias al amor, el mundo es habitable.'", ejercicio: "Escribe 3 oraciones con 'gracias a'.", reto: "Escribe un texto sobre el agradecimiento." },
+            { titulo: "Por culpa de (causa negativa)", teoria: "Indica una causa negativa o desfavorable. Expresa culpa o responsabilidad.", preposicion: "por culpa de", ejemplo: "Lorca: 'Por culpa del amor, el alma se desgarra.'", ejercicio: "Escribe 3 oraciones con 'por culpa de'.", reto: "Escribe un texto sobre la culpa." },
+            { titulo: "En nombre de (representación)", teoria: "Indica que alguien actúa en representación de otra persona o cosa.", preposicion: "en nombre de", ejemplo: "Machado: 'En nombre del amor, todo se perdona.'", ejercicio: "Escribe 3 oraciones con 'en nombre de'.", reto: "Escribe un texto sobre la representación." },
+            { titulo: "Por amor a (motivación)", teoria: "Indica que una acción se realiza por amor a algo o alguien.", preposicion: "por amor a", ejemplo: "Borges: 'Por amor a la poesía, el mundo se vuelve laberinto.'", ejercicio: "Escribe 3 oraciones con 'por amor a'.", reto: "Escribe un texto sobre la motivación del amor." },
+            { titulo: "A favor de (apoyo)", teoria: "Indica apoyo a favor de algo o alguien.", preposicion: "a favor de", ejemplo: "Cervantes: 'A favor del amor, la vida se inclina.'", ejercicio: "Escribe 3 oraciones con 'a favor de'.", reto: "Escribe un texto sobre el apoyo." },
+            { titulo: "En contra de (oposición)", teoria: "Indica oposición en contra de algo o alguien.", preposicion: "en contra de", ejemplo: "Paz: 'En contra del amor, el tiempo se rebela.'", ejercicio: "Escribe 3 oraciones con 'en contra de'.", reto: "Escribe un texto sobre la oposición." },
+            { titulo: "Por razón de (causa formal)", teoria: "Locución preposicional formal que indica la causa de algo.", preposicion: "por razón de", ejemplo: "García Márquez: 'Por razón del amor, la vida se desborda.'", ejercicio: "Escribe 3 oraciones con 'por razón de'.", reto: "Escribe un texto formal sobre la razón." },
+            { titulo: "En virtud de (causa formal)", teoria: "Locución preposicional formal que indica la causa o el fundamento de algo.", preposicion: "en virtud de", ejemplo: "Neruda: 'En virtud del amor, el mundo se transforma.'", ejercicio: "Escribe 3 oraciones con 'en virtud de'.", reto: "Escribe un texto formal sobre la virtud." },
+            { titulo: "Con motivo de (ocasión)", teoria: "Indica la ocasión o el motivo de algo.", preposicion: "con motivo de", ejemplo: "Lorca: 'Con motivo del amor, la primavera se anticipa.'", ejercicio: "Escribe 3 oraciones con 'con motivo de'.", reto: "Escribe un texto sobre la ocasión." },
+            { titulo: "A raíz de (consecuencia)", teoria: "Indica que algo ocurre como consecuencia de otra cosa.", preposicion: "a raíz de", ejemplo: "Machado: 'A raíz del amor, el tiempo se detiene.'", ejercicio: "Escribe 3 oraciones con 'a raíz de'.", reto: "Escribe un texto sobre la consecuencia." },
+            { titulo: "En consecuencia de (consecuencia)", teoria: "Indica que algo ocurre como consecuencia de otra cosa.", preposicion: "en consecuencia de", ejemplo: "Borges: 'En consecuencia del amor, el laberinto se abre.'", ejercicio: "Escribe 3 oraciones con 'en consecuencia de'.", reto: "Escribe un texto sobre la consecuencia formal." },
+            { titulo: "Por mor de (causa literaria)", teoria: "Locución preposicional literaria que indica la causa de algo. Tiene un tono arcaico.", preposicion: "por mor de", ejemplo: "Cervantes: 'Por mor del amor, la vida se arriesga.'", ejercicio: "Escribe 2 oraciones con 'por mor de'.", reto: "Escribe un texto literario con 'por mor de'." },
+            { titulo: "En aras de (causa formal)", teoria: "Locución preposicional formal que indica la causa o el objetivo de algo.", preposicion: "en aras de", ejemplo: "Paz: 'En aras del amor, el mundo se reconcilia.'", ejercicio: "Escribe 3 oraciones con 'en aras de'.", reto: "Escribe un texto formal sobre el objetivo." },
+            { titulo: "Por obra de (causa)", teoria: "Indica que algo ocurre por obra de alguien o algo.", preposicion: "por obra de", ejemplo: "García Márquez: 'Por obra del amor, el milagro se hace presente.'", ejercicio: "Escribe 3 oraciones con 'por obra de'.", reto: "Escribe un texto sobre la obra del amor." }
+        ]
+    },
+    relacion: {
+        nombre: "Relación", color: "rojo", icono: "bi-robot",
+        especialidad: "Preposiciones de vínculo: contra, hacia, hasta, mediante, vía",
+        tecnicas: [
+            { titulo: "Contra (oposición)", teoria: "Indica oposición, resistencia o movimiento en dirección contraria.", preposicion: "contra", ejemplo: "Neruda: 'Contra el amor, no hay muralla que valga.'", ejercicio: "Escribe 3 oraciones con 'contra' indicando oposición.", reto: "Escribe un texto sobre la resistencia." },
+            { titulo: "Hacia (dirección)", teoria: "Indica dirección o tendencia hacia un punto.", preposicion: "hacia", ejemplo: "Lorca: 'Hacia el mar, el amor se desliza como un río.'", ejercicio: "Escribe 3 oraciones con 'hacia' indicando dirección.", reto: "Escribe un texto sobre la dirección del amor." },
+            { titulo: "Hasta (límite)", teoria: "Indica el límite espacial, temporal o de grado. Se usa para marcar el final.", preposicion: "hasta", ejemplo: "Machado: 'Hasta el final, el amor es un camino de luz.'", ejercicio: "Escribe 3 oraciones con 'hasta' indicando límite.", reto: "Escribe un texto sobre el límite del amor." },
+            { titulo: "Mediante (instrumento)", teoria: "Indica el medio o instrumento a través del cual se realiza algo.", preposicion: "mediante", ejemplo: "Borges: 'Mediante el amor, el mundo se vuelve legible.'", ejercicio: "Escribe 3 oraciones con 'mediante' indicando instrumento.", reto: "Escribe un texto sobre el instrumento del amor." },
+            { titulo: "Vía (a través de)", teoria: "Indica el camino o la vía a través de la cual se realiza algo.", preposicion: "vía", ejemplo: "Cervantes: 'Vía el amor, la vida se transforma.'", ejercicio: "Escribe 3 oraciones con 'vía' indicando camino.", reto: "Escribe un texto sobre la vía del amor." },
+            { titulo: "Con respecto a (relación)", teoria: "Indica relación o referencia a algo. Es una locución formal.", preposicion: "con respecto a", ejemplo: "Paz: 'Con respecto al amor, todo es posible.'", ejercicio: "Escribe 3 oraciones con 'con respecto a'.", reto: "Escribe un texto formal sobre la relación." },
+            { titulo: "En relación con (relación)", teoria: "Indica relación o referencia a algo. Es una locución muy usada.", preposicion: "en relación con", ejemplo: "García Márquez: 'En relación con el amor, la vida es un misterio.'", ejercicio: "Escribe 3 oraciones con 'en relación con'.", reto: "Escribe un texto sobre la relación con el amor." },
+            { titulo: "Referente a (relación)", teoria: "Indica relación o referencia a algo. Es una locución formal.", preposicion: "referente a", ejemplo: "Neruda: 'Referente al amor, todo es poesía.'", ejercicio: "Escribe 3 oraciones con 'referente a'.", reto: "Escribe un texto formal sobre la referencia." },
+            { titulo: "Tocante a (relación)", teoria: "Indica relación o referencia a algo. Es una locución formal y literaria.", preposicion: "tocante a", ejemplo: "Borges: 'Tocante al amor, el tiempo es un espejo.'", ejercicio: "Escribe 3 oraciones con 'tocante a'.", reto: "Escribe un texto literario con 'tocante a'." },
+            { titulo: "Acerca de (relación)", teoria: "Indica relación o referencia a algo. Es una locución muy usada.", preposicion: "acerca de", ejemplo: "Lorca: 'Acerca del amor, todo es posible.'", ejercicio: "Escribe 3 oraciones con 'acerca de'.", reto: "Escribe un texto sobre el tema del amor." },
+            { titulo: "Sobre (tema)", teoria: "Indica el tema o asunto del que se trata. Es una preposición muy usada.", preposicion: "sobre", ejemplo: "Machado: 'Sobre el amor, el silencio es la mejor palabra.'", ejercicio: "Escribe 3 oraciones con 'sobre' indicando tema.", reto: "Escribe un texto sobre un tema usando 'sobre'." },
+            { titulo: "En torno a (relación)", teoria: "Indica relación o referencia a algo. Tiene valor de aproximación temática.", preposicion: "en torno a", ejemplo: "Cervantes: 'En torno al amor, la vida gira como un sol.'", ejercicio: "Escribe 3 oraciones con 'en torno a'.", reto: "Escribe un texto sobre el entorno del amor." },
+            { titulo: "Respecto a (relación)", teoria: "Indica relación o referencia a algo. Es una locución formal.", preposicion: "respecto a", ejemplo: "Paz: 'Respecto al amor, todo es posible.'", ejercicio: "Escribe 3 oraciones con 'respecto a'.", reto: "Escribe un texto formal sobre la relación." },
+            { titulo: "En cuanto a (relación)", teoria: "Indica relación o referencia a algo. Es una locución muy usada.", preposicion: "en cuanto a", ejemplo: "García Márquez: 'En cuanto al amor, la vida es un sueño.'", ejercicio: "Escribe 3 oraciones con 'en cuanto a'.", reto: "Escribe un texto sobre la relación con el amor." },
+            { titulo: "Por parte de (relación)", teoria: "Indica la parte o el lado de algo o alguien.", preposicion: "por parte de", ejemplo: "Neruda: 'Por parte del amor, todo es posible.'", ejercicio: "Escribe 3 oraciones con 'por parte de'.", reto: "Escribe un texto sobre la parte del amor." },
+            { titulo: "De parte de (relación)", teoria: "Indica la parte o el lado de algo o alguien. Es una variante de 'por parte de'.", preposicion: "de parte de", ejemplo: "Lorca: 'De parte del amor, la vida se abre.'", ejercicio: "Escribe 3 oraciones con 'de parte de'.", reto: "Escribe un texto sobre la parte del amor." },
+            { titulo: "En favor de (apoyo)", teoria: "Indica apoyo a favor de algo o alguien.", preposicion: "en favor de", ejemplo: "Machado: 'En favor del amor, la vida se inclina.'", ejercicio: "Escribe 3 oraciones con 'en favor de'.", reto: "Escribe un texto sobre el apoyo." },
+            { titulo: "En defensa de (protección)", teoria: "Indica protección o defensa de algo o alguien.", preposicion: "en defensa de", ejemplo: "Borges: 'En defensa del amor, el mundo se levanta.'", ejercicio: "Escribe 3 oraciones con 'en defensa de'.", reto: "Escribe un texto sobre la defensa del amor." },
+            { titulo: "En busca de (búsqueda)", teoria: "Indica la búsqueda de algo o alguien.", preposicion: "en busca de", ejemplo: "Cervantes: 'En busca del amor, la vida se hace camino.'", ejercicio: "Escribe 3 oraciones con 'en busca de'.", reto: "Escribe un texto sobre la búsqueda del amor." },
+            { titulo: "Al encuentro de (encuentro)", teoria: "Indica el encuentro con algo o alguien.", preposicion: "al encuentro de", ejemplo: "Paz: 'Al encuentro del amor, la vida se lanza.'", ejercicio: "Escribe 3 oraciones con 'al encuentro de'.", reto: "Escribe un texto sobre el encuentro." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['lugar','tiempo','modo','causa','relacion'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="preposicion-clave">
+                        <span>${t.preposicion}</span>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo del autor:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_prepositiva_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

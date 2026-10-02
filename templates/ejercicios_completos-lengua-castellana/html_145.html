@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>100 técnicas · Chría (Teón) en ciencia ficción</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0b0e14;
+            background-image: radial-gradient(circle at 20% 30%, rgba(20, 40, 70, 0.8) 0%, transparent 60%);
+            font-family: 'Inter', sans-serif;
+            padding: 2rem 1.5rem;
+            color: #d0dbe8;
+            min-height: 100vh;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 2px solid #4a7a9c;
+            padding-bottom: 0.75rem;
+            margin-bottom: 2.5rem;
+        }
+        .header h1 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 2.4rem;
+            color: #8bc4e0;
+            letter-spacing: -0.02em;
+            text-shadow: 0 0 20px rgba(80, 160, 220, 0.2);
+        }
+        .header h1 span {
+            background: #3a6a8c;
+            color: #e0f0ff;
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            margin-left: 0.75rem;
+            font-family: 'Inter', sans-serif;
+            letter-spacing: 0.02em;
+            vertical-align: middle;
+            border: 1px solid #5a8aaa;
+        }
+        .header .sub {
+            font-size: 1rem;
+            color: #7a9ab0;
+            background: rgba(60, 120, 180, 0.15);
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 500;
+            border: 1px dashed #4a7a9c;
+        }
+        .block-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 0.7rem;
+            margin-bottom: 2.5rem;
+            background: #141c26;
+            padding: 0.8rem 1.2rem;
+            border-radius: 60px;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+        }
+        .block-nav button {
+            background: transparent;
+            border: none;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            font-size: 0.85rem;
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+            color: #8bb0c8;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid transparent;
+        }
+        .block-nav button:hover { background: #1a2a3a; color: #c0dcee; }
+        .block-nav button.active {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border-color: #4a8aaa;
+            box-shadow: 0 0 20px rgba(60, 140, 220, 0.2);
+        }
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.8rem;
+            margin-top: 1rem;
+        }
+        .card-flip {
+            perspective: 1200px;
+            height: 520px;
+            cursor: default;
+        }
+        .card-flip-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+        .card-flip.flipped .card-flip-inner { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 24px;
+            padding: 1.5rem 1.2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.6);
+            border: 1px solid #2a4a5c;
+        }
+        .card-front {
+            background: #121c26;
+            background-image: linear-gradient(145deg, #0e1820 0%, #1a2a36 100%);
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            border-bottom: 3px solid #3a7a9c;
+        }
+        .card-front .numero {
+            font-family: 'Libre Baskerville', serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #4a8aaa;
+            opacity: 0.3;
+            line-height: 1;
+            margin-bottom: 0.2rem;
+        }
+        .card-front .categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #6a9ab0;
+            background: #1a2a3a;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-bottom: 0.75rem;
+            border: 1px solid #3a5a6a;
+        }
+        .card-front h3 {
+            font-family: 'Libre Baskerville', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #8bc4e0;
+            margin: 0.25rem 0 0.3rem;
+        }
+        .card-front .teoria {
+            font-size: 0.9rem;
+            color: #9ab8d0;
+            line-height: 1.4;
+            margin-top: 0.3rem;
+            font-weight: 400;
+            max-width: 90%;
+        }
+        .card-front .girar-indicador {
+            margin-top: 0.8rem;
+            font-size: 0.7rem;
+            color: #5a7a8a;
+            letter-spacing: 0.04em;
+            border-top: 1px dashed #2a4a5c;
+            padding-top: 0.6rem;
+            width: 100%;
+        }
+        .card-back {
+            background: #0e1820;
+            background-image: linear-gradient(160deg, #0c1620 0%, #16222e 100%);
+            transform: rotateY(180deg);
+            justify-content: flex-start;
+            overflow-y: auto;
+            border-left: 6px solid #4a8aaa;
+            border-bottom: 1px solid #3a6a8c;
+        }
+        .card-back .definicion {
+            background: rgba(60, 140, 220, 0.12);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .sintaxis {
+            background: rgba(60, 180, 120, 0.10);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #5a8a7a;
+            margin-bottom: 0.3rem;
+            color: #a0c8b8;
+            font-family: monospace;
+        }
+        .card-back .estructura {
+            background: rgba(60, 140, 200, 0.08);
+            padding: 0.3rem 0.6rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border-left: 3px solid #4a8aaa;
+            margin-bottom: 0.3rem;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo {
+            font-style: italic;
+            background: rgba(60, 140, 220, 0.08);
+            padding: 0.4rem 0.8rem;
+            border-radius: 12px;
+            margin: 0.3rem 0 0.5rem;
+            font-size: 0.9rem;
+            border-left: 3px solid #4a8aaa;
+            color: #b0d0e8;
+        }
+        .card-back .ejemplo strong {
+            font-style: normal;
+            font-weight: 600;
+            color: #8bc4e0;
+        }
+        .card-back .ejercicio {
+            background: #1a2a3a;
+            padding: 0.5rem 0.8rem;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            margin: 0.4rem 0;
+            font-weight: 500;
+            color: #b0c8d8;
+            border: 1px solid #2a4a5c;
+        }
+        .card-back .respuesta-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.4rem;
+            align-items: center;
+        }
+        .card-back .respuesta-area input {
+            flex: 1;
+            min-width: 120px;
+            padding: 0.4rem 0.8rem;
+            border-radius: 40px;
+            border: 1px solid #2a4a5c;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            background: #0a141c;
+            color: #d0dbe8;
+        }
+        .card-back .respuesta-area input:focus {
+            outline: 2px solid #4a8aaa;
+            border-color: transparent;
+        }
+        .card-back .btn-verificar {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            border: none;
+            padding: 0.4rem 1.2rem;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .card-back .btn-verificar:hover { background: #3a7a9c; }
+        .card-back .feedback-msg {
+            margin-top: 0.3rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            min-height: 1.5rem;
+        }
+        .card-back .feedback-msg.correcto { color: #6abe6a; }
+        .card-back .feedback-msg.incorrecto { color: #d46a6a; }
+        .card-back .respuesta-correcta {
+            background: #2a5a7a;
+            color: #e0f0ff;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card-back .etiqueta {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #5a7a8a;
+            margin-top: 0.4rem;
+        }
+        .quiz-section {
+            margin-top: 4rem;
+            background: #121c26;
+            border-radius: 40px;
+            padding: 2rem 2rem 2.2rem;
+            border: 1px solid #2a4a5c;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+        }
+        .quiz-section h2 {
+            font-family: 'Libre Baskerville', serif;
+            color: #8bc4e0;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .quiz-section h2 small {
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #6a9ab0;
+        }
+        .quiz-pregunta {
+            background: #0c1620;
+            border-radius: 28px;
+            padding: 1.8rem 2rem;
+            margin: 1.5rem 0 1rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            border: 1px solid #1a2a3a;
+        }
+        .quiz-pregunta p {
+            font-weight: 500;
+            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            color: #c0dcee;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 1.2rem;
+        }
+        .quiz-opciones button {
+            background: #0e1820;
+            border: 1px solid #2a4a5c;
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            font-family: 'Inter', sans-serif;
+            font-weight: 500;
+            color: #b0c8d8;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-opciones button:hover { background: #1a2a3a; }
+        .quiz-opciones button.correct {
+            background: #1a5a3a;
+            border-color: #3a8a5a;
+            color: #b0e8c0;
+        }
+        .quiz-opciones button.incorrect {
+            background: #5a2a2a;
+            border-color: #8a4a4a;
+            color: #e8b0b0;
+        }
+        .quiz-result {
+            margin-top: 1.2rem;
+            font-weight: 500;
+            background: #1a2a3a;
+            padding: 0.6rem 1.2rem;
+            border-radius: 60px;
+            display: inline-block;
+            color: #b0c8d8;
+        }
+        .quiz-controles {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1.5rem;
+        }
+        .quiz-controles button {
+            background: #2a5a7a;
+            border: none;
+            color: #e0f0ff;
+            padding: 0.5rem 1.8rem;
+            border-radius: 40px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .quiz-controles button:hover { background: #3a7a9c; }
+        .quiz-controles button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            color: #5a7a8a;
+            border-top: 1px solid #1a2a3a;
+            padding-top: 1.5rem;
+        }
+        @media (max-width: 600px) {
+            .header h1 { font-size: 1.8rem; }
+            .block-nav { border-radius: 30px; gap: 0.3rem; }
+            .cards-grid { grid-template-columns: 1fr; }
+            .quiz-section { padding: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <div class="header">
+        <h1>📖 Chría (Teón) en ciencia ficción <span>100 técnicas</span></h1>
+        <div class="sub">anécdotas · enseñanzas · sintaxis · ejemplos</div>
+    </div>
+
+    <div class="block-nav" id="blockNav"></div>
+    <div id="cardsGrid" class="cards-grid"></div>
+
+    <div class="quiz-section" id="quizSection">
+        <h2>🧠 Cuestionario <small>chría y anécdotas en ciencia ficción</small></h2>
+        <div id="quizContainer"></div>
+    </div>
+    <div class="footer">Escribe tu respuesta en cada tarjeta y verifica · Explora las anécdotas del cosmos</div>
+</div>
+
+<script>
+    // ================================================================
+    // 100 TÉCNICAS DE CHRÍA (TEÓN) EN CIENCIA FICCIÓN
+    // Cada técnica: nombre, definición/teoría, estructura sintáctica,
+    // fórmula de redacción, ejemplo (anécdota de personaje famoso), ejercicio y respuesta.
+    // Distribuidas en 4 bloques: Científicos, Astronautas, Exploradores, Filósofos.
+    // ================================================================
+    const TECNICAS = [];
+
+    // =================== BLOQUE 1: CHRÍA DE CIENTÍFICOS (25) ===================
+    const cientificos = [
+        { nombre: "La chría de Stephen Hawking", definicion: "Anécdota sobre Hawking que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hawking fue diagnosticado con ELA, aprendió que la mente puede superar las limitaciones del cuerpo.", ejercicio: "¿Qué personaje famoso enseñó que la mente supera al cuerpo?", respuesta: "Stephen Hawking" },
+        { nombre: "La chría de Albert Einstein", definicion: "Anécdota sobre Einstein que enseña sobre la imaginación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Einstein dijo que la imaginación es más importante que el conocimiento, enseñó que la creatividad es clave.", ejercicio: "¿Qué científico enseñó que la imaginación es más importante que el conocimiento?", respuesta: "Albert Einstein" },
+        { nombre: "La chría de Carl Sagan", definicion: "Anécdota sobre Sagan que enseña sobre el asombro.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Sagan miró al cielo, comprendió que todos estamos hechos de polvo de estrellas.", ejercicio: "¿Qué divulgador enseñó que estamos hechos de polvo de estrellas?", respuesta: "Carl Sagan" },
+        { nombre: "La chría de Neil deGrasse Tyson", definicion: "Anécdota sobre Tyson que enseña sobre la curiosidad.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Tyson explicó que el universo no nos debe nada, enseñó que debemos buscar respuestas por nosotros mismos.", ejercicio: "¿Qué astrofísico enseñó que el universo no nos debe nada?", respuesta: "Neil deGrasse Tyson" },
+        { nombre: "La chría de Richard Feynman", definicion: "Anécdota sobre Feynman que enseña sobre el disfrute de la ciencia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Feynman tocaba los bongós, recordaba que la ciencia y el arte van de la mano.", ejercicio: "¿Qué físico enseñó que la ciencia y el arte van de la mano?", respuesta: "Richard Feynman" },
+        { nombre: "La chría de Nikola Tesla", definicion: "Anécdota sobre Tesla que enseña sobre la visión.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Tesla soñó con el motor de corriente alterna, demostró que la visión puede cambiar el mundo.", ejercicio: "¿Qué inventor enseñó que la visión puede cambiar el mundo?", respuesta: "Nikola Tesla" },
+        { nombre: "La chría de Marie Curie", definicion: "Anécdota sobre Curie que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Curie trabajó con el radio a pesar de los peligros, enseñó que la dedicación a la ciencia es un acto de valentía.", ejercicio: "¿Qué científica enseñó que la dedicación a la ciencia es valentía?", respuesta: "Marie Curie" },
+        { nombre: "La chría de Isaac Newton", definicion: "Anécdota sobre Newton que enseña sobre la observación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Newton observó la manzana caer, descubrió que la gravedad gobierna el universo.", ejercicio: "¿Qué físico enseñó que la observación lleva al descubrimiento?", respuesta: "Isaac Newton" },
+        { nombre: "La chría de Galileo Galilei", definicion: "Anécdota sobre Galileo que enseña sobre la valentía.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Galilei defendió el heliocentrismo, enseñó que la verdad vale la pena incluso frente a la adversidad.", ejercicio: "¿Qué astrónomo enseñó que la verdad vale la pena frente a la adversidad?", respuesta: "Galileo Galilei" },
+        { nombre: "La chría de Johannes Kepler", definicion: "Anécdota sobre Kepler que enseña sobre la precisión.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kepler analizó los datos de Tycho, demostró que la precisión en la ciencia es fundamental.", ejercicio: "¿Qué astrónomo enseñó que la precisión es fundamental en la ciencia?", respuesta: "Johannes Kepler" },
+        { nombre: "La chría de Edwin Hubble", definicion: "Anécdota sobre Hubble que enseña sobre el descubrimiento.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hubble descubrió que el universo se expande, enseñó que el cosmos está en constante cambio.", ejercicio: "¿Qué astrónomo enseñó que el universo se expande?", respuesta: "Edwin Hubble" },
+        { nombre: "La chría de Hedy Lamarr", definicion: "Anécdota sobre Lamarr que enseña sobre la inventiva.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Lamarr inventó el espectro ensanchado, demostró que la creatividad no conoce límites.", ejercicio: "¿Qué actriz e inventora enseñó que la creatividad no conoce límites?", respuesta: "Hedy Lamarr" },
+        { nombre: "La chría de Katherine Johnson", definicion: "Anécdota sobre Johnson que enseña sobre la excelencia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Johnson calculó la trayectoria del Apolo 11, enseñó que la excelencia no tiene color ni género.", ejercicio: "¿Qué matemática enseñó que la excelencia no tiene color ni género?", respuesta: "Katherine Johnson" },
+        { nombre: "La chría de Vera Rubin", definicion: "Anécdota sobre Rubin que enseña sobre la persistencia.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Rubin observó la rotación de las galaxias, descubrió la materia oscura y enseñó que la persistencia paga.", ejercicio: "¿Qué astrónoma descubrió la materia oscura?", respuesta: "Vera Rubin" },
+        { nombre: "La chría de Robert Oppenheimer", definicion: "Anécdota sobre Oppenheimer que enseña sobre la responsabilidad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Oppenheimer citó el Bhagavad Gita, enseñó que la ciencia debe ir acompañada de responsabilidad moral.", ejercicio: "¿Qué físico enseñó que la ciencia debe tener responsabilidad moral?", respuesta: "Robert Oppenheimer" },
+        { nombre: "La chría de Margaret Hamilton", definicion: "Anécdota sobre Hamilton que enseña sobre la innovación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hamilton programó el software del Apolo, demostró que la innovación tecnológica puede salvar vidas.", ejercicio: "¿Qué programadora enseñó que la innovación puede salvar vidas?", respuesta: "Margaret Hamilton" },
+        { nombre: "La chría de John von Neumann", definicion: "Anécdota sobre von Neumann que enseña sobre la lógica.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando von Neumann diseñó la arquitectura de computadoras, demostró que la lógica es la base de la tecnología.", ejercicio: "¿Qué matemático enseñó que la lógica es la base de la tecnología?", respuesta: "John von Neumann" },
+        { nombre: "La chría de Alan Turing", definicion: "Anécdota sobre Turing que enseña sobre la inteligencia.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Turing descifró Enigma, demostró que la inteligencia puede vencer a la máquina.", ejercicio: "¿Qué matemático enseñó que la inteligencia puede vencer a la máquina?", respuesta: "Alan Turing" },
+        { nombre: "La chría de Francis Crick", definicion: "Anécdota sobre Crick que enseña sobre la curiosidad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Crick descubrió la estructura del ADN, enseñó que la curiosidad es el motor de la ciencia.", ejercicio: "¿Qué biólogo enseñó que la curiosidad es el motor de la ciencia?", respuesta: "Francis Crick" },
+        { nombre: "La chría de Rosalind Franklin", definicion: "Anécdota sobre Franklin que enseña sobre la dedicación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Franklin fotografió el ADN, demostró que la dedicación a la investigación puede cambiar la historia.", ejercicio: "¿Qué científica enseñó que la dedicación a la investigación cambia la historia?", respuesta: "Rosalind Franklin" },
+        { nombre: "La chría de Carl Linneo", definicion: "Anécdota sobre Linneo que enseña sobre la clasificación.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Linneo clasificó las especies, enseñó que el orden es esencial para entender la naturaleza.", ejercicio: "¿Qué naturalista enseñó que el orden es esencial para entender la naturaleza?", respuesta: "Carl Linneo" },
+        { nombre: "La chría de Charles Darwin", definicion: "Anécdota sobre Darwin que enseña sobre la evolución.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Darwin viajó en el Beagle, descubrió que la evolución es la clave de la vida.", ejercicio: "¿Qué naturalista enseñó que la evolución es la clave de la vida?", respuesta: "Charles Darwin" },
+        { nombre: "La chría de Gregor Mendel", definicion: "Anécdota sobre Mendel que enseña sobre la paciencia.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Mendel cruzó guisantes, enseñó que la paciencia en la experimentación lleva a grandes descubrimientos.", ejercicio: "¿Qué científico enseñó que la paciencia en la experimentación lleva a grandes descubrimientos?", respuesta: "Gregor Mendel" },
+        { nombre: "La chría de Louis Pasteur", definicion: "Anécdota sobre Pasteur que enseña sobre la prevención.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Pasteur desarrolló la vacuna, demostró que la prevención es mejor que la cura.", ejercicio: "¿Qué científico enseñó que la prevención es mejor que la cura?", respuesta: "Louis Pasteur" },
+        { nombre: "La chría de Jonas Salk", definicion: "Anécdota sobre Salk que enseña sobre el altruismo.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Salk desarrolló la vacuna contra la polio, enseñó que el altruismo es el mayor acto de la ciencia.", ejercicio: "¿Qué científico enseñó que el altruismo es el mayor acto de la ciencia?", respuesta: "Jonas Salk" },
+    ];
+    cientificos.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 1, categoria: "científico", ...t }));
+
+    // =================== BLOQUE 2: CHRÍA DE ASTRONAUTAS (25) ===================
+    const astronautas = [
+        { nombre: "La chría de Neil Armstrong", definicion: "Anécdota sobre Armstrong que enseña sobre los pequeños pasos.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Armstrong pisó la Luna, enseñó que los pequeños pasos pueden tener un gran impacto.", ejercicio: "¿Qué astronauta enseñó que los pequeños pasos pueden tener un gran impacto?", respuesta: "Neil Armstrong" },
+        { nombre: "La chría de Buzz Aldrin", definicion: "Anécdota sobre Aldrin que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Aldrin caminó sobre la Luna, demostró que la perseverancia lleva a logros extraordinarios.", ejercicio: "¿Qué astronauta enseñó que la perseverancia lleva a logros extraordinarios?", respuesta: "Buzz Aldrin" },
+        { nombre: "La chría de Yuri Gagarin", definicion: "Anécdota sobre Gagarin que enseña sobre el coraje.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Gagarin orbitó la Tierra, enseñó que el coraje es el combustible de la exploración.", ejercicio: "¿Qué cosmonauta enseñó que el coraje es el combustible de la exploración?", respuesta: "Yuri Gagarin" },
+        { nombre: "La chría de John Glenn", definicion: "Anécdota sobre Glenn que enseña sobre la dedicación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Glenn orbitó la Tierra, demostró que la dedicación a la exploración puede inspirar a generaciones.", ejercicio: "¿Qué astronauta enseñó que la dedicación a la exploración inspira a generaciones?", respuesta: "John Glenn" },
+        { nombre: "La chría de Sally Ride", definicion: "Anécdota sobre Ride que enseña sobre la igualdad.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Ride viajó al espacio, enseñó que el espacio no tiene género, solo exploradores.", ejercicio: "¿Qué astronauta enseñó que el espacio no tiene género?", respuesta: "Sally Ride" },
+        { nombre: "La chría de Mae Jemison", definicion: "Anécdota sobre Jemison que enseña sobre la diversidad.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Jemison viajó al espacio, demostró que la diversidad es una fortaleza en la exploración.", ejercicio: "¿Qué astronauta enseñó que la diversidad es una fortaleza en la exploración?", respuesta: "Mae Jemison" },
+        { nombre: "La chría de Chris Hadfield", definicion: "Anécdota sobre Hadfield que enseña sobre la preparación.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hadfield grabó 'Space Oddity' en la ISS, enseñó que la preparación y la pasión pueden crear arte en el espacio.", ejercicio: "¿Qué astronauta enseñó que la preparación y la pasión crean arte en el espacio?", respuesta: "Chris Hadfield" },
+        { nombre: "La chría de Buzz Aldrin (segunda)", definicion: "Anécdota sobre Aldrin que enseña sobre el trabajo en equipo.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Aldrin trabajó con Armstrong, demostró que el trabajo en equipo es esencial para las misiones espaciales.", ejercicio: "¿Qué astronauta enseñó que el trabajo en equipo es esencial en el espacio?", respuesta: "Buzz Aldrin" },
+        { nombre: "La chría de James Lovell", definicion: "Anécdota sobre Lovell que enseña sobre la resiliencia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Lovell lideró el Apolo 13, enseñó que la resiliencia convierte el desastre en éxito.", ejercicio: "¿Qué astronauta enseñó que la resiliencia convierte el desastre en éxito?", respuesta: "James Lovell" },
+        { nombre: "La chría de Eileen Collins", definicion: "Anécdota sobre Collins que enseña sobre el liderazgo.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Collins comandó el STS-93, enseñó que el liderazgo no tiene género.", ejercicio: "¿Qué astronauta enseñó que el liderazgo no tiene género?", respuesta: "Eileen Collins" },
+        { nombre: "La chría de Peggy Whitson", definicion: "Anécdota sobre Whitson que enseña sobre la constancia.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Whitson pasó más de 600 días en el espacio, demostró que la constancia es la clave de la exploración.", ejercicio: "¿Qué astronauta enseñó que la constancia es la clave de la exploración?", respuesta: "Peggy Whitson" },
+        { nombre: "La chría de Scott Kelly", definicion: "Anécdota sobre Kelly que enseña sobre la adaptación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kelly pasó un año en el espacio, enseñó que la adaptación es esencial para la supervivencia.", ejercicio: "¿Qué astronauta enseñó que la adaptación es esencial para la supervivencia?", respuesta: "Scott Kelly" },
+        { nombre: "La chría de Mark Kelly", definicion: "Anécdota sobre Kelly que enseña sobre la familia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kelly regresó del espacio, enseñó que la familia es el ancla del explorador.", ejercicio: "¿Qué astronauta enseñó que la familia es el ancla del explorador?", respuesta: "Mark Kelly" },
+        { nombre: "La chría de Sally Ride (segunda)", definicion: "Anécdota sobre Ride que enseña sobre la educación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Ride enseñó física, demostró que la educación es la base de la exploración.", ejercicio: "¿Qué astronauta enseñó que la educación es la base de la exploración?", respuesta: "Sally Ride" },
+        { nombre: "La chría de Neil Armstrong (segunda)", definicion: "Anécdota sobre Armstrong que enseña sobre la humildad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Armstrong dijo 'un pequeño paso', enseñó que la humildad es la grandeza del explorador.", ejercicio: "¿Qué astronauta enseñó que la humildad es la grandeza del explorador?", respuesta: "Neil Armstrong" },
+        { nombre: "La chría de Yuri Gagarin (segunda)", definicion: "Anécdota sobre Gagarin que enseña sobre la visión.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Gagarin vio la Tierra desde el espacio, enseñó que la visión cambia la perspectiva del mundo.", ejercicio: "¿Qué cosmonauta enseñó que la visión cambia la perspectiva del mundo?", respuesta: "Yuri Gagarin" },
+        { nombre: "La chría de Alan Shepard", definicion: "Anécdota sobre Shepard que enseña sobre la determinación.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Shepard jugó al golf en la Luna, demostró que la determinación puede convertir un momento histórico en uno divertido.", ejercicio: "¿Qué astronauta enseñó que la determinación puede hacerlo todo?", respuesta: "Alan Shepard" },
+        { nombre: "La chría de Buzz Aldrin (tercera)", definicion: "Anécdota sobre Aldrin que enseña sobre la fe.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Aldrin comulgó en la Luna, enseñó que la fe puede acompañar la exploración.", ejercicio: "¿Qué astronauta enseñó que la fe puede acompañar la exploración?", respuesta: "Buzz Aldrin" },
+        { nombre: "La chría de Michael Collins", definicion: "Anécdota sobre Collins que enseña sobre la soledad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Collins orbitó la Luna solo, enseñó que la soledad puede ser un espacio para la reflexión.", ejercicio: "¿Qué astronauta enseñó que la soledad puede ser un espacio para la reflexión?", respuesta: "Michael Collins" },
+        { nombre: "La chría de Mae Jemison (segunda)", definicion: "Anécdota sobre Jemison que enseña sobre la innovación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Jemison llevó arte al espacio, demostró que la innovación no tiene límites.", ejercicio: "¿Qué astronauta enseñó que la innovación no tiene límites?", respuesta: "Mae Jemison" },
+        { nombre: "La chría de Chris Hadfield (segunda)", definicion: "Anécdota sobre Hadfield que enseña sobre la comunicación.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hadfield comunicó su experiencia en el espacio, enseñó que la comunicación es clave para inspirar.", ejercicio: "¿Qué astronauta enseñó que la comunicación es clave para inspirar?", respuesta: "Chris Hadfield" },
+        { nombre: "La chría de Eileen Collins (segunda)", definicion: "Anécdota sobre Collins que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Collins superó las barreras de género, enseñó que la perseverancia rompe techos de cristal.", ejercicio: "¿Qué astronauta enseñó que la perseverancia rompe techos de cristal?", respuesta: "Eileen Collins" },
+        { nombre: "La chría de Peggy Whitson (segunda)", definicion: "Anécdota sobre Whitson que enseña sobre la resistencia.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Whitson enfrentó el envejecimiento en el espacio, demostró que la resistencia es clave para los viajes largos.", ejercicio: "¿Qué astronauta enseñó que la resistencia es clave para los viajes largos?", respuesta: "Peggy Whitson" },
+        { nombre: "La chría de Scott Kelly (segunda)", definicion: "Anécdota sobre Kelly que enseña sobre la salud.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kelly estudió los efectos del espacio en su cuerpo, enseñó que la salud es esencial para la exploración.", ejercicio: "¿Qué astronauta enseñó que la salud es esencial para la exploración?", respuesta: "Scott Kelly" },
+        { nombre: "La chría de Mark Kelly (segunda)", definicion: "Anécdota sobre Kelly que enseña sobre el servicio.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kelly sirvió en la Marina, demostró que el servicio es el honor del explorador.", ejercicio: "¿Qué astronauta enseñó que el servicio es el honor del explorador?", respuesta: "Mark Kelly" },
+    ];
+    astronautas.forEach((t, i) => TECNICAS.push({ id: i+26, bloque: 2, categoria: "astronauta", ...t }));
+
+    // =================== BLOQUE 3: CHRÍA DE EXPLORADORES (25) ===================
+    const exploradores = [
+        { nombre: "La chría de Cristóbal Colón", definicion: "Anécdota sobre Colón que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Colón navegó hacia el oeste, enseñó que la perseverancia puede llevar a descubrimientos inesperados.", ejercicio: "¿Qué explorador enseñó que la perseverancia lleva a descubrimientos inesperados?", respuesta: "Cristóbal Colón" },
+        { nombre: "La chría de Magallanes", definicion: "Anécdota sobre Magallanes que enseña sobre la determinación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Magallanes circunnavegó la Tierra, demostró que la determinación puede superar cualquier obstáculo.", ejercicio: "¿Qué explorador enseñó que la determinación supera cualquier obstáculo?", respuesta: "Fernando de Magallanes" },
+        { nombre: "La chría de Marco Polo", definicion: "Anécdota sobre Polo que enseña sobre la curiosidad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Polo viajó a China, enseñó que la curiosidad puede abrir puertas a mundos desconocidos.", ejercicio: "¿Qué explorador enseñó que la curiosidad abre puertas a mundos desconocidos?", respuesta: "Marco Polo" },
+        { nombre: "La chría de Livingstone", definicion: "Anécdota sobre Livingstone que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Livingstone exploró África, demostró que la perseverancia puede superar la adversidad.", ejercicio: "¿Qué explorador enseñó que la perseverancia supera la adversidad?", respuesta: "David Livingstone" },
+        { nombre: "La chría de Amundsen", definicion: "Anécdota sobre Amundsen que enseña sobre la preparación.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Amundsen alcanzó el Polo Sur, enseñó que la preparación es la clave del éxito.", ejercicio: "¿Qué explorador enseñó que la preparación es la clave del éxito?", respuesta: "Roald Amundsen" },
+        { nombre: "La chría de Scott", definicion: "Anécdota sobre Scott que enseña sobre el coraje.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Scott llegó al Polo Sur, demostró que el coraje puede ser tan importante como el éxito.", ejercicio: "¿Qué explorador enseñó que el coraje es tan importante como el éxito?", respuesta: "Robert Falcon Scott" },
+        { nombre: "La chría de Cousteau", definicion: "Anécdota sobre Cousteau que enseña sobre la pasión.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Cousteau exploró los océanos, enseñó que la pasión por el descubrimiento puede proteger el planeta.", ejercicio: "¿Qué explorador enseñó que la pasión por el descubrimiento protege el planeta?", respuesta: "Jacques Cousteau" },
+        { nombre: "La chría de Armstrong (explorador)", definicion: "Anécdota sobre Armstrong que enseña sobre la humildad.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Armstrong pisó la Luna, enseñó que la humildad es la verdadera grandeza del explorador.", ejercicio: "¿Qué explorador enseñó que la humildad es la verdadera grandeza?", respuesta: "Neil Armstrong" },
+        { nombre: "La chría de Aldrin (explorador)", definicion: "Anécdota sobre Aldrin que enseña sobre el trabajo en equipo.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Aldrin caminó sobre la Luna, demostró que el trabajo en equipo es esencial en la exploración.", ejercicio: "¿Qué explorador enseñó que el trabajo en equipo es esencial?", respuesta: "Buzz Aldrin" },
+        { nombre: "La chría de Gagarin (explorador)", definicion: "Anécdota sobre Gagarin que enseña sobre la visión.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Gagarin vio la Tierra desde el espacio, enseñó que la visión puede cambiar la perspectiva del mundo.", ejercicio: "¿Qué explorador enseñó que la visión cambia la perspectiva del mundo?", respuesta: "Yuri Gagarin" },
+        { nombre: "La chría de James Cook", definicion: "Anécdota sobre Cook que enseña sobre la exactitud.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Cook cartografió el Pacífico, enseñó que la exactitud es la base de la exploración.", ejercicio: "¿Qué explorador enseñó que la exactitud es la base de la exploración?", respuesta: "James Cook" },
+        { nombre: "La chría de Leif Erikson", definicion: "Anécdota sobre Erikson que enseña sobre la audacia.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Erikson llegó a América, demostró que la audacia puede llevar a descubrimientos tempranos.", ejercicio: "¿Qué explorador enseñó que la audacia puede llevar a descubrimientos tempranos?", respuesta: "Leif Erikson" },
+        { nombre: "La chría de Pizarro", definicion: "Anécdota sobre Pizarro que enseña sobre la ambición.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Pizarro conquistó el Imperio Inca, enseñó que la ambición puede cambiar la historia.", ejercicio: "¿Qué explorador enseñó que la ambición cambia la historia?", respuesta: "Francisco Pizarro" },
+        { nombre: "La chría de Hernán Cortés", definicion: "Anécdota sobre Cortés que enseña sobre la estrategia.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Cortés conquistó México, demostró que la estrategia es clave en la exploración.", ejercicio: "¿Qué explorador enseñó que la estrategia es clave en la exploración?", respuesta: "Hernán Cortés" },
+        { nombre: "La chría de Vasco da Gama", definicion: "Anécdota sobre Da Gama que enseña sobre la determinación.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Da Gama llegó a la India, enseñó que la determinación puede abrir rutas comerciales.", ejercicio: "¿Qué explorador enseñó que la determinación puede abrir rutas?", respuesta: "Vasco da Gama" },
+        { nombre: "La chría de Bartolomé Díaz", definicion: "Anécdota sobre Díaz que enseña sobre la perseverancia.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Díaz rodeó el Cabo de Buena Esperanza, demostró que la perseverancia puede superar los límites.", ejercicio: "¿Qué explorador enseñó que la perseverancia supera los límites?", respuesta: "Bartolomé Díaz" },
+        { nombre: "La chría de John Cabot", definicion: "Anécdota sobre Cabot que enseña sobre la exploración.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Cabot exploró América del Norte, enseñó que la exploración es la base del conocimiento.", ejercicio: "¿Qué explorador enseñó que la exploración es la base del conocimiento?", respuesta: "John Cabot" },
+        { nombre: "La chría de Francisco de Orellana", definicion: "Anécdota sobre Orellana que enseña sobre la aventura.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Orellana navegó el Amazonas, demostró que la aventura puede llevar a descubrimientos legendarios.", ejercicio: "¿Qué explorador enseñó que la aventura lleva a descubrimientos legendarios?", respuesta: "Francisco de Orellana" },
+        { nombre: "La chría de Alexander von Humboldt", definicion: "Anécdota sobre Humboldt que enseña sobre la interconexión.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Humboldt exploró América, enseñó que todo en la naturaleza está interconectado.", ejercicio: "¿Qué explorador enseñó que todo en la naturaleza está interconectado?", respuesta: "Alexander von Humboldt" },
+        { nombre: "La chría de John Muir", definicion: "Anécdota sobre Muir que enseña sobre la conservación.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Muir exploró Sierra Nevada, enseñó que la conservación de la naturaleza es esencial.", ejercicio: "¿Qué explorador enseñó que la conservación de la naturaleza es esencial?", respuesta: "John Muir" },
+        { nombre: "La chría de Shackleton", definicion: "Anécdota sobre Shackleton que enseña sobre el liderazgo.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Shackleton lideró la expedición Endurance, demostró que el liderazgo puede salvar vidas.", ejercicio: "¿Qué explorador enseñó que el liderazgo puede salvar vidas?", respuesta: "Ernest Shackleton" },
+        { nombre: "La chría de Jacques Cartier", definicion: "Anécdota sobre Cartier que enseña sobre la curiosidad.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Cartier exploró Canadá, enseñó que la curiosidad puede abrir nuevas rutas.", ejercicio: "¿Qué explorador enseñó que la curiosidad puede abrir nuevas rutas?", respuesta: "Jacques Cartier" },
+        { nombre: "La chría de Samuel de Champlain", definicion: "Anécdota sobre Champlain que enseña sobre la diplomacia.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Champlain fundó Quebec, enseñó que la diplomacia es clave en la exploración.", ejercicio: "¿Qué explorador enseñó que la diplomacia es clave en la exploración?", respuesta: "Samuel de Champlain" },
+        { nombre: "La chría de Henry Hudson", definicion: "Anécdota sobre Hudson que enseña sobre la valentía.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Hudson exploró el Ártico, demostró que la valentía puede enfrentar lo desconocido.", ejercicio: "¿Qué explorador enseñó que la valentía puede enfrentar lo desconocido?", respuesta: "Henry Hudson" },
+        { nombre: "La chría de Richard Burton", definicion: "Anécdota sobre Burton que enseña sobre la adaptabilidad.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Burton exploró África, enseñó que la adaptabilidad es esencial en la exploración.", ejercicio: "¿Qué explorador enseñó que la adaptabilidad es esencial en la exploración?", respuesta: "Richard Burton" },
+        { nombre: "La chría de Roald Amundsen (segunda)", definicion: "Anécdota sobre Amundsen que enseña sobre la planificación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Amundsen planeó su expedición al Polo Sur, demostró que la planificación es la clave del éxito.", ejercicio: "¿Qué explorador enseñó que la planificación es la clave del éxito?", respuesta: "Roald Amundsen" },
+    ];
+    exploradores.forEach((t, i) => TECNICAS.push({ id: i+51, bloque: 3, categoria: "explorador", ...t }));
+
+    // =================== BLOQUE 4: CHRÍA DE FILÓSOFOS Y PENSADORES (25) ===================
+    const filosofos = [
+        { nombre: "La chría de Sócrates", definicion: "Anécdota sobre Sócrates que enseña sobre el conocimiento.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Sócrates dijo 'solo sé que no sé nada', enseñó que la sabiduría comienza con la humildad.", ejercicio: "¿Qué filósofo enseñó que la sabiduría comienza con la humildad?", respuesta: "Sócrates" },
+        { nombre: "La chría de Platón", definicion: "Anécdota sobre Platón que enseña sobre la realidad.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Platón escribió la alegoría de la caverna, enseñó que la realidad puede ser una ilusión.", ejercicio: "¿Qué filósofo enseñó que la realidad puede ser una ilusión?", respuesta: "Platón" },
+        { nombre: "La chría de Aristóteles", definicion: "Anécdota sobre Aristóteles que enseña sobre la virtud.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Aristóteles dijo que la virtud es el equilibrio, enseñó que la moderación es la clave de la vida.", ejercicio: "¿Qué filósofo enseñó que la moderación es la clave de la vida?", respuesta: "Aristóteles" },
+        { nombre: "La chría de Descartes", definicion: "Anécdota sobre Descartes que enseña sobre la duda.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Descartes dijo 'pienso, luego existo', enseñó que la duda es el camino a la certeza.", ejercicio: "¿Qué filósofo enseñó que la duda es el camino a la certeza?", respuesta: "René Descartes" },
+        { nombre: "La chría de Kant", definicion: "Anécdota sobre Kant que enseña sobre la ética.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Kant habló del imperativo categórico, enseñó que la ética debe ser universal.", ejercicio: "¿Qué filósofo enseñó que la ética debe ser universal?", respuesta: "Immanuel Kant" },
+        { nombre: "La chría de Nietzsche", definicion: "Anécdota sobre Nietzsche que enseña sobre la voluntad.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Nietzsche dijo que la voluntad de poder es la fuerza vital, enseñó que la vida es autosuperación.", ejercicio: "¿Qué filósofo enseñó que la vida es autosuperación?", respuesta: "Friedrich Nietzsche" },
+        { nombre: "La chría de Simone de Beauvoir", definicion: "Anécdota sobre Beauvoir que enseña sobre la libertad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Beauvoir dijo que no se nace mujer, se llega a serlo, enseñó que la libertad es construcción.", ejercicio: "¿Qué filósofa enseñó que la libertad es construcción?", respuesta: "Simone de Beauvoir" },
+        { nombre: "La chría de Foucault", definicion: "Anécdota sobre Foucault que enseña sobre el poder.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Foucault analizó el poder, enseñó que el conocimiento y el poder están entrelazados.", ejercicio: "¿Qué filósofo enseñó que el conocimiento y el poder están entrelazados?", respuesta: "Michel Foucault" },
+        { nombre: "La chría de Hannah Arendt", definicion: "Anécdota sobre Arendt que enseña sobre la reflexión.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Arendt reflexionó sobre el totalitarismo, enseñó que la reflexión es la defensa contra la tiranía.", ejercicio: "¿Qué filósofa enseñó que la reflexión es la defensa contra la tiranía?", respuesta: "Hannah Arendt" },
+        { nombre: "La chría de George Orwell", definicion: "Anécdota sobre Orwell que enseña sobre la verdad.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Orwell escribió 1984, enseñó que la verdad es la primera víctima del totalitarismo.", ejercicio: "¿Qué escritor enseñó que la verdad es la primera víctima del totalitarismo?", respuesta: "George Orwell" },
+        { nombre: "La chría de Aldous Huxley", definicion: "Anécdota sobre Huxley que enseña sobre la libertad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Huxley escribió Un mundo feliz, enseñó que la libertad es más importante que la felicidad impuesta.", ejercicio: "¿Qué escritor enseñó que la libertad es más importante que la felicidad impuesta?", respuesta: "Aldous Huxley" },
+        { nombre: "La chría de H.G. Wells", definicion: "Anécdota sobre Wells que enseña sobre la ciencia.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Wells escribió La máquina del tiempo, enseñó que la ciencia puede ser una advertencia.", ejercicio: "¿Qué escritor enseñó que la ciencia puede ser una advertencia?", respuesta: "H.G. Wells" },
+        { nombre: "La chría de Isaac Asimov", definicion: "Anécdota sobre Asimov que enseña sobre la tecnología.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Asimov creó las leyes de la robótica, enseñó que la tecnología debe servir a la humanidad.", ejercicio: "¿Qué escritor enseñó que la tecnología debe servir a la humanidad?", respuesta: "Isaac Asimov" },
+        { nombre: "La chría de Arthur C. Clarke", definicion: "Anécdota sobre Clarke que enseña sobre la imaginación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Clarke escribió 2001: Una odisea del espacio, enseñó que la imaginación puede anticipar el futuro.", ejercicio: "¿Qué escritor enseñó que la imaginación puede anticipar el futuro?", respuesta: "Arthur C. Clarke" },
+        { nombre: "La chría de Philip K. Dick", definicion: "Anécdota sobre Dick que enseña sobre la realidad.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Dick escribió ¿Sueñan los androides con ovejas eléctricas?, enseñó que la realidad es una cuestión de perspectiva.", ejercicio: "¿Qué escritor enseñó que la realidad es una cuestión de perspectiva?", respuesta: "Philip K. Dick" },
+        { nombre: "La chría de Ursula K. Le Guin", definicion: "Anécdota sobre Le Guin que enseña sobre la diversidad.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Le Guin escribió La mano izquierda de la oscuridad, enseñó que la diversidad es la riqueza de la humanidad.", ejercicio: "¿Qué escritora enseñó que la diversidad es la riqueza de la humanidad?", respuesta: "Ursula K. Le Guin" },
+        { nombre: "La chría de Frank Herbert", definicion: "Anécdota sobre Herbert que enseña sobre el poder.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Herbert escribió Dune, enseñó que el poder es una ilusión y la verdadera fuerza está en el conocimiento.", ejercicio: "¿Qué escritor enseñó que el poder es una ilusión?", respuesta: "Frank Herbert" },
+        { nombre: "La chría de Stanisław Lem", definicion: "Anécdota sobre Lem que enseña sobre la comunicación.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Lem escribió Solaris, enseñó que la comunicación con lo desconocido es el mayor desafío.", ejercicio: "¿Qué escritor enseñó que la comunicación con lo desconocido es el mayor desafío?", respuesta: "Stanisław Lem" },
+        { nombre: "La chría de Ray Bradbury", definicion: "Anécdota sobre Bradbury que enseña sobre la memoria.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Bradbury escribió Fahrenheit 451, enseñó que la memoria es la defensa contra el olvido.", ejercicio: "¿Qué escritor enseñó que la memoria es la defensa contra el olvido?", respuesta: "Ray Bradbury" },
+        { nombre: "La chría de J.G. Ballard", definicion: "Anécdota sobre Ballard que enseña sobre el cambio.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Ballard escribió El mundo sumergido, enseñó que el cambio climático es una realidad inevitable.", ejercicio: "¿Qué escritor enseñó que el cambio climático es inevitable?", respuesta: "J.G. Ballard" },
+        { nombre: "La chría de Octavia Butler", definicion: "Anécdota sobre Butler que enseña sobre la adaptación.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Butler escribió La parábola del sembrador, enseñó que la adaptación es la clave de la supervivencia.", ejercicio: "¿Qué escritora enseñó que la adaptación es la clave de la supervivencia?", respuesta: "Octavia Butler" },
+        { nombre: "La chría de Kim Stanley Robinson", definicion: "Anécdota sobre Robinson que enseña sobre la esperanza.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Robinson escribió la Trilogía de Marte, enseñó que la esperanza es el combustible de la colonización.", ejercicio: "¿Qué escritor enseñó que la esperanza es el combustible de la colonización?", respuesta: "Kim Stanley Robinson" },
+        { nombre: "La chría de Neal Stephenson", definicion: "Anécdota sobre Stephenson que enseña sobre la tecnología.", sintaxis: "Cuando [personaje] [acción], comprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Stephenson escribió Snow Crash, enseñó que la tecnología puede ser tanto una herramienta como una trampa.", ejercicio: "¿Qué escritor enseñó que la tecnología puede ser una trampa?", respuesta: "Neal Stephenson" },
+        { nombre: "La chría de William Gibson", definicion: "Anécdota sobre Gibson que enseña sobre el futuro.", sintaxis: "Cuando [personaje] [acción], se dio cuenta de que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Gibson escribió Neuromante, enseñó que el futuro ya está aquí, solo que no está distribuido equitativamente.", ejercicio: "¿Qué escritor enseñó que el futuro ya está aquí?", respuesta: "William Gibson" },
+        { nombre: "La chría de Theodore Sturgeon", definicion: "Anécdota sobre Sturgeon que enseña sobre la creatividad.", sintaxis: "Cuando [personaje] [acción], aprendió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Sturgeon escribió Más que humano, enseñó que la creatividad es la verdadera evolución.", ejercicio: "¿Qué escritor enseñó que la creatividad es la verdadera evolución?", respuesta: "Theodore Sturgeon" },
+        { nombre: "La chría de Alfred Bester", definicion: "Anécdota sobre Bester que enseña sobre el poder de la mente.", sintaxis: "Cuando [personaje] [acción], descubrió que [enseñanza].", estructura: "Estructura: [Cuando] [Personaje] [Acción] [Enseñanza].", ejemplo: "Cuando Bester escribió El hombre demolido, enseñó que el poder de la mente puede superar cualquier barrera.", ejercicio: "¿Qué escritor enseñó que el poder de la mente supera barreras?", respuesta: "Alfred Bester" },
+    ];
+    filosofos.forEach((t, i) => TECNICAS.push({ id: i+76, bloque: 4, categoria: "filósofo", ...t }));
+
+    TECNICAS.sort((a,b) => a.id - b.id);
+
+    // ========== RENDER ==========
+    const blockNav = document.getElementById('blockNav');
+    const cardsGrid = document.getElementById('cardsGrid');
+    const quizContainer = document.getElementById('quizContainer');
+
+    let currentBlock = 1;
+    const BLOCK_NAMES = ['', 'Científicos', 'Astronautas', 'Exploradores', 'Filósofos'];
+
+    for (let i = 1; i <= 4; i++) {
+        const btn = document.createElement('button');
+        btn.textContent = `${i}. ${BLOCK_NAMES[i]}`;
+        btn.dataset.block = i;
+        btn.addEventListener('click', () => {
+            currentBlock = i;
+            renderCards(i);
+            updateNav(i);
+        });
+        blockNav.appendChild(btn);
+    }
+
+    function updateNav(block) {
+        document.querySelectorAll('.block-nav button').forEach(b => b.classList.toggle('active', parseInt(b.dataset.block) === block));
+    }
+    updateNav(1);
+
+    window.verificarRespuesta = function(id) {
+        const input = document.getElementById(`input-${id}`);
+        const feedback = document.getElementById(`feedback-${id}`);
+        const correcta = document.getElementById(`correcta-${id}`);
+        if (!input || !feedback) return;
+        const valor = input.value.trim().toLowerCase();
+        const respuestaCorrecta = correcta ? correcta.textContent.toLowerCase() : '';
+        if (valor === '' || valor === '...') {
+            feedback.textContent = '✏️ Escribe tu respuesta primero.';
+            feedback.className = 'feedback-msg';
+            return;
+        }
+        const normalize = (s) => s.replace(/\s+/g, ' ').trim();
+        const esCorrecto = normalize(valor) === normalize(respuestaCorrecta) ||
+                           normalize(valor).includes(normalize(respuestaCorrecta)) ||
+                           normalize(respuestaCorrecta).includes(normalize(valor));
+        if (esCorrecto) {
+            feedback.textContent = '✅ ¡Correcto! Bien hecho.';
+            feedback.className = 'feedback-msg correcto';
+        } else {
+            feedback.textContent = `❌ Incorrecto. La respuesta correcta es: "${respuestaCorrecta}"`;
+            feedback.className = 'feedback-msg incorrecto';
+        }
+    };
+
+    function renderCards(block) {
+        const filtered = TECNICAS.filter(t => t.bloque === block);
+        cardsGrid.innerHTML = filtered.map((t, idx) => {
+            return `
+                <div class="card-flip" data-id="${t.id}" onclick="this.classList.toggle('flipped')">
+                    <div class="card-flip-inner">
+                        <div class="card-front">
+                            <div class="numero">${t.id}</div>
+                            <span class="categoria">${t.categoria}</span>
+                            <h3>${t.nombre}</h3>
+                            <div class="teoria">${t.definicion}</div>
+                            <div class="girar-indicador">↻ tocar para ver ejemplo y ejercicio</div>
+                        </div>
+                        <div class="card-back">
+                            <div style="font-weight:600;color:#8bc4e0;margin-bottom:0.2rem;">📖 ${t.nombre}</div>
+                            <div class="definicion"><strong>📘 Teoría:</strong> ${t.definicion}</div>
+                            <div class="sintaxis"><strong>📐 Fórmula:</strong> ${t.sintaxis}</div>
+                            <div class="estructura"><strong>📊 Estructura:</strong> ${t.estructura}</div>
+                            <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                            <div class="ejercicio">✏️ ${t.ejercicio}</div>
+                            <div class="respuesta-area">
+                                <input type="text" id="input-${t.id}" placeholder="Escribe tu respuesta..." />
+                                <button class="btn-verificar" onclick="verificarRespuesta(${t.id})">Comprobar</button>
+                            </div>
+                            <div id="feedback-${t.id}" class="feedback-msg"></div>
+                            <div id="correcta-${t.id}" style="display:none;">${t.respuesta}</div>
+                            <div class="respuesta-correcta">✓ ${t.respuesta}</div>
+                            <div class="etiqueta">técnica #${t.id} · ${t.categoria}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // ========== QUIZ ==========
+    let quizQuestions = [];
+    let currentQuizIndex = 0;
+    let score = 0;
+    let answered = false;
+
+    function generateQuiz() {
+        const shuffled = [...TECNICAS].sort(() => Math.random() - 0.5);
+        quizQuestions = shuffled.slice(0, 10).map(t => {
+            const opts = [t.respuesta];
+            const others = TECNICAS.filter(x => x.id !== t.id);
+            const shuffledOthers = others.sort(() => Math.random() - 0.5);
+            for (let i = 0; i < 3; i++) {
+                if (shuffledOthers[i]) opts.push(shuffledOthers[i].respuesta);
+            }
+            for (let i = opts.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [opts[i], opts[j]] = [opts[j], opts[i]];
+            }
+            return {
+                pregunta: `📌 ${t.ejercicio} (técnica: ${t.nombre})`,
+                opciones: opts,
+                correcta: t.respuesta,
+                id: t.id
+            };
+        });
+        currentQuizIndex = 0;
+        score = 0;
+        answered = false;
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        if (!quizQuestions.length) return;
+        const q = quizQuestions[currentQuizIndex];
+        const total = quizQuestions.length;
+        let html = `
+            <div class="quiz-pregunta">
+                <p>${q.pregunta}</p>
+                <div class="quiz-opciones" id="quizOptions">
+        `;
+        q.opciones.forEach((op, idx) => {
+            html += `<button data-idx="${idx}" onclick="checkAnswer(${idx})">${op}</button>`;
+        });
+        html += `</div>
+                <div id="quizFeedback" style="margin-top:0.8rem;"></div>
+                <div class="quiz-result" id="quizScore">Puntuación: ${score}/${total}</div>
+            </div>
+            <div class="quiz-controles">
+                <button id="nextQuizBtn" disabled>→ Siguiente</button>
+                <button onclick="generateQuiz()">🔄 Nuevo cuestionario</button>
+            </div>
+        `;
+        quizContainer.innerHTML = html;
+        answered = false;
+        document.getElementById('nextQuizBtn').disabled = true;
+    }
+
+    window.checkAnswer = function(idx) {
+        if (answered) return;
+        const q = quizQuestions[currentQuizIndex];
+        const buttons = document.querySelectorAll('#quizOptions button');
+        buttons.forEach((b, i) => {
+            b.disabled = true;
+            if (i === idx) {
+                const esCorrecta = q.opciones[idx] === q.correcta;
+                b.classList.add(esCorrecta ? 'correct' : 'incorrect');
+                if (esCorrecta) score++;
+            }
+            if (q.opciones[i] === q.correcta) {
+                buttons[i].classList.add('correct');
+            }
+        });
+        answered = true;
+        document.getElementById('nextQuizBtn').disabled = false;
+        document.getElementById('quizScore').textContent = `Puntuación: ${score}/${quizQuestions.length}`;
+        const fb = document.getElementById('quizFeedback');
+        fb.innerHTML = `<span style="background:#2a5a7a;color:#e0f0ff;padding:0.2rem 1rem;border-radius:40px;">✅ Respuesta correcta: ${q.correcta}</span>`;
+    };
+
+    document.addEventListener('click', function(e) {
+        if (e.target.id === 'nextQuizBtn') {
+            if (currentQuizIndex < quizQuestions.length - 1) {
+                currentQuizIndex++;
+                renderQuiz();
+            } else {
+                alert(`¡Cuestionario finalizado! Puntuación: ${score}/${quizQuestions.length}`);
+                document.getElementById('nextQuizBtn').disabled = true;
+            }
+        }
+    });
+
+    // Inicializar
+    renderCards(1);
+    generateQuiz();
+</script>
+</body>
+</html>

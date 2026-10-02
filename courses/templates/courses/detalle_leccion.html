@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 800px; margin: 40px auto; font-family: 'Segoe UI', sans-serif; padding: 20px;">
+    
+    <h1 style="color: #2c3e50; text-align: center;">{{ leccion.titulo }}</h1>
+    
+    {% if leccion.video_explicativo %}
+        <div style="margin-bottom: 30px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <video width="100%" controls>
+                <source src="{{ leccion.video_explicativo.url }}" type="video/mp4">
+                Tu navegador no soporta el video.
+            </video>
+        </div>
+    {% endif %}
+
+    <div style="background: #f8f9fa; padding: 30px; border-radius: 20px; border: 2px solid #3498db;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>🎙️ Ejercicio de Dictado y Escritura</h3>
+            <label style="font-size: 0.8rem;">
+                <input type="checkbox" id="voz-automatica" checked> Voz IA Licenciada
+            </label>
+        </div>
+
+        <p style="font-size: 1.2rem; color: #34495e; margin: 20px 0;">
+            <strong>Oración:</strong> <span id="texto-pregunta">"{{ pregunta }}"</span>
+        </p>
+
+        <button onclick="reproducirVoz('{{ pregunta }}', true)" 
+                style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 50px; cursor: pointer;">
+            🔊 Escuchar ahora
+        </button>
+
+        <div style="margin-top: 25px;">
+            <p>Escriba la clasificación correcta:</p>
+            <input type="text" id="respuesta-estudiante" 
+                   style="width: 100%; padding: 15px; border-radius: 10px; border: 2px solid #bdc3c7; font-size: 1.1rem;">
+            
+            <button onclick="validarEjercicio()" 
+                    style="width: 100%; margin-top: 15px; background: #27ae60; color: white; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">
+                Verificar mi respuesta
+            </button>
+        </div>
+
+        <div id="feedback" style="margin-top: 20px; display: none; padding: 20px; border-radius: 10px;"></div>
+    </div>
+</div>
+
+<script>
+function reproducirVoz(texto, forzar = false) {
+    if (document.getElementById('voz-automatica').checked || forzar) {
+        window.speechSynthesis.cancel();
+        const msg = new SpeechSynthesisUtterance(texto);
+        msg.lang = 'es-ES';
+        msg.rate = 0.8; // Solemne y pausado
+        window.speechSynthesis.speak(msg);
+    }
+}
+
+function validarEjercicio() {
+    const input = document.getElementById('respuesta-estudiante').value.toLowerCase().trim();
+    const correcta = "{{ respuesta_correcta }}".toLowerCase().trim();
+    const explicacion = "{{ explicacion_ejercicio }}";
+    const feedback = document.getElementById('feedback');
+
+    if (input === correcta) {
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#d4edda';
+        feedback.innerHTML = `<h4>✅ ¡Excelente!</h4><p>${explicacion}</p>`;
+        reproducirVoz("¡Excelente! " + explicacion);
+    } else {
+        feedback.style.display = 'block';
+        feedback.style.backgroundColor = '#f8d7da';
+        feedback.innerHTML = `<h4>❌ Inténtalo de nuevo</h4><p>Revisa la ortografía de la categoría.</p>`;
+        reproducirVoz("Inténtalo de nuevo, revisa la ortografía.");
+    }
+}
+</script>
+{% endblock %}

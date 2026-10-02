@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .cert-wrapper { max-width: 1000px; margin: 2rem auto; padding: 0 1rem; }
+    .certificado {
+        background: linear-gradient(135deg, #fdfbf6 0%, #f5edd6 100%);
+        color: #1a1a1a;
+        padding: 3rem 4rem;
+        border: 12px double #c9a227;
+        border-radius: 6px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        font-family: Georgia, 'Times New Roman', serif;
+        position: relative;
+        overflow: hidden;
+    }
+    .certificado::before {
+        content: ''; position: absolute; top: 20px; left: 20px; right: 20px; bottom: 20px;
+        border: 2px solid #c9a227; pointer-events: none; border-radius: 4px;
+    }
+    .cert-escudo { text-align: center; font-size: 4rem; margin-bottom: 0.5rem; }
+    .cert-inst { text-align: center; font-size: 1.1rem; letter-spacing: 4px;
+        text-transform: uppercase; color: #8b6914; font-weight: 700; margin-bottom: 0.25rem; }
+    .cert-sub { text-align: center; font-size: 0.85rem; color: #8b6914;
+        letter-spacing: 2px; margin-bottom: 2rem; }
+    .cert-titulo { text-align: center; font-size: 2.2rem; font-weight: 700;
+        color: #1a1a1a; margin: 1.5rem 0 1rem; font-family: 'Georgia', serif; }
+    .cert-otorga { text-align: center; font-size: 1rem; color: #444;
+        margin-bottom: 1.5rem; font-style: italic; }
+    .cert-nombre { text-align: center; font-size: 2rem; font-weight: 700;
+        color: #8b6914; border-bottom: 2px solid #c9a227;
+        display: inline-block; padding: 0 1.5rem 0.4rem;
+        margin: 0 auto 1.5rem; font-family: 'Georgia', serif; }
+    .cert-nombre-wrapper { text-align: center; }
+    .cert-texto { text-align: center; font-size: 1rem; color: #333;
+        line-height: 1.7; max-width: 720px; margin: 0 auto 2rem; }
+    .cert-curso { font-weight: 700; color: #8b6914; }
+    .cert-footer { display: flex; justify-content: space-between;
+        align-items: flex-end; margin-top: 3rem; gap: 2rem; }
+    .cert-firma { flex: 1; text-align: center; }
+    .cert-firma-linea { border-top: 1px solid #333; padding-top: 0.4rem;
+        font-size: 0.85rem; color: #333; margin-top: 2.5rem; }
+    .cert-codigo { text-align: center; margin-top: 2rem; font-size: 0.8rem;
+        color: #666; font-family: monospace; letter-spacing: 2px; }
+    .cert-sello { position: absolute; top: 30px; right: 30px; font-size: 3rem;
+        color: #c9a227; opacity: 0.35; transform: rotate(-15deg); }
+    .cert-acciones { text-align: center; margin-top: 2rem; }
+    .cert-acciones a, .cert-acciones button {
+        display: inline-block; padding: 0.6rem 1.5rem; margin: 0 0.4rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border: none; border-radius: 8px;
+        text-decoration: none; cursor: pointer; font-size: 0.9rem;
+    }
+    @media print {
+        body { background: white !important; }
+        .navbar, footer, .cert-acciones { display: none !important; }
+        .certificado { box-shadow: none; margin: 0; }
+    }
+</style>
+
+<div class="cert-wrapper">
+    {% if cert.estado == 'emitido' %}
+        <div class="certificado">
+            <div class="cert-sello">🎓</div>
+
+            <div class="cert-escudo">🏛️</div>
+            <div class="cert-inst">Academia Puente Digital</div>
+            <div class="cert-sub">Formación en Lengua Castellana y Soberanía Digital</div>
+
+            <div class="cert-titulo">Certificado de Finalización</div>
+            <div class="cert-otorga">Se otorga el presente certificado a</div>
+
+            <div class="cert-nombre-wrapper">
+                <div class="cert-nombre">
+                    {{ cert.estudiante.get_full_name|default:cert.estudiante.username }}
+                </div>
+            </div>
+
+            <div class="cert-texto">
+                por haber completado satisfactoriamente el curso
+                <span class="cert-curso">«{{ cert.curso.titulo }}»</span>,
+                perteneciente a la materia <em>{{ cert.curso.materia.nombre }}</em>,
+                con nivel {{ cert.curso.nivel }}, demostrando dedicación y aprovechamiento
+                en el dominio de los contenidos.
+            </div>
+
+            <div class="cert-footer">
+                <div class="cert-firma">
+                    <div class="cert-firma-linea">
+                        <strong>Profesor</strong><br>
+                        <span style="font-size: 0.75rem;">{{ cert.curso.profesor.get_full_name|default:cert.curso.profesor.username }}</span>
+                    </div>
+                </div>
+
+                <div class="cert-firma">
+                    <div class="cert-firma-linea">
+                        <strong>Fecha de emisión</strong><br>
+                        <span style="font-size: 0.75rem;">{{ cert.fecha_emision|date:"d \d\e F \d\e Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cert-codigo">
+                Código de verificación: <strong>{{ cert.codigo }}</strong>
+                · Puntos obtenidos: {{ cert.puntos_obtenidos }}
+                · Calificación: {{ cert.calificacion }}
+            </div>
+        </div>
+
+        <div class="cert-acciones">
+            <button onclick="window.print()">🖨️ Imprimir / PDF</button>
+            <a href="{% url 'courses:certificado_verificar' %}?codigo={{ cert.codigo }}">✅ Verificar</a>
+            {% if user.is_authenticated %}
+                <a href="{% url 'users:dashboard' %}">← Volver al dashboard</a>
+            {% endif %}
+        </div>
+
+        <p style="text-align:center; color:#8b949e; font-size:0.85rem; margin-top:1.5rem;">
+            Comparte este enlace público para validar el certificado:
+            <code style="color:#f1c40f;">/certificado/{{ cert.codigo }}/</code>
+        </p>
+    {% else %}
+        <div class="empty-state" style="text-align:center; padding:3rem;">
+            <h2>⚠️ Certificado revocado</h2>
+            <p>Este certificado ha sido revocado por la institución.</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

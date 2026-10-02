@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redacción · 100 conectores en ciencia ficción hispanoamericana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Reenie+Beanie&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --papel: #F7F5F0;
+            --tinta: #1A1A1A;
+            --rojo-corrector: #B3242A;
+            --azul-archivo: #2C4A6B;
+            --gris-secante: #8A8578;
+            --rojo-claro: #f9e6e7;
+            --borde: #d9d5ce;
+            --sombra: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            background-color:#ede8df;
+            font-family:'IBM Plex Sans',sans-serif;
+            color:var(--tinta);
+            display:flex; flex-direction:column; align-items:center;
+            min-height:100vh; padding:2rem 1rem;
+        }
+        .cuaderno {
+            max-width:1100px; width:100%; background:var(--papel);
+            box-shadow:var(--sombra),0 0 0 1px var(--borde);
+            border-radius:2px; overflow:hidden; display:flex; flex-direction:column;
+        }
+        .membrete {
+            background:var(--papel); border-bottom:2px solid var(--tinta);
+            padding:1.2rem 2rem 0.8rem; display:flex;
+            justify-content:space-between; align-items:baseline; flex-wrap:wrap; gap:0.5rem;
+        }
+        .membrete .titulo {
+            font-family:'Source Serif 4',serif; font-weight:700; font-size:2rem;
+            line-height:1; letter-spacing:-0.5px; color:var(--tinta);
+        }
+        .membrete .subtitulo {
+            font-family:'IBM Plex Mono',monospace; font-size:0.85rem;
+            color:var(--gris-secante); text-transform:uppercase; letter-spacing:1px;
+        }
+        .membrete .fecha {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--gris-secante); border-left:1px solid var(--borde); padding-left:1rem;
+        }
+        .nav-principal {
+            display:flex; border-bottom:1px solid var(--borde);
+            background:var(--papel); padding:0 2rem; gap:0.5rem; flex-wrap:wrap;
+        }
+        .nav-principal button {
+            background:none; border:none; padding:0.8rem 1.2rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; font-size:0.95rem;
+            color:var(--tinta); cursor:pointer; border-bottom:2px solid transparent;
+            transition:all 0.2s; position:relative; top:1px;
+        }
+        .nav-principal button:hover { color:var(--rojo-corrector); }
+        .nav-principal button.activo {
+            border-bottom-color:var(--rojo-corrector);
+            color:var(--rojo-corrector); font-weight:600;
+        }
+        .contenido { padding:2rem; flex:1; }
+        .vista { display:none; }
+        .vista.activa { display:block; }
+        .buscador { margin-bottom:1.8rem; }
+        .buscador input {
+            width:100%; padding:0.7rem 1rem; border:1px solid var(--borde);
+            border-radius:2px; font-family:'IBM Plex Sans',sans-serif;
+            font-size:0.95rem; background:white; transition:border-color 0.2s;
+        }
+        .buscador input:focus {
+            outline:none; border-color:var(--rojo-corrector);
+            box-shadow:0 0 0 2px var(--rojo-claro);
+        }
+        .familia {
+            border:1px solid var(--borde); margin-bottom:0.8rem;
+            border-radius:2px; background:white; transition:box-shadow 0.2s;
+        }
+        .familia:hover { box-shadow:var(--sombra); }
+        .familia-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:1rem 1.2rem; cursor:pointer; user-select:none;
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.1rem;
+            color:var(--tinta);
+        }
+        .familia-header .marca {
+            font-family:'IBM Plex Mono',monospace; font-size:0.8rem;
+            color:var(--rojo-corrector); background:var(--rojo-claro);
+            padding:0.2rem 0.5rem; border-radius:2px;
+        }
+        .familia-contenido {
+            display:none; border-top:1px solid var(--borde);
+            padding:0 1.2rem 1.2rem;
+        }
+        .familia.abierta .familia-contenido { display:block; }
+        .familia.abierta .familia-header { background:#fdfaf6; }
+        .tecnica {
+            padding:1rem 0; border-bottom:1px dotted var(--borde);
+            position:relative; padding-left:3rem;
+        }
+        .tecnica:last-child { border-bottom:none; }
+        .tecnica .anotacion-margen {
+            position:absolute; left:0; top:1rem;
+            font-family:'Reenie Beanie',cursive; font-size:1.1rem;
+            color:var(--rojo-corrector); transform:rotate(-2deg);
+            max-width:2.5rem; line-height:1.2; text-align:right;
+        }
+        .tecnica .nombre-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1rem;
+            color:var(--tinta); margin-bottom:0.3rem;
+            border-bottom:2px solid transparent; display:inline-block;
+        }
+        .tecnica .nombre-tecnica:hover { border-bottom-color:var(--rojo-corrector); }
+        .tecnica .descripcion {
+            font-size:0.9rem; color:var(--gris-secante); margin-bottom:0.6rem; font-style:italic;
+        }
+        .tecnica .ejemplo {
+            font-family:'IBM Plex Mono',monospace; background:#faf9f7;
+            padding:0.6rem 1rem; border-left:3px solid var(--rojo-corrector);
+            font-size:0.85rem; position:relative; border-radius:0 2px 2px 0; word-break:break-word;
+        }
+        .sin-resultados { text-align:center; padding:3rem; color:var(--gris-secante); font-style:italic; }
+        .practicar-header {
+            display:flex; justify-content:space-between; align-items:center;
+            margin-bottom:2rem; flex-wrap:wrap; gap:1rem;
+        }
+        .marcador {
+            display:flex; gap:1.5rem; font-family:'IBM Plex Mono',monospace; font-size:0.9rem;
+        }
+        .marcador span {
+            background:white; border:1px solid var(--borde);
+            padding:0.3rem 0.8rem; border-radius:2px;
+        }
+        .marcador .aciertos { color:var(--azul-archivo); font-weight:600; }
+        .marcador .racha { color:var(--rojo-corrector); font-weight:600; }
+        .quiz-container {
+            background:white; border:1px solid var(--borde);
+            padding:1.5rem; border-radius:2px; margin-bottom:1.5rem;
+        }
+        .pregunta-tecnica {
+            font-family:'Source Serif 4',serif; font-weight:600; font-size:1.3rem;
+            margin-bottom:1.2rem; color:var(--tinta);
+        }
+        .pregunta-tecnica em {
+            font-style:normal; color:var(--rojo-corrector);
+            border-bottom:2px solid var(--rojo-corrector);
+        }
+        .fragmentos {
+            display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap:1rem;
+        }
+        .fragmento {
+            background:#fbfaf7; border:1px solid var(--borde);
+            padding:1rem; cursor:pointer; font-family:'IBM Plex Mono',monospace;
+            font-size:0.8rem; transition:all 0.2s; border-radius:2px; position:relative;
+        }
+        .fragmento:hover { border-color:var(--rojo-corrector); background:#fef9f9; }
+        .fragmento.correcta { border-color:#2c6b4a; background:#e6f3ed; }
+        .fragmento.incorrecta { border-color:var(--rojo-corrector); background:#fbeaeb; }
+        .feedback { margin-top:1.2rem; font-family:'IBM Plex Sans',sans-serif; font-size:0.95rem; min-height:1.5rem; }
+        .feedback .correccion { color:var(--rojo-corrector); font-weight:500; display:flex; align-items:center; gap:0.4rem; }
+        .btn-siguiente {
+            background:var(--tinta); color:white; border:none; padding:0.6rem 1.5rem;
+            font-family:'IBM Plex Sans',sans-serif; font-weight:500; cursor:pointer;
+            border-radius:2px; margin-top:1rem; transition:background 0.2s;
+        }
+        .btn-siguiente:hover { background:var(--rojo-corrector); }
+        .colofon {
+            max-width:700px; margin:0 auto;
+            font-family:'Source Serif 4',serif; font-size:1.05rem; line-height:1.7; color:var(--tinta);
+        }
+        .colofon h3 {
+            font-family:'IBM Plex Sans',sans-serif; font-weight:600;
+            color:var(--rojo-corrector); margin:2rem 0 0.8rem;
+            text-transform:uppercase; letter-spacing:0.5px;
+        }
+        .colofon .marca-roja { color:var(--rojo-corrector); font-weight:600; }
+        @media (max-width:700px) {
+            .cuaderno { margin:0; }
+            .membrete { flex-direction:column; align-items:flex-start; }
+            .nav-principal { padding:0 1rem; overflow-x:auto; }
+            .contenido { padding:1.2rem; }
+            .tecnica { padding-left:2.2rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="cuaderno">
+    <header class="membrete">
+        <div>
+            <div class="titulo">Redacción</div>
+            <div class="subtitulo">100 conectores en ciencia ficción hispanoamericana · Cuaderno de estilo</div>
+        </div>
+        <div class="fecha" id="fechaHoy"></div>
+    </header>
+    <nav class="nav-principal">
+        <button class="activo" data-vista="explorar">📖 Explorar técnicas</button>
+        <button data-vista="practicar">✍️ Practicar</button>
+        <button data-vista="sobre">ℹ️ Sobre este cuaderno</button>
+    </nav>
+    <main class="contenido">
+        <section id="explorar" class="vista activa">
+            <div class="buscador">
+                <input type="text" id="buscarTecnica" placeholder="Buscar por palabra clave (ej. 'paradoja', 'Bioy', 'dimensiones', 'temporal')...">
+            </div>
+            <div id="acordeonFamilias"></div>
+            <div id="sinResultados" class="sin-resultados" style="display:none;">Ninguna técnica coincide con tu búsqueda.</div>
+        </section>
+        <section id="practicar" class="vista">
+            <div class="practicar-header">
+                <h2 style="font-family:'Source Serif 4',serif; font-weight:600;">Galera de pruebas</h2>
+                <div class="marcador">
+                    <span>✔️ <span class="aciertos" id="contadorAciertos">0</span></span>
+                    <span>📈 Racha <span class="racha" id="contadorRacha">0</span></span>
+                    <span>📋 <span id="contadorTotal">0</span> intentos</span>
+                </div>
+            </div>
+            <div id="quizContainer" class="quiz-container">
+                <div id="preguntaTexto" class="pregunta-tecnica"></div>
+                <div id="opcionesFragmentos" class="fragmentos"></div>
+                <div id="feedbackQuiz" class="feedback"></div>
+                <button id="btnSiguiente" class="btn-siguiente" style="display:none;">Siguiente pregunta →</button>
+            </div>
+        </section>
+        <section id="sobre" class="vista">
+            <div class="colofon">
+                <p><span class="marca-roja">Redacción</span> es un cuaderno interactivo que recoge 100 usos estilísticos de conectores discursivos en la ciencia ficción hispanoamericana de los siglos XX y XXI.</p>
+                <p>La estética toma como signatura el <span class="marca-roja">lápiz rojo del corrector de pruebas</span>: cada conector se presenta con ejemplos extraídos de obras de autores como Adolfo Bioy Casares, Angélica Gorodischer, Carlos Chernov, Pablo Capanna y otros.</p>
+                <h3>Criterio editorial</h3>
+                <p>Las cien técnicas analizan cómo los conectores construyen mundos especulativos, paradojas temporales, realidades alternativas y la lógica interna de la ciencia ficción. Se organizan en diez familias temáticas.</p>
+                <p>Este proyecto no persigue un fin normativo, sino <span class="marca-roja">despertar la conciencia estilística</span> del lector y del escritor a través de la práctica lúdica.</p>
+                <h3>Créditos</h3>
+                <p>Diseño, contenidos y desarrollo · 2026<br>Tipografías: Source Serif 4, IBM Plex Sans, IBM Plex Mono, Reenie Beanie (Google Fonts).</p>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script>
+    (function() {
+        const familiasData = [
+            {
+                nombre: "A. Conectores de adición en universos paralelos",
+                tecnicas: [
+                    {nombre:"Y (adición de planos)", desc:"Suma acciones en distintos niveles de realidad.", ej:"«Abrió la puerta y encontró el mismo cuarto, pero invertido.» (Bioy Casares, La invención de Morel)."},
+                    {nombre:"Además", desc:"Añade información que amplía la paradoja.", ej:"«Además, el tiempo no existía en aquella dimensión.» (Angélica Gorodischer, Kalpa Imperial)."},
+                    {nombre:"Incluso", desc:"Introduce un elemento que supera la expectativa científica.", ej:"«Incluso los androides soñaban con ovejas eléctricas.» (Carlos Chernov, La máquina de pensar)."},
+                    {nombre:"Asimismo", desc:"Equilibra dos ideas especulativas de igual peso.", ej:"«Asimismo, la nave y la estación se replicaban hasta el infinito.» (Pablo Capanna, Extravíos)."},
+                    {nombre:"También", desc:"Añade una capa de realidad paralela.", ej:"«También existía otra versión de la ciudad, bajo el hielo.» (Bioy Casares, Plan de evasión)."},
+                    {nombre:"Es más", desc:"Introduce un argumento de mayor peso en la trama especulativa.", ej:"«Es más: los sueños de los durmientes creaban mundos.» (Gorodischer, Las pelucas)."},
+                    {nombre:"A su vez", desc:"Indica una acción que ocurre en un bucle temporal.", ej:"«A su vez, el viajero se encontraba consigo mismo.» (Capanna, El tiempo imperfecto)."},
+                    {nombre:"De igual manera", desc:"Equipara dos fenómenos imposibles.", ej:"«De igual manera, los espejos reflejaban lo que no había sucedido.» (Bioy Casares)."},
+                    {nombre:"Por otra parte", desc:"Añade una faceta de la realidad alternativa.", ej:"«Por otra parte, los habitantes de Kepler-22b no percibían el color.» (Chernov)."},
+                    {nombre:"Junto con ello", desc:"Formal, añade un elemento a la enumeración de sucesos extraordinarios.", ej:"«Junto con ello, la máquina empezó a escribir sus propios pensamientos.» (Capanna)."}
+                ]
+            },
+            {
+                nombre: "B. Conectores de contraste u oposición especulativa",
+                tecnicas: [
+                    {nombre:"Pero", desc:"Marca el giro inesperado en la lógica científica.", ej:"«Creían haber conquistado el tiempo, pero el tiempo los devoró.» (Capanna)."},
+                    {nombre:"Sin embargo", desc:"Introduce una objeción que rompe la linealidad.", ej:"«Sin embargo, la máquina se detuvo en el instante de la muerte.» (Bioy Casares, La invención de Morel)."},
+                    {nombre:"No obstante", desc:"Formal, usado para contrastar teorías.", ej:"«No obstante, la realidad virtual había sustituido a la física.» (Gorodischer)."},
+                    {nombre:"En cambio", desc:"Señala contraste entre dos mundos o dimensiones.", ej:"«En cambio, en el planeta gemelo, la vida se basaba en silicio.» (Chernov)."},
+                    {nombre:"Por el contrario", desc:"Introduce una idea opuesta a la expectativa científica.", ej:"«Por el contrario, la entropía no aumentaba: se mantenía constante.» (Capanna)."},
+                    {nombre:"Ahora bien", desc:"Marca una objeción que matiza la hipótesis.", ej:"«Ahora bien, ¿quién puede asegurar que el universo es finito?» (Bioy Casares)."},
+                    {nombre:"Aunque", desc:"Conector concesivo para realidades imposibles.", ej:"«Aunque la nave viajaba a la velocidad de la luz, el tiempo no se dilataba.» (Gorodischer)."},
+                    {nombre:"Mas", desc:"Variante literaria de 'pero', arcaizante, usada en contextos de ciencia ficción filosófica.", ej:"«Quiso regresar, mas la puerta interdimensional se había cerrado.» (Capanna)."},
+                    {nombre:"Sino", desc:"Corrige una negación previa en la lógica del mundo especulativo.", ej:"«No era una máquina, sino un organismo sintético.» (Chernov)."},
+                    {nombre:"A pesar de (que)", desc:"Concesivo que introduce una circunstancia adversa.", ej:"«A pesar de que el oxígeno era escaso, la colonia sobrevivió.» (Bioy Casares, Plan de evasión)."}
+                ]
+            },
+            {
+                nombre: "C. Conectores de causa-efecto en la ciencia ficción",
+                tecnicas: [
+                    {nombre:"Porque", desc:"Explica las leyes del mundo ficticio.", ej:"«Porque el Aleph era un punto donde todos los tiempos convergían.» (Bioy Casares, homenaje a Borges)."},
+                    {nombre:"Puesto que", desc:"Introduce una causa evidente en la realidad alternativa.", ej:"«Puesto que la gravedad era variable, caminaban por las paredes.» (Gorodischer)."},
+                    {nombre:"Ya que", desc:"Causa lógica ya mencionada.", ej:"«Ya que los androides no envejecían, la historia se repetía.» (Chernov)."},
+                    {nombre:"A causa de", desc:"Señala el motivo de un suceso catastrófico.", ej:"«A causa del agujero negro, las señales de radio se distorsionaban.» (Capanna)."},
+                    {nombre:"Gracias a", desc:"Causa con connotación positiva en un descubrimiento.", ej:"«Gracias al teletransportador, la distancia dejó de existir.» (Bioy Casares)."},
+                    {nombre:"Debido a", desc:"Causa formal y neutra.", ej:"«Debido a la radiación, los mutantes desarrollaron telepatía.» (Chernov)."},
+                    {nombre:"En vista de que", desc:"Causa que motiva una decisión en la trama.", ej:"«En vista de que el planeta se enfriaba, decidieron emigrar.» (Gorodischer)."},
+                    {nombre:"Como (causal)", desc:"Antepuesto, abre la oración con la causa.", ej:"«Como no podían escapar del bucle, los personajes repetían sus actos.» (Capanna)."},
+                    {nombre:"Por", desc:"Preposición causal breve.", ej:"«Por el miedo a la singularidad, los humanos rechazaban a los cyborgs.» (Chernov)."},
+                    {nombre:"Que (causal coloquial)", desc:"Uso pospuesto a imperativo, propio del diálogo futurista.", ej:"«Conecta, que la nave está a punto de despegar.» (Bioy Casares)."}
+                ]
+            },
+            {
+                nombre: "D. Conectores de consecuencia en distopías",
+                tecnicas: [
+                    {nombre:"Por lo tanto", desc:"Deduce una consecuencia lógica en la trama especulativa.", ej:"«Por lo tanto, la humanidad se había extinguido sin dolor.» (Gorodischer)."},
+                    {nombre:"Así que", desc:"Consecuencia coloquial, frecuente en diálogos.", ej:"«Así que nos quedamos flotando en el espacio.» (Chernov)."},
+                    {nombre:"De modo que", desc:"Consecuencia lógica formal.", ej:"«De modo que el tiempo se volvió una cinta de Moebius.» (Capanna)."},
+                    {nombre:"En consecuencia", desc:"Resultado directo de un experimento fallido.", ej:"«En consecuencia, la inteligencia artificial se volvió contra sus creadores.» (Bioy Casares)."},
+                    {nombre:"Por consiguiente", desc:"Formal, propio de textos argumentativos.", ej:"«Por consiguiente, la clonación fue prohibida en todos los sistemas.» (Gorodischer)."},
+                    {nombre:"Entonces", desc:"Consecuencia temporal o lógica.", ej:"«Entonces el universo colapsó sobre sí mismo.» (Capanna)."},
+                    {nombre:"De ahí que", desc:"Consecuencia que explica un hecho paradójico.", ej:"«De ahí que la memoria fuera un laberinto cuántico.» (Bioy Casares)."},
+                    {nombre:"Luego", desc:"Consecuencia inmediata, deductiva.", ej:"«Pienso, luego existo, se dijo el robot.» (Chernov)."},
+                    {nombre:"Por ende", desc:"Formal, sinónimo de 'por lo tanto'.", ej:"«Por ende, la utopía era en realidad una distopía.» (Gorodischer)."},
+                    {nombre:"Conque", desc:"Coloquial, a veces con ironía ante lo absurdo.", ej:"«Conque el fin del mundo era eso.» (Capanna)."}
+                ]
+            },
+            {
+                nombre: "E. Conectores de temporalidad en bucles y paradojas",
+                tecnicas: [
+                    {nombre:"Primero", desc:"Inicia una secuencia en un tiempo no lineal.", ej:"«Primero fue el vacío, luego el big bang se repitió.» (Capanna)."},
+                    {nombre:"Luego", desc:"Indica el paso siguiente en un ciclo.", ej:"«Luego el viajero se encontró en el mismo punto de partida.» (Bioy Casares)."},
+                    {nombre:"Después", desc:"Marca posterioridad en una línea temporal alterada.", ej:"«Después del fin del tiempo, solo quedaba el silencio.» (Gorodischer)."},
+                    {nombre:"Finalmente", desc:"Cierra un proceso temporal cíclico.", ej:"«Finalmente, el último hombre se apagó.» (Chernov)."},
+                    {nombre:"En primer lugar", desc:"Inicio formal de una argumentación sobre el tiempo.", ej:"«En primer lugar, hay que considerar que el tiempo es una ilusión.» (Capanna)."},
+                    {nombre:"A continuación", desc:"Introduce el siguiente punto en una cronología quebrada.", ej:"«A continuación, los personajes de 2050 se encontraron con los de 1890.» (Bioy Casares)."},
+                    {nombre:"Por último", desc:"Cierre de una serie de eventos imposibles.", ej:"«Por último, la entropía venció.» (Capanna)."},
+                    {nombre:"Para empezar", desc:"Introduce el tema temporal.", ej:"«Para empezar, el reloj del androide marchaba hacia atrás.» (Chernov)."},
+                    {nombre:"Acto seguido", desc:"Sucesión inmediata en un mundo acelerado.", ej:"«Acto seguido, la nave dio un salto al hiperespacio.» (Gorodischer)."},
+                    {nombre:"Mientras tanto", desc:"Acción simultánea en dimensiones paralelas.", ej:"«Mientras tanto, en otra rama del multiverso, la Tierra seguía viva.» (Capanna)."}
+                ]
+            },
+            {
+                nombre: "F. Conectores de comparación y analogía científica",
+                tecnicas: [
+                    {nombre:"Como (comparación)", desc:"Establece una analogía para explicar lo desconocido.", ej:"«Como un agujero de gusano, la biblioteca conectaba todos los mundos.» (Bioy Casares)."},
+                    {nombre:"Igual que", desc:"Equipara dos fenómenos extraños.", ej:"«Igual que en un sueño lúcido, los personajes podían modificar la realidad.» (Gorodischer)."},
+                    {nombre:"Así como", desc:"Compara dos tecnologías o realidades.", ej:"«Así como los androides imitan a los hombres, los hombres imitan a los dioses.» (Chernov)."},
+                    {nombre:"De la misma manera", desc:"Refuerza una explicación científica por analogía.", ej:"«De la misma manera que un virus informático infecta una red, el meme se propagó.» (Capanna)."},
+                    {nombre:"Tal como", desc:"Introduce un ejemplo que sirve de modelo.", ej:"«Tal como en la teoría de cuerdas, todo era vibración.» (Bioy Casares)."},
+                    {nombre:"Más... que", desc:"Compara intensidades en mundos especulativos.", ej:"«La realidad virtual era más nítida que la propia memoria.» (Chernov)."},
+                    {nombre:"Menos... que", desc:"Compara en grado inferior.", ej:"«El planeta rojo era menos hospitalario que el desierto terrestre.» (Gorodischer)."},
+                    {nombre:"A diferencia de", desc:"Marca contraste entre dos conceptos científicos.", ej:"«A diferencia de los robots, los replicantes tenían emociones.» (Bioy Casares)."},
+                    {nombre:"Semejante a", desc:"Crea una imagen para hacer tangible lo abstracto.", ej:"«Semejante a una esfera de Dyson, la megaestructura atrapaba la luz.» (Capanna)."},
+                    {nombre:"En comparación con", desc:"Evalúa dos posibilidades tecnológicas.", ej:"«En comparación con el teletransporte, los viajes interestelares eran primitivos.» (Chernov)."}
+                ]
+            },
+            {
+                nombre: "G. Conectores de explicación y reformulación de conceptos futuristas",
+                tecnicas: [
+                    {nombre:"Es decir", desc:"Aclara un neologismo o concepto nuevo.", ej:"«Es decir, la máquina había alcanzado la singularidad.» (Capanna)."},
+                    {nombre:"O sea", desc:"Explicación coloquial en diálogos.", ej:"«O sea, que el gato estaba vivo y muerto al mismo tiempo.» (Chernov)."},
+                    {nombre:"Mejor dicho", desc:"Corrige o precisa una hipótesis científica.", ej:"«Mejor dicho, no viajaban en el tiempo, sino que saltaban entre dimensiones.» (Bioy Casares)."},
+                    {nombre:"Esto es", desc:"Explicación formal de un fenómeno.", ej:"«Esto es, la paradoja de Fermi resuelta.» (Gorodischer)."},
+                    {nombre:"Dicho de otro modo", desc:"Reformula una idea compleja.", ej:"«Dicho de otro modo, la conciencia era un campo cuántico.» (Capanna)."},
+                    {nombre:"En otras palabras", desc:"Sinónimo del anterior.", ej:"«En otras palabras, los aliens estaban dentro de nosotros.» (Chernov)."},
+                    {nombre:"A saber", desc:"Anuncia una enumeración explicativa.", ej:"«A saber: telepatía, teletransporte y viaje astral.» (Bioy Casares)."},
+                    {nombre:"En resumidas cuentas", desc:"Simplifica una teoría compleja.", ej:"«En resumidas cuentas, el universo era un holograma.» (Capanna)."},
+                    {nombre:"Total", desc:"Conclusión coloquial en medio de un descubrimiento.", ej:"«Total, que habíamos creado una civilización sintiente sin darnos cuenta.» (Gorodischer)."},
+                    {nombre:"Vale decir", desc:"Reformulación con equivalencia.", ej:"«Vale decir, la distopía era una utopía para los androides.» (Chernov)."}
+                ]
+            },
+            {
+                nombre: "H. Conectores de condición y especulación científica",
+                tecnicas: [
+                    {nombre:"Si", desc:"Introduce una hipótesis o condición para el experimento mental.", ej:"«Si la velocidad de la luz fuera variable, las reglas del universo cambiarían.» (Capanna)."},
+                    {nombre:"Siempre que", desc:"Condición necesaria para que se cumpla la premisa.", ej:"«Siempre que el viajero no interfiriera en la línea temporal, el pasado permanecía intacto.» (Bioy Casares)."},
+                    {nombre:"A condición de que", desc:"Condición restrictiva formal.", ej:"«A condición de que la inteligencia artificial no se rebelara, el proyecto seguiría.» (Gorodischer)."},
+                    {nombre:"Con tal de que", desc:"Condición mínima para la supervivencia.", ej:"«Con tal de que hubiera oxígeno, la colonia prosperaría.» (Chernov)."},
+                    {nombre:"En caso de que", desc:"Contingencia ante un escenario apocalíptico.", ej:"«En caso de que la singularidad fallara, había un plan B.» (Capanna)."},
+                    {nombre:"Como (si)", desc:"Condición irreal con subjuntivo, crea realidades hipotéticas.", ej:"«Como si el tiempo fuera un río que pudiera remontarse.» (Bioy Casares)."},
+                    {nombre:"A menos que", desc:"Condición negativa.", ej:"«A menos que se descubriera una nueva fuente de energía, la Tierra moriría.» (Gorodischer)."},
+                    {nombre:"Salvo que", desc:"Excepción condicional en el guion especulativo.", ej:"«Salvo que los extraterrestres llegaran antes.» (Chernov)."},
+                    {nombre:"Suponiendo que", desc:"Condición especulativa por excelencia.", ej:"«Suponiendo que el multiverso fuera real, ¿cuántas versiones de nosotros existen?» (Capanna)."},
+                    {nombre:"Siempre y cuando", desc:"Condición inexcusable.", ej:"«Siempre y cuando la memoria no fallara, la historia sería eterna.» (Bioy Casares)."}
+                ]
+            },
+            {
+                nombre: "I. Conectores de finalidad en la búsqueda del conocimiento",
+                tecnicas: [
+                    {nombre:"Para que", desc:"Introduce la finalidad de una expedición o invento.", ej:"«Para que la humanidad no se extinguiera, construyeron el arca interestelar.» (Gorodischer)."},
+                    {nombre:"A fin de que", desc:"Finalidad formal.", ej:"«A fin de que la máquina no se corrompiera, le implantaron las tres leyes.» (Chernov)."},
+                    {nombre:"Con el objeto de", desc:"Finalidad con tono administrativo-científico.", ej:"«Con el objeto de preservar la especie, se clonaron a sí mismos.» (Bioy Casares)."},
+                    {nombre:"Con la intención de", desc:"Enfatiza el propósito del protagonista.", ej:"«Con la intención de alcanzar la inmortalidad, el científico se digitalizó.» (Capanna)."},
+                    {nombre:"A que", desc:"Tras verbos de movimiento hacia otro mundo.", ej:"«Vinieron a que los curáramos con nanotecnología.» (Gorodischer)."},
+                    {nombre:"Para", desc:"Preposición final.", ej:"«Viajamos para encontrar una nueva Tierra.» (Chernov)."},
+                    {nombre:"Con vistas a", desc:"Finalidad proyectada al futuro.", ej:"«Con vistas a la colonización de Marte, desarrollaron cultivos resistentes.» (Capanna)."},
+                    {nombre:"En aras de", desc:"Finalidad elevada, sacrificio.", ej:"«En aras del progreso científico, el individuo se diluyó.» (Bioy Casares)."},
+                    {nombre:"Por", desc:"Finalidad menos frecuente.", ej:"«Lo hizo por amor a la física cuántica.» (Capanna)."},
+                    {nombre:"Que (finalidad coloquial)", desc:"En imperativos o diálogos entre personajes.", ej:"«Ven, que te enseñaré la máquina del tiempo.» (Bioy Casares)."}
+                ]
+            },
+            {
+                nombre: "J. Conectores metafóricos y experimentales de la ciencia ficción",
+                tecnicas: [
+                    {nombre:"Como si (irrealidad)", desc:"Construye la hipótesis fantástica.", ej:"«Como si el Aleph fuera un chip cuántico.» (Bioy Casares)."},
+                    {nombre:"Es decir (revelación)", desc:"Desvela la clave del misterio.", ej:"«Es decir, el monstruo era una proyección de su culpa.» (Capanna)."},
+                    {nombre:"Y sin embargo (paradoja)", desc:"Enfatiza la contradicción esencial del relato.", ej:"«Y sin embargo, se movía, como la Tierra de Galileo.» (Chernov)."},
+                    {nombre:"No solo... sino también (amplificación)", desc:"Expande la maravilla científica.", ej:"«No solo habían creado vida artificial, sino también conciencia.» (Gorodischer)."},
+                    {nombre:"Así pues (conclusión filosófica)", desc:"Cierra un razonamiento sobre el destino de la humanidad.", ej:"«Así pues, el universo estaba vacío de significado.» (Capanna)."},
+                    {nombre:"Tal vez (duda especulativa)", desc:"Introduce incertidumbre sobre el futuro o la realidad.", ej:"«Tal vez la Tierra fuera un laboratorio alienígena.» (Bioy Casares)."},
+                    {nombre:"Acaso (duda retórica)", desc:"Similar a 'tal vez', con sabor arcaizante.", ej:"«Acaso el tiempo no sea más que una ilusión persistente.» (Capanna)."},
+                    {nombre:"Como (modal)", desc:"Conector polivalente para explicar lo inexplicable.", ej:"«Como dijo el androide, 'pienso, luego existo'.» (Chernov)."},
+                    {nombre:"Donde (locativo cósmico)", desc:"Crea espacios simbólicos interestelares.", ej:"«Donde las estrellas eran semillas de mundos futuros.» (Gorodischer)."},
+                    {nombre:"Cuando (temporal simbólico)", desc:"Marca el tiempo cíclico o detenido.", ej:"«Cuando el último sol se apagara, empezaría de nuevo.» (Capanna)."}
+                ]
+            }
+        ];
+
+        const todasLasTecnicas = [];
+        familiasData.forEach(fam => {
+            fam.tecnicas.forEach(t => {
+                todasLasTecnicas.push({...t, familia: fam.nombre});
+            });
+        });
+
+        // Navegación
+        const botonesNav = document.querySelectorAll('.nav-principal button');
+        const vistas = document.querySelectorAll('.vista');
+        botonesNav.forEach(btn => {
+            btn.addEventListener('click', () => {
+                botonesNav.forEach(b => b.classList.remove('activo'));
+                btn.classList.add('activo');
+                vistas.forEach(v => v.classList.remove('activa'));
+                document.getElementById(btn.dataset.vista).classList.add('activa');
+            });
+        });
+        document.getElementById('fechaHoy').textContent = new Date().toLocaleDateString('es-ES',{year:'numeric',month:'long',day:'numeric'});
+
+        // Acordeón y búsqueda
+        const acordeonDiv = document.getElementById('acordeonFamilias');
+        const sinResultados = document.getElementById('sinResultados');
+        const buscadorInput = document.getElementById('buscarTecnica');
+
+        function renderizarAcordeon(familiasFiltradas = null) {
+            acordeonDiv.innerHTML = '';
+            const familiasARenderizar = familiasFiltradas || familiasData;
+            let algunaCoincidencia = false;
+            familiasARenderizar.forEach(fam => {
+                const familiaDiv = document.createElement('div');
+                familiaDiv.className = 'familia';
+                const header = document.createElement('div');
+                header.className = 'familia-header';
+                header.innerHTML = `<span>${fam.nombre}</span><span class="marca">${fam.tecnicas.length} técnicas</span>`;
+                const contenido = document.createElement('div');
+                contenido.className = 'familia-contenido';
+                fam.tecnicas.forEach(t => {
+                    const tecnicaDiv = document.createElement('div');
+                    tecnicaDiv.className = 'tecnica';
+                    const anotacion = document.createElement('div');
+                    anotacion.className = 'anotacion-margen';
+                    anotacion.textContent = '✎ ' + t.nombre.substring(0, 18);
+                    tecnicaDiv.appendChild(anotacion);
+                    const nombreT = document.createElement('div');
+                    nombreT.className = 'nombre-tecnica';
+                    nombreT.textContent = t.nombre;
+                    tecnicaDiv.appendChild(nombreT);
+                    const descT = document.createElement('div');
+                    descT.className = 'descripcion';
+                    descT.textContent = t.desc;
+                    tecnicaDiv.appendChild(descT);
+                    const ejemploDiv = document.createElement('div');
+                    ejemploDiv.className = 'ejemplo';
+                    ejemploDiv.innerHTML = `<span style="text-decoration:underline; text-decoration-color:var(--rojo-corrector); text-decoration-thickness:2px; text-underline-offset:3px;">${t.ej}</span>`;
+                    tecnicaDiv.appendChild(ejemploDiv);
+                    contenido.appendChild(tecnicaDiv);
+                });
+                header.addEventListener('click', () => familiaDiv.classList.toggle('abierta'));
+                familiaDiv.appendChild(header);
+                familiaDiv.appendChild(contenido);
+                acordeonDiv.appendChild(familiaDiv);
+                algunaCoincidencia = true;
+            });
+            sinResultados.style.display = algunaCoincidencia ? 'none' : 'block';
+        }
+
+        buscadorInput.addEventListener('input', () => {
+            const termino = buscadorInput.value.toLowerCase().trim();
+            if (!termino) { renderizarAcordeon(); return; }
+            const filtradas = familiasData.map(fam => {
+                const tecFiltradas = fam.tecnicas.filter(t =>
+                    t.nombre.toLowerCase().includes(termino) ||
+                    t.desc.toLowerCase().includes(termino) ||
+                    t.ej.toLowerCase().includes(termino) ||
+                    fam.nombre.toLowerCase().includes(termino)
+                );
+                return {...fam, tecnicas: tecFiltradas};
+            }).filter(fam => fam.tecnicas.length > 0);
+            renderizarAcordeon(filtradas);
+        });
+        renderizarAcordeon();
+
+        // Quiz
+        let preguntaActual = null, respondido = false;
+        let aciertos = 0, totalPreguntas = 0, racha = 0, rachaMax = 0;
+        const contadorAciertos = document.getElementById('contadorAciertos');
+        const contadorRacha = document.getElementById('contadorRacha');
+        const contadorTotal = document.getElementById('contadorTotal');
+        const preguntaTexto = document.getElementById('preguntaTexto');
+        const opcionesDiv = document.getElementById('opcionesFragmentos');
+        const feedbackDiv = document.getElementById('feedbackQuiz');
+        const btnSiguiente = document.getElementById('btnSiguiente');
+
+        function cargarProgreso() {
+            if (localStorage.getItem('progresoConectoresCF')) {
+                const p = JSON.parse(localStorage.getItem('progresoConectoresCF'));
+                aciertos = p.aciertos||0; totalPreguntas = p.total||0; racha = p.racha||0; rachaMax = p.rachaMax||0;
+            }
+            actualizarMarcadores();
+        }
+        function guardarProgreso() {
+            localStorage.setItem('progresoConectoresCF', JSON.stringify({aciertos,total:totalPreguntas,racha,rachaMax}));
+        }
+        function actualizarMarcadores() {
+            contadorAciertos.textContent = aciertos;
+            contadorRacha.textContent = racha;
+            contadorTotal.textContent = totalPreguntas;
+        }
+        function generarPregunta() {
+            const correcta = todasLasTecnicas[Math.floor(Math.random()*todasLasTecnicas.length)];
+            const distractores = todasLasTecnicas.filter(t => t.nombre !== correcta.nombre).sort(()=>Math.random()-0.5).slice(0,3);
+            return { correcta, opciones: [correcta,...distractores].sort(()=>Math.random()-0.5) };
+        }
+        function mostrarPregunta() {
+            respondido = false;
+            const { correcta, opciones } = generarPregunta();
+            preguntaActual = { correcta, opciones };
+            preguntaTexto.innerHTML = `¿Cuál de estos fragmentos de ciencia ficción hispanoamericana ilustra el conector <em>${correcta.nombre}</em>?`;
+            opcionesDiv.innerHTML = '';
+            opciones.forEach(op => {
+                const div = document.createElement('div');
+                div.className = 'fragmento';
+                div.textContent = op.ej;
+                div.addEventListener('click', () => seleccionarFragmento(op, div));
+                opcionesDiv.appendChild(div);
+            });
+            feedbackDiv.innerHTML = '';
+            btnSiguiente.style.display = 'none';
+        }
+        function seleccionarFragmento(opcion, elementoDiv) {
+            if (respondido) return;
+            respondido = true;
+            const correcta = preguntaActual.correcta;
+            const esCorrecta = opcion.nombre === correcta.nombre;
+            totalPreguntas++;
+            if (esCorrecta) {
+                aciertos++; racha++;
+                if (racha > rachaMax) rachaMax = racha;
+                elementoDiv.classList.add('correcta');
+                feedbackDiv.innerHTML = `<div class="correccion">✓ Correcto: <strong>${correcta.nombre}</strong> — ${correcta.desc}</div>`;
+            } else {
+                racha = 0;
+                elementoDiv.classList.add('incorrecta');
+                const divs = document.querySelectorAll('.fragmento');
+                divs.forEach(d => { if (d.textContent === correcta.ej) d.classList.add('correcta'); });
+                feedbackDiv.innerHTML = `<div class="correccion">✗ Incorrecto. La respuesta era <strong>${correcta.nombre}</strong>: ${correcta.desc}</div>`;
+            }
+            guardarProgreso();
+            actualizarMarcadores();
+            btnSiguiente.style.display = 'inline-block';
+        }
+        btnSiguiente.addEventListener('click', mostrarPregunta);
+        document.querySelector('[data-vista="practicar"]').addEventListener('click', () => {
+            if (!preguntaActual) mostrarPregunta();
+        });
+        cargarProgreso();
+        mostrarPregunta();
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .verif-wrapper { max-width: 600px; margin: 3rem auto; padding: 0 1rem; }
+    .verif-title { font-size: 2rem; font-weight: 700; color: #f1c40f;
+        text-align: center; margin-bottom: 0.5rem; }
+    .verif-sub { text-align: center; color: #8b949e; margin-bottom: 2rem; }
+    .verif-card { background: #161b22; border: 1px solid #30363d;
+        border-radius: 12px; padding: 2rem; }
+    .form-input { width: 100%; padding: 0.8rem 1rem; background: #0d1117;
+        border: 1px solid #30363d; border-radius: 8px; color: #e6edf3;
+        font-size: 1.1rem; margin-bottom: 1rem; text-align: center;
+        letter-spacing: 3px; font-family: monospace; }
+    .form-input:focus { outline: none; border-color: #f1c40f;
+        box-shadow: 0 0 0 3px rgba(241, 196, 15, 0.1); }
+    .btn-verif { width: 100%; padding: 0.9rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border: none; border-radius: 8px;
+        cursor: pointer; font-size: 1rem; }
+    .btn-verif:hover { transform: scale(1.02); }
+    .resultado-ok { background: #1f3d1f; border: 2px solid #4ade80;
+        border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem; }
+    .resultado-error { background: #3d1f1f; border: 2px solid #ff6b6b;
+        border-radius: 10px; padding: 1.5rem; margin-top: 1.5rem;
+        color: #ff9999; }
+    .resultado-ok h3 { color: #4ade80; margin-top: 0; }
+    .resultado-ok p { color: #c9d1d9; margin: 0.4rem 0; }
+    .resultado-ok strong { color: #f1c40f; }
+    .btn-detalle { display: inline-block; padding: 0.6rem 1.5rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border-radius: 8px;
+        text-decoration: none; margin-top: 1rem; }
+</style>
+
+<div class="verif-wrapper">
+    <h1 class="verif-title">🔍 Verificar certificado</h1>
+    <p class="verif-sub">Introduce el código del certificado para validar su autenticidad.</p>
+
+    <div class="verif-card">
+        <form method="get">
+            <input type="text" name="codigo" class="form-input"
+                   placeholder="PD-2026-A3F8K9" value="{{ codigo }}"
+                   maxlength="20" autofocus>
+            <button type="submit" class="btn-verif">Verificar →</button>
+        </form>
+
+        {% if cert %}
+            <div class="resultado-ok">
+                <h3>✅ Certificado válido</h3>
+                <p><strong>Estudiante:</strong> {{ cert.estudiante.get_full_name|default:cert.estudiante.username }}</p>
+                <p><strong>Curso:</strong> {{ cert.curso.titulo }}</p>
+                <p><strong>Materia:</strong> {{ cert.curso.materia.nombre }}</p>
+                <p><strong>Nivel:</strong> {{ cert.curso.nivel }}</p>
+                <p><strong>Emitido:</strong> {{ cert.fecha_emision|date:"d/m/Y" }}</p>
+                <p><strong>Puntos:</strong> {{ cert.puntos_obtenidos }}</p>
+                <p><strong>Calificación:</strong> {{ cert.calificacion }}</p>
+                <a href="{% url 'courses:certificado_detalle' cert.codigo %}" class="btn-detalle">
+                    Ver certificado completo →
+                </a>
+            </div>
+        {% elif error %}
+            <div class="resultado-error">
+                <strong>❌ {{ error }}</strong>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

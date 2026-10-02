@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>⚡ Flota Eléctrica · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.6rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">⚡ FLOTA ELÉCTRICA<small>100 TÉCNICAS · INSTALACIONES</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="norma" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Norma <span class="badge-personaje bg-dorado">RETIE</span></a>
+        <a class="nav-link" data-section="segura" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Segura <span class="badge-personaje bg-azul">Seguridad</span></a>
+        <a class="nav-link" data-section="tierra" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Tierra <span class="badge-personaje bg-verde">Protecciones</span></a>
+        <a class="nav-link" data-section="circu" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Circu <span class="badge-personaje bg-purpura">Circuitos</span></a>
+        <a class="nav-link" data-section="energia" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Energía <span class="badge-personaje bg-rojo">Energía</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">⚡</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Conceptos básicos de instalaciones eléctricas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Instalaciones eléctricas en Colombia</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área de las instalaciones eléctricas:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Norma</strong> – RETIE: marco legal, libros, certificación, obligatoriedad.</li>
+                    <li><strong style="color:var(--neon-azul);">Segura</strong> – Seguridad eléctrica: riesgos, EPP, distancias, protección.</li>
+                    <li><strong style="color:var(--neon-verde);">Tierra</strong> – Puesta a tierra y protecciones: sistema de tierras, protecciones contra sobrecargas.</li>
+                    <li><strong style="color:var(--neon-purpura);">Circu</strong> – Circuitos y componentes: conductores, canalizaciones, tableros, interruptores.</li>
+                    <li><strong style="color:var(--neon-rojo);">Energía</strong> – Generación y uso eficiente: medición, eficiencia energética, instalaciones especiales.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-norma" class="section-content" style="display:none;"></div>
+        <div id="section-segura" class="section-content" style="display:none;"></div>
+        <div id="section-tierra" class="section-content" style="display:none;"></div>
+        <div id="section-circu" class="section-content" style="display:none;"></div>
+        <div id="section-energia" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    norma: {
+        nombre: "Norma", color: "dorado", icono: "bi-robot",
+        especialidad: "RETIE: marco legal, libros, certificación, obligatoriedad",
+        tecnicas: [
+            { titulo: "¿Qué es el RETIE?", teoria: "El Reglamento Técnico de Instalaciones Eléctricas (RETIE) es el marco regulatorio para la industria eléctrica en Colombia, establecido por el Ministerio de Minas y Energía mediante la Resolución 40117 del 2 de abril de 2024 [citation:4][citation:5]. Cubre equipos y procesos relacionados con generación, transmisión, transformación, distribución y uso final de energía eléctrica [citation:5].", ejemplo: "El RETIE aplica a sistemas desde 25 voltios hasta los de gran escala [citation:2][citation:4].", ejercicio: "¿Qué significan las siglas RETIE y qué organismo lo expide?", reto: "Investiga la fecha de la última versión del RETIE." },
+            { titulo: "Objetivos del RETIE", teoria: "El RETIE busca garantizar la seguridad y calidad de las instalaciones eléctricas, proteger la integridad de personas, animales y plantas, conservar el medio ambiente y prevenir prácticas que induzcan a error al usuario [citation:2][citation:4].", ejemplo: "Protege contra sobrecargas, cortocircuitos y sobretemperaturas en equipos e instalaciones [citation:4].", ejercicio: "Enumera 3 objetivos del RETIE.", reto: "Explica por qué el RETIE protege el medio ambiente." },
+            { titulo: "Libros del RETIE", teoria: "El RETIE se divide en 4 libros: Libro 1 (Disposiciones Generales), Libro 2 (Productos objeto del RETIE), Libro 3 (Instalaciones objeto del RETIE) y Libro 4 (Evaluación de la conformidad) [citation:4].", ejemplo: "El Libro 3 define los requerimientos generales de las instalaciones eléctricas [citation:1].", ejercicio: "Escribe los nombres de los 4 libros del RETIE.", reto: "Explica qué regula el Libro 4." },
+            { titulo: "Obligatoriedad del RETIE", teoria: "El RETIE es de aplicación obligatoria para todas las nuevas instalaciones eléctricas, así como para ampliaciones o remodelaciones. Aplica desde sistemas de 25 voltios hasta los más altos [citation:2][citation:4].", ejemplo: "Una vivienda nueva debe cumplir con RETIE para ser conectada a la red [citation:2].", ejercicio: "¿A qué tipo de instalaciones aplica el RETIE?", reto: "¿Qué pasa si una instalación no cumple con RETIE?" },
+            { titulo: "Certificación RETIE", teoria: "La certificación RETIE es obligatoria para productos eléctricos antes de su importación, comercialización o distribución. Es emitida por un organismo de inspección acreditado [citation:2][citation:5].", ejemplo: "Un inversor solar debe tener certificado RETIE para ser vendido en Colombia [citation:4].", ejercicio: "¿Quién emite el certificado RETIE?", reto: "¿Cuánto tiempo toma el proceso de certificación?" },
+            { titulo: "Libro 1: Disposiciones Generales", teoria: "El Libro 1 del RETIE contiene el objeto, definiciones, abreviaturas, sistema de unidades, señalización, y el Sistema de Gestión de Seguridad y Salud en el Trabajo (SG-SST) [citation:1].", ejemplo: "Define los requisitos técnicos principales y el análisis de riesgos de origen eléctrico [citation:1].", ejercicio: "Menciona 3 temas del Libro 1.", reto: "Explica la importancia del SG-SST en el RETIE." },
+            { titulo: "Libro 3: Instalaciones objeto del RETIE", teoria: "El Libro 3 define el campo de aplicación, requerimientos generales, competencias del personal, diseño, espacios de trabajo, distancias de seguridad, sistema de puesta a tierra y protección contra rayos [citation:1].", ejemplo: "Establece las distancias de seguridad que deben respetarse en instalaciones eléctricas [citation:1].", ejercicio: "¿Qué temas trata el Libro 3?", reto: "Explica la competencia del personal según el RETIE." },
+            { titulo: "Actores responsables del RETIE", teoria: "El cumplimiento del RETIE es responsabilidad compartida de: fabricantes, distribuidores, diseñadores, constructores, prestadores del servicio, interventores, certificadores y propietarios [citation:2][citation:4].", ejemplo: "El diseñador debe asegurar que el proyecto cumpla RETIE; el constructor debe ejecutarlo correctamente [citation:2].", ejercicio: "Enumera 5 actores responsables del RETIE.", reto: "¿Cuál es la responsabilidad del propietario?" },
+            { titulo: "Resolución 40117 de 2024", teoria: "La Resolución 40117 del 2 de abril de 2024 es la versión más reciente del RETIE, que entró en vigor el 3 de abril de 2024 y sustituye a la Resolución 90708 de 2013 [citation:4][citation:5][citation:6].", ejemplo: "Esta versión amplió la certificación a tecnologías renovables como turbinas eólicas, inversores fotovoltaicos y cargadores de vehículos eléctricos [citation:5][citation:6].", ejercicio: "¿Cuál es la resolución actual del RETIE?", reto: "Investiga qué tecnologías incluyó la nueva versión." },
+            { titulo: "Evaluación de la conformidad", teoria: "El Libro 4 del RETIE establece el procedimiento de evaluación de la conformidad, que incluye la certificación de productos y la inspección de instalaciones [citation:4][citation:6].", ejemplo: "Para obtener la certificación RETIE, el producto debe ser probado por un laboratorio acreditado [citation:5].", ejercicio: "¿Qué es la evaluación de la conformidad?", reto: "¿Quién acredita los laboratorios en Colombia?" },
+            { titulo: "ONAC: Organismo Nacional de Acreditación", teoria: "ONAC es el organismo encargado de acreditar a las entidades que realizan evaluaciones técnicas y pruebas de conformidad con el RETIE [citation:5][citation:6].", ejemplo: "ONAC acredita laboratorios y organismos de certificación para RETIE [citation:5].", ejercicio: "¿Qué significa ONAC?", reto: "¿Por qué es importante la acreditación ONAC?" },
+            { titulo: "Certificación de productos importados", teoria: "Los productos eléctricos importados deben obtener un certificado de conformidad RETIE antes de su comercialización. Deben ser probados por laboratorios acreditados [citation:5].", ejemplo: "Un panel solar importado necesita certificado RETIE homologado [citation:4].", ejercicio: "¿Qué necesitan los productos importados para venderse en Colombia?", reto: "¿Cómo se obtiene la homologación?" },
+            { titulo: "Manual de operación y mantenimiento", teoria: "El nuevo RETIE exige que los constructores entreguen al usuario final un manual de operación y mantenimiento (O&M) de la instalación [citation:6].", ejemplo: "El manual debe incluir protocolos de operación, precauciones de seguridad y reemplazo de equipos [citation:6].", ejercicio: "¿Qué exige el RETIE sobre el manual O&M?", reto: "Diseña la estructura de un manual O&M básico." },
+            { titulo: "Frecuencia de inspección RETIE", teoria: "Las instalaciones eléctricas deben ser revisadas periódicamente: para construcciones hospitalarias cada 5 años, para otras edificaciones cada 10 años [citation:2].", ejemplo: "Un centro médico debe certificar RETIE cada 5 años [citation:2].", ejercicio: "¿Cada cuánto se debe revisar una instalación RETIE?", reto: "¿Por qué los hospitales tienen plazos más cortos?" },
+            { titulo: "Certificación plena", teoria: "La certificación plena es el nivel máximo de cumplimiento, que incluye la declaración de cumplimiento y el dictamen de inspección aprobados [citation:4].", ejemplo: "Una instalación fotovoltaica que inyecta corriente a la red debe tener certificación plena [citation:4].", ejercicio: "¿Qué incluye la certificación plena?", reto: "¿Qué instalaciones requieren certificación plena?" },
+            { titulo: "Certificación de productos fotovoltaicos", teoria: "Los paneles solares deben contar con un certificado homologado RETIE. Los inversores no requieren homologación, pero sí certificados del fabricante [citation:4].", ejemplo: "Un módulo fotovoltaico importado debe tener certificado homologado [citation:4].", ejercicio: "¿Qué productos fotovoltaicos requieren certificación?", reto: "Investiga los requisitos para inversores solares." },
+            { titulo: "RETIE y NTC 2050", teoria: "El RETIE se complementa con la NTC 2050 (Norma Técnica Colombiana para instalaciones eléctricas) y con normas internacionales como IEC, IEEE y NFPA [citation:1][citation:2].", ejemplo: "La NTC 2050 es la versión colombiana de la NFPA 70 [citation:1].", ejercicio: "¿Qué es la NTC 2050?", reto: "¿Qué relación tiene con el RETIE?" },
+            { titulo: "Consecuencias del incumplimiento del RETIE", teoria: "El incumplimiento del RETIE puede resultar en sanciones económicas, desconexión de la red, y pone en riesgo la vida y la integridad de las personas [citation:2][citation:4].", ejemplo: "Un hospital sin sistema de protección contra rayos puede ser sancionado y poner en riesgo vidas [citation:2].", ejercicio: "Enumera 3 consecuencias del incumplimiento del RETIE.", reto: "¿Por qué el RETIE protege la vida?" },
+            { titulo: "RETIE y eficiencia energética", teoria: "El RETIE promueve la eficiencia energética al exigir equipos de alta calidad y durabilidad, y al estandarizar procesos técnicos [citation:2][citation:4].", ejemplo: "Un motor eléctrico certificado RETIE consume menos energía y dura más [citation:2].", ejercicio: "¿Cómo contribuye el RETIE a la eficiencia energética?", reto: "¿Qué equipos son más eficientes bajo RETIE?" },
+            { titulo: "RETIE y sostenibilidad", teoria: "El RETIE contribuye al desarrollo sostenible al garantizar instalaciones seguras, duraderas y eficientes, reduciendo el impacto ambiental y los accidentes eléctricos [citation:4].", ejemplo: "Un sistema solar certificado RETIE reduce emisiones y es seguro [citation:4].", ejercicio: "¿Cómo contribuye el RETIE al desarrollo sostenible?", reto: "Explica la relación RETIE-medio ambiente." },
+            { titulo: "Actualizaciones del RETIE", teoria: "El RETIE se actualiza periódicamente para adaptarse a los avances tecnológicos y a la legislación nacional. La última actualización fue la Resolución 40117 de 2024 [citation:4][citation:5].", ejemplo: "La nueva versión incluyó tecnologías renovables [citation:5][citation:6].", ejercicio: "¿Por qué se actualiza el RETIE?", reto: "Investiga qué cambios trajo la Resolución 40117." }
+        ]
+    },
+    segura: {
+        nombre: "Segura", color: "azul", icono: "bi-robot",
+        especialidad: "Seguridad eléctrica: riesgos, EPP, distancias, protección",
+        tecnicas: [
+            { titulo: "Riesgo eléctrico", teoria: "El riesgo eléctrico es la probabilidad de sufrir daño por contacto con la electricidad. Incluye electrocuciones, quemaduras, caídas y explosiones [citation:1].", ejemplo: "Tocar un cable pelado bajo tensión es un riesgo eléctrico [citation:1].", ejercicio: "¿Qué es el riesgo eléctrico?", reto: "Enumera 3 tipos de accidentes eléctricos." },
+            { titulo: "Análisis de riesgos eléctricos", teoria: "El RETIE exige un análisis de riesgos de origen eléctrico como parte del Sistema de Gestión de Seguridad y Salud en el Trabajo [citation:1].", ejemplo: "Identificar puntos con riesgo de sobrecarga o cortocircuito [citation:1].", ejercicio: "¿Qué exige el RETIE sobre el análisis de riesgos?", reto: "Diseña un análisis de riesgos básico." },
+            { titulo: "Elementos de Protección Personal (EPP)", teoria: "Los EPP son equipos obligatorios para trabajar en instalaciones eléctricas: guantes dieléctricos, cascos, gafas, botas dieléctricas, arneses [citation:1].", ejemplo: "Un electricista debe usar guantes dieléctricos al manipular cables energizados [citation:1].", ejercicio: "Enumera 5 EPP para trabajos eléctricos.", reto: "¿Por qué son obligatorios los EPP?" },
+            { titulo: "Distancias de seguridad", teoria: "El RETIE establece distancias de seguridad mínimas entre elementos energizados y personas, estructuras y otros equipos [citation:1][citation:2].", ejemplo: "La distancia mínima a líneas de alta tensión es de varios metros según la tensión [citation:1].", ejercicio: "¿Qué son las distancias de seguridad?", reto: "Investiga las distancias para baja y media tensión." },
+            { titulo: "Espacios de trabajo", teoria: "El RETIE define espacios de trabajo adecuados para la operación y mantenimiento de equipos eléctricos, garantizando acceso seguro [citation:1].", ejemplo: "Un tablero eléctrico debe tener espacio libre frente a él para operar [citation:1].", ejercicio: "¿Qué exige el RETIE sobre los espacios de trabajo?", reto: "¿Qué medidas mínimas debe tener un espacio de trabajo?" },
+            { titulo: "Señalización eléctrica", teoria: "El RETIE exige señalización adecuada en instalaciones eléctricas para advertir sobre riesgos [citation:1].", ejemplo: "Carteles de 'Alto Voltaje' o 'Peligro Eléctrico' [citation:1].", ejercicio: "¿Qué señalización exige el RETIE?", reto: "Diseña un sistema de señalización para un tablero." },
+            { titulo: "Protección contra sobretensiones", teoria: "Las sobretensiones pueden dañar equipos. El RETIE exige protecciones como supresores de sobretensión (SPD) [citation:1][citation:2].", ejemplo: "Un SPD protege equipos electrónicos contra picos de tensión [citation:2].", ejercicio: "¿Qué son los SPD?", reto: "¿Dónde se instalan los SPD?" },
+            { titulo: "Protección contra sobrecargas", teoria: "Las sobrecargas ocurren cuando la corriente supera la capacidad del conductor. Se protegen con interruptores termomagnéticos [citation:1][citation:2].", ejemplo: "Un interruptor de 15A protege un circuito de 14 AWG [citation:1].", ejercicio: "¿Qué causa una sobrecarga?", reto: "¿Cómo se protege una instalación contra sobrecargas?" },
+            { titulo: "Protección contra cortocircuitos", teoria: "Los cortocircuitos son fallas de baja impedancia. Se protegen con fusibles o interruptores con capacidad de corte [citation:1][citation:2].", ejemplo: "Un cortocircuito puede causar incendios si no se protege [citation:2].", ejercicio: "¿Qué es un cortocircuito?", reto: "¿Cómo se protege contra cortocircuitos?" },
+            { titulo: "Protección contra contactos directos e indirectos", teoria: "El RETIE exige protección contra contactos directos (tocar partes activas) e indirectos (tocar partes que se energizan por falla) [citation:1].", ejemplo: "Aislar conductores (directo) y poner a tierra (indirecto) [citation:1].", ejercicio: "¿Qué diferencia hay entre contacto directo e indirecto?", reto: "¿Qué protecciones existen para cada tipo?" },
+            { titulo: "Protección contra incendios eléctricos", teoria: "Las instalaciones eléctricas deben tener protección contra incendios, con dispositivos como interruptores termomagnéticos y diferenciales [citation:1][citation:2].", ejemplo: "Un interruptor diferencial detecta fugas de corriente y corta el suministro [citation:2].", ejercicio: "¿Qué causa incendios eléctricos?", reto: "¿Cómo se previenen los incendios eléctricos?" },
+            { titulo: "Protección contra arco eléctrico", teoria: "El arco eléctrico es una descarga de alta temperatura que puede causar quemaduras y explosiones. El RETIE exige protección contra arco [citation:1].", ejemplo: "El uso de EPP contra arco es obligatorio en trabajos en vivo [citation:1].", ejercicio: "¿Qué es un arco eléctrico?", reto: "¿Qué EPP protegen contra arco eléctrico?" },
+            { titulo: "Seguridad en trabajos en tensión", teoria: "El RETIE regula los trabajos en tensión, exigiendo procedimientos seguros, EPP y personal capacitado [citation:1].", ejemplo: "Solo personal calificado puede trabajar en instalaciones energizadas [citation:1].", ejercicio: "¿Qué exige el RETIE para trabajos en tensión?", reto: "¿Qué EPP se necesitan?" },
+            { titulo: "Seguridad en trabajos fuera de tensión", teoria: "El RETIE también regula los trabajos sin tensión, exigiendo bloqueo y etiquetado (LOTO) de circuitos [citation:1].", ejemplo: "Antes de trabajar, se debe bloquear el circuito y colocar una etiqueta [citation:1].", ejercicio: "¿Qué es el bloqueo y etiquetado?", reto: "¿Por qué es importante LOTO?" },
+            { titulo: "Competencias del personal eléctrico", teoria: "El RETIE define las competencias que deben tener las personas que diseñan, construyen, operan y mantienen instalaciones eléctricas [citation:1][citation:2].", ejemplo: "Un instalador debe ser técnico electricista o tener formación equivalente [citation:1].", ejercicio: "¿Qué competencias exige el RETIE?", reto: "¿Qué certificaciones se necesitan?" },
+            { titulo: "Formación en seguridad eléctrica", teoria: "El RETIE exige formación continua en seguridad eléctrica para todo el personal que trabaja con instalaciones eléctricas [citation:1].", ejemplo: "Curso de RETIE y riesgo eléctrico [citation:1].", ejercicio: "¿Qué formación exige el RETIE?", reto: "Diseña un programa de formación básica." },
+            { titulo: "Gestión de seguridad y salud en el trabajo (SG-SST)", teoria: "El RETIE exige un SG-SST que incluya la gestión del riesgo eléctrico, con identificación, evaluación y control de peligros [citation:1].", ejemplo: "El SG-SST debe incluir procedimientos de trabajo seguro [citation:1].", ejercicio: "¿Qué exige el RETIE sobre SG-SST?", reto: "¿Cómo se integra el riesgo eléctrico en el SG-SST?" },
+            { titulo: "Inspecciones de seguridad", teoria: "El RETIE exige inspecciones periódicas de las instalaciones para verificar su seguridad [citation:1][citation:2].", ejemplo: "Las instalaciones deben ser inspeccionadas cada 5 o 10 años [citation:2].", ejercicio: "¿Cada cuánto se inspeccionan las instalaciones?", reto: "¿Qué se verifica en una inspección?" },
+            { titulo: "Normas de seguridad aplicables", teoria: "El RETIE se complementa con normas internacionales como NFPA 70E (seguridad eléctrica en el trabajo) [citation:1].", ejemplo: "NFPA 70E regula la protección contra arco eléctrico [citation:1].", ejercicio: "¿Qué normas de seguridad complementan al RETIE?", reto: "Investiga la NFPA 70E." },
+            { titulo: "Actuación en caso de accidente eléctrico", teoria: "El RETIE exige procedimientos claros para actuar en caso de accidente eléctrico, incluyendo primeros auxilios y RCP [citation:1].", ejemplo: "Todo personal debe conocer cómo actuar ante una electrocución [citation:1].", ejercicio: "¿Qué hacer ante un accidente eléctrico?", reto: "¿Qué primeros auxilios se aplican?" }
+        ]
+    },
+    tierra: {
+        nombre: "Tierra", color: "verde", icono: "bi-robot",
+        especialidad: "Puesta a tierra y protecciones: sistema de tierras, protecciones contra sobrecargas",
+        tecnicas: [
+            { titulo: "Sistema de puesta a tierra (SPT)", teoria: "El SPT es una conexión intencionada a tierra que protege contra sobretensiones y garantiza la seguridad. Es obligatorio según el RETIE [citation:1][citation:2].", ejemplo: "Una varilla de cobre enterrada conecta la instalación a tierra [citation:1].", ejercicio: "¿Qué es un sistema de puesta a tierra?", reto: "¿Por qué es obligatorio el SPT?" },
+            { titulo: "Resistencia de puesta a tierra", teoria: "El RETIE exige que la resistencia del SPT sea lo suficientemente baja para garantizar la protección. Generalmente ≤ 10 ohmios [citation:1].", ejemplo: "Se mide la resistencia con un telurómetro [citation:1].", ejercicio: "¿Qué resistencia máxima exige el RETIE?", reto: "¿Cómo se mide la resistencia de tierra?" },
+            { titulo: "Electrodos de puesta a tierra", teoria: "Los electrodos son elementos conductores enterrados que conectan la instalación a tierra. Pueden ser varillas, placas o mallas [citation:1].", ejemplo: "Una varilla de cobre de 2.4 m es un electrodo común [citation:1].", ejercicio: "¿Qué tipos de electrodos existen?", reto: "¿Qué material es adecuado para electrodos?" },
+            { titulo: "Conductores de puesta a tierra", teoria: "Los conductores que conectan los equipos al electrodo deben ser de cobre y tener la sección adecuada según RETIE [citation:1].", ejemplo: "Un conductor de cobre AWG 6 para una vivienda [citation:1].", ejercicio: "¿Qué conductores se usan para puesta a tierra?", reto: "¿Qué sección debe tener un conductor de tierra?" },
+            { titulo: "Protección contra rayos", teoria: "El RETIE exige protección contra descargas atmosféricas (pararrayos) en edificaciones según su nivel de riesgo [citation:1][citation:2].", ejemplo: "Un hospital debe tener pararrayos y sistema de bajantes [citation:1].", ejercicio: "¿Qué exige el RETIE sobre protección contra rayos?", reto: "¿Cómo se calcula el riesgo de rayos?" },
+            { titulo: "Protección contra sobrecargas", teoria: "Las protecciones contra sobrecargas (interruptores termomagnéticos) deben dimensionarse según la corriente del circuito [citation:1][citation:2].", ejemplo: "Un circuito de 15A debe tener un interruptor de 15A [citation:1].", ejercicio: "¿Qué dispositivos protegen contra sobrecargas?", reto: "¿Cómo se dimensiona un interruptor?" },
+            { titulo: "Protección contra cortocircuitos", teoria: "La protección contra cortocircuitos se logra con interruptores automáticos con capacidad de corte suficiente [citation:1][citation:2].", ejemplo: "Un interruptor con capacidad de corte de 10kA [citation:1].", ejercicio: "¿Qué protege contra cortocircuitos?", reto: "¿Qué es la capacidad de corte?" },
+            { titulo: "Protección diferencial", teoria: "El interruptor diferencial protege contra fugas de corriente, cortando el suministro al detectar una diferencia de corriente entre fase y neutro [citation:1][citation:2].", ejemplo: "Un diferencial de 30 mA protege contra electrocución [citation:1].", ejercicio: "¿Qué es un interruptor diferencial?", reto: "¿Qué sensibilidad debe tener?" },
+            { titulo: "Coordinación de protecciones", teoria: "Las protecciones deben coordinarse para que solo actúe el dispositivo más cercano a la falla. El RETIE exige esta coordinación [citation:1].", ejemplo: "Un interruptor general no debe saltar antes que uno de rama [citation:1].", ejercicio: "¿Qué es la coordinación de protecciones?", reto: "¿Cómo se logra la coordinación?" },
+            { titulo: "Interruptor general automático", teoria: "El interruptor general automático (IGA) protege toda la instalación y debe estar en el tablero principal [citation:1].", ejemplo: "El IGA se instala a la entrada de la vivienda [citation:1].", ejercicio: "¿Qué es el IGA?", reto: "¿Qué función tiene el IGA?" },
+            { titulo: "Dispositivos de protección contra sobretensiones (SPD)", teoria: "Los SPD protegen equipos contra picos de tensión (transitorios). Son obligatorios en instalaciones con equipos sensibles [citation:1][citation:2].", ejemplo: "Un SPD en el tablero protege computadoras y electrodomésticos [citation:1].", ejercicio: "¿Qué son los SPD?", reto: "¿Dónde se instalan los SPD?" },
+            { titulo: "Puesta a tierra de equipos", teoria: "Todos los equipos eléctricos con partes metálicas accesibles deben tener puesta a tierra para proteger contra contactos indirectos [citation:1].", ejemplo: "Una lavadora debe tener su conexión a tierra [citation:1].", ejercicio: "¿Qué equipos deben tener puesta a tierra?", reto: "¿Por qué es importante la puesta a tierra de equipos?" },
+            { titulo: "Puesta a tierra de estructuras", teoria: "Las estructuras metálicas de edificaciones deben conectarse al SPT para disipar cargas estáticas y proteger contra rayos [citation:1].", ejemplo: "La estructura metálica de un edificio se conecta a tierra [citation:1].", ejercicio: "¿Qué estructuras deben tener puesta a tierra?", reto: "¿Por qué?" },
+            { titulo: "Medición de la resistencia de tierra", teoria: "La resistencia de tierra debe medirse al instalar el SPT y periódicamente para asegurar su eficacia [citation:1].", ejemplo: "Se usa un telurómetro de 3 puntos [citation:1].", ejercicio: "¿Cómo se mide la resistencia de tierra?", reto: "¿Cada cuánto se debe medir?" },
+            { titulo: "Normas de puesta a tierra aplicables", teoria: "El RETIE se basa en normas internacionales como IEEE 80 (puesta a tierra de subestaciones) y NFPA 780 (protección contra rayos) [citation:1].", ejemplo: "IEEE 80 define la resistencia máxima de tierra [citation:1].", ejercicio: "¿Qué normas complementan al RETIE en puesta a tierra?", reto: "Investiga la IEEE 80." },
+            { titulo: "Documentación del sistema de puesta a tierra", teoria: "El RETIE exige que el SPT esté documentado, incluyendo planos, cálculos y mediciones [citation:1].", ejemplo: "Se debe guardar el informe de medición de resistencia [citation:1].", ejercicio: "¿Qué documentación exige el RETIE?", reto: "¿Por qué es importante la documentación?" },
+            { titulo: "Protección contra corrientes de falla", teoria: "Las corrientes de falla deben ser detectadas y desconectadas por las protecciones para evitar daños [citation:1].", ejemplo: "Un cortocircuito activa la protección [citation:1].", ejercicio: "¿Qué son las corrientes de falla?", reto: "¿Cómo se protegen?" },
+            { titulo: "Puesta a tierra en instalaciones fotovoltaicas", teoria: "Las instalaciones fotovoltaicas requieren SPT específico, con conexión a tierra de los paneles y el inversor [citation:1][citation:4].", ejemplo: "Los marcos de los paneles solares deben estar conectados a tierra [citation:4].", ejercicio: "¿Qué exige el RETIE para SPT fotovoltaico?", reto: "¿Cómo se protege un sistema solar?" },
+            { titulo: "Puesta a tierra en instalaciones hospitalarias", teoria: "Las instalaciones hospitalarias tienen requisitos especiales de puesta a tierra para garantizar la seguridad de pacientes y equipos [citation:1].", ejemplo: "Salas de cirugía tienen puesta a tierra de baja resistencia [citation:1].", ejercicio: "¿Qué requisitos especiales tienen los hospitales?", reto: "¿Por qué son más estrictos?" },
+            { titulo: "Puesta a tierra en zonas con alta resistividad", teoria: "En suelos con alta resistividad se requieren sistemas de tierra especiales, como electrolitos o mallas profundas [citation:1].", ejemplo: "Se usan sales para reducir la resistividad [citation:1].", ejercicio: "¿Cómo se mejora la puesta a tierra en suelos rocosos?", reto: "Investiga métodos de mejora." }
+        ]
+    },
+    circu: {
+        nombre: "Circu", color: "purpura", icono: "bi-robot",
+        especialidad: "Circuitos y componentes: conductores, canalizaciones, tableros, interruptores",
+        tecnicas: [
+            { titulo: "Conductores eléctricos", teoria: "Los conductores son los elementos que transportan la corriente eléctrica. En Colombia se usan principalmente de cobre o aluminio, con aislamiento según RETIE [citation:1].", ejemplo: "Un conductor de cobre THHN AWG 12 [citation:1].", ejercicio: "¿Qué tipos de conductores existen?", reto: "¿Qué diferencia hay entre cobre y aluminio?" },
+            { titulo: "Aislamiento de conductores", teoria: "El RETIE exige que los conductores tengan aislamiento adecuado para la tensión y el ambiente. Se usan materiales como PVC, XLPE, EPR [citation:1].", ejemplo: "Cable THHN (PVC) para interiores, XLPE para exteriores [citation:1].", ejercicio: "¿Qué tipos de aislamiento existen?", reto: "¿Cómo se selecciona el aislamiento?" },
+            { titulo: "Canalizaciones eléctricas", teoria: "Las canalizaciones protegen los conductores contra daños mecánicos y ambientales. Pueden ser tuberías de PVC, EMT, bandejas portacables [citation:1].", ejemplo: "Tubería PVC para instalaciones ocultas en viviendas [citation:1].", ejercicio: "¿Qué tipos de canalizaciones existen?", reto: "¿Cómo se selecciona una canalización?" },
+            { titulo: "Tableros eléctricos", teoria: "Los tableros son el centro de distribución de la instalación. Contienen protecciones y dispositivos de maniobra [citation:1].", ejemplo: "Tablero general de una vivienda [citation:1].", ejercicio: "¿Qué es un tablero eléctrico?", reto: "¿Qué componentes tiene un tablero?" },
+            { titulo: "Interruptores termomagnéticos", teoria: "Los interruptores termomagnéticos protegen contra sobrecargas y cortocircuitos. Se dimensionan según la corriente del circuito [citation:1][citation:2].", ejemplo: "Un interruptor de 15A para iluminación [citation:1].", ejercicio: "¿Qué función tiene un interruptor termomagnético?", reto: "¿Cómo se selecciona la corriente nominal?" },
+            { titulo: "Interruptores diferenciales", teoria: "Los diferenciales protegen contra fugas de corriente y electrocución. Son obligatorios en instalaciones modernas [citation:1][citation:2].", ejemplo: "Diferencial de 30 mA para viviendas [citation:1].", ejercicio: "¿Qué es un interruptor diferencial?", reto: "¿Qué sensibilidad se usa en viviendas?" },
+            { titulo: "Circuitos de iluminación", teoria: "Los circuitos de iluminación alimentan lámparas y dispositivos de alumbrado. Se protegen con interruptores de 10-15A [citation:1].", ejemplo: "Circuito de iluminación con cable 14 AWG [citation:1].", ejercicio: "¿Cómo se diseña un circuito de iluminación?", reto: "¿Qué protección usa?" },
+            { titulo: "Circuitos de tomacorrientes", teoria: "Los circuitos de tomacorrientes alimentan enchufes. En viviendas se usan de 15-20A con conductor 12 AWG [citation:1].", ejemplo: "Tomacorrientes con cable 12 AWG y protección de 20A [citation:1].", ejercicio: "¿Cómo se diseña un circuito de tomacorrientes?", reto: "¿Qué protección usa?" },
+            { titulo: "Circuitos de fuerza", teoria: "Los circuitos de fuerza alimentan motores y equipos de alta potencia. Requieren protecciones especiales [citation:1].", ejemplo: "Un motor de 5 HP con protección de 30A [citation:1].", ejercicio: "¿Qué son los circuitos de fuerza?", reto: "¿Qué protecciones necesitan?" },
+            { titulo: "Circuitos especiales", teoria: "Los circuitos especiales alimentan equipos como hornos, aires acondicionados, bombas. Tienen protecciones dedicadas [citation:1].", ejemplo: "Un aire acondicionado de 240V con protección de 30A [citation:1].", ejercicio: "¿Qué son los circuitos especiales?", reto: "¿Cómo se protegen?" },
+            { titulo: "Conductores de protección (tierra)", teoria: "Los conductores de protección (CP) conectan las partes metálicas a tierra. Su sección se dimensiona según la corriente del circuito [citation:1].", ejemplo: "Conductor de tierra de 14 AWG para un circuito de 15A [citation:1].", ejercicio: "¿Qué son los conductores de protección?", reto: "¿Cómo se dimensionan?" },
+            { titulo: "Conductores neutros", teoria: "El conductor neutro es el retorno de la corriente. Debe ser dimensionado para la corriente del circuito [citation:1].", ejemplo: "Neutro del mismo calibre que la fase [citation:1].", ejercicio: "¿Qué función tiene el neutro?", reto: "¿Cómo se dimensiona el neutro?" },
+            { titulo: "Seccionamiento de conductores", teoria: "La sección de los conductores se calcula según la corriente que transportan y la caída de tensión permitida [citation:1].", ejemplo: "Un conductor 10 AWG para 30A [citation:1].", ejercicio: "¿Cómo se calcula la sección de un conductor?", reto: "¿Qué es la caída de tensión?" },
+            { titulo: "Caída de tensión", teoria: "El RETIE limita la caída de tensión en los circuitos para garantizar el funcionamiento de los equipos. Generalmente ≤ 3% en circuitos finales [citation:1].", ejemplo: "En una vivienda, la caída de tensión no debe superar el 3% [citation:1].", ejercicio: "¿Qué es la caída de tensión?", reto: "¿Cómo se calcula?" },
+            { titulo: "Factor de demanda", teoria: "El factor de demanda es el coeficiente que reduce la carga total para dimensionar los conductores y protecciones, considerando que no todos los equipos funcionan a la vez [citation:1].", ejemplo: "En viviendas, el factor de demanda para tomacorrientes es del 50% [citation:1].", ejercicio: "¿Qué es el factor de demanda?", reto: "¿Cómo se aplica?" },
+            { titulo: "Carga instalada", teoria: "La carga instalada es la suma de las potencias de todos los equipos conectados. Se usa para dimensionar la instalación [citation:1].", ejemplo: "Suma de los wattajes de lámparas y electrodomésticos [citation:1].", ejercicio: "¿Qué es la carga instalada?", reto: "¿Cómo se calcula?" },
+            { titulo: "Carga demandada", teoria: "La carga demandada es la carga que realmente se espera que demande la instalación, aplicando factores de demanda [citation:1].", ejemplo: "La carga demandada es menor que la instalada [citation:1].", ejercicio: "¿Qué es la carga demandada?", reto: "¿Cómo se calcula?" },
+            { titulo: "Balance de cargas", teoria: "El balance de cargas consiste en distribuir los circuitos entre las fases para evitar desbalances que causen problemas [citation:1].", ejemplo: "Distribuir los tomacorrientes entre las fases A, B y C [citation:1].", ejercicio: "¿Qué es el balance de cargas?", reto: "¿Por qué es importante?" },
+            { titulo: "Normas de instalación aplicables", teoria: "Las instalaciones eléctricas en Colombia deben cumplir RETIE, NTC 2050, y normas IEC, IEEE y NFPA [citation:1].", ejemplo: "La NTC 2050 es la norma de instalaciones eléctricas [citation:1].", ejercicio: "¿Qué normas aplican?", reto: "Investiga la NTC 2050." },
+            { titulo: "Documentación de la instalación", teoria: "El RETIE exige documentación completa de la instalación: planos, memorias de cálculo, certificados de los equipos [citation:1][citation:2].", ejemplo: "La documentación se entrega al propietario [citation:1].", ejercicio: "¿Qué documentación exige el RETIE?", reto: "¿Por qué es importante?" }
+        ]
+    },
+    energia: {
+        nombre: "Energía", color: "rojo", icono: "bi-robot",
+        especialidad: "Generación y uso eficiente: medición, eficiencia energética, instalaciones especiales",
+        tecnicas: [
+            { titulo: "Medición de energía eléctrica", teoria: "La medición de energía se realiza con medidores (contadores) que registran el consumo en kWh. Es obligatoria para todos los usuarios [citation:1].", ejemplo: "Un medidor electromecánico o digital instalado en la entrada [citation:1].", ejercicio: "¿Cómo se mide el consumo eléctrico?", reto: "¿Qué tipos de medidores existen?" },
+            { titulo: "Eficiencia energética", teoria: "La eficiencia energética es el uso óptimo de la energía para obtener el mismo servicio con menos consumo. El RETIE promueve equipos eficientes [citation:2][citation:4].", ejemplo: "Usar lámparas LED en lugar de incandescentes [citation:2].", ejercicio: "¿Qué es la eficiencia energética?", reto: "¿Cómo se mide la eficiencia?" },
+            { titulo: "Equipos de alta eficiencia", teoria: "Los equipos eléctricos deben tener etiquetas de eficiencia (clasificación A, B, C). El RETIE exige equipos con alta eficiencia [citation:1][citation:2].", ejemplo: "Un motor IE3 es de alta eficiencia [citation:1].", ejercicio: "¿Qué son los equipos de alta eficiencia?", reto: "¿Cómo se clasifican?" },
+            { titulo: "Factor de potencia", teoria: "El factor de potencia (FP) es la relación entre la potencia activa y la aparente. Un FP bajo aumenta las pérdidas y penaliza al usuario [citation:1].", ejemplo: "Un motor con FP 0.8 tiene pérdidas altas [citation:1].", ejercicio: "¿Qué es el factor de potencia?", reto: "¿Cómo se mejora el factor de potencia?" },
+            { titulo: "Corrección del factor de potencia", teoria: "La corrección del FP se logra con capacitores o compensadores activos. Mejora la eficiencia y reduce costos [citation:1].", ejemplo: "Instalar un banco de capacitores en el tablero [citation:1].", ejercicio: "¿Cómo se corrige el factor de potencia?", reto: "¿Qué equipos se usan?" },
+            { titulo: "Demanda eléctrica", teoria: "La demanda es la potencia máxima que requiere una instalación en un periodo determinado. Se mide en kW o kVA [citation:1].", ejemplo: "La demanda de una vivienda es la suma de los equipos encendidos a la vez [citation:1].", ejercicio: "¿Qué es la demanda eléctrica?", reto: "¿Cómo se calcula la demanda?" },
+            { titulo: "Generación distribuida", teoria: "La generación distribuida (GD) es la producción de energía cerca del punto de consumo, como paneles solares en tejados [citation:1][citation:4].", ejemplo: "Un sistema solar fotovoltaico residencial [citation:4].", ejercicio: "¿Qué es la generación distribuida?", reto: "¿Qué tipos de GD existen?" },
+            { titulo: "Instalaciones fotovoltaicas", teoria: "Las instalaciones fotovoltaicas convierten la luz solar en electricidad. Deben cumplir con el RETIE y tener certificación plena [citation:4].", ejemplo: "Un sistema de 3 kWp en una vivienda [citation:4].", ejercicio: "¿Qué es una instalación fotovoltaica?", reto: "¿Qué requisitos RETIE deben cumplir?" },
+            { titulo: "Instalaciones eólicas", teoria: "Las instalaciones eólicas convierten la energía del viento en electricidad. Están incluidas en el RETIE 2024 [citation:5][citation:6].", ejemplo: "Un aerogenerador de pequeña escala [citation:5].", ejercicio: "¿Qué es una instalación eólica?", reto: "¿Qué requisitos RETIE deben cumplir?" },
+            { titulo: "Instalaciones de almacenamiento (baterías)", teoria: "Las baterías para sistemas fotovoltaicos y eólicos deben cumplir con el RETIE. Son nuevas en la versión 2024 [citation:5][citation:6].", ejemplo: "Batería de litio para almacenar energía solar [citation:5].", ejercicio: "¿Qué son las baterías para almacenamiento?", reto: "¿Qué requisitos RETIE deben cumplir?" },
+            { titulo: "Cargadores de vehículos eléctricos", teoria: "Los cargadores de VE están incluidos en el RETIE 2024. Deben ser certificados para garantizar seguridad y eficiencia [citation:5][citation:6].", ejemplo: "Cargador de nivel 2 para vehículo eléctrico [citation:5].", ejercicio: "¿Qué exige el RETIE para cargadores de VE?", reto: "¿Qué tipos de cargadores existen?" },
+            { titulo: "Eficiencia en motores eléctricos", teoria: "Los motores eléctricos deben ser de alta eficiencia (IE2 o IE3) según RETIE, para reducir el consumo de energía [citation:1].", ejemplo: "Un motor IE3 consume 30% menos que uno estándar [citation:1].", ejercicio: "¿Qué eficiencia exige el RETIE para motores?", reto: "¿Cómo se clasifican los motores?" },
+            { titulo: "Eficiencia en iluminación", teoria: "El RETIE promueve el uso de iluminación eficiente (LED) en instalaciones nuevas y remodelaciones [citation:1][citation:2].", ejemplo: "Reemplazar bombillas incandescentes por LED [citation:2].", ejercicio: "¿Qué exige el RETIE sobre iluminación?", reto: "¿Por qué LED es eficiente?" },
+            { titulo: "Eficiencia en transformadores", teoria: "Los transformadores deben tener pérdidas reducidas y cumplir con los estándares de eficiencia RETIE [citation:1].", ejemplo: "Un transformador de distribución con eficiencia 98% [citation:1].", ejercicio: "¿Qué exige el RETIE sobre transformadores?", reto: "¿Cómo se mide la eficiencia de un transformador?" },
+            { titulo: "Eficiencia en equipos de climatización", teoria: "Los aires acondicionados deben tener alta eficiencia según RETIE. Se miden con el SEER [citation:1].", ejemplo: "Un AA con SEER 18 es muy eficiente [citation:1].", ejercicio: "¿Qué exige el RETIE sobre climatización?", reto: "¿Qué es el SEER?" },
+            { titulo: "Auditoría energética", teoria: "La auditoría energética evalúa el consumo y las oportunidades de mejora. Puede ser requerida por el RETIE para grandes consumidores [citation:1].", ejemplo: "Auditoría en una planta industrial [citation:1].", ejercicio: "¿Qué es una auditoría energética?", reto: "¿Qué beneficios tiene?" },
+            { titulo: "Facturación eléctrica", teoria: "La facturación eléctrica incluye el consumo (kWh), la demanda (kW) y cargos por FP. El RETIE influye en la eficiencia que reduce la factura [citation:1].", ejemplo: "La factura muestra consumo y demanda [citation:1].", ejercicio: "¿Qué incluye la factura eléctrica?", reto: "¿Cómo se reduce la factura?" },
+            { titulo: "Uso racional de la energía", teoria: "El uso racional de la energía (URE) consiste en reducir el consumo sin sacrificar el confort. Es una práctica promovida por el RETIE [citation:1][citation:2].", ejemplo: "Apagar luces al salir de una habitación [citation:2].", ejercicio: "¿Qué es el URE?", reto: "¿Cómo se aplica el URE?" },
+            { titulo: "Normas de eficiencia energética", teoria: "El RETIE se complementa con normas como la NTC 2200 (etiquetado de eficiencia) y las normas IEC de eficiencia [citation:1].", ejemplo: "NTC 2200 clasifica equipos por eficiencia [citation:1].", ejercicio: "¿Qué normas complementan al RETIE en eficiencia?", reto: "Investiga la NTC 2200." },
+            { titulo: "Energías renovables en Colombia", teoria: "Las energías renovables (solar, eólica) están en crecimiento y deben cumplir con el RETIE. La nueva versión las incluye explícitamente [citation:5][citation:6].", ejemplo: "Un parque solar cumple RETIE [citation:5].", ejercicio: "¿Qué energías renovables están reguladas?", reto: "¿Cómo promueve el RETIE las renovables?" }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['norma','segura','tierra','circu','energia'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo"><strong>💡 Ejemplo:</strong> ${t.ejemplo}</div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_electrica_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Archivo de Vector · El Dequeísmo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        :root {
+            --bg: #07070e;
+            --bg-card: #0e0e1a;
+            --cyan: #00f0ff;
+            --violet: #a855f7;
+            --cyan-dim: rgba(0, 240, 255, 0.12);
+            --violet-dim: rgba(168, 85, 247, 0.15);
+            --text: #d4d4f0;
+            --text-dim: #8888bb;
+            --glow-cyan: 0 0 30px rgba(0, 240, 255, 0.25);
+            --glow-violet: 0 0 30px rgba(168, 85, 247, 0.25);
+            --radius: 16px;
+            --font-display: 'Orbitron', monospace;
+            --font-body: 'Rajdhani', sans-serif;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: var(--font-body);
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 20px;
+            background-image: radial-gradient(ellipse at 20% 50%, rgba(0, 240, 255, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 60%);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--violet);
+            border-radius: 8px;
+        }
+        .app-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            padding: 16px 24px;
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            box-shadow: var(--glow-cyan);
+            margin-bottom: 28px;
+            backdrop-filter: blur(4px);
+        }
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .header-brand .icon {
+            font-size: 32px;
+            filter: drop-shadow(0 0 12px var(--cyan));
+        }
+        .header-brand h1 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+        .header-brand .sub {
+            font-family: var(--font-body);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            letter-spacing: 2px;
+            font-weight: 300;
+            -webkit-text-fill-color: var(--text-dim);
+            background: none;
+        }
+        .header-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+        .stat-item {
+            text-align: center;
+        }
+        .stat-item .num {
+            font-family: var(--font-display);
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+        }
+        .stat-item .label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-dim);
+        }
+        .stat-item .num.violet {
+            color: var(--violet);
+            text-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+        .stat-divider {
+            width: 1px;
+            height: 32px;
+            background: linear-gradient(to bottom, transparent, var(--cyan-dim), transparent);
+        }
+        .vector-avatar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px 16px 4px 8px;
+            border-radius: 40px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .vector-avatar:hover {
+            border-color: var(--violet);
+            box-shadow: 0 0 30px rgba(168, 85, 247, 0.15);
+        }
+        .vector-avatar .avatar-icon {
+            font-size: 34px;
+            line-height: 1;
+            filter: drop-shadow(0 0 16px var(--cyan));
+            transition: all 0.4s;
+        }
+        .vector-avatar .avatar-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text);
+            letter-spacing: 0.5px;
+        }
+        .vector-avatar .avatar-label small {
+            display: block;
+            font-weight: 300;
+            color: var(--text-dim);
+            font-size: 0.6rem;
+        }
+        .block-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 24px;
+            padding: 8px 4px;
+        }
+        .block-tab {
+            padding: 8px 18px;
+            border-radius: 40px;
+            background: var(--bg-card);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            color: var(--text-dim);
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+        }
+        .block-tab:hover {
+            border-color: var(--cyan);
+            color: var(--text);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
+        }
+        .block-tab.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.12), rgba(168, 85, 247, 0.12));
+            border-color: var(--cyan);
+            color: var(--cyan);
+            box-shadow: var(--glow-cyan);
+        }
+        .block-tab .check {
+            margin-left: 6px;
+            font-size: 0.7rem;
+        }
+        .lesson-card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            padding: 28px 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+            animation: fadeSlide 0.35s ease-out;
+        }
+        .lesson-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--cyan), var(--violet), var(--cyan));
+            opacity: 0.4;
+        }
+        @keyframes fadeSlide {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .lesson-number {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--violet);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            opacity: 0.7;
+        }
+        .lesson-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 6px;
+        }
+        .lesson-root {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            margin-bottom: 18px;
+        }
+        .lesson-root strong {
+            color: var(--cyan);
+            font-weight: 600;
+            -webkit-text-fill-color: var(--cyan);
+        }
+        .theory-box {
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 3px solid var(--cyan);
+            padding: 16px 20px;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 18px;
+        }
+        .theory-box h3 {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--cyan);
+            margin-bottom: 6px;
+        }
+        .theory-box p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+        }
+        .example-holo {
+            background: rgba(168, 85, 247, 0.06);
+            border: 1px solid rgba(168, 85, 247, 0.2);
+            border-radius: 12px;
+            padding: 18px 22px;
+            margin-bottom: 22px;
+            box-shadow: var(--glow-violet);
+            position: relative;
+            animation: pulse-glow 3s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%,
+            100% {
+                box-shadow: 0 0 20px rgba(0, 240, 255, 0.05);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(0, 240, 255, 0.12);
+            }
+        }
+        .example-holo::after {
+            content: '◈';
+            position: absolute;
+            top: 8px;
+            right: 16px;
+            font-size: 1.2rem;
+            color: var(--violet);
+            opacity: 0.3;
+        }
+        .example-holo .label {
+            font-family: var(--font-display);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--violet);
+            margin-bottom: 4px;
+        }
+        .example-holo .word {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 0 40px rgba(168, 85, 247, 0.3);
+            letter-spacing: 0.5px;
+        }
+        .example-holo .breakdown {
+            font-size: 1rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+        .example-holo .breakdown span {
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        .quiz-section {
+            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+        .quiz-section .q {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 12px;
+            color: var(--text);
+        }
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .quiz-option {
+            padding: 12px 18px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quiz-option:hover:not(.disabled) {
+            background: rgba(0, 240, 255, 0.06);
+            border-color: var(--cyan);
+        }
+        .quiz-option .letter {
+            font-family: var(--font-display);
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            width: 22px;
+            text-align: center;
+        }
+        .quiz-option.correct {
+            background: rgba(0, 240, 255, 0.12);
+            border-color: var(--cyan);
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+        }
+        .quiz-option.correct .letter {
+            color: var(--cyan);
+        }
+        .quiz-option.wrong {
+            background: rgba(255, 50, 80, 0.12);
+            border-color: #ff3355;
+        }
+        .quiz-option.wrong .letter {
+            color: #ff3355;
+        }
+        .quiz-option.disabled {
+            cursor: default;
+            opacity: 0.6;
+        }
+        .quiz-feedback {
+            margin-top: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            display: none;
+        }
+        .quiz-feedback.show {
+            display: block;
+        }
+        .quiz-feedback.ok {
+            background: rgba(0, 240, 255, 0.08);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            color: var(--cyan);
+        }
+        .quiz-feedback.fail {
+            background: rgba(255, 50, 80, 0.08);
+            border: 1px solid rgba(255, 50, 80, 0.2);
+            color: #ff6688;
+        }
+        .terminal {
+            margin-top: 18px;
+            border-radius: 12px;
+            background: #0a0a14;
+            border: 1px solid rgba(0, 240, 255, 0.1);
+            overflow: hidden;
+        }
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(0, 240, 255, 0.04);
+            border-bottom: 1px solid rgba(0, 240, 255, 0.06);
+        }
+        .terminal-header .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--violet);
+        }
+        .terminal-header .dot.cyan {
+            background: var(--cyan);
+        }
+        .terminal-header .dot.dim {
+            background: var(--text-dim);
+        }
+        .terminal-header .term-label {
+            font-family: var(--font-display);
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-dim);
+            margin-left: 8px;
+        }
+        .terminal-body {
+            padding: 16px 20px;
+        }
+        .terminal-body .prompt {
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+        .terminal-body .prompt strong {
+            color: var(--cyan);
+        }
+        .terminal-body textarea {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 240, 255, 0.08);
+            border-radius: 8px;
+            padding: 12px 14px;
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            color: var(--text);
+            resize: vertical;
+            min-height: 56px;
+            transition: border 0.3s;
+        }
+        .terminal-body textarea:focus {
+            outline: none;
+            border-color: var(--cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.06);
+        }
+        .terminal-body textarea::placeholder {
+            color: var(--text-dim);
+            opacity: 0.4;
+        }
+        .terminal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 22px;
+            border-radius: 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.8rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--cyan), var(--violet));
+            color: #07070e;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.15);
+        }
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 50px rgba(0, 240, 255, 0.25);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: var(--text-dim);
+        }
+        .btn-secondary:hover {
+            border-color: var(--violet);
+            color: var(--text);
+        }
+        .btn-success {
+            background: rgba(0, 240, 255, 0.1);
+            border: 1px solid var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-success:hover {
+            background: rgba(0, 240, 255, 0.18);
+        }
+        .terminal-output {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 240, 255, 0.04);
+            border-left: 2px solid var(--cyan);
+            font-size: 0.9rem;
+            color: var(--text);
+            display: none;
+            min-height: 20px;
+        }
+        .terminal-output.show {
+            display: block;
+        }
+        .lesson-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+        }
+        .lesson-nav .btn {
+            min-width: 100px;
+        }
+        .lesson-nav .counter {
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            font-weight: 300;
+        }
+        .progress-bar-wrap {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 4px;
+            margin: 12px 0 8px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyan), var(--violet));
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 28px;
+            border-radius: 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--cyan);
+            box-shadow: var(--glow-cyan);
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--cyan);
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+            backdrop-filter: blur(8px);
+        }
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        @media (max-width: 700px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                padding: 16px;
+            }
+            .header-brand h1 {
+                font-size: 1.1rem;
+            }
+            .header-stats {
+                justify-content: space-around;
+            }
+            .stat-divider {
+                display: none;
+            }
+            .lesson-card {
+                padding: 18px 16px;
+            }
+            .lesson-title {
+                font-size: 1.2rem;
+            }
+            .block-tabs {
+                gap: 4px;
+            }
+            .block-tab {
+                font-size: 0.6rem;
+                padding: 6px 12px;
+            }
+            .lesson-nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .lesson-nav .btn {
+                width: 100%;
+                text-align: center;
+            }
+            .vector-avatar .avatar-label small {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" id="app">
+        <header class="header">
+            <div class="header-brand">
+                <span class="icon">◈</span>
+                <div>
+                    <h1>ARCHIVO VECTOR</h1>
+                    <span class="sub">el dequeísmo · 100 técnicas</span>
+                </div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-item">
+                    <div class="num" id="scoreDisplay">0</div>
+                    <div class="label">aciertos</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num violet" id="streakDisplay">0</div>
+                    <div class="label">racha</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <div class="num" id="progressDisplay">0%</div>
+                    <div class="label">completado</div>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="vector-avatar" id="vectorAvatar" title="Cambiar variante de Vector">
+                    <span class="avatar-icon" id="avatarIcon">🧬</span>
+                    <span class="avatar-label" id="avatarLabel">
+                        Vector
+                        <small id="avatarVariant">Archivo</small>
+                    </span>
+                </div>
+            </div>
+        </header>
+
+        <div class="block-tabs" id="blockTabs"></div>
+
+        <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressFill" style="width:0%"></div>
+        </div>
+
+        <div class="lesson-card" id="lessonCard">
+            <div class="lesson-number" id="lessonNumber">Lección 1 · Bloque 1</div>
+            <div class="lesson-title" id="lessonTitle">Técnica</div>
+            <div class="lesson-root" id="lessonRoot">Fenómeno: <strong>—</strong></div>
+
+            <div class="theory-box" id="theoryBox">
+                <h3>◈ Teoría</h3>
+                <p id="theoryText">Cargando...</p>
+            </div>
+
+            <div class="example-holo" id="exampleHolo">
+                <div class="label">✦ ejemplo holográfico</div>
+                <div class="word" id="exampleWord">—</div>
+                <div class="breakdown" id="exampleBreakdown">Análisis: <span>—</span></div>
+            </div>
+
+            <div class="quiz-section" id="quizSection">
+                <div class="q" id="quizQuestion">Selecciona la opción correcta:</div>
+                <div class="quiz-options" id="quizOptions"></div>
+                <div class="quiz-feedback" id="quizFeedback"></div>
+            </div>
+
+            <div class="terminal">
+                <div class="terminal-header">
+                    <span class="dot cyan"></span>
+                    <span class="dot"></span>
+                    <span class="dot dim"></span>
+                    <span class="term-label">⌨ terminal de práctica</span>
+                </div>
+                <div class="terminal-body">
+                    <div class="prompt" id="terminalPrompt">✧ Escribe una oración que ejemplifique el uso correcto o incorrecto de "de que":</div>
+                    <textarea id="terminalInput" placeholder="Ej: «Creo que vendrá.» (sin "de")"></textarea>
+                    <div class="terminal-actions">
+                        <button class="btn btn-primary" id="terminalSubmit">Enviar</button>
+                        <button class="btn btn-secondary" id="terminalClear">Limpiar</button>
+                    </div>
+                    <div class="terminal-output" id="terminalOutput"></div>
+                </div>
+            </div>
+
+            <div class="lesson-nav">
+                <button class="btn btn-secondary" id="prevBtn">◀ Anterior</button>
+                <span class="counter" id="lessonCounter">1 / 100</span>
+                <button class="btn btn-primary" id="nextBtn">Siguiente ▶</button>
+            </div>
+        </div>
+
+        <div class="toast" id="toast"></div>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA — 100 TÉCNICAS SOBRE EL DEQUEÍSMO CASTELLANO
+        //  Uso correcto e incorrecto de "de que" en subordinadas
+        // ============================================================
+
+        const BLOCKS = [
+            { id: 'definicion', label: 'Definición y Regla General' },
+            { id: 'verbos_creencia', label: 'Verbos de Creencia' },
+            { id: 'verbos_comunicacion', label: 'Verbos de Comunicación' },
+            { id: 'verbos_percepcion', label: 'Verbos de Percepción' },
+            { id: 'verbos_opinion', label: 'Verbos de Opinión' },
+            { id: 'verbos_duda', label: 'Verbos de Duda' },
+            { id: 'sustantivos', label: 'Sustantivos y Locuciones' },
+            { id: 'errores_comunes', label: 'Errores Comunes' },
+            { id: 'queismo', label: 'Queísmo (caso contrario)' },
+            { id: 'usos_redaccion', label: 'Usos en Redacción' }
+        ];
+
+        const LESSONS = [];
+
+        function addLesson(blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt) {
+            LESSONS.push({ blockId, title, pattern, theory, example, breakdown, question, options, correct, prompt });
+        }
+
+        // ============================================================
+        //  BLOQUE 1: DEFINICIÓN Y REGLA GENERAL (1–10)
+        // ============================================================
+        const b1 = [
+            ['Dequeísmo: definición', 'Uso incorrecto de "de que" por "que"',
+                'El dequeísmo es el uso incorrecto de la preposición "de" delante de la conjunción "que" en oraciones subordinadas sustantivas cuando no es necesaria.',
+                'Incorrecto: Pienso de que vendrá. / Correcto: Pienso que vendrá.',
+                'de que (incorrecto) → que (correcto)',
+                '¿Qué es el dequeísmo?', ['Usar "de que" cuando solo debe ir "que"', 'Usar "que" cuando debe ir "de que"',
+                    'Usar "de" en lugar de "que"', 'Usar "que" en lugar de "de"'
+                ], 0, 'Escribe una oración correcta con "que" en lugar de "de que".'
+            ],
+            ['Regla general: prueba del "esto"', 'Prueba: sustituir por "esto"',
+                'Para saber si se necesita "de que", se puede sustituir el complemento por "esto". Si la construcción es "de esto", lleva "de que"; si es "esto", solo lleva "que".',
+                'Pienso esto. → Pienso que... (sin "de") / Me acuerdo de esto. → Me acuerdo de que... (con "de")',
+                'Pienso esto (sin de) / Me acuerdo de esto (con de)',
+                '¿Qué prueba ayuda a saber si se usa "de que" o "que"?', ['Sustituir por "esto"', 'Sustituir por "aquello"',
+                    'Sustituir por "algo"', 'Sustituir por "nada"'
+                ], 0, 'Escribe dos oraciones: una con "que" (sin de) y otra con "de que" (con de).'
+            ],
+            ['Verbos que NO llevan "de"', 'Verbos que no rigen "de"',
+                'Los verbos que no rigen la preposición "de" no admiten "de que" en la subordinada sustantiva.',
+                'Creo que vendrá. (sin de) / Pienso que sí. (sin de)',
+                'creer (sin de) / pensar (sin de)',
+                '¿Qué verbos no llevan "de" en la subordinada sustantiva?', ['Creer, pensar, decir', 'Acordarse, olvidarse',
+                    'Dudar, alegrarse', 'Tratar, hablar'
+                ], 0, 'Escribe una oración con "creo que" (sin "de").'
+            ],
+            ['Verbos que SÍ llevan "de"', 'Verbos que rigen "de"',
+                'Los verbos que rigen la preposición "de" admiten "de que" en la subordinada sustantiva.',
+                'Me acuerdo de que llegó tarde. (con de) / Me olvidé de que tenía cita. (con de)',
+                'acordarse (con de) / olvidarse (con de)',
+                '¿Qué verbos llevan "de" en la subordinada sustantiva?', ['Acordarse, olvidarse, alegrarse',
+                    'Creer, pensar, decir', 'Ver, oír, sentir', 'Saber, entender, comprender'
+                ], 0, 'Escribe una oración con "me acuerdo de que" (con "de").'
+            ],
+            ['Verbos que admiten ambas', 'Ambas formas (con y sin "de")',
+                'Algunos verbos admiten ambas construcciones, pero con cambios de significado o registro.',
+                'Tratar de que (intentar) / Tratar que (menos común) / Tratar de que (hablar de)',
+                'tratar de que (intentar / hablar de)',
+                '¿Qué verbo admite ambas formas con cambios de significado?', ['Tratar', 'Creer', 'Pensar', 'Decir'],
+                0, 'Escribe una oración con "tratar de que" (intentar) y otra con "tratar de que" (hablar de).'
+            ],
+            ['Prueba del "eso"', 'Sustituir el complemento por "eso"',
+                'Si la construcción es "de eso" en la respuesta, lleva "de que"; si es "eso", solo lleva "que".',
+                '¿De qué te acuerdas? → Me acuerdo de eso. → Me acuerdo de que...',
+                'de eso (con de)',
+                '¿Qué prueba ayuda a determinar si se usa "de que"?', ['Sustituir por "eso"', 'Sustituir por "esto"',
+                    'Sustituir por "aquello"', 'Sustituir por "algo"'
+                ], 0, 'Escribe una oración con "me acuerdo de que" usando la prueba del "eso".'
+            ],
+            ['Prueba del "algo"', 'Sustituir el complemento por "algo"',
+                    'Si la construcción es "de algo" en la respuesta, lleva "de que"; si es "algo", solo lleva "que".',
+                    '¿De qué hablas? → Hablo de algo. → Hablo de que...',
+                    'de algo (con de)',
+                    '¿Qué prueba ayuda a determinar si se usa "de que"?', ['Sustituir por "algo"', 'Sustituir por "esto"',
+                        'Sustituir por "eso"', 'Sustituir por "aquello"'
+                    ], 0, 'Escribe una oración con "hablo de que" usando la prueba del "algo".'
+                ],
+                ['Dequeísmo en verbos de comunicación', 'Verbos de comunicación con "de" incorrecto',
+                    'Verbos como "decir", "contar" no llevan "de" en la subordinada sustantiva.',
+                    'Incorrecto: Dijo de que vendría. / Correcto: Dijo que vendría.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Qué verbos de comunicación no llevan "de"?', ['Decir, contar, afirmar', 'Acordarse, olvidarse',
+                        'Alegrarse, lamentarse', 'Tratar, hablar'
+                    ], 0, 'Corrige la oración "Dijo de que vendría".'
+                ],
+                ['Dequeísmo en verbos de opinión', 'Verbos de opinión con "de" incorrecto',
+                    'Verbos como "pensar", "creer" no llevan "de" en la subordinada sustantiva.',
+                    'Incorrecto: Pienso de que es tarde. / Correcto: Pienso que es tarde.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Qué verbos de opinión no llevan "de"?', ['Pensar, creer, opinar', 'Acordarse, olvidarse',
+                        'Alegrarse, lamentarse', 'Tratar, hablar'
+                    ], 0, 'Corrige la oración "Pienso de que es tarde".'
+                ],
+                ['Dequeísmo en verbos de percepción', 'Verbos de percepción con "de" incorrecto',
+                    'Verbos como "ver", "oír", "sentir" no llevan "de" en la subordinada sustantiva.',
+                    'Incorrecto: Vi de que llegaba. / Correcto: Vi que llegaba.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Qué verbos de percepción no llevan "de"?', ['Ver, oír, sentir', 'Acordarse, olvidarse',
+                        'Alegrarse, lamentarse', 'Tratar, hablar'
+                    ], 0, 'Corrige la oración "Vi de que llegaba".'
+                ]
+            ];
+        b1.forEach(d => addLesson('definicion', ...d));
+
+            // ============================================================
+            //  BLOQUE 2: VERBOS DE CREENCIA (11–20)
+            // ============================================================
+            const b2 = [
+                ['Creer que (sin "de")', 'Creer + que (no "de que")',
+                    'El verbo "creer" no rige la preposición "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Creo que vendrá. / Cree que es cierto.',
+                    'creer + que (sin de)',
+                    '¿Qué construcción es correcta con "creer"?', ['Creer que', 'Creer de que', 'Creer en que',
+                        'Creer a que'
+                    ], 0, 'Escribe una oración con "creo que" (sin "de").'
+                ],
+                ['Pensar que (sin "de")', 'Pensar + que (no "de que")',
+                    'El verbo "pensar" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Pienso que es buena idea. / Piensa que llegaremos tarde.',
+                    'pensar + que (sin de)',
+                    '¿Qué construcción es correcta con "pensar"?', ['Pensar que', 'Pensar de que', 'Pensar en que',
+                        'Pensar a que'
+                    ], 0, 'Escribe una oración con "pienso que" (sin "de").'
+                ],
+                ['Considerar que (sin "de")', 'Considerar + que (no "de que")',
+                    'El verbo "considerar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Considero que es importante. / Consideramos que está bien.',
+                    'considerar + que (sin de)',
+                    '¿Qué construcción es correcta con "considerar"?', ['Considerar que', 'Considerar de que',
+                        'Considerar en que', 'Considerar a que'
+                    ], 0, 'Escribe una oración con "considero que" (sin "de").'
+                ],
+                ['Suponer que (sin "de")', 'Suponer + que (no "de que")',
+                    'El verbo "suponer" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Supongo que vendrá. / Suponemos que es verdad.',
+                    'suponer + que (sin de)',
+                    '¿Qué construcción es correcta con "suponer"?', ['Suponer que', 'Suponer de que', 'Suponer en que',
+                        'Suponer a que'
+                    ], 0, 'Escribe una oración con "supongo que" (sin "de").'
+                ],
+                ['Imaginar que (sin "de")', 'Imaginar + que (no "de que")',
+                    'El verbo "imaginar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Imagino que estás bien. / Imagina que llegan tarde.',
+                    'imaginar + que (sin de)',
+                    '¿Qué construcción es correcta con "imaginar"?', ['Imaginar que', 'Imaginar de que', 'Imaginar en que',
+                        'Imaginar a que'
+                    ], 0, 'Escribe una oración con "imagino que" (sin "de").'
+                ],
+                ['Sospechar que (sin "de")', 'Sospechar + que (no "de que")',
+                    'El verbo "sospechar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Sospecho que miente. / Sospechamos que llegó tarde.',
+                    'sospechar + que (sin de)',
+                    '¿Qué construcción es correcta con "sospechar"?', ['Sospechar que', 'Sospechar de que',
+                        'Sospechar en que', 'Sospechar a que'
+                    ], 0, 'Escribe una oración con "sospecho que" (sin "de").'
+                ],
+                ['Estimar que (sin "de")', 'Estimar + que (no "de que")',
+                    'El verbo "estimar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Estimo que es suficiente. / Estiman que llegaremos a tiempo.',
+                    'estimar + que (sin de)',
+                    '¿Qué construcción es correcta con "estimar"?', ['Estimar que', 'Estimar de que', 'Estimar en que',
+                        'Estimar a que'
+                    ], 0, 'Escribe una oración con "estimo que" (sin "de").'
+                ],
+                ['Juzgar que (sin "de")', 'Juzgar + que (no "de que")',
+                    'El verbo "juzgar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Juzgo que es justo. / Juzgan que es correcto.',
+                    'juzgar + que (sin de)',
+                    '¿Qué construcción es correcta con "juzgar"?', ['Juzgar que', 'Juzgar de que', 'Juzgar en que',
+                        'Juzgar a que'
+                    ], 0, 'Escribe una oración con "juzgo que" (sin "de").'
+                ],
+                ['Tener por cierto que (sin "de")', 'Tener por cierto + que (sin "de")',
+                    'La locución "tener por cierto" no rige "de". Se usa solo "que".',
+                    'Tengo por cierto que llegará.',
+                    'tener por cierto + que (sin de)',
+                    '¿Qué construcción es correcta con "tener por cierto"?', ['Tener por cierto que', 'Tener por cierto de que',
+                        'Tener por cierto en que', 'Tener por cierto a que'
+                    ], 0, 'Escribe una oración con "tengo por cierto que" (sin "de").'
+                ],
+                ['Dar por sentado que (sin "de")', 'Dar por sentado + que (sin "de")',
+                    'La locución "dar por sentado" no rige "de". Se usa solo "que".',
+                    'Doy por sentado que vendrá.',
+                    'dar por sentado + que (sin de)',
+                    '¿Qué construcción es correcta con "dar por sentado"?', ['Dar por sentado que', 'Dar por sentado de que',
+                        'Dar por sentado en que', 'Dar por sentado a que'
+                    ], 0, 'Escribe una oración con "doy por sentado que" (sin "de").'
+                ]
+            ];
+        b2.forEach(d => addLesson('verbos_creencia', ...d));
+
+            // ============================================================
+            //  BLOQUE 3: VERBOS DE COMUNICACIÓN (21–30)
+            // ============================================================
+            const b3 = [
+                ['Decir que (sin "de")', 'Decir + que (no "de que")',
+                    'El verbo "decir" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Digo que vendré. / Dice que es cierto.',
+                    'decir + que (sin de)',
+                    '¿Qué construcción es correcta con "decir"?', ['Decir que', 'Decir de que', 'Decir en que',
+                        'Decir a que'
+                    ], 0, 'Escribe una oración con "digo que" (sin "de").'
+                ],
+                ['Contar que (sin "de")', 'Contar + que (no "de que")',
+                    'El verbo "contar" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Cuento que llegué tarde. / Cuenta que es verdad.',
+                    'contar + que (sin de)',
+                    '¿Qué construcción es correcta con "contar"?', ['Contar que', 'Contar de que', 'Contar en que',
+                        'Contar a que'
+                    ], 0, 'Escribe una oración con "cuento que" (sin "de").'
+                ],
+                ['Afirmar que (sin "de")', 'Afirmar + que (no "de que")',
+                    'El verbo "afirmar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Afirmo que es verdad. / Afirma que llegará.',
+                    'afirmar + que (sin de)',
+                    '¿Qué construcción es correcta con "afirmar"?', ['Afirmar que', 'Afirmar de que', 'Afirmar en que',
+                        'Afirmar a que'
+                    ], 0, 'Escribe una oración con "afirmo que" (sin "de").'
+                ],
+                ['Negar que (sin "de")', 'Negar + que (no "de que")',
+                    'El verbo "negar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Niego que sea verdad. / Niega que llegó tarde.',
+                    'negar + que (sin de)',
+                    '¿Qué construcción es correcta con "negar"?', ['Negar que', 'Negar de que', 'Negar en que',
+                        'Negar a que'
+                    ], 0, 'Escribe una oración con "niego que" (sin "de").'
+                ],
+                ['Explicar que (sin "de")', 'Explicar + que (no "de que")',
+                    'El verbo "explicar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Explico que es difícil. / Explica que llegó tarde.',
+                    'explicar + que (sin de)',
+                    '¿Qué construcción es correcta con "explicar"?', ['Explicar que', 'Explicar de que', 'Explicar en que',
+                        'Explicar a que'
+                    ], 0, 'Escribe una oración con "explico que" (sin "de").'
+                ],
+                ['Comunicar que (sin "de")', 'Comunicar + que (no "de que")',
+                    'El verbo "comunicar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Comunico que llegaremos. / Comunica que es cierto.',
+                    'comunicar + que (sin de)',
+                    '¿Qué construcción es correcta con "comunicar"?', ['Comunicar que', 'Comunicar de que',
+                        'Comunicar en que', 'Comunicar a que'
+                    ], 0, 'Escribe una oración con "comunico que" (sin "de").'
+                ],
+                ['Añadir que (sin "de")', 'Añadir + que (no "de que")',
+                    'El verbo "añadir" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Añado que es importante. / Añade que llegó tarde.',
+                    'añadir + que (sin de)',
+                    '¿Qué construcción es correcta con "añadir"?', ['Añadir que', 'Añadir de que', 'Añadir en que',
+                        'Añadir a que'
+                    ], 0, 'Escribe una oración con "añado que" (sin "de").'
+                ],
+                ['Advertir que (sin "de")', 'Advertir + que (no "de que")',
+                    'El verbo "advertir" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Advierto que es peligroso. / Advierte que llegará tarde.',
+                    'advertir + que (sin de)',
+                    '¿Qué construcción es correcta con "advertir"?', ['Advertir que', 'Advertir de que', 'Advertir en que',
+                        'Advertir a que'
+                    ], 0, 'Escribe una oración con "advierto que" (sin "de").'
+                ],
+                ['Asegurar que (sin "de")', 'Asegurar + que (no "de que")',
+                    'El verbo "asegurar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Aseguro que es verdad. / Asegura que llegará.',
+                    'asegurar + que (sin de)',
+                    '¿Qué construcción es correcta con "asegurar"?', ['Asegurar que', 'Asegurar de que', 'Asegurar en que',
+                        'Asegurar a que'
+                    ], 0, 'Escribe una oración con "aseguro que" (sin "de").'
+                ],
+                ['Confesar que (sin "de")', 'Confesar + que (no "de que")',
+                    'El verbo "confesar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Confieso que es cierto. / Confiesa que llegó tarde.',
+                    'confesar + que (sin de)',
+                    '¿Qué construcción es correcta con "confesar"?', ['Confesar que', 'Confesar de que', 'Confesar en que',
+                        'Confesar a que'
+                    ], 0, 'Escribe una oración con "confieso que" (sin "de").'
+                ]
+            ];
+        b3.forEach(d => addLesson('verbos_comunicacion', ...d));
+
+            // ============================================================
+            //  BLOQUE 4: VERBOS DE PERCEPCIÓN (31–40)
+            // ============================================================
+            const b4 = [
+                ['Ver que (sin "de")', 'Ver + que (no "de que")',
+                    'El verbo "ver" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Veo que es tarde. / Vio que llegaba.',
+                    'ver + que (sin de)',
+                    '¿Qué construcción es correcta con "ver"?', ['Ver que', 'Ver de que', 'Ver en que', 'Ver a que'],
+                    0, 'Escribe una oración con "veo que" (sin "de").'
+                ],
+                ['Oír que (sin "de")', 'Oír + que (no "de que")',
+                    'El verbo "oír" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Oigo que llaman. / Oyó que llegaban.',
+                    'oír + que (sin de)',
+                    '¿Qué construcción es correcta con "oír"?', ['Oír que', 'Oír de que', 'Oír en que', 'Oír a que'],
+                    0, 'Escribe una oración con "oigo que" (sin "de").'
+                ],
+                ['Sentir que (sin "de")', 'Sentir + que (no "de que")',
+                    'El verbo "sentir" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Siento que es así. / Siente que llegará.',
+                    'sentir + que (sin de)',
+                    '¿Qué construcción es correcta con "sentir"?', ['Sentir que', 'Sentir de que', 'Sentir en que',
+                        'Sentir a que'
+                    ], 0, 'Escribe una oración con "siento que" (sin "de").'
+                ],
+                ['Notar que (sin "de")', 'Notar + que (no "de que")',
+                    'El verbo "notar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Noto que está cansado. / Notó que llegaba.',
+                    'notar + que (sin de)',
+                    '¿Qué construcción es correcta con "notar"?', ['Notar que', 'Notar de que', 'Notar en que',
+                        'Notar a que'
+                    ], 0, 'Escribe una oración con "noto que" (sin "de").'
+                ],
+                ['Observar que (sin "de")', 'Observar + que (no "de que")',
+                    'El verbo "observar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Observo que es cierto. / Observó que llegaban.',
+                    'observar + que (sin de)',
+                    '¿Qué construcción es correcta con "observar"?', ['Observar que', 'Observar de que', 'Observar en que',
+                        'Observar a que'
+                    ], 0, 'Escribe una oración con "observo que" (sin "de").'
+                ],
+                ['Percibir que (sin "de")', 'Percibir + que (no "de que")',
+                    'El verbo "percibir" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Percibo que es tarde. / Percibió que llegaban.',
+                    'percibir + que (sin de)',
+                    '¿Qué construcción es correcta con "percibir"?', ['Percibir que', 'Percibir de que', 'Percibir en que',
+                        'Percibir a que'
+                    ], 0, 'Escribe una oración con "percibo que" (sin "de").'
+                ],
+                ['Comprobar que (sin "de")', 'Comprobar + que (no "de que")',
+                    'El verbo "comprobar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Compruebo que es cierto. / Comprobó que llegaban.',
+                    'comprobar + que (sin de)',
+                    '¿Qué construcción es correcta con "comprobar"?', ['Comprobar que', 'Comprobar de que',
+                        'Comprobar en que', 'Comprobar a que'
+                    ], 0, 'Escribe una oración con "compruebo que" (sin "de").'
+                ],
+                ['Comprobar que (sin "de")', 'Comprobar + que (no "de que")',
+                    'El verbo "comprobar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Compruebo que es cierto. / Comprobó que llegaban.',
+                    'comprobar + que (sin de)',
+                    '¿Qué construcción es correcta con "comprobar"?', ['Comprobar que', 'Comprobar de que',
+                        'Comprobar en que', 'Comprobar a que'
+                    ], 0, 'Escribe una oración con "compruebo que" (sin "de").'
+                ],
+                ['Verificar que (sin "de")', 'Verificar + que (no "de que")',
+                    'El verbo "verificar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Verifico que es correcto. / Verificó que llegaban.',
+                    'verificar + que (sin de)',
+                    '¿Qué construcción es correcta con "verificar"?', ['Verificar que', 'Verificar de que',
+                        'Verificar en que', 'Verificar a que'
+                    ], 0, 'Escribe una oración con "verifico que" (sin "de").'
+                ],
+                ['Reconocer que (sin "de")', 'Reconocer + que (no "de que")',
+                    'El verbo "reconocer" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Reconozco que es cierto. / Reconoció que llegaba.',
+                    'reconocer + que (sin de)',
+                    '¿Qué construcción es correcta con "reconocer"?', ['Reconocer que', 'Reconocer de que',
+                        'Reconocer en que', 'Reconocer a que'
+                    ], 0, 'Escribe una oración con "reconozco que" (sin "de").'
+                ]
+            ];
+        b4.forEach(d => addLesson('verbos_percepcion', ...d));
+
+            // ============================================================
+            //  BLOQUE 5: VERBOS DE OPINIÓN (41–50)
+            // ============================================================
+            const b5 = [
+                ['Opinar que (sin "de")', 'Opinar + que (no "de que")',
+                    'El verbo "opinar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Opino que es buena idea. / Opina que llegaremos tarde.',
+                    'opinar + que (sin de)',
+                    '¿Qué construcción es correcta con "opinar"?', ['Opinar que', 'Opinar de que', 'Opinar en que',
+                        'Opinar a que'
+                    ], 0, 'Escribe una oración con "opino que" (sin "de").'
+                ],
+                ['Considerar que (sin "de")', 'Considerar + que (no "de que")',
+                    'El verbo "considerar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Considero que es justo. / Considera que es correcto.',
+                    'considerar + que (sin de)',
+                    '¿Qué construcción es correcta con "considerar"?', ['Considerar que', 'Considerar de que',
+                        'Considerar en que', 'Considerar a que'
+                    ], 0, 'Escribe una oración con "considero que" (sin "de").'
+                ],
+                ['Creer que (sin "de")', 'Creer + que (no "de que")',
+                    'El verbo "creer" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Creo que es verdad. / Cree que llegará.',
+                    'creer + que (sin de)',
+                    '¿Qué construcción es correcta con "creer"?', ['Creer que', 'Creer de que', 'Creer en que',
+                        'Creer a que'
+                    ], 0, 'Escribe una oración con "creo que" (sin "de").'
+                ],
+                ['Pensar que (sin "de")', 'Pensar + que (no "de que")',
+                    'El verbo "pensar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Pienso que es tarde. / Piensa que llegaremos.',
+                    'pensar + que (sin de)',
+                    '¿Qué construcción es correcta con "pensar"?', ['Pensar que', 'Pensar de que', 'Pensar en que',
+                        'Pensar a que'
+                    ], 0, 'Escribe una oración con "pienso que" (sin "de").'
+                ],
+                ['Juzgar que (sin "de")', 'Juzgar + que (no "de que")',
+                    'El verbo "juzgar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Juzgo que es justo. / Juzga que es correcto.',
+                    'juzgar + que (sin de)',
+                    '¿Qué construcción es correcta con "juzgar"?', ['Juzgar que', 'Juzgar de que', 'Juzgar en que',
+                        'Juzgar a que'
+                    ], 0, 'Escribe una oración con "juzgo que" (sin "de").'
+                ],
+                ['Valorar que (sin "de")', 'Valorar + que (no "de que")',
+                    'El verbo "valorar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Valoro que es importante. / Valora que es bueno.',
+                    'valorar + que (sin de)',
+                    '¿Qué construcción es correcta con "valorar"?', ['Valorar que', 'Valorar de que', 'Valorar en que',
+                        'Valorar a que'
+                    ], 0, 'Escribe una oración con "valoro que" (sin "de").'
+                ],
+                ['Calificar que (sin "de")', 'Calificar + que (no "de que")',
+                    'El verbo "calificar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Califico que es excelente. / Califica que es bueno.',
+                    'calificar + que (sin de)',
+                    '¿Qué construcción es correcta con "calificar"?', ['Calificar que', 'Calificar de que',
+                        'Calificar en que', 'Calificar a que'
+                    ], 0, 'Escribe una oración con "califico que" (sin "de").'
+                ],
+                ['Tachar que (sin "de")', 'Tachar + que (no "de que")',
+                    'El verbo "tachar" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Tacho que es malo. / Tacha que es incorrecto.',
+                    'tachar + que (sin de)',
+                    '¿Qué construcción es correcta con "tachar"?', ['Tachar que', 'Tachar de que', 'Tachar en que',
+                        'Tachar a que'
+                    ], 0, 'Escribe una oración con "tacho que" (sin "de").'
+                ],
+                ['Mencionar que (sin "de")', 'Mencionar + que (no "de que")',
+                    'El verbo "mencionar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Menciono que es importante. / Menciona que llegó.',
+                    'mencionar + que (sin de)',
+                    '¿Qué construcción es correcta con "mencionar"?', ['Mencionar que', 'Mencionar de que',
+                        'Mencionar en que', 'Mencionar a que'
+                    ], 0, 'Escribe una oración con "menciono que" (sin "de").'
+                ],
+                ['Señalar que (sin "de")', 'Señalar + que (no "de que")',
+                    'El verbo "señalar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Señalo que es importante. / Señala que llegó.',
+                    'señalar + que (sin de)',
+                    '¿Qué construcción es correcta con "señalar"?', ['Señalar que', 'Señalar de que', 'Señalar en que',
+                        'Señalar a que'
+                    ], 0, 'Escribe una oración con "señalo que" (sin "de").'
+                ]
+            ];
+        b5.forEach(d => addLesson('verbos_opinion', ...d));
+
+            // ============================================================
+            //  BLOQUE 6: VERBOS DE DUDA (51–60)
+            // ============================================================
+            const b6 = [
+                ['Dudar que (sin "de")', 'Dudar + que (no "de que")',
+                    'El verbo "dudar" no rige "de" en la subordinada sustantiva. Se usa solo "que".',
+                    'Dudo que venga. / Dudan que sea cierto.',
+                    'dudar + que (sin de)',
+                    '¿Qué construcción es correcta con "dudar"?', ['Dudar que', 'Dudar de que', 'Dudar en que',
+                        'Dudar a que'
+                    ], 0, 'Escribe una oración con "dudo que" (sin "de").'
+                ],
+                ['No creer que (sin "de")', 'No creer + que (no "de que")',
+                    'La negación de "creer" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'No creo que venga. / No cree que sea cierto.',
+                    'no creer + que (sin de)',
+                    '¿Qué construcción es correcta con "no creer"?', ['No creer que', 'No creer de que', 'No creer en que',
+                        'No creer a que'
+                    ], 0, 'Escribe una oración con "no creo que" (sin "de").'
+                ],
+                ['No pensar que (sin "de")', 'No pensar + que (no "de que")',
+                    'La negación de "pensar" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'No pienso que sea tarde. / No piensa que llegue.',
+                    'no pensar + que (sin de)',
+                    '¿Qué construcción es correcta con "no pensar"?', ['No pensar que', 'No pensar de que',
+                        'No pensar en que', 'No pensar a que'
+                    ], 0, 'Escribe una oración con "no pienso que" (sin "de").'
+                ],
+                ['Dudar en que (con "en")', 'Dudar en + que (con "en")',
+                    '"Dudar en" es una variante con "en" que sí lleva "que" después de "en".',
+                    'Dudo en que venga. (con "en") / Dudan en que sea cierto.',
+                    'dudar en + que (con en)',
+                    '¿Qué construcción es correcta con "dudar en"?', ['Dudar en que', 'Dudar en de que', 'Dudar en que',
+                        'Dudar en a que'
+                    ], 0, 'Escribe una oración con "dudo en que" (con "en").'
+                ],
+                ['Temer que (sin "de")', 'Temer + que (no "de que")',
+                    'El verbo "temer" no rige "de". Se usa solo "que" en la subordinada sustantiva.',
+                    'Temo que venga. / Temen que sea tarde.',
+                    'temer + que (sin de)',
+                    '¿Qué construcción es correcta con "temer"?', ['Temer que', 'Temer de que', 'Temer en que',
+                        'Temer a que'
+                    ], 0, 'Escribe una oración con "temo que" (sin "de").'
+                ],
+                ['No estar seguro de que (con "de")', 'No estar seguro + de que (con "de")',
+                    'La locución "no estar seguro" rige "de", por lo que admite "de que".',
+                    'No estoy seguro de que venga.',
+                    'no estar seguro de que (con de)',
+                    '¿Qué construcción es correcta con "no estar seguro"?', ['No estar seguro de que',
+                        'No estar seguro que', 'No estar seguro en que', 'No estar seguro a que'
+                    ], 0, 'Escribe una oración con "no estoy seguro de que" (con "de").'
+                ],
+                ['No estar convencido de que (con "de")', 'No estar convencido + de que (con "de")',
+                    'La locución "no estar convencido" rige "de", por lo que admite "de que".',
+                    'No estoy convencido de que sea cierto.',
+                    'no estar convencido de que (con de)',
+                    '¿Qué construcción es correcta con "no estar convencido"?', ['No estar convencido de que',
+                        'No estar convencido que', 'No estar convencido en que', 'No estar convencido a que'
+                    ], 0, 'Escribe una oración con "no estoy convencido de que" (con "de").'
+                ],
+                ['No estar seguro (sin "de")', 'No estar seguro + que (sin "de") incorrecto',
+                    'Es incorrecto omitir "de" en "no estar seguro".',
+                    'Incorrecto: No estoy seguro que venga. / Correcto: No estoy seguro de que venga.',
+                    'seguro que (incorrecto) → seguro de que (correcto)',
+                    '¿Cómo se corrige "No estoy seguro que venga"?', ['No estoy seguro de que venga',
+                        'No estoy seguro que venga', 'No estoy seguro en que venga', 'No estoy seguro a que venga'
+                    ], 0, 'Corrige la oración "No estoy seguro que venga".'
+                ],
+                ['No estar convencido (sin "de")', 'No estar convencido + que (sin "de") incorrecto',
+                    'Es incorrecto omitir "de" en "no estar convencido".',
+                    'Incorrecto: No estoy convencido que sea cierto. / Correcto: No estoy convencido de que sea cierto.',
+                    'convencido que (incorrecto) → convencido de que (correcto)',
+                    '¿Cómo se corrige "No estoy convencido que sea cierto"?', ['No estoy convencido de que sea cierto',
+                        'No estoy convencido que sea cierto', 'No estoy convencido en que sea cierto',
+                        'No estoy convencido a que sea cierto'
+                    ], 0, 'Corrige la oración "No estoy convencido que sea cierto".'
+                ],
+                ['No estar cierto de que (con "de")', 'No estar cierto + de que (con "de")',
+                    'La locución "no estar cierto" rige "de", por lo que admite "de que".',
+                    'No estoy cierto de que venga.',
+                    'no estar cierto de que (con de)',
+                    '¿Qué construcción es correcta con "no estar cierto"?', ['No estar cierto de que',
+                        'No estar cierto que', 'No estar cierto en que', 'No estar cierto a que'
+                    ], 0, 'Escribe una oración con "no estoy cierto de que" (con "de").'
+                ]
+            ];
+        b6.forEach(d => addLesson('verbos_duda', ...d));
+
+            // ============================================================
+            //  BLOQUE 7: SUSTANTIVOS Y LOCUCIONES (61–70)
+            // ============================================================
+            const b7 = [
+                ['Tener la sensación de que (con "de")', 'Tener la sensación + de que (con "de")',
+                    'La locución "tener la sensación" rige "de", por lo que admite "de que".',
+                    'Tengo la sensación de que algo va mal.',
+                    'tener la sensación de que (con de)',
+                    '¿Qué construcción es correcta con "tener la sensación"?', ['Tener la sensación de que',
+                        'Tener la sensación que', 'Tener la sensación en que', 'Tener la sensación a que'
+                    ], 0, 'Escribe una oración con "tengo la sensación de que" (con "de").'
+                ],
+                ['Dar la impresión de que (con "de")', 'Dar la impresión + de que (con "de")',
+                    'La locución "dar la impresión" rige "de", por lo que admite "de que".',
+                    'Da la impresión de que va a llover.',
+                    'dar la impresión de que (con de)',
+                    '¿Qué construcción es correcta con "dar la impresión"?', ['Dar la impresión de que',
+                        'Dar la impresión que', 'Dar la impresión en que', 'Dar la impresión a que'
+                    ], 0, 'Escribe una oración con "da la impresión de que" (con "de").'
+                ],
+                ['Tener la certeza de que (con "de")', 'Tener la certeza + de que (con "de")',
+                    'La locución "tener la certeza" rige "de", por lo que admite "de que".',
+                    'Tengo la certeza de que es verdad.',
+                    'tener la certeza de que (con de)',
+                    '¿Qué construcción es correcta con "tener la certeza"?', ['Tener la certeza de que',
+                        'Tener la certeza que', 'Tener la certeza en que', 'Tener la certeza a que'
+                    ], 0, 'Escribe una oración con "tengo la certeza de que" (con "de").'
+                ],
+                ['Tener la esperanza de que (con "de")', 'Tener la esperanza + de que (con "de")',
+                    'La locución "tener la esperanza" rige "de", por lo que admite "de que".',
+                    'Tengo la esperanza de que llegue.',
+                    'tener la esperanza de que (con de)',
+                    '¿Qué construcción es correcta con "tener la esperanza"?', ['Tener la esperanza de que',
+                        'Tener la esperanza que', 'Tener la esperanza en que', 'Tener la esperanza a que'
+                    ], 0, 'Escribe una oración con "tengo la esperanza de que" (con "de").'
+                ],
+                ['Tener la sospecha de que (con "de")', 'Tener la sospecha + de que (con "de")',
+                    'La locución "tener la sospecha" rige "de", por lo que admite "de que".',
+                    'Tengo la sospecha de que miente.',
+                    'tener la sospecha de que (con de)',
+                    '¿Qué construcción es correcta con "tener la sospecha"?', ['Tener la sospecha de que',
+                        'Tener la sospecha que', 'Tener la sospecha en que', 'Tener la sospecha a que'
+                    ], 0, 'Escribe una oración con "tengo la sospecha de que" (con "de").'
+                ],
+                ['Tener el presentimiento de que (con "de")', 'Tener el presentimiento + de que (con "de")',
+                    'La locución "tener el presentimiento" rige "de", por lo que admite "de que".',
+                    'Tengo el presentimiento de que va a pasar algo.',
+                    'tener el presentimiento de que (con de)',
+                    '¿Qué construcción es correcta con "tener el presentimiento"?', ['Tener el presentimiento de que',
+                        'Tener el presentimiento que', 'Tener el presentimiento en que', 'Tener el presentimiento a que'
+                    ], 0, 'Escribe una oración con "tengo el presentimiento de que" (con "de").'
+                ],
+                ['Tener la convicción de que (con "de")', 'Tener la convicción + de que (con "de")',
+                    'La locución "tener la convicción" rige "de", por lo que admite "de que".',
+                    'Tengo la convicción de que es cierto.',
+                    'tener la convicción de que (con de)',
+                    '¿Qué construcción es correcta con "tener la convicción"?', ['Tener la convicción de que',
+                        'Tener la convicción que', 'Tener la convicción en que', 'Tener la convicción a que'
+                    ], 0, 'Escribe una oración con "tengo la convicción de que" (con "de").'
+                ],
+                ['Tener el convencimiento de que (con "de")', 'Tener el convencimiento + de que (con "de")',
+                    'La locución "tener el convencimiento" rige "de", por lo que admite "de que".',
+                    'Tengo el convencimiento de que es así.',
+                    'tener el convencimiento de que (con de)',
+                    '¿Qué construcción es correcta con "tener el convencimiento"?', ['Tener el convencimiento de que',
+                        'Tener el convencimiento que', 'Tener el convencimiento en que', 'Tener el convencimiento a que'
+                    ], 0, 'Escribe una oración con "tengo el convencimiento de que" (con "de").'
+                ],
+                ['Tener la duda de que (con "de")', 'Tener la duda + de que (con "de")',
+                    'La locución "tener la duda" rige "de", por lo que admite "de que".',
+                    'Tengo la duda de que sea cierto.',
+                    'tener la duda de que (con de)',
+                    '¿Qué construcción es correcta con "tener la duda"?', ['Tener la duda de que', 'Tener la duda que',
+                        'Tener la duda en que', 'Tener la duda a que'
+                    ], 0, 'Escribe una oración con "tengo la duda de que" (con "de").'
+                ],
+                ['Tener la seguridad de que (con "de")', 'Tener la seguridad + de que (con "de")',
+                    'La locución "tener la seguridad" rige "de", por lo que admite "de que".',
+                    'Tengo la seguridad de que llegará.',
+                    'tener la seguridad de que (con de)',
+                    '¿Qué construcción es correcta con "tener la seguridad"?', ['Tener la seguridad de que',
+                        'Tener la seguridad que', 'Tener la seguridad en que', 'Tener la seguridad a que'
+                    ], 0, 'Escribe una oración con "tengo la seguridad de que" (con "de").'
+                ]
+            ];
+        b7.forEach(d => addLesson('sustantivos', ...d));
+
+            // ============================================================
+            //  BLOQUE 8: ERRORES COMUNES (71–80)
+            // ============================================================
+            const b8 = [
+                ['Error: "pienso de que"', 'Pienso de que (incorrecto)',
+                    'El error más común es usar "pienso de que" en lugar de "pienso que".',
+                    'Incorrecto: Pienso de que es tarde. / Correcto: Pienso que es tarde.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Pienso de que es tarde"?', ['Pienso que es tarde', 'Pienso de que es tarde',
+                        'Pienso en que es tarde', 'Pienso a que es tarde'
+                    ], 0, 'Corrige la oración "Pienso de que es tarde".'
+                ],
+                ['Error: "creo de que"', 'Creo de que (incorrecto)',
+                    '"Creo de que" es otro dequeísmo muy común.',
+                    'Incorrecto: Creo de que vendrá. / Correcto: Creo que vendrá.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Creo de que vendrá"?', ['Creo que vendrá', 'Creo de que vendrá',
+                        'Creo en que vendrá', 'Creo a que vendrá'
+                    ], 0, 'Corrige la oración "Creo de que vendrá".'
+                ],
+                ['Error: "digo de que"', 'Digo de que (incorrecto)',
+                    '"Digo de que" es un error común en el habla coloquial.',
+                    'Incorrecto: Digo de que vendré. / Correcto: Digo que vendré.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Digo de que vendré"?', ['Digo que vendré', 'Digo de que vendré',
+                        'Digo en que vendré', 'Digo a que vendré'
+                    ], 0, 'Corrige la oración "Digo de que vendré".'
+                ],
+                ['Error: "veo de que"', 'Veo de que (incorrecto)',
+                    '"Veo de que" es un dequeísmo con verbos de percepción.',
+                    'Incorrecto: Veo de que llega. / Correcto: Veo que llega.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Veo de que llega"?', ['Veo que llega', 'Veo de que llega', 'Veo en que llega',
+                        'Veo a que llega'
+                    ], 0, 'Corrige la oración "Veo de que llega".'
+                ],
+                ['Error: "siento de que"', 'Siento de que (incorrecto)',
+                    '"Siento de que" es otro dequeísmo con verbos de percepción.',
+                    'Incorrecto: Siento de que es así. / Correcto: Siento que es así.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Siento de que es así"?', ['Siento que es así', 'Siento de que es así',
+                        'Siento en que es así', 'Siento a que es así'
+                    ], 0, 'Corrige la oración "Siento de que es así".'
+                ],
+                ['Error: "opino de que"', 'Opino de que (incorrecto)',
+                    '"Opino de que" es un dequeísmo con verbos de opinión.',
+                    'Incorrecto: Opino de que es bueno. / Correcto: Opino que es bueno.',
+                    'de que (incorrecto) → que (correcto)',
+                    '¿Cómo se corrige "Opino de que es bueno"?', ['Opino que es bueno', 'Opino de que es bueno',
+                        'Opino en que es bueno', 'Opino a que es bueno'
+                    ], 0, 'Corrige la oración "Opino de que es bueno".'
+                ],
+                ['Error: "dudo de que" (incorrecto)', 'Dudo de que (incorrecto en algunos casos)',
+                    '"Dudo de que" es incorrecto si el verbo "dudar" no rige "de". Se usa "dudo que" (sin "de").',
+                    'Incorrecto: Dudo de que venga. (en la norma, "dudo que" es más común)',
+                    'dudo de que (menos común) → dudo que (más común)',
+                    '¿Qué construcción es más común con "dudar"?', ['Dudo que', 'Dudo de que', 'Dudo en que',
+                        'Dudo a que'
+                    ], 0, 'Escribe una oración con "dudo que" (sin "de").'
+                ],
+                ['Error: "tratar de que" por "tratar que"', 'Tratar de que (intentar) / Tratar que (incorrecto)',
+                    '"Tratar de que" se usa para "intentar", pero no se debe omitir "de" en ese sentido.',
+                    'Incorrecto: Trato que venga. / Correcto: Trato de que venga. (intentar)',
+                    'trato que (incorrecto) → trato de que (correcto)',
+                    '¿Cómo se corrige "Trato que venga" (intentar)?', ['Trato de que venga', 'Trato que venga',
+                        'Trato en que venga', 'Trato a que venga'
+                    ], 0, 'Corrige la oración "Trato que venga" (intentar).'
+                ],
+                ['Error: "me acuerdo que" por "me acuerdo de que"', 'Me acuerdo que (incorrecto)',
+                    'Es incorrecto omitir "de" en "me acuerdo".',
+                    'Incorrecto: Me acuerdo que llegó tarde. / Correcto: Me acuerdo de que llegó tarde.',
+                    'acuerdo que (incorrecto) → acuerdo de que (correcto)',
+                    '¿Cómo se corrige "Me acuerdo que llegó tarde"?', ['Me acuerdo de que llegó tarde',
+                        'Me acuerdo que llegó tarde', 'Me acuerdo en que llegó tarde', 'Me acuerdo a que llegó tarde'
+                    ], 0, 'Corrige la oración "Me acuerdo que llegó tarde".'
+                ],
+                ['Error: "me olvido que" por "me olvido de que"', 'Me olvido que (incorrecto)',
+                    'Es incorrecto omitir "de" en "me olvido".',
+                    'Incorrecto: Me olvido que tengo cita. / Correcto: Me olvido de que tengo cita.',
+                    'olvido que (incorrecto) → olvido de que (correcto)',
+                    '¿Cómo se corrige "Me olvido que tengo cita"?', ['Me olvido de que tengo cita',
+                        'Me olvido que tengo cita', 'Me olvido en que tengo cita', 'Me olvido a que tengo cita'
+                    ], 0, 'Corrige la oración "Me olvido que tengo cita".'
+                ]
+            ];
+        b8.forEach(d => addLesson('errores_comunes', ...d));
+
+            // ============================================================
+            //  BLOQUE 9: QUEÍSMO (CASO CONTRARIO) (81–90)
+            // ============================================================
+            const b9 = [
+                ['Queísmo: definición', 'Omitir "de" cuando es necesario',
+                    'El queísmo es lo contrario al dequeísmo: omitir la preposición "de" cuando es necesaria.',
+                    'Incorrecto (queísmo): Me acuerdo que llegó. / Correcto: Me acuerdo de que llegó.',
+                    'que (incorrecto) → de que (correcto)',
+                    '¿Qué es el queísmo?', ['Omitir "de" cuando es necesario', 'Usar "de que" cuando no es necesario',
+                        'Usar "que" en lugar de "de"', 'Usar "de" en lugar de "que"'
+                    ], 0, 'Corrige la oración "Me acuerdo que llegó".'
+                ],
+                ['Queísmo con "darse cuenta"', 'Darse cuenta que (incorrecto)',
+                    '"Darse cuenta" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Me di cuenta que era tarde. / Correcto: Me di cuenta de que era tarde.',
+                    'cuenta que (incorrecto) → cuenta de que (correcto)',
+                    '¿Cómo se corrige "Me di cuenta que era tarde"?', ['Me di cuenta de que era tarde',
+                        'Me di cuenta que era tarde', 'Me di cuenta en que era tarde', 'Me di cuenta a que era tarde'
+                    ], 0, 'Corrige la oración "Me di cuenta que era tarde".'
+                ],
+                ['Queísmo con "estar seguro"', 'Estar seguro que (incorrecto)',
+                    '"Estar seguro" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Estoy seguro que vendrá. / Correcto: Estoy seguro de que vendrá.',
+                    'seguro que (incorrecto) → seguro de que (correcto)',
+                    '¿Cómo se corrige "Estoy seguro que vendrá"?', ['Estoy seguro de que vendrá',
+                        'Estoy seguro que vendrá', 'Estoy seguro en que vendrá', 'Estoy seguro a que vendrá'
+                    ], 0, 'Corrige la oración "Estoy seguro que vendrá".'
+                ],
+                ['Queísmo con "estar convencido"', 'Estar convencido que (incorrecto)',
+                    '"Estar convencido" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Estoy convencido que es cierto. / Correcto: Estoy convencido de que es cierto.',
+                    'convencido que (incorrecto) → convencido de que (correcto)',
+                    '¿Cómo se corrige "Estoy convencido que es cierto"?', ['Estoy convencido de que es cierto',
+                        'Estoy convencido que es cierto', 'Estoy convencido en que es cierto',
+                        'Estoy convencido a que es cierto'
+                    ], 0, 'Corrige la oración "Estoy convencido que es cierto".'
+                ],
+                ['Queísmo con "tener la sensación"', 'Tener la sensación que (incorrecto)',
+                    '"Tener la sensación" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo la sensación que algo va mal. / Correcto: Tengo la sensación de que algo va mal.',
+                    'sensación que (incorrecto) → sensación de que (correcto)',
+                    '¿Cómo se corrige "Tengo la sensación que algo va mal"?', ['Tengo la sensación de que algo va mal',
+                        'Tengo la sensación que algo va mal', 'Tengo la sensación en que algo va mal',
+                        'Tengo la sensación a que algo va mal'
+                    ], 0, 'Corrige la oración "Tengo la sensación que algo va mal".'
+                ],
+                ['Queísmo con "tener la impresión"', 'Tener la impresión que (incorrecto)',
+                    '"Tener la impresión" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo la impresión que va a llover. / Correcto: Tengo la impresión de que va a llover.',
+                    'impresión que (incorrecto) → impresión de que (correcto)',
+                    '¿Cómo se corrige "Tengo la impresión que va a llover"?', ['Tengo la impresión de que va a llover',
+                        'Tengo la impresión que va a llover', 'Tengo la impresión en que va a llover',
+                        'Tengo la impresión a que va a llover'
+                    ], 0, 'Corrige la oración "Tengo la impresión que va a llover".'
+                ],
+                ['Queísmo con "tener la certeza"', 'Tener la certeza que (incorrecto)',
+                    '"Tener la certeza" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo la certeza que es verdad. / Correcto: Tengo la certeza de que es verdad.',
+                    'certeza que (incorrecto) → certeza de que (correcto)',
+                    '¿Cómo se corrige "Tengo la certeza que es verdad"?', ['Tengo la certeza de que es verdad',
+                        'Tengo la certeza que es verdad', 'Tengo la certeza en que es verdad',
+                        'Tengo la certeza a que es verdad'
+                    ], 0, 'Corrige la oración "Tengo la certeza que es verdad".'
+                ],
+                ['Queísmo con "tener la esperanza"', 'Tener la esperanza que (incorrecto)',
+                    '"Tener la esperanza" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo la esperanza que llegue. / Correcto: Tengo la esperanza de que llegue.',
+                    'esperanza que (incorrecto) → esperanza de que (correcto)',
+                    '¿Cómo se corrige "Tengo la esperanza que llegue"?', ['Tengo la esperanza de que llegue',
+                        'Tengo la esperanza que llegue', 'Tengo la esperanza en que llegue',
+                        'Tengo la esperanza a que llegue'
+                    ], 0, 'Corrige la oración "Tengo la esperanza que llegue".'
+                ],
+                ['Queísmo con "tener la sospecha"', 'Tener la sospecha que (incorrecto)',
+                    '"Tener la sospecha" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo la sospecha que miente. / Correcto: Tengo la sospecha de que miente.',
+                    'sospecha que (incorrecto) → sospecha de que (correcto)',
+                    '¿Cómo se corrige "Tengo la sospecha que miente"?', ['Tengo la sospecha de que miente',
+                        'Tengo la sospecha que miente', 'Tengo la sospecha en que miente', 'Tengo la sospecha a que miente'
+                    ], 0, 'Corrige la oración "Tengo la sospecha que miente".'
+                ],
+                ['Queísmo con "tener el presentimiento"', 'Tener el presentimiento que (incorrecto)',
+                    '"Tener el presentimiento" rige "de", por lo que se debe usar "de que".',
+                    'Incorrecto: Tengo el presentimiento que va a pasar. / Correcto: Tengo el presentimiento de que va a pasar.',
+                    'presentimiento que (incorrecto) → presentimiento de que (correcto)',
+                    '¿Cómo se corrige "Tengo el presentimiento que va a pasar"?',
+                    ['Tengo el presentimiento de que va a pasar', 'Tengo el presentimiento que va a pasar',
+                        'Tengo el presentimiento en que va a pasar', 'Tengo el presentimiento a que va a pasar'
+                    ], 0, 'Corrige la oración "Tengo el presentimiento que va a pasar".'
+                ]
+            ];
+        b9.forEach(d => addLesson('queismo', ...d));
+
+            // ============================================================
+            //  BLOQUE 10: USOS EN REDACCIÓN (91–100)
+            // ============================================================
+            const b10 = [
+                ['Uso en textos formales', 'Norma formal: evitar dequeísmo y queísmo',
+                    'En textos formales, se debe evitar tanto el dequeísmo como el queísmo, usando la construcción correcta según el verbo.',
+                    'Correcto: Creo que vendrá. / Me acuerdo de que llegó. / Estoy seguro de que es cierto.',
+                    'uso formal',
+                    '¿Qué se debe evitar en textos formales?', ['Dequeísmo y queísmo', 'Solo dequeísmo', 'Solo queísmo',
+                        'Ninguno'
+                    ], 0, 'Escribe una oración formal con "creo que" y otra con "me acuerdo de que".'
+                ],
+                ['Uso en textos académicos', 'Precisión académica (dequeísmo/queísmo)',
+                    'En la redacción académica, la precisión es clave, por lo que se debe usar la construcción correcta.',
+                    'El estudio muestra que los resultados son positivos. / Se tiene constancia de que los datos son fiables.',
+                    'académico',
+                    '¿Qué se debe priorizar en textos académicos?', ['La precisión y corrección', 'La ambigüedad',
+                        'El dequeísmo', 'El queísmo'
+                    ], 0, 'Escribe una oración académica con "demuestra que" y otra con "tiene constancia de que".'
+                ],
+                ['Uso en textos periodísticos', 'Norma periodística (claridad)',
+                    'En el periodismo, se busca claridad y corrección, evitando estos vicios.',
+                    'El presidente afirmó que las medidas son necesarias. / Hay pruebas de que se cometieron irregularidades.',
+                    'periodístico',
+                    '¿Qué se busca en el periodismo con los nexos?', ['Claridad y corrección', 'Dequeísmo', 'Queísmo',
+                        'Ambigüedad'
+                    ], 0, 'Escribe una oración periodística con "afirmó que" y otra con "hay pruebas de que".'
+                ],
+                ['Uso en textos literarios', 'Estilo literario (puede usar dequeísmo)',
+                    'En la literatura, el dequeísmo puede usarse como recurso estilístico o para reflejar el habla coloquial.',
+                    'Pensó de que era mejor así. (dequeísmo literario)',
+                    'dequeísmo literario',
+                    '¿Qué recurso puede ser el dequeísmo en la literatura?', ['Recurso estilístico', 'Error',
+                        'Descuido', 'Ambigüedad'
+                    ], 0, 'Escribe una frase literaria con dequeísmo como recurso estilístico.'
+                ],
+                ['Uso en textos coloquiales (España)', 'Dequeísmo en el habla coloquial de España',
+                    'En el habla coloquial de España, el dequeísmo es relativamente común, aunque se considera incorrecto.',
+                    'Creo de que es tarde. (coloquial España)',
+                    'dequeísmo coloquial',
+                    '¿Dónde es común el dequeísmo coloquial?', ['En el habla coloquial de España', 'En América Latina',
+                        'En textos formales', 'En ninguna parte'
+                    ], 0, 'Escribe una oración coloquial con dequeísmo y su corrección.'
+                ],
+                ['Uso en textos coloquiales (América)', 'Dequeísmo en América Latina',
+                    'En América Latina, el dequeísmo es menos común que en España, pero aparece en algunas regiones.',
+                    'Pienso de que es mejor así. (dequeísmo en América)',
+                    'dequeísmo americano',
+                    '¿Dónde es menos común el dequeísmo?', ['En América Latina', 'En España', 'En todo el mundo',
+                        'En ninguna parte'
+                    ], 0, 'Escribe una oración con dequeísmo y su corrección según la norma americana.'
+                ],
+                ['Uso en redes sociales', 'Dequeísmo en redes (España)',
+                    'En redes sociales, el dequeísmo es común en España, mientras que en América se prefiere la norma.',
+                    'Creo de que sí. (redes España) / Creo que sí. (redes América)',
+                    'dequeísmo en redes',
+                    '¿Qué uso se da al dequeísmo en redes sociales en España?', ['Es común', 'Es raro',
+                        'No se usa', 'Es formal'
+                    ], 0, 'Escribe una oración como se escribiría en redes sociales en España y otra en América.'
+                ],
+                ['Uso en traducciones', 'Dequeísmo en traducciones',
+                    'En traducciones del inglés, a veces se introduce dequeísmo por calco de estructuras como "the fact that".',
+                    'Incorrecto: El hecho de que llegó tarde. (dequeísmo) / Correcto: El hecho de que llegara tarde.',
+                    'dequeísmo por calco',
+                    '¿Cómo se evita el dequeísmo en traducciones?', ['Usando la estructura correcta en español',
+                        'Manteniendo el calco', 'Usando "que" siempre', 'Usando "de que" siempre'
+                    ], 0, 'Escribe una oración correcta para "the fact that he arrived late".'
+                ],
+                ['Uso en el español neutro', 'Norma en el español neutro (doblaje)',
+                    'En el español neutro usado en doblajes, se prefiere la norma general: evitar dequeísmo y queísmo.',
+                    'Creo que es así. (neutro)',
+                    'español neutro',
+                    '¿Qué se prefiere en el español neutro?', ['La norma general', 'El dequeísmo', 'El queísmo',
+                        'La ambigüedad'
+                    ], 0, 'Escribe una oración en español neutro con "creo que".'
+                ],
+                ['Revisión general: dequeísmo y queísmo', 'Resumen de los dos fenómenos',
+                    'El dequeísmo es usar "de que" cuando no es necesario; el queísmo es omitir "de" cuando es necesario. La clave está en si el verbo rige la preposición "de".',
+                    'Pienso que (sin de) / Me acuerdo de que (con de)',
+                    'dequeísmo / queísmo',
+                    '¿Cuál es la clave para evitar ambos vicios?', ['Saber si el verbo rige "de"', 'Usar siempre "de que"',
+                        'Usar siempre "que"', 'No usar subordinadas'
+                    ], 0, 'Escribe tres oraciones: una con "que" (sin de), una con "de que" (con de) y una que muestre la diferencia.'
+                ]
+            ];
+        b10.forEach(d => addLesson('usos_redaccion', ...d));
+
+        console.log('Total lecciones cargadas:', LESSONS.length); // 100
+
+        // ============================================================
+        //  APP STATE
+        // ============================================================
+        const state = {
+            currentLesson: 0,
+            score: 0,
+            streak: 0,
+            completed: new Array(100).fill(false),
+            quizState: LESSONS.map(() => ({ answered: false, correct: false, selected: null })),
+            vectorVariant: 0,
+        };
+
+        const VARIANT_NAMES = ['Archivo', 'Biblioteca temporal', 'En transmisión', 'Coordenada Roma', 'Coordenada Grecia'];
+        const VARIANT_ICONS = ['🧬', '📚', '📡', '🏛️', '🏺'];
+
+        const $ = id => document.getElementById(id);
+        const blockTabs = $('blockTabs');
+        const lessonNumber = $('lessonNumber');
+        const lessonTitle = $('lessonTitle');
+        const lessonRoot = $('lessonRoot');
+        const theoryText = $('theoryText');
+        const exampleWord = $('exampleWord');
+        const exampleBreakdown = $('exampleBreakdown');
+        const quizQuestion = $('quizQuestion');
+        const quizOptions = $('quizOptions');
+        const quizFeedback = $('quizFeedback');
+        const terminalPrompt = $('terminalPrompt');
+        const terminalInput = $('terminalInput');
+        const terminalOutput = $('terminalOutput');
+        const terminalSubmit = $('terminalSubmit');
+        const terminalClear = $('terminalClear');
+        const prevBtn = $('prevBtn');
+        const nextBtn = $('nextBtn');
+        const lessonCounter = $('lessonCounter');
+        const scoreDisplay = $('scoreDisplay');
+        const streakDisplay = $('streakDisplay');
+        const progressDisplay = $('progressDisplay');
+        const progressFill = $('progressFill');
+        const avatarIcon = $('avatarIcon');
+        const avatarVariant = $('avatarVariant');
+        const vectorAvatar = $('vectorAvatar');
+        const toast = $('toast');
+
+        // ============================================================
+        //  RENDER
+        // ============================================================
+        function renderBlocks() {
+            blockTabs.innerHTML = '';
+            BLOCKS.forEach((block) => {
+                const tab = document.createElement('button');
+                tab.className = 'block-tab';
+                const isActive = LESSONS[state.currentLesson]?.blockId === block.id;
+                if (isActive) tab.classList.add('active');
+                const count = LESSONS.filter(l => l.blockId === block.id).length;
+                const done = LESSONS.filter((l, i) => l.blockId === block.id && state.completed[i]).length;
+                tab.innerHTML = `${block.label} <span class="check">${done}/${count}</span>`;
+                tab.dataset.blockId = block.id;
+                tab.addEventListener('click', () => {
+                    const first = LESSONS.findIndex(l => l.blockId === block.id);
+                    if (first !== -1) goToLesson(first);
+                });
+                blockTabs.appendChild(tab);
+            });
+        }
+
+        function renderLesson() {
+            const idx = state.currentLesson;
+            const lesson = LESSONS[idx];
+            if (!lesson) return;
+
+            const blockIdx = BLOCKS.findIndex(b => b.id === lesson.blockId);
+            lessonNumber.textContent = `Lección ${idx+1} · Bloque ${blockIdx+1} · ${BLOCKS[blockIdx].label}`;
+            lessonTitle.textContent = lesson.title;
+            lessonRoot.innerHTML = `Fenómeno: <strong>${lesson.pattern}</strong>`;
+
+            theoryText.textContent = lesson.theory;
+
+            exampleWord.textContent = lesson.example;
+            exampleBreakdown.innerHTML = `Análisis: <span>${lesson.breakdown}</span>`;
+
+            quizQuestion.textContent = lesson.question;
+            const letters = ['A', 'B', 'C', 'D'];
+            quizOptions.innerHTML = '';
+            const qState = state.quizState[idx];
+            lesson.options.forEach((opt, oi) => {
+                const div = document.createElement('div');
+                div.className = 'quiz-option';
+                if (qState.answered) div.classList.add('disabled');
+                if (qState.answered && oi === lesson.correct) div.classList.add('correct');
+                if (qState.answered && qState.correct === false && oi !== lesson.correct && oi === qState
+                    .selected) div.classList.add('wrong');
+                div.innerHTML = `<span class="letter">${letters[oi]}</span> ${opt}`;
+                div.dataset.optIndex = oi;
+                if (!qState.answered) {
+                    div.addEventListener('click', () => handleQuizAnswer(idx, oi));
+                }
+                quizOptions.appendChild(div);
+            });
+
+            if (qState.answered) {
+                quizFeedback.className = 'quiz-feedback show ' + (qState.correct ? 'ok' : 'fail');
+                quizFeedback.textContent = qState.correct ?
+                    '✓ ¡Correcto! Bien hecho.' :
+                    `✗ Incorrecto. La respuesta correcta era: "${lesson.options[lesson.correct]}"`;
+            } else {
+                quizFeedback.className = 'quiz-feedback';
+                quizFeedback.textContent = '';
+            }
+
+            terminalPrompt.innerHTML = `✧ <strong>${lesson.prompt}</strong>`;
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+
+            lessonCounter.textContent = `${idx+1} / ${LESSONS.length}`;
+            updateStats();
+            renderBlocks();
+            $('lessonCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function handleQuizAnswer(idx, selected) {
+            const lesson = LESSONS[idx];
+            const qState = state.quizState[idx];
+            if (qState.answered) return;
+            qState.answered = true;
+            qState.selected = selected;
+            const correct = selected === lesson.correct;
+            qState.correct = correct;
+            if (correct) {
+                state.score += 1;
+                state.streak += 1;
+                if (!state.completed[idx]) {
+                    state.completed[idx] = true;
+                }
+                showToast('✓ ¡Acierto! +1 punto, racha: ' + state.streak);
+            } else {
+                state.streak = 0;
+                showToast('✗ Fallo. La respuesta correcta era: ' + lesson.options[lesson.correct]);
+            }
+            renderLesson();
+        }
+
+        function updateStats() {
+            const total = LESSONS.length;
+            const done = state.completed.filter(Boolean).length;
+            const pct = Math.round((done / total) * 100);
+            scoreDisplay.textContent = state.score;
+            streakDisplay.textContent = state.streak;
+            progressDisplay.textContent = pct + '%';
+            progressFill.style.width = pct + '%';
+        }
+
+        function goToLesson(idx) {
+            if (idx < 0) idx = 0;
+            if (idx >= LESSONS.length) idx = LESSONS.length - 1;
+            state.currentLesson = idx;
+            renderLesson();
+        }
+
+        // ============================================================
+        //  TERMINAL
+        // ============================================================
+        terminalSubmit.addEventListener('click', () => {
+            const val = terminalInput.value.trim();
+            if (!val) {
+                terminalOutput.className = 'terminal-output show';
+                terminalOutput.style.borderLeftColor = 'var(--violet)';
+                terminalOutput.style.color = 'var(--text-dim)';
+                terminalOutput.textContent = '⚠ Escribe algo antes de enviar.';
+                return;
+            }
+            terminalOutput.className = 'terminal-output show';
+            terminalOutput.style.borderLeftColor = 'var(--cyan)';
+            terminalOutput.style.color = 'var(--text)';
+            terminalOutput.innerHTML =
+                `◈ Registro enviado:<br><span style="color:var(--cyan);">${val}</span><br><span style="color:var(--text-dim);font-size:0.8rem;">✓ Guardado en el archivo temporal de Vector.</span>`;
+            terminalInput.value = '';
+        });
+
+        terminalClear.addEventListener('click', () => {
+            terminalInput.value = '';
+            terminalOutput.className = 'terminal-output';
+            terminalOutput.textContent = '';
+        });
+
+        // ============================================================
+        //  NAVIGATION
+        // ============================================================
+        prevBtn.addEventListener('click', () => {
+            if (state.currentLesson > 0) goToLesson(state.currentLesson - 1);
+            else showToast('◀ Ya estás en la primera lección.');
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (state.currentLesson < LESSONS.length - 1) goToLesson(state.currentLesson + 1);
+            else showToast('▶ ¡Has completado todas las lecciones!');
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'TEXTAREA') return;
+            if (e.key === 'ArrowLeft') prevBtn.click();
+            if (e.key === 'ArrowRight') nextBtn.click();
+        });
+
+        // ============================================================
+        //  VECTOR AVATAR
+        // ============================================================
+        vectorAvatar.addEventListener('click', () => {
+            state.vectorVariant = (state.vectorVariant + 1) % VARIANT_NAMES.length;
+            updateAvatar();
+            showToast('◈ Vector · ' + VARIANT_NAMES[state.vectorVariant]);
+        });
+
+        function updateAvatar() {
+            avatarIcon.textContent = VARIANT_ICONS[state.vectorVariant];
+            avatarVariant.textContent = VARIANT_NAMES[state.vectorVariant];
+        }
+
+        // ============================================================
+        //  TOAST
+        // ============================================================
+        let toastTimer;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2800);
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        function init() {
+            renderBlocks();
+            updateAvatar();
+            goToLesson(0);
+            setTimeout(() => {
+                showToast('◈ Archivo de Vector · El Dequeísmo');
+            }, 400);
+        }
+
+        init();
+        console.log('✅ Archivo de Vector · Dequeísmo cargado. Lecciones:', LESSONS.length);
+        console.log('🎯 Bloques:', BLOCKS.length);
+    </script>
+</body>
+</html>

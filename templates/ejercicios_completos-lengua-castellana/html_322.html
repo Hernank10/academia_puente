@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✉️ Flota Epistolar · 100 Técnicas</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --fondo: #060a12;
+            --panel: #0d1520;
+            --panel-border: #2a4060;
+            --texto: #ffffff;
+            --texto-muted: #c0d8f0;
+            --neon-dorado: #ffd54f;
+            --neon-azul: #00d4ff;
+            --neon-verde: #69f0ae;
+            --neon-purpura: #b388ff;
+            --neon-rojo: #ff6b6b;
+            --card-bg: rgba(20, 30, 50, 0.95);
+            --color-dorado: #ffd54f;
+            --color-azul: #00d4ff;
+            --color-verde: #69f0ae;
+            --color-purpura: #b388ff;
+            --color-rojo: #ff6b6b;
+        }
+        * { scroll-behavior: smooth; }
+        body {
+            background: var(--fondo);
+            background-image: radial-gradient(ellipse at 20% 50%, #0f1a2e 0%, #050810 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--texto);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+                radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+                radial-gradient(1px 1px at 90px 40px, #fff, transparent);
+            background-size: 200px 200px;
+            background-repeat: repeat;
+            opacity: 0.12;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app-container { position: relative; z-index: 1; display: flex; min-height: 100vh; }
+        .sidebar-stellar {
+            width: 280px;
+            background: rgba(10, 18, 30, 0.98);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid var(--panel-border);
+            box-shadow: 4px 0 40px rgba(0,0,0,0.8);
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            flex-direction: column;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+        .sidebar-stellar::-webkit-scrollbar { width: 4px; }
+        .sidebar-stellar::-webkit-scrollbar-track { background: transparent; }
+        .sidebar-stellar::-webkit-scrollbar-thumb { background: var(--neon-azul); border-radius: 10px; }
+        .sidebar-brand {
+            font-family: 'Orbitron', monospace;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: #fff;
+            text-align: center;
+            padding-bottom: 1.2rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .sidebar-brand small {
+            display: block;
+            font-family: 'Inter', sans-serif;
+            font-weight: 300;
+            font-size: 0.6rem;
+            color: var(--texto-muted);
+            letter-spacing: 3px;
+            margin-top: 0.2rem;
+        }
+        .sidebar-stellar .nav-link {
+            color: #b0c8e0;
+            font-family: 'Inter', sans-serif;
+            font-weight: 400;
+            font-size: 0.85rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.1rem;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+        }
+        .sidebar-stellar .nav-link:hover { background: rgba(255,255,255,0.08); border-left-color: #fff; color: #fff; }
+        .sidebar-stellar .nav-link.active { background: rgba(255,255,255,0.12); border-left-color: #fff; color: #fff; font-weight: 600; }
+        .sidebar-stellar .nav-link i { font-size: 1.1rem; min-width: 1.5rem; text-align: center; }
+        .badge-personaje {
+            font-size: 0.5rem;
+            padding: 0.05rem 0.5rem;
+            border-radius: 30px;
+            margin-left: auto;
+            font-weight: 700;
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        .bg-dorado { background: var(--neon-dorado); color: #0a0e17; }
+        .bg-azul { background: var(--neon-azul); color: #0a0e17; }
+        .bg-verde { background: var(--neon-verde); color: #0a0e17; }
+        .bg-purpura { background: var(--neon-purpura); color: #0a0e17; }
+        .bg-rojo { background: var(--neon-rojo); color: #0a0e17; }
+
+        .sidebar-progress {
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            margin-top: auto;
+            margin-bottom: 0.5rem;
+        }
+        .sidebar-progress .label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--texto-muted); font-weight: 600; }
+        .sidebar-progress .porcentaje { font-family: 'Orbitron', monospace; font-size: 1.1rem; color: #fff; float: right; }
+        .sidebar-progress .progress { height: 6px; background: #1a2a4a; border-radius: 10px; margin-top: 4px; }
+        .sidebar-progress .progress-bar { background: linear-gradient(90deg, var(--neon-azul), var(--neon-purpura)); border-radius: 10px; }
+        .sidebar-progress .detalle { font-size: 0.55rem; color: var(--texto-muted); text-align: right; margin-top: 3px; }
+
+        .main-stellar { flex: 1; padding: 2rem 2.5rem; background: rgba(6, 10, 18, 0.7); backdrop-filter: blur(4px); min-height: 100vh; }
+        .holo-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1.2rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+        }
+        .holo-card:hover { border-color: rgba(255,255,255,0.2); }
+        .holo-title {
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #fff;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+        .holo-title small { font-family: 'Inter', sans-serif; font-weight: 300; font-size: 0.7rem; color: var(--texto-muted); margin-left: auto; }
+
+        .personaje-destacado {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1rem 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        .personaje-destacado .avatar { font-size: 3rem; line-height: 1; }
+        .personaje-destacado .info h4 { font-family: 'Orbitron', monospace; font-weight: 700; margin: 0; font-size: 1.2rem; color: #fff; }
+        .personaje-destacado .info .especialidad { font-size: 0.85rem; color: var(--texto-muted); }
+
+        .tecnica-card {
+            background: rgba(0,0,0,0.35);
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.2rem;
+            margin-bottom: 0.8rem;
+            border-left: 4px solid transparent;
+            cursor: pointer;
+            transition: 0.2s;
+            border: 1px solid rgba(255,255,255,0.06);
+        }
+        .tecnica-card:hover { background: rgba(0,0,0,0.5); border-color: rgba(255,255,255,0.12); }
+        .tecnica-card .cabecera { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; }
+        .tecnica-card .cabecera .num { font-family: 'Orbitron', monospace; font-size: 0.7rem; opacity: 0.5; color: #fff; }
+        .tecnica-card .cabecera .titulo { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .tecnica-card .cabecera .badge-personaje { background: rgba(255,255,255,0.1); color: #fff; padding: 0.1rem 0.6rem; border-radius: 30px; font-size: 0.6rem; }
+        .tecnica-card .contenido {
+            margin-top: 0.8rem;
+            border-top: 1px solid rgba(255,255,255,0.06);
+            padding-top: 0.8rem;
+            display: none;
+        }
+        .tecnica-card .contenido .teoria { color: #fff; font-size: 0.95rem; margin-bottom: 0.6rem; background: rgba(0,0,0,0.2); padding: 0.6rem 1rem; border-radius: 0.5rem; border-left: 3px solid var(--neon-dorado); }
+        .tecnica-card .contenido .ejemplo { background: rgba(0,0,0,0.3); padding: 0.8rem 1rem; border-radius: 0.5rem; font-style: italic; color: var(--texto-muted); margin-bottom: 0.6rem; border-left: 3px solid rgba(255,255,255,0.1); }
+        .tecnica-card .contenido .ejemplo strong { color: var(--neon-dorado); }
+        .tecnica-card .contenido .ejercicio { background: rgba(0,0,0,0.25); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-bottom: 0.6rem; }
+        .tecnica-card .contenido .ejercicio textarea { width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); border-radius: 0.5rem; color: #fff; padding: 0.6rem; font-family: 'Inter', sans-serif; resize: vertical; min-height: 60px; font-size: 0.95rem; }
+        .tecnica-card .contenido .ejercicio textarea:focus { border-color: rgba(255,255,255,0.25); outline: none; }
+        .tecnica-card .contenido .reto { background: rgba(255,215,0,0.1); border: 1px solid rgba(255,215,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; color: #fff; }
+        .tecnica-card .contenido .reto i { color: var(--neon-dorado); }
+        .tecnica-card .contenido .flashcard-area { background: rgba(0,0,0,0.2); padding: 0.8rem 1rem; border-radius: 0.5rem; margin-top: 0.6rem; text-align: center; cursor: pointer; border: 1px dashed rgba(255,255,255,0.1); transition: 0.2s; }
+        .tecnica-card .contenido .flashcard-area:hover { border-color: rgba(255,255,255,0.2); background: rgba(0,0,0,0.3); }
+        .tecnica-card .contenido .flashcard-area .flash-front { font-size: 1.2rem; font-weight: 600; color: var(--neon-azul); }
+        .tecnica-card .contenido .flashcard-area .flash-back { color: var(--texto-muted); font-style: italic; }
+        .tecnica-card .contenido .flashcard-area .flash-indicador { font-size: 0.7rem; color: var(--texto-muted); opacity: 0.5; margin-top: 0.3rem; }
+
+        .btn-neon-lleno {
+            background: var(--neon-azul);
+            border: none;
+            color: #0a0e17;
+            font-weight: 700;
+            border-radius: 2rem;
+            padding: 0.4rem 1.4rem;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-neon-lleno:hover { background: #00e5ff; color: #000; box-shadow: 0 0 25px rgba(0,212,255,0.3); }
+        .btn-neon-lleno:disabled { opacity: 0.4; cursor: default; }
+
+        .btn-audio {
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.15);
+            color: #fff;
+            border-radius: 2rem;
+            padding: 0.2rem 1rem;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+        .btn-audio:hover { background: rgba(255,255,255,0.2); color: #fff; border-color: rgba(255,255,255,0.3); }
+        .btn-audio.escuchando { background: rgba(255, 0, 0, 0.2); border-color: rgba(255, 0, 0, 0.3); }
+
+        .tabla-seguimiento { font-size: 0.85rem; color: #fff; }
+        .tabla-seguimiento th { font-family: 'Orbitron', monospace; font-weight: 400; font-size: 0.6rem; letter-spacing: 1px; color: var(--texto-muted); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 0.5rem 0.2rem; }
+        .tabla-seguimiento td { padding: 0.4rem 0.2rem; vertical-align: middle; border-bottom: 1px solid rgba(255,255,255,0.04); color: #fff; }
+        .tabla-seguimiento .form-check-input { border-color: #2a4060; background-color: rgba(0,0,0,0.5); cursor: pointer; width: 1.3rem; height: 1.3rem; }
+        .tabla-seguimiento .form-check-input:checked { background-color: var(--neon-azul); border-color: var(--neon-azul); }
+
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar-stellar { width: 100%; height: auto; position: relative; border-right: none; border-bottom: 1px solid var(--panel-border); padding: 0.6rem; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .sidebar-brand { display: none; }
+            .sidebar-stellar .nav-link { padding: 0.3rem 0.6rem; font-size: 0.7rem; }
+            .sidebar-progress { display: none; }
+            .main-stellar { padding: 0.8rem; }
+            .holo-title { font-size: 1rem; }
+            .personaje-destacado { flex-direction: column; text-align: center; }
+            .tecnica-card .cabecera { flex-direction: column; align-items: stretch; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <nav class="sidebar-stellar">
+        <div class="sidebar-brand">✉️ FLOTA EPISTOLAR<small>100 TÉCNICAS · CARTA MANUSCRITA</small></div>
+        <a class="nav-link active" data-section="dashboard" href="#"><i class="bi bi-speedometer2"></i> Tablero</a>
+        <a class="nav-link" data-section="estructura" href="#"><i class="bi bi-robot" style="color:var(--neon-dorado);"></i> Estructura <span class="badge-personaje bg-dorado">Partes</span></a>
+        <a class="nav-link" data-section="protocolo" href="#"><i class="bi bi-robot" style="color:var(--neon-azul);"></i> Protocolo <span class="badge-personaje bg-azul">Etiqueta</span></a>
+        <a class="nav-link" data-section="estiloep" href="#"><i class="bi bi-robot" style="color:var(--neon-verde);"></i> Estilo <span class="badge-personaje bg-verde">Voz</span></a>
+        <a class="nav-link" data-section="caligrafia" href="#"><i class="bi bi-robot" style="color:var(--neon-purpura);"></i> Caligrafía <span class="badge-personaje bg-purpura">Presentación</span></a>
+        <a class="nav-link" data-section="contextoep" href="#"><i class="bi bi-robot" style="color:var(--neon-rojo);"></i> Contexto <span class="badge-personaje bg-rojo">Legado</span></a>
+        <a class="nav-link" data-section="seguimiento" href="#"><i class="bi bi-check2-square"></i> Seguimiento</a>
+        <div class="sidebar-progress">
+            <div class="d-flex justify-content-between">
+                <span class="label"><i class="bi bi-arrow-right-circle"></i> Progreso</span>
+                <span class="porcentaje" id="sidebar-porcentaje">0%</span>
+            </div>
+            <div class="progress"><div class="progress-bar" id="sidebar-barra" style="width:0%"></div></div>
+            <div class="detalle" id="sidebar-detalle">0 / 100 técnicas</div>
+        </div>
+    </nav>
+
+    <main class="main-stellar">
+        <div id="section-dashboard" class="section-content">
+            <div class="holo-title"><i class="bi bi-speedometer2"></i> Tablero de la Flota <small>Visión general</small></div>
+            <div class="row g-3">
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">🤖</div><h5>5 Amazonas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">20 técnicas cada una</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem;">✉️</div><h5>100 Técnicas</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Arte epistolar</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-verde);">🏆</div><h5 id="dashboard-completadas">0</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Completadas</p></div></div>
+                <div class="col-md-3 col-6"><div class="holo-card text-center"><div style="font-size:2.8rem; color:var(--neon-dorado);">📊</div><h5 id="dashboard-porcentaje">0%</h5><p class="text-muted small" style="color:var(--texto-muted)!important;">Progreso</p></div></div>
+            </div>
+            <div class="holo-card">
+                <h5 style="color:#fff;"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> El Códice Epistolar</h5>
+                <p style="color:var(--texto-muted);">Cada amazona cubre un área del arte de la carta manuscrita:</p>
+                <ul style="color:var(--texto-muted);">
+                    <li><strong style="color:var(--neon-dorado);">Estructura</strong> – Partes de la carta: encabezado, saludo, cuerpo, despedida, firma, posdata.</li>
+                    <li><strong style="color:var(--neon-azul);">Protocolo</strong> – Protocolo y etiqueta: tratamiento, cortesía, formalidad, destinatario.</li>
+                    <li><strong style="color:var(--neon-verde);">Estilo</strong> – Estilo y voz: tono, retórica, lenguaje, figuras epistolares.</li>
+                    <li><strong style="color:var(--neon-purpura);">Caligrafía</strong> – Caligrafía y presentación: tipos de letra, tinta, papel, sellos, plegado.</li>
+                    <li><strong style="color:var(--neon-rojo);">Contexto</strong> – Contexto y legado: historia postal, cartas célebres, archivo, correspondencia.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="section-estructura" class="section-content" style="display:none;"></div>
+        <div id="section-protocolo" class="section-content" style="display:none;"></div>
+        <div id="section-estiloep" class="section-content" style="display:none;"></div>
+        <div id="section-caligrafia" class="section-content" style="display:none;"></div>
+        <div id="section-contextoep" class="section-content" style="display:none;"></div>
+
+        <div id="section-seguimiento" class="section-content" style="display:none;">
+            <div class="holo-title"><i class="bi bi-check2-square"></i> Seguimiento <small>Progreso por técnica</small></div>
+            <div class="holo-card">
+                <p style="color:var(--texto-muted);"><i class="bi bi-info-circle" style="color:var(--neon-azul);"></i> Marca cada técnica como completada.</p>
+                <div class="table-responsive">
+                    <table class="table tabla-seguimiento">
+                        <thead><tr><th>#</th><th>Técnica</th><th>Amazonas</th><th class="text-center">✅</th></tr></thead>
+                        <tbody id="tabla-seguimiento-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+// ============================================================
+// DATOS: 5 AMAZONAS × 20 TÉCNICAS = 100
+// ============================================================
+const AMAZONAS_DATA = {
+    estructura: {
+        nombre: "Estructura", color: "dorado", icono: "bi-robot",
+        especialidad: "Partes de la carta: encabezado, saludo, cuerpo, despedida, firma, posdata",
+        tecnicas: [
+            { titulo: "El encabezado (lugar y fecha)", teoria: "El encabezado sitúa la carta en el tiempo y el espacio. Suele incluir la ciudad, la fecha y, en ocasiones, la hora. Es la primera coordenada del diálogo epistolar.", ejemplo: "En las cartas de Gustavo Flaubert a Louise Colet, el encabezado 'Croisset, martes, 23 de agosto de 1846' sitúa al lector en el momento exacto de la escritura.", ejercicio: "Escribe el encabezado de una carta fechada en el lugar y momento actuales.", reto: "Escribe un encabezado que incluya no solo fecha y lugar, sino también el estado de ánimo del remitente." },
+            { titulo: "El saludo inicial", teoria: "El saludo establece el tono de la carta y la relación con el destinatario. Puede ser formal ('Muy señor mío'), afectuoso ('Querido amigo'), o íntimo ('Mi amor').", ejemplo: "Las cartas de Frida Kahlo a Diego Rivera comienzan con 'Mi Diego' o 'Mi niño', estableciendo una intimidad inmediata.", ejercicio: "Escribe 3 saludos para diferentes tipos de destinatarios (un profesor, un amigo, un familiar).", reto: "Escribe un saludo que sea formal y afectuoso a la vez." },
+            { titulo: "El cuerpo de la carta", teoria: "El cuerpo es el corazón de la carta. En él se desarrollan las ideas, se cuentan historias, se expresan sentimientos. Debe tener una estructura clara, con introducción, desarrollo y conclusión.", ejercicio: "Escribe el cuerpo de una carta de 10 líneas sobre un tema que te importe.", reto: "Escribe una carta donde el cuerpo tenga tres partes claras: introducción, desarrollo y conclusión." },
+            { titulo: "La despedida", teoria: "La despedida cierra la carta con una fórmula que refleja la relación con el destinatario. Puede ser formal ('Le saluda atentamente'), afectuosa ('Un abrazo'), o íntima ('Con todo mi amor').", ejemplo: "Las cartas de Simón Bolívar a su hermana María Antonia terminaban con 'Tu hermano que te ama' o 'Siempre tuyo'.", ejercicio: "Escribe 3 despedidas para diferentes niveles de formalidad.", reto: "Escribe una despedida que resuma el tono de toda la carta." },
+            { titulo: "La firma", teoria: "La firma es la huella del remitente. Puede ser la firma autógrafa (manuscrita) o el nombre escrito. Es la prueba de autenticidad de la carta.", ejemplo: "La firma de Napoleón en sus cartas era tan icónica como sus campañas militares, con una 'N' mayúscula que se extendía con autoridad.", ejercicio: "Firma una carta con tu nombre y reflexiona sobre lo que esa firma dice de ti.", reto: "Diseña una firma que refleje tu personalidad (firma autógrafa)." },
+            { titulo: "La posdata (P.D.)", teoria: "La posdata es un añadido al final de la carta, después de la firma. Se usa para incluir algo que se olvidó o para dar un énfasis especial a un comentario.", ejemplo: "La posdata de Oscar Wilde en sus cartas era a menudo más ingeniosa que el resto de la carta, como en su famosa P.D. a Lord Alfred Douglas.", ejercicio: "Escribe una carta con una posdata que añada un detalle importante.", reto: "Escribe una carta donde la posdata sea más importante que el cuerpo." },
+            { titulo: "El sobre", teoria: "El sobre es el primer contacto visual del destinatario con la carta. Debe incluir el nombre y dirección del destinatario, la dirección del remitente y, a veces, el remite.", ejemplo: "El sobre de la carta de Virginia Woolf a Vita Sackville-West era tan cuidado como el contenido, con una caligrafía elegante y un sello de cera.", ejercicio: "Escribe la dirección de un sobre para una carta formal.", reto: "Diseña un sobre con remite y sello que invite a abrirlo." },
+            { titulo: "El remitente en el sobre", teoria: "El remitente (dirección de quien escribe) en el sobre permite que la carta pueda ser devuelta si no llega a su destino. Es una cortesía epistolar.", ejercicio: "Escribe tu dirección de remitente en un sobre.", reto: "Diseña un remite con tu nombre y dirección de forma elegante." },
+            { titulo: "Las abreviaturas epistolares", teoria: "Las abreviaturas como 'P.D.' (posdata), 'A.D.' (antes de la posdata), 'Q.E.P.D.' (que en paz descanse) son parte del código epistolar tradicional.", ejemplo: "En las cartas de G.K. Chesterton, el uso de 'N.B.' (nota bene) era frecuente para llamar la atención sobre un punto importante.", ejercicio: "Investiga el significado de 5 abreviaturas epistolares.", reto: "Escribe una carta usando al menos 3 abreviaturas epistolares." },
+            { titulo: "Las notas al margen", teoria: "Las notas al margen son una tradición epistolar que permite añadir comentarios o aclaraciones sin interrumpir el flujo del texto principal.", ejercicio: "Escribe una carta con una nota al margen.", reto: "Escribe una carta donde las notas al margen sean un diálogo con el lector." },
+            { titulo: "El membrete", teoria: "El membrete es el encabezado impreso con el nombre, dirección, teléfono u otros datos del remitente. Se usa en cartas formales y comerciales.", ejercicio: "Diseña un membrete para una carta formal.", reto: "Crea un membrete con un logotipo o escudo." },
+            { titulo: "La referencia (Ref.)", teoria: "La referencia es un código que identifica el asunto de la carta, facilitando su archivo y seguimiento. Es común en correspondencia oficial.", ejercicio: "Escribe una referencia para una carta sobre un tema específico.", reto: "Crea un sistema de referencias para tus cartas." },
+            { titulo: "El asunto (Subject)", teoria: "El asunto es una línea breve que resume el contenido de la carta. Es común en cartas formales y correos electrónicos, pero también se usaba en cartas manuscritas.", ejercicio: "Escribe el asunto de una carta sobre un tema que te importe.", reto: "Escribe un asunto que sea a la vez informativo y atractivo." },
+            { titulo: "La cortesía epistolar", teoria: "La cortesía epistolar se manifiesta en el uso de fórmulas de cortesía, el tratamiento adecuado y el respeto por las convenciones sociales.", ejercicio: "Escribe una carta formal con fórmulas de cortesía.", reto: "Escribe una carta donde la cortesía sea el centro del contenido." },
+            { titulo: "La carta de presentación", teoria: "La carta de presentación es una forma de introducción en el ámbito profesional o social. Debe presentar al remitente y el motivo del contacto.", ejercicio: "Escribe una carta de presentación breve (5 líneas).", reto: "Escribe una carta de presentación para una solicitud de trabajo." },
+            { titulo: "La carta de recomendación", teoria: "La carta de recomendación es una carta que avala a una persona para un fin específico (trabajo, estudio, etc.).", ejercicio: "Escribe una carta de recomendación para una persona ficticia.", reto: "Escribe una carta de recomendación para un amigo." },
+            { titulo: "La carta de agradecimiento", teoria: "La carta de agradecimiento expresa gratitud por un favor, un regalo o una atención recibida. Es una forma esencial de cortesía epistolar.", ejercicio: "Escribe una carta de agradecimiento por un regalo.", reto: "Escribe una carta de agradecimiento que sorprenda por su originalidad." },
+            { titulo: "La carta de condolencias", teoria: "La carta de condolencias es una de las cartas más difíciles de escribir. Debe transmitir empatía y consuelo sin resultar fría o invasiva.", ejercicio: "Escribe una carta de condolencias a un amigo que ha perdido a un ser querido.", reto: "Escribe una carta de condolencias que ofrezca consuelo sin clichés." },
+            { titulo: "La carta de amor", teoria: "La carta de amor es el género epistolar por excelencia, donde la pasión y la sinceridad se funden en un texto destinado a conquistar o mantener el amor.", ejercicio: "Escribe una carta de amor breve (5 líneas).", reto: "Escribe una carta de amor que evite los tópicos." },
+            { titulo: "La carta de despedida", teoria: "La carta de despedida cierra un ciclo (una relación, una amistad, una etapa de la vida). Debe transmitir el cierre sin rencor y con dignidad.", ejercicio: "Escribe una carta de despedida para un amigo que se va.", reto: "Escribe una carta de despedida que sea un cierre elegante." }
+        ]
+    },
+    protocolo: {
+        nombre: "Protocolo", color: "azul", icono: "bi-robot",
+        especialidad: "Protocolo y etiqueta: tratamiento, cortesía, formalidad, destinatario",
+        tecnicas: [
+            { titulo: "El tratamiento al destinatario", teoria: "El tratamiento varía según la relación con el destinatario: 'Vuestra Excelencia' (muy formal), 'Vuesa Merced' (formal histórico), 'Don/Doña' (formal), 'Señor/Señora' (estándar), o el nombre de pila (informal).", ejemplo: "En las cartas de Goya a la familia real, usaba tratamientos como 'Excelentísimo Señor' o 'Vuestra Majestad' según el rango del destinatario.", ejercicio: "Escribe 3 tratamientos para diferentes niveles de formalidad.", reto: "Escribe una carta a un personaje histórico usando el tratamiento adecuado." },
+            { titulo: "La fórmula de cortesía inicial", teoria: "La fórmula de cortesía inicial (después del saludo) suele ser una frase de respeto o buenos deseos que abre el cuerpo de la carta.", ejemplo: "En las cartas de Sor Juana Inés de la Cruz, las fórmulas de cortesía eran tan elaboradas como el resto de su prosa. 'Muy señor mío: esperando que la presente le halle con la salud que deseo...'.", ejercicio: "Escribe 3 fórmulas de cortesía iniciales.", reto: "Escribe una carta con una fórmula de cortesía original." },
+            { titulo: "El nivel de formalidad", teoria: "El nivel de formalidad determina el tono y el vocabulario de la carta. Puede ser alto (formal), medio (semi-formal) o bajo (informal).", ejercicio: "Escribe una misma frase en tres niveles de formalidad.", reto: "Escribe una carta que cambie de nivel de formalidad." },
+            { titulo: "La cortesía negativa", teoria: "La cortesía negativa es una forma de respeto que implica no imponerse al destinatario, usando fórmulas como 'si no le molesta', 'con su permiso', etc.", ejercicio: "Escribe 3 frases con cortesía negativa.", reto: "Escribe una carta donde la cortesía negativa sea predominante." },
+            { titulo: "La cortesía positiva", teoria: "La cortesía positiva es una forma de acercamiento que incluye al destinatario, usando fórmulas como 'me alegra saber', 'confío en que', etc.", ejercicio: "Escribe 3 frases con cortesía positiva.", reto: "Escribe una carta donde la cortesía positiva sea predominante." },
+            { titulo: "El tratamiento a los títulos nobiliarios", teoria: "En la correspondencia histórica, el tratamiento a los títulos nobiliarios (duques, condes, marqueses) seguía protocolos estrictos.", ejercicio: "Investiga y escribe el tratamiento para un duque, un conde y un marqués.", reto: "Escribe una carta a un título nobiliario ficticio." },
+            { titulo: "El tratamiento a las autoridades eclesiásticas", teoria: "El tratamiento a las autoridades eclesiásticas (obispos, cardenales, papas) tiene protocolos específicos.", ejercicio: "Investiga y escribe el tratamiento para un obispo y un cardenal.", reto: "Escribe una carta a un obispo histórico." },
+            { titulo: "El tratamiento a las autoridades militares", teoria: "El tratamiento a las autoridades militares (generales, capitanes) tenía sus propias fórmulas en la correspondencia histórica.", ejercicio: "Escribe el tratamiento para un general.", reto: "Escribe una carta a un general de una época histórica." },
+            { titulo: "El uso de 'Usted' y 'Tú'", teoria: "La elección entre 'usted' y 'tú' (y sus formas arcaicas 'vos' y 'vuestra merced') determina la relación social entre remitente y destinatario.", ejemplo: "En las cartas de Antonio Machado a Juan Ramón Jiménez, el uso de 'usted' evoluciona a 'tú' a medida que se consolida su amistad.", ejercicio: "Escribe una carta usando 'usted' y otra usando 'tú' a la misma persona.", reto: "Escribe una carta donde el tratamiento cambie de 'usted' a 'tú'." },
+            { titulo: "Los títulos honoríficos", teoria: "Los títulos honoríficos (Dr., Lic., Arq., etc.) se utilizan en correspondencia formal para mostrar respeto por la profesión o grado académico del destinatario.", ejercicio: "Escribe 3 títulos honoríficos con sus respectivos tratamientos.", reto: "Escribe una carta a un doctor con todos los títulos correspondientes." },
+            { titulo: "La distancia epistolar", teoria: "La distancia epistolar es el grado de cercanía o lejanía que se establece entre el remitente y el destinatario a través del lenguaje.", ejercicio: "Escribe una carta con gran distancia epistolar y otra con poca.", reto: "Escribe una carta donde la distancia epistolar se reduzca a lo largo del texto." },
+            { titulo: "La confidencialidad en la carta", teoria: "La confidencialidad se expresa mediante fórmulas como 'confidencial', 'para sus ojos' o 'no mostrar a terceros', especialmente en correspondencia personal o diplomática.", ejemplo: "En las cartas de Isabel la Católica a su confesor, solían incluir la advertencia de 'no mostrar a terceros' al inicio.", ejercicio: "Escribe una carta con una advertencia de confidencialidad.", reto: "Escribe una carta que sea deliberadamente confidencial." },
+            { titulo: "El protocolo diplomático", teoria: "La correspondencia diplomática sigue protocolos estrictos en cuanto a tratamientos, fórmulas de cortesía y lenguaje.", ejercicio: "Investiga y escribe una fórmula de cortesía diplomática.", reto: "Escribe una carta diplomática entre dos estados." },
+            { titulo: "La carta pastoral", teoria: "La carta pastoral es una carta abierta de un obispo a los fieles de su diócesis, con un tono paternal y autorizado.", ejercicio: "Escribe una carta pastoral breve (5 líneas).", reto: "Escribe una carta pastoral sobre un tema de actualidad." },
+            { titulo: "La carta circular", teoria: "La carta circular es una carta enviada a múltiples destinatarios, con un contenido común y una dirección colectiva.", ejercicio: "Escribe una carta circular para una comunidad.", reto: "Escribe una carta circular que sea a la vez informativa y persuasiva." },
+            { titulo: "La carta de recomendación formal", teoria: "La carta de recomendación formal sigue un protocolo específico, con membrete, tratamiento, cuerpo y firma.", ejercicio: "Escribe una carta de recomendación formal.", reto: "Escribe una carta de recomendación con membrete y firma." },
+            { titulo: "La carta de presentación formal", teoria: "La carta de presentación formal se usa en ámbitos profesionales y sigue un protocolo estricto.", ejercicio: "Escribe una carta de presentación formal.", reto: "Escribe una carta de presentación con membrete y saludo formal." },
+            { titulo: "La carta de solicitud formal", teoria: "La carta de solicitud formal debe seguir un protocolo claro: saludo, motivo, argumentación y despedida.", ejercicio: "Escribe una carta de solicitud formal.", reto: "Escribe una carta de solicitud con todos los elementos formales." },
+            { titulo: "La carta de reclamación formal", teoria: "La carta de reclamación formal debe ser firme pero cortés, con argumentos claros y un tono respetuoso.", ejercicio: "Escribe una carta de reclamación formal.", reto: "Escribe una carta de reclamación con un tono firme pero cortés." },
+            { titulo: "La carta de renuncia formal", teoria: "La carta de renuncia formal debe ser clara, respetuosa y sin resentimientos, aunque las circunstancias sean difíciles.", ejercicio: "Escribe una carta de renuncia formal.", reto: "Escribe una carta de renuncia elegante y profesional." }
+        ]
+    },
+    estiloep: {
+        nombre: "Estilo", color: "verde", icono: "bi-robot",
+        especialidad: "Estilo y voz: tono, retórica, lenguaje, figuras epistolares",
+        tecnicas: [
+            { titulo: "El tono epistolar", teoria: "El tono es la actitud del remitente hacia el destinatario y el contenido. Puede ser serio, irónico, nostálgico, apasionado, humorístico, etc.", ejemplo: "El tono de las cartas de Kafka a Milena es intenso, desgarrado y lleno de angustia existencial, mientras que el de las cartas de Oscar Wilde es ingenioso y provocador.", ejercicio: "Escribe una carta con tono irónico.", reto: "Escribe una carta donde el tono cambie gradualmente." },
+            { titulo: "La retórica epistolar", teoria: "La retórica en la carta incluye el uso de preguntas retóricas, exclamaciones, apóstrofes (dirigirse al destinatario) y otros recursos persuasivos.", ejemplo: "Las cartas de Cicerón están llenas de preguntas retóricas dirigidas a su destinatario, creando un diálogo ficticio que da vivacidad al texto.", ejercicio: "Escribe una carta con al menos 3 preguntas retóricas.", reto: "Escribe una carta donde la retórica sea el centro del estilo." },
+            { titulo: "La sinceridad epistolar", teoria: "La sinceridad en la carta se logra cuando el remitente escribe desde el corazón, sin artificios, transmitiendo autenticidad y honestidad.", ejemplo: "Las cartas de Ana Frank son sinceras porque están escritas sin filtro, en la intimidad de su diario-epístola.", ejercicio: "Escribe una carta con total sinceridad sobre un tema personal.", reto: "Escribe una carta donde la sinceridad sea la principal virtud." },
+            { titulo: "La reflexión epistolar", teoria: "La carta es un espacio para la reflexión, para examinar la vida, las emociones y las ideas desde la distancia y el silencio de la escritura.", ejemplo: "Las cartas de la filósofa Simone Weil a sus amigos son un testimonio de la reflexión filosófica aplicada a la vida cotidiana.", ejercicio: "Escribe una carta reflexiva sobre un tema que te preocupe.", reto: "Escribe una carta donde la reflexión sea el centro del contenido." },
+            { titulo: "La confesión epistolar", teoria: "La carta puede ser un espacio de confesión, donde el remitente se abre y comparte sus secretos, culpas o deseos más profundos.", ejemplo: "Las cartas de Santa Teresa de Jesús a sus confesores son una forma de confesión espiritual.", ejercicio: "Escribe una carta de confesión sobre un tema que te cueste compartir.", reto: "Escribe una carta donde la confesión sea el centro." },
+            { titulo: "La descripción epistolar", teoria: "La descripción en la carta permite al remitente compartir paisajes, personas o momentos con el destinatario, haciendo la carta más vívida.", ejemplo: "Las descripciones de la naturaleza en las cartas de John Muir a su mujer son una celebración de la vida al aire libre.", ejercicio: "Escribe una carta con una descripción detallada de un lugar.", reto: "Escribe una carta donde la descripción sea tan importante como el contenido." },
+            { titulo: "La narración epistolar", teoria: "La carta puede contar historias, narrando acontecimientos de la vida del remitente o anécdotas que compartir con el destinatario.", ejemplo: "Las cartas de Lord Byron a su editor narran sus viajes y aventuras con un estilo narrativo vibrante.", ejercicio: "Escribe una carta narrando un acontecimiento reciente.", reto: "Escribe una carta donde la narración sea el centro." },
+            { titulo: "La fórmula de cierre personalizada", teoria: "La fórmula de cierre debe reflejar la relación con el destinatario, no ser una fórmula vacía. Puede ser original, poética o emotiva.", ejemplo: "Las cartas de Frida Kahlo terminaban con fórmulas como 'Te abrazo con toda mi alma' o 'Tuya siempre, Frida'.", ejercicio: "Escribe 3 fórmulas de cierre personalizadas.", reto: "Escribe una carta con una fórmula de cierre que resuma el contenido." },
+            { titulo: "La posdata en el estilo", teoria: "La posdata puede tener un estilo diferente al del resto de la carta (más íntimo, más urgente, más humorístico).", ejercicio: "Escribe una carta con una posdata en un estilo diferente.", reto: "Escribe una carta donde la posdata sea lo más importante." },
+            { titulo: "El diálogo en la carta", teoria: "La carta puede incluir diálogos (reales o imaginados) con el destinatario, creando una sensación de conversación viva.", ejemplo: "Las cartas de Dostoievski a su mujer incluyen diálogos con ella, anticipando sus respuestas.", ejercicio: "Escribe una carta con un diálogo imaginario con el destinatario.", reto: "Escribe una carta que sea un diálogo completo." },
+            { titulo: "El silencio en la carta", teoria: "El silencio también puede ser parte de la carta: lo que no se dice, lo que se insinúa, lo que se omite.", ejercicio: "Escribe una carta donde el silencio sea más elocuente que las palabras.", reto: "Escribe una carta donde el silencio sea el centro." },
+            { titulo: "Las figuras retóricas epistolares", teoria: "El uso de metáforas, símiles, personificaciones, hipérboles, etc., enriquece la carta y le da un carácter literario.", ejemplo: "Las cartas de Emily Dickinson son poemas en prosa, llenos de metáforas y lenguaje figurado.", ejercicio: "Escribe una carta con al menos 3 figuras retóricas.", reto: "Escribe una carta donde las figuras retóricas sean el centro del estilo." },
+            { titulo: "El ritmo epistolar", teoria: "El ritmo de la carta se logra a través de la longitud de las oraciones, el uso de pausas y la variación del tempo narrativo.", ejercicio: "Escribe una carta con ritmo rápido y otra con ritmo lento.", reto: "Escribe una carta donde el ritmo cambie según el contenido." },
+            { titulo: "La ironía en la carta", teoria: "La ironía permite al remitente tomar distancia, hacer crítica o añadir humor a su correspondencia.", ejemplo: "La ironía de Voltaire en sus cartas a amigos es legendaria, una forma de denuncia social y política.", ejercicio: "Escribe una carta con ironía.", reto: "Escribe una carta donde la ironía sea el tono principal." },
+            { titulo: "El humor en la carta", teoria: "El humor hace la carta más ligera, más humana, y puede ser una forma de intimidad y complicidad con el destinatario.", ejemplo: "Las cartas de Mark Twain a sus amigos están llenas de humor y anécdotas divertidas.", ejercicio: "Escribe una carta con humor.", reto: "Escribe una carta donde el humor sea el centro." },
+            { titulo: "La metáfora epistolar", teoria: "La metáfora en la carta convierte la experiencia en imagen, haciendo el texto más evocador y significativo.", ejercicio: "Escribe una carta usando metáforas.", reto: "Escribe una carta donde una metáfora sea el tema central." },
+            { titulo: "La evocación", teoria: "La evocación es el arte de traer al presente el pasado, compartiendo con el destinatario los recuerdos que unen a remitente y destinatario.", ejemplo: "Las cartas de Proust a su amigo Reynaldo Hahn evocan los días felices de su juventud con una nostalgia que traspasa las páginas.", ejercicio: "Escribe una carta evocadora de un recuerdo compartido.", reto: "Escribe una carta donde la evocación sea el centro." },
+            { titulo: "La anécdota epistolar", teoria: "La anécdota es una breve narración que ilustra un punto o que sirve para entretener al destinatario.", ejercicio: "Escribe una carta con una anécdota.", reto: "Escribe una carta donde la anécdota sea el centro." },
+            { titulo: "La confidencia", teoria: "La confidencia es compartir con el destinatario algo íntimo, algo que no se diría a cualquier persona, creando un vínculo especial.", ejemplo: "Las confidencias de Rilke en sus 'Cartas a un joven poeta' son el centro de su reflexión sobre la vida y el arte.", ejercicio: "Escribe una carta con una confidencia.", reto: "Escribe una carta donde la confidencia sea el centro." },
+            { titulo: "La reflexión final", teoria: "La reflexión final es el cierre del pensamiento de la carta, una conclusión que da sentido a lo anteriormente escrito.", ejercicio: "Escribe una carta con una reflexión final potente.", reto: "Escribe una carta donde la reflexión final sea el momento culminante." }
+        ]
+    },
+    caligrafia: {
+        nombre: "Caligrafía", color: "purpura", icono: "bi-robot",
+        especialidad: "Caligrafía y presentación: tipos de letra, tinta, papel, sellos, plegado",
+        tecnicas: [
+            { titulo: "La elección del papel", teoria: "El papel es el soporte de la carta. Su textura, color y gramaje transmiten un mensaje táctil y visual antes de que el destinatario lea una palabra.", ejemplo: "Las cartas de amor de Napoleón a Josefina estaban escritas en papel de hilo, fino y casi translúcido, como un susurro.", ejercicio: "Describe el papel que usarías para una carta de amor y para una carta formal.", reto: "Escribe una carta en un papel texturizado y reflexiona sobre la experiencia." },
+            { titulo: "La tinta", teoria: "La tinta es el alma de la escritura. La tinta negra es formal, la sepia evoca antigüedad, la azul puede ser personal. La elección de la tinta es una decisión estilística.", ejemplo: "Las cartas de Vincent van Gogh a su hermano Theo están escritas con tinta azul o negra, a veces con dibujos al margen, una extensión de su arte.", ejercicio: "Elige una tinta para una carta y explica tu elección.", reto: "Escribe una carta con tinta de color (o imagina que lo haces) y reflexiona sobre el efecto." },
+            { titulo: "Tipos de caligrafía: la letra itálica", teoria: "La letra itálica, cursiva o inclinada, es elegante y personal. Deriva de la escritura humanística del Renacimiento.", ejercicio: "Practica la escritura de una frase en letra itálica.", reto: "Escribe una carta breve en letra itálica." },
+            { titulo: "Tipos de caligrafía: la letra gótica", teoria: "La letra gótica, angulosa y densa, evoca la Edad Media y la tradición monástica. Es más difícil de leer pero muy estilizada.", ejercicio: "Practica la escritura de una palabra en letra gótica.", reto: "Escribe una carta en letra gótica (o una variante moderna)." },
+            { titulo: "Tipos de caligrafía: la letra redonda", teoria: "La letra redonda (roundhand) es una caligrafía inglesa de los siglos XVII-XVIII, elegante y clara, usada en documentos oficiales.", ejercicio: "Practica la escritura de una frase en letra redonda.", reto: "Escribe una carta formal en letra redonda." },
+            { titulo: "Tipos de caligrafía: la letra uncial", teoria: "La letra uncial es una caligrafía mayúscula redondeada de la antigüedad tardía, usada en manuscritos medievales.", ejercicio: "Practica la escritura de una palabra en letra uncial.", reto: "Escribe una carta con una combinación de mayúsculas unciales y minúsculas." },
+            { titulo: "Tipos de caligrafía: la letra de cancillería", teoria: "La letra de cancillería, también llamada cancilleresca, es una caligrafía cursiva usada en documentos oficiales y cartas diplomáticas.", ejercicio: "Practica la escritura de una frase en letra de cancillería.", reto: "Escribe una carta diplomática en letra de cancillería." },
+            { titulo: "La elección de la pluma", teoria: "La pluma (estilográfica, de punta de acero, de caña, de ave) influye en el trazo y el grosor de la escritura.", ejemplo: "Las cartas de Ernest Hemingway estaban escritas con una pluma estilográfica Parker, que le permitía una escritura fluida y firme.", ejercicio: "Elige una pluma para una carta y explica tu elección.", reto: "Escribe una carta con una pluma diferente (o imagina que lo haces)." },
+            { titulo: "El sello de cera", teoria: "El sello de cera es un sello de autenticidad y una marca personal. Se estampaba en el sobre o en el cierre de la carta.", ejemplo: "El sello de cera de la reina Isabel I de Inglaterra, con su escudo de armas, era una marca de autoridad y poder.", ejercicio: "Diseña un sello de cera personal (puede ser un símbolo o una inicial).", reto: "Diseña un sello de cera para una carta formal." },
+            { titulo: "El plegado de la carta", teoria: "El plegado de la carta tiene su propia técnica. Antes del sobre, la carta se doblaba en uno o varios pliegues, cada vez más estrechos.", ejercicio: "Investiga y practica el plegado de una carta a la antigua usanza.", reto: "Dobla una carta en un pliegue que sea a la vez práctico y elegante." },
+            { titulo: "El sobre y sus pliegues", teoria: "El sobre debe ser lo suficientemente grande para la carta doblada, y se cierra con un pliegue o con un sello.", ejercicio: "Diseña un sobre para una carta formal.", reto: "Crea un sobre con un cierre especial (pestaña, sello de cera)." },
+            { titulo: "Las márgenes", teoria: "Las márgenes no son un espacio vacío, sino un marco que da respiro a la escritura y equilibra la página.", ejercicio: "Escribe una carta respetando márgenes generosos.", reto: "Escribe una carta donde las márgenes sean parte del diseño." },
+            { titulo: "La distribución del texto en la página", teoria: "La distribución del texto (centrado, justificado, alineado a la izquierda) afecta la lectura y la estética.", ejercicio: "Escribe una carta con una distribución diferente.", reto: "Escribe una carta donde la distribución sea significativa." },
+            { titulo: "Los adornos caligráficos", teoria: "Los adornos, como las rúbricas, las iniciales decoradas o las viñetas, añaden personalidad a la carta.", ejemplo: "Las cartas de Lewis Carroll a sus amigas niñas estaban llenas de dibujos, viñetas y adornos caligráficos que completaban el texto.", ejercicio: "Añade un adorno a una carta.", reto: "Diseña una letra capitular decorada para el inicio de una carta." },
+            { titulo: "La coloración de la página", teoria: "La coloración de la página con tintas, aguadas o bordes de color puede hacer la carta más especial.", ejercicio: "Diseña una carta con un borde de color.", reto: "Escribe una carta en papel coloreado o con un borde decorativo." },
+            { titulo: "El uso de la combinación de tintas", teoria: "La combinación de tintas (por ejemplo, tinta negra para el cuerpo y tinta roja para el saludo o la firma) era común en la correspondencia histórica.", ejercicio: "Escribe una carta usando dos tintas diferentes.", reto: "Escribe una carta donde el color de la tinta tenga un significado." },
+            { titulo: "La ortografía en la carta manuscrita", teoria: "La ortografía en la carta manuscrita debe ser cuidada, ya que los errores restan credibilidad al remitente.", ejercicio: "Revisa la ortografía de una carta que hayas escrito.", reto: "Escribe una carta con una ortografía impecable." },
+            { titulo: "La corrección en la carta", teoria: "Las tachaduras y correcciones a mano pueden ser un elemento de autenticidad o pueden restar pulcritud.", ejercicio: "Escribe una carta y haz una corrección visible.", reto: "Escribe una carta sin correcciones." },
+            { titulo: "La firma caligráfica", teoria: "La firma es la marca personal del remitente. Debe ser legible (o reconocible) y reflejar la personalidad.", ejercicio: "Diseña una firma caligráfica.", reto: "Escribe una carta con una firma que sea una obra de arte." },
+            { titulo: "La presentación final de la carta", teoria: "La presentación final incluye el sobre, el sello, la dirección y cualquier otro elemento que acompañe a la carta.", ejercicio: "Prepara una carta para su envío (sobre, sello, dirección).", reto: "Presenta una carta como si fuera un objeto de colección." }
+        ]
+    },
+    contextoep: {
+        nombre: "Contexto", color: "rojo", icono: "bi-robot",
+        especialidad: "Contexto y legado: historia postal, cartas célebres, archivo, correspondencia",
+        tecnicas: [
+            { titulo: "Historia del correo", teoria: "La historia del correo es la historia de la conexión humana. Desde los mensajeros a pie hasta el correo electrónico, la carta ha sido el vehículo del diálogo a distancia.", ejemplo: "El 'curso ordinario' de correos en la España del siglo XVIII era una red de mensajeros a caballo que recorría el país para entregar la correspondencia.", ejercicio: "Investiga la historia del correo en tu país.", reto: "Escribe una carta imaginaria a un mensajero del pasado." },
+            { titulo: "Cartas célebres: la carta de San Pablo", teoria: "Las cartas de San Pablo son el primer gran corpus epistolar de la cultura occidental, con un estilo retórico y teológico que ha influido en la literatura y el pensamiento.", ejercicio: "Lee un fragmento de una carta de San Pablo y analiza su estilo.", reto: "Escribe una carta a una comunidad ficticia al estilo de San Pablo." },
+            { titulo: "Cartas célebres: las cartas de las heroínas de Ovidio", teoria: "Las 'Heroidas' de Ovidio son cartas ficticias de heroínas mitológicas a sus amantes, un ejercicio de retórica y empatía literaria.", ejercicio: "Lee una de las 'Heroidas' y analiza el punto de vista de la heroína.", reto: "Escribe una carta en primera persona de un personaje histórico o mitológico." },
+            { titulo: "Cartas célebres: la correspondencia de Abelardo y Eloísa", teoria: "La correspondencia de Abelardo y Eloísa es el ejemplo más famoso de amor prohibido narrado a través de cartas, lleno de pasión, dolor y reflexión.", ejercicio: "Lee un fragmento de la correspondencia de Abelardo y Eloísa.", reto: "Escribe una carta al estilo de Abelardo o Eloísa." },
+            { titulo: "Cartas célebres: las cartas de Santa Teresa", teoria: "Las cartas de Santa Teresa de Jesús son una ventana a su vida espiritual y a su labor de reforma carmelitana.", ejercicio: "Lee una carta de Santa Teresa y analiza su lenguaje espiritual.", reto: "Escribe una carta espiritual al estilo de Santa Teresa." },
+            { titulo: "Cartas célebres: las cartas de Sor Juana", teoria: "Las cartas de Sor Juana Inés de la Cruz son un testimonio de su vida intelectual, su lucha por la libertad de pensamiento y su relación con la Iglesia.", ejercicio: "Lee un fragmento de una carta de Sor Juana.", reto: "Escribe una carta al estilo de Sor Juana." },
+            { titulo: "Cartas célebres: las cartas de Beethoven", teoria: "Las cartas de Beethoven a su 'Amada inmortal' son un ejemplo de la intensidad emocional que puede alcanzar la carta de amor.", ejercicio: "Lee un fragmento de la carta de Beethoven.", reto: "Escribe una carta a un amor imposible al estilo de Beethoven." },
+            { titulo: "Cartas célebres: las cartas de Franz Kafka", teoria: "Las cartas de Kafka a Milena Jesenská son una de las correspondencias más íntimas y desgarradas de la literatura del siglo XX.", ejercicio: "Lee un fragmento de las cartas de Kafka.", reto: "Escribe una carta al estilo de Kafka." },
+            { titulo: "Cartas célebres: las cartas de Virginia Woolf", teoria: "Las cartas de Virginia Woolf a Vita Sackville-West son un documento de una relación amorosa y literaria, con un estilo elegante y reflexivo.", ejercicio: "Lee un fragmento de las cartas de Virginia Woolf.", reto: "Escribe una carta al estilo de Virginia Woolf." },
+            { titulo: "Cartas célebres: las cartas de Frida Kahlo", teoria: "Las cartas de Frida Kahlo a Diego Rivera son un testimonio de su relación tormentosa y apasionada, llena de amor y dolor.", ejercicio: "Lee un fragmento de las cartas de Frida Kahlo.", reto: "Escribe una carta al estilo de Frida Kahlo." },
+            { titulo: "Cartas célebres: las cartas de Oscar Wilde", teoria: "Las cartas de Oscar Wilde desde la cárcel, especialmente 'De Profundis', son un testimonio de su caída y su reflexión sobre el arte y la vida.", ejercicio: "Lee un fragmento de 'De Profundis'.", reto: "Escribe una carta desde un lugar de introspección al estilo de Wilde." },
+            { titulo: "Cartas célebres: las cartas de Albert Camus", teoria: "Las cartas de Albert Camus a María Casares son un testimonio de una relación amorosa y de la intensidad de la vida del escritor argelino.", ejercicio: "Lee un fragmento de las cartas de Camus.", reto: "Escribe una carta al estilo de Camus." },
+            { titulo: "El archivo epistolar", teoria: "El archivo epistolar es la conservación de las cartas como documento histórico y literario. Las cartas son memoria de la humanidad.", ejercicio: "Investiga el archivo epistolar de un autor o figura histórica.", reto: "Crea un archivo de tus propias cartas (físico o digital)." },
+            { titulo: "La correspondencia como fuente histórica", teoria: "La correspondencia es una fuente de primera mano para el historiador, que revela aspectos de la vida cotidiana, las relaciones sociales y las mentalidades.", ejercicio: "Analiza una carta histórica como fuente primaria.", reto: "Escribe un análisis histórico de una carta." },
+            { titulo: "La correspondencia como fuente literaria", teoria: "La correspondencia de los escritores es una fuente inagotable para el estudio de su vida, su obra y su contexto literario.", ejercicio: "Analiza una carta de un escritor desde el punto de vista literario.", reto: "Escribe un ensayo sobre la correspondencia de un escritor." },
+            { titulo: "La preservación de la carta manuscrita", teoria: "La carta manuscrita es un objeto frágil que requiere cuidados para su preservación: temperatura, humedad, luz, manipulación.", ejercicio: "Investiga cómo preservar una carta manuscrita.", reto: "Prepara un plan de conservación para una colección de cartas." },
+            { titulo: "El legado epistolar", teoria: "El legado epistolar es el conjunto de cartas que una persona deja a la posteridad, una forma de inmortalidad a través de la palabra escrita.", ejercicio: "Escribe una carta a un descendiente imaginario.", reto: "Escribe una carta que sea tu legado epistolar." },
+            { titulo: "La carta en la era digital", teoria: "La carta manuscrita ha sido reemplazada en gran medida por el correo electrónico, pero conserva su valor como objeto y como experiencia.", ejercicio: "Escribe una reflexión sobre el valor de la carta manuscrita en la era digital.", reto: "Escribe una carta manuscrita a alguien en la era digital." },
+            { titulo: "La carta como objeto de arte", teoria: "La carta manuscrita puede ser considerada una obra de arte, con su caligrafía, su diseño y su presencia física.", ejercicio: "Escribe una carta que sea también una obra de arte visual.", reto: "Crea una carta como objeto de arte (con materiales, texturas, etc.)." },
+            { titulo: "La correspondencia y la amistad", teoria: "La correspondencia es el hilo que une a las personas a través de la distancia, alimentando la amistad y el amor.", ejemplo: "La correspondencia entre Gustave Flaubert y George Sand es un ejemplo de amistad literaria y afecto mutuo a través de las cartas.", ejercicio: "Escribe una carta a un amigo que no ves desde hace tiempo.", reto: "Inicia una correspondencia con alguien." }
+        ]
+    }
+};
+
+// ============================================================
+// GENERAR LISTA COMPLETA DE TÉCNICAS
+// ============================================================
+let TECNICAS = [];
+let idCounter = 0;
+for (const [key, amazona] of Object.entries(AMAZONAS_DATA)) {
+    const tecnicas = amazona.tecnicas.map((t, idx) => ({
+        id: ++idCounter,
+        amazonaKey: key,
+        amazonaNombre: amazona.nombre,
+        color: amazona.color,
+        ...t,
+        numero: idx + 1
+    }));
+    TECNICAS.push(...tecnicas);
+}
+
+// ============================================================
+// LÓGICA DE LA APP
+// ============================================================
+
+document.querySelectorAll('.sidebar-stellar .nav-link').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const section = this.dataset.section;
+        document.querySelectorAll('.sidebar-stellar .nav-link').forEach(l => l.classList.remove('active'));
+        this.classList.add('active');
+        document.querySelectorAll('.section-content').forEach(el => el.style.display = 'none');
+        const target = document.getElementById('section-' + section);
+        if (target) target.style.display = 'block';
+        if (['estructura','protocolo','estiloep','caligrafia','contextoep'].includes(section)) {
+            renderAmazona(section);
+        }
+        if (section === 'dashboard') actualizarDashboard();
+        if (section === 'seguimiento') renderSeguimiento();
+    });
+});
+
+function leerTexto(texto, boton) {
+    if (!window.speechSynthesis) { alert('Tu navegador no soporta síntesis de voz.'); return; }
+    if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        if (boton) { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); }
+        return;
+    }
+    const utterance = new SpeechSynthesisUtterance(texto);
+    utterance.lang = 'es-ES';
+    utterance.rate = 0.9;
+    utterance.pitch = 1;
+    if (boton) {
+        boton.innerHTML = '<i class="bi bi-stop-circle"></i> Detener';
+        boton.classList.add('escuchando');
+        utterance.onend = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+        utterance.onerror = function() { boton.innerHTML = '<i class="bi bi-play-circle"></i> Escuchar'; boton.classList.remove('escuchando'); };
+    }
+    window.speechSynthesis.speak(utterance);
+}
+
+function renderAmazona(amazonaKey) {
+    const container = document.getElementById('section-' + amazonaKey);
+    if (!container) return;
+    const data = AMAZONAS_DATA[amazonaKey];
+    const colorHex = data.color === 'dorado' ? 'var(--neon-dorado)' :
+                     data.color === 'azul' ? 'var(--neon-azul)' :
+                     data.color === 'verde' ? 'var(--neon-verde)' :
+                     data.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+
+    let html = `
+        <div class="personaje-destacado" style="border-left:4px solid ${colorHex};">
+            <div class="avatar">🤖</div>
+            <div class="info">
+                <h4 style="color:${colorHex};">${data.nombre} · ${data.especialidad}</h4>
+                <p style="color:var(--texto-muted);">${data.tecnicas.length} técnicas interactivas. Haz clic para desplegar contenido.</p>
+            </div>
+        </div>
+        <div id="tecnicas-${amazonaKey}">
+    `;
+
+    const tecnicas = TECNICAS.filter(t => t.amazonaKey === amazonaKey);
+    const seguimiento = getSeguimiento();
+
+    tecnicas.forEach((t) => {
+        const completada = seguimiento[t.id] || false;
+        const teoriaCompleta = `Técnica ${t.numero}: ${t.titulo}. ${t.teoria}`;
+        const flashPregunta = t.titulo;
+        const flashRespuesta = t.teoria;
+        html += `
+            <div class="tecnica-card" style="border-left-color: ${colorHex};">
+                <div class="cabecera" onclick="toggleTecnicaCard(${t.id})">
+                    <span class="num">#${t.id}</span>
+                    <span class="titulo">${t.numero}. ${t.titulo}</span>
+                    <span class="badge-personaje" style="background:${completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)'}; color:${completada ? 'var(--neon-verde)' : '#fff'};">${completada ? '✅ Completada' : '⬜ Pendiente'}</span>
+                </div>
+                <div class="contenido" id="contenido-${t.id}">
+                    <div class="teoria">
+                        <strong>📖 Teoría:</strong> ${t.teoria}
+                        <button class="btn-audio ms-2" onclick="event.stopPropagation(); leerTexto('${teoriaCompleta.replace(/'/g, "\\'")}', this);">
+                            <i class="bi bi-play-circle"></i> Escuchar
+                        </button>
+                    </div>
+                    <div class="ejemplo">
+                        <strong>💡 Ejemplo histórico/literario:</strong> ${t.ejemplo}
+                    </div>
+                    <div class="ejercicio">
+                        <strong>✍️ Ejercicio:</strong> ${t.ejercicio}
+                        <textarea placeholder="Escribe tu respuesta aquí..." rows="2"></textarea>
+                        <button class="btn-neon-lleno mt-1" onclick="marcarEjercicio(${t.id})"><i class="bi bi-check-circle"></i> Marcar como completado</button>
+                    </div>
+                    <div class="reto"><i class="bi bi-trophy"></i> <strong>🏆 Reto:</strong> ${t.reto}</div>
+                    <div class="flashcard-area" onclick="event.stopPropagation(); toggleFlashcard(${t.id})" id="flash-${t.id}">
+                        <div class="flash-front" id="flash-front-${t.id}">${flashPregunta}</div>
+                        <div class="flash-back" id="flash-back-${t.id}" style="display:none;">${flashRespuesta}</div>
+                        <div class="flash-indicador">👆 Haz clic para ver la respuesta</div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+
+    html += `</div>`;
+    container.innerHTML = html;
+}
+
+function toggleTecnicaCard(id) {
+    const content = document.getElementById('contenido-' + id);
+    if (content) {
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+}
+
+function toggleFlashcard(id) {
+    const front = document.getElementById('flash-front-' + id);
+    const back = document.getElementById('flash-back-' + id);
+    const indicador = document.querySelector(`#flash-${id} .flash-indicador`);
+    if (!front || !back) return;
+    if (front.style.display !== 'none') {
+        front.style.display = 'none';
+        back.style.display = 'block';
+        if (indicador) indicador.textContent = '👆 Haz clic para volver';
+    } else {
+        front.style.display = 'block';
+        back.style.display = 'none';
+        if (indicador) indicador.textContent = '👆 Haz clic para ver la respuesta';
+    }
+}
+
+function marcarEjercicio(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = true;
+    setSeguimiento(seguimiento);
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            badge.textContent = '✅ Completada';
+            badge.style.background = 'rgba(0,255,0,0.15)';
+            badge.style.color = 'var(--neon-verde)';
+        }
+        const btn = card.querySelector('.ejercicio button');
+        if (btn) {
+            btn.textContent = '✅ ¡Completado!';
+            btn.disabled = true;
+            btn.style.opacity = '0.6';
+        }
+    }
+    actualizarProgreso();
+    actualizarDashboard();
+}
+
+// ============================================================
+// SEGUIMIENTO
+// ============================================================
+const SEGUIMIENTO_KEY = 'flota_epistolar_seguimiento_v2';
+
+function getSeguimiento() {
+    const raw = localStorage.getItem(SEGUIMIENTO_KEY);
+    if (raw) {
+        try { return JSON.parse(raw); } catch(e) {}
+    }
+    return {};
+}
+
+function setSeguimiento(data) {
+    localStorage.setItem(SEGUIMIENTO_KEY, JSON.stringify(data));
+}
+
+function renderSeguimiento() {
+    const seguimiento = getSeguimiento();
+    const tbody = document.getElementById('tabla-seguimiento-body');
+    if (!tbody) return;
+    let html = '';
+    TECNICAS.forEach(t => {
+        const checked = seguimiento[t.id] ? 'checked' : '';
+        const colorHex = t.color === 'dorado' ? 'var(--neon-dorado)' :
+                         t.color === 'azul' ? 'var(--neon-azul)' :
+                         t.color === 'verde' ? 'var(--neon-verde)' :
+                         t.color === 'purpura' ? 'var(--neon-purpura)' : 'var(--neon-rojo)';
+        html += `
+            <tr>
+                <td>${t.id}</td>
+                <td>${t.titulo}</td>
+                <td><span style="background:${colorHex}; color:#0a0e17; padding:0.05rem 0.5rem; border-radius:30px; font-size:0.6rem; font-weight:600;">${t.amazonaNombre}</span></td>
+                <td class="text-center"><input class="form-check-input" type="checkbox" ${checked} onchange="toggleTecnicaCheck(${t.id})"></td>
+            </tr>
+        `;
+    });
+    tbody.innerHTML = html;
+    actualizarProgreso();
+}
+
+function toggleTecnicaCheck(id) {
+    const seguimiento = getSeguimiento();
+    seguimiento[id] = !seguimiento[id];
+    setSeguimiento(seguimiento);
+    actualizarProgreso();
+    actualizarDashboard();
+    const card = document.querySelector(`.tecnica-card .cabecera[onclick*="${id}"]`)?.closest('.tecnica-card');
+    if (card) {
+        const badge = card.querySelector('.badge-personaje');
+        if (badge) {
+            const completada = seguimiento[id];
+            badge.textContent = completada ? '✅ Completada' : '⬜ Pendiente';
+            badge.style.background = completada ? 'rgba(0,255,0,0.15)' : 'rgba(255,255,255,0.05)';
+            badge.style.color = completada ? 'var(--neon-verde)' : '#fff';
+        }
+    }
+}
+
+function actualizarProgreso() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('sidebar-porcentaje').textContent = pct + '%';
+    document.getElementById('sidebar-barra').style.width = pct + '%';
+    document.getElementById('sidebar-detalle').textContent = `${completadas} / ${total} técnicas`;
+}
+
+function actualizarDashboard() {
+    const seguimiento = getSeguimiento();
+    const total = TECNICAS.length;
+    let completadas = 0;
+    TECNICAS.forEach(t => {
+        if (seguimiento[t.id]) completadas++;
+    });
+    const pct = total > 0 ? Math.round((completadas / total) * 100) : 0;
+    document.getElementById('dashboard-completadas').textContent = completadas;
+    document.getElementById('dashboard-porcentaje').textContent = pct + '%';
+}
+
+// ============================================================
+// INICIALIZACIÓN
+// ============================================================
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.section-content').forEach((el, idx) => {
+        el.style.display = idx === 0 ? 'block' : 'none';
+    });
+    renderSeguimiento();
+    actualizarDashboard();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cuaderno Descriptivo · 100 técnicas + Figuras</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Tangerine:wght@700&family=Cookie&family=Caveat:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --teal: #1a8f8f;
+      --teal-light: #b2d9d9;
+      --teal-dark: #0d5c5c;
+      --yellow-bg: #fff9e6;
+      --yellow-card: #ffefc0;
+    }
+    body { background-color: var(--yellow-bg); font-family: 'Segoe UI', Roboto, system-ui, sans-serif; }
+    .navbar-custom {
+      background: linear-gradient(135deg, #f7e9b0, #f5d742);
+      border-bottom: 3px solid var(--teal);
+    }
+    .navbar-custom .navbar-brand { font-weight: 700; color: var(--teal-dark); }
+    .navbar-custom .nav-link { color: var(--teal-dark); font-weight: 500; cursor: pointer; }
+    .navbar-custom .nav-link.active {
+      background-color: var(--teal);
+      color: #fff !important;
+      border-radius: 20px;
+      padding: 0.4rem 1.2rem;
+    }
+    .btn-teal { background-color: var(--teal); border-color: var(--teal); color: #fff; }
+    .btn-teal:hover { background-color: var(--teal-dark); border-color: var(--teal-dark); color: #fff; }
+    .btn-outline-teal { border-color: var(--teal); color: var(--teal); }
+    .btn-outline-teal:hover { background-color: var(--teal); color: #fff; }
+    .card-descriptivo {
+      background-color: var(--yellow-card);
+      border-left: 6px solid var(--teal);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      transition: transform 0.15s ease, box-shadow 0.2s;
+      height: 100%;
+    }
+    .card-descriptivo:hover { transform: translateY(-4px); box-shadow: 0 10px 24px rgba(26,143,143,0.15); }
+    .card-descriptivo .card-title { color: var(--teal-dark); font-weight: 700; font-size: 1.1rem; }
+    .badge-bloque { background-color: var(--teal); color: #fff; font-size: 0.7rem; padding: 0.3rem 0.7rem; border-radius: 30px; }
+    .firma-cursiva { font-style: italic; font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--teal-dark); }
+    .ejemplo-cursiva { font-style: italic; color: #555; }
+    .progreso-bar { height: 8px; border-radius: 10px; background-color: #e9ecef; }
+    .progreso-bar .progress-fill { height: 100%; border-radius: 10px; background: linear-gradient(90deg, var(--teal-light), var(--teal)); transition: width 0.4s; }
+    .filtro-bloque { background-color: #fff6d5; border-radius: 30px; padding: 0.25rem 0.5rem; }
+    .filtro-bloque .btn-outline-secondary { border-color: var(--teal); color: var(--teal); font-size: 0.75rem; padding: 0.2rem 0.8rem; border-radius: 20px; cursor: pointer; }
+    .filtro-bloque .btn-outline-secondary.active { background-color: var(--teal); color: #fff; }
+    .filtro-bloque .btn-outline-secondary:hover { background-color: var(--teal-light); color: var(--teal-dark); }
+    .modo-practica .card-descriptivo { cursor: pointer; }
+    .modo-practica .card-descriptivo .definicion,
+    .modo-practica .card-descriptivo .ejemplo {
+      filter: blur(4px);
+      user-select: none;
+      transition: filter 0.3s;
+    }
+    .modo-practica .card-descriptivo.revelado .definicion,
+    .modo-practica .card-descriptivo.revelado .ejemplo {
+      filter: blur(0);
+      user-select: auto;
+    }
+    .lector-activo { background-color: #d1ecf1; border-radius: 30px; padding: 0.2rem 1rem; color: var(--teal-dark); }
+    #voiceStatus { font-size: 0.9rem; font-style: italic; }
+    .fuente-selector { background-color: #fff6d5; border-radius: 30px; padding: 0.2rem 0.8rem; }
+    .fuente-selector select { border: none; background: transparent; color: var(--teal-dark); font-weight: 500; outline: none; }
+    .fuente-tangerine { font-family: 'Tangerine', cursive; font-size: 1.4rem; }
+    .fuente-cookie { font-family: 'Cookie', cursive; font-size: 1.3rem; }
+    .fuente-caveat { font-family: 'Caveat', cursive; font-size: 1.2rem; }
+    .flashcard {
+      background-color: var(--yellow-card);
+      border: 3px solid var(--teal);
+      border-radius: 24px;
+      padding: 2rem;
+      min-height: 300px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .flashcard .card-front, .flashcard .card-back { transition: opacity 0.3s; }
+    .flashcard .card-back { display: none; }
+    .flashcard.revelada .card-front { display: none; }
+    .flashcard.revelada .card-back { display: block; }
+    .flashcard .badge-bloque { font-size: 0.9rem; }
+    .flashcard .card-title { font-size: 2rem; font-weight: 700; color: var(--teal-dark); }
+    .flashcard .definicion { font-size: 1.1rem; }
+    .flashcard .ejemplo { font-size: 1.2rem; }
+    @media (max-width: 576px) {
+      .card-descriptivo .card-title { font-size: 0.95rem; }
+      .flashcard .card-title { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="#"><i class="bi bi-journal-bookmark-fill me-2" style="color:var(--teal-dark);"></i>Cuaderno Descriptivo</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMain">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item"><a class="nav-link active" data-modo="explorar" href="#"><i class="bi bi-grid-3x3-gap-fill me-1"></i>Explorar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="practicar" href="#"><i class="bi bi-puzzle-fill me-1"></i>Practicar</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="flashcards" href="#"><i class="bi bi-stack me-1"></i>Flashcards</a></li>
+        <li class="nav-item"><a class="nav-link" data-modo="progreso" href="#"><i class="bi bi-bar-chart-fill me-1"></i>Progreso</a></li>
+      </ul>
+      <div class="d-flex align-items-center gap-2">
+        <div class="fuente-selector d-none d-md-inline-block">
+          <i class="bi bi-fonts" style="color:var(--teal-dark);"></i>
+          <select id="fuenteCursiva" aria-label="Elegir caligrafía">
+            <option value="caveat">Caveat</option>
+            <option value="tangerine">Tangerine</option>
+            <option value="cookie">Cookie</option>
+          </select>
+        </div>
+        <span id="voiceStatus" class="d-none d-md-inline"><i class="bi bi-volume-up-fill me-1"></i>Lector</span>
+        <button id="btnVoiceToggle" class="btn btn-outline-teal btn-sm" title="Activar/desactivar lector"><i class="bi bi-mic"></i></button>
+        <span class="badge bg-teal rounded-pill" id="contadorAprendidas">0/100</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-12 d-flex flex-wrap align-items-center gap-2 filtro-bloque p-2">
+      <span class="fw-bold me-2" style="color:var(--teal-dark);"><i class="bi bi-tags"></i> Bloques:</span>
+      <button class="btn btn-outline-secondary active" data-bloque="todos">Todos</button>
+      <button class="btn btn-outline-secondary" data-bloque="I">I</button>
+      <button class="btn btn-outline-secondary" data-bloque="II">II</button>
+      <button class="btn btn-outline-secondary" data-bloque="III">III</button>
+      <button class="btn btn-outline-secondary" data-bloque="IV">IV</button>
+      <button class="btn btn-outline-secondary" data-bloque="V">V</button>
+      <button class="btn btn-outline-secondary" data-bloque="VI">VI</button>
+      <button class="btn btn-outline-secondary" data-bloque="VII">VII</button>
+      <button class="btn btn-outline-secondary" data-bloque="VIII">VIII</button>
+      <button class="btn btn-outline-secondary" data-bloque="IX">IX</button>
+      <span class="ms-2 text-muted small" id="resultCount">100 técnicas</span>
+    </div>
+  </div>
+</div>
+
+<div class="container mt-3 pb-5">
+  <div id="gridTecnicas" class="row g-3"></div>
+  <div id="flashcardContainer" class="row justify-content-center" style="display:none;">
+    <div class="col-lg-8 col-md-10">
+      <div id="flashcard" class="flashcard">
+        <div class="card-front text-center">
+          <span class="badge-bloque mb-2" id="flashBloque">I</span>
+          <h2 class="card-title" id="flashNombre">Nombre</h2>
+          <p class="text-muted mt-3"><i class="bi bi-info-circle"></i> Haz clic en la tarjeta o en "Revelar"</p>
+        </div>
+        <div class="card-back">
+          <span class="badge-bloque mb-2" id="flashBloqueBack">I</span>
+          <h2 class="card-title" id="flashNombreBack">Nombre</h2>
+          <p class="definicion" id="flashDefinicion">Definición</p>
+          <p class="ejemplo-cursiva ejemplo" id="flashEjemplo">Ejemplo</p>
+        </div>
+      </div>
+      <div class="d-flex flex-wrap justify-content-between align-items-center mt-4">
+        <div>
+          <button id="flashPrev" class="btn btn-outline-teal"><i class="bi bi-chevron-left"></i> Anterior</button>
+          <button id="flashNext" class="btn btn-outline-teal">Siguiente <i class="bi bi-chevron-right"></i></button>
+        </div>
+        <div>
+          <button id="flashRevelar" class="btn btn-teal"><i class="bi bi-eye"></i> Revelar</button>
+          <button id="flashFirmar" class="btn btn-outline-warning"><i class="bi bi-pen"></i> Firmar</button>
+          <button id="flashVoice" class="btn btn-outline-teal"><i class="bi bi-volume-up"></i></button>
+        </div>
+      </div>
+      <div class="text-center mt-2">
+        <span id="flashContador" class="text-muted">1 / 100</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="modalPractica" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color:var(--yellow-bg); border-left:8px solid var(--teal);">
+      <div class="modal-header" style="border-bottom:2px solid var(--teal-light);">
+        <h5 class="modal-title" style="color:var(--teal-dark);"><i class="bi bi-puzzle me-2"></i>Detalle</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="modalPracticaBody"></div>
+      <div class="modal-footer">
+        <button class="btn btn-teal" id="btnVoiceModal"><i class="bi bi-volume-up"></i> Escuchar</button>
+        <button class="btn btn-outline-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    'use strict';
+
+    // ----------------------------------------------------------------
+    // 1. DATOS: 100 técnicas en 9 bloques
+    // ----------------------------------------------------------------
+    const TECNICAS = [];
+
+    // BLOQUE I: Elementos básicos (10)
+    const bloqueI = [
+      { nombre: 'Impresión dominante', definicion: 'Sensación global o atmósfera que el autor quiere transmitir.', ejemplo: 'La habitación olía a viejo y a misterio, una penumbra que envolvía cada rincón.' },
+      { nombre: 'Foco descriptivo', definicion: 'Punto de atención principal hacia el cual se orienta la mirada.', ejemplo: 'Su mirada se fijó en la ventana empañada, centro de toda la escena.' },
+      { nombre: 'Distancia del observador', definicion: 'Proximidad o lejanía del narrador respecto al objeto descrito.', ejemplo: 'Desde la colina, el pueblo parecía un juguete; al acercarse, cada piedra cobraba vida.' },
+      { nombre: 'Ángulo de visión', definicion: 'Perspectiva desde la que se observa: frontal, cenital, picado, contrapicado.', ejemplo: 'Visto desde arriba, el laberinto de calles trazaba un mapa celeste.' },
+      { nombre: 'Selección de detalles', definicion: 'Elección de los rasgos más significativos para crear una imagen precisa.', ejemplo: 'No mencionó la mesa ni las sillas, solo el polvo que bailaba en el rayo de sol.' },
+      { nombre: 'Orden de percepción', definicion: 'Secuencia en que se presentan los estímulos: visual, auditivo, táctil, olfativo, gustativo.', ejemplo: 'Primero el aroma a café, luego el rumor de la taza, después el calor en las manos.' },
+      { nombre: 'Ritmo descriptivo', definicion: 'Velocidad y cadencia en la presentación de los detalles (pausado, rápido, acumulativo).', ejemplo: 'Una tras otra, las hojas caían: lenta, pausada, interminablemente.' },
+      { nombre: 'Color y luz', definicion: 'Uso de tonalidades, intensidades y claroscuros para dar atmósfera.', ejemplo: 'El atardecer tiñó de naranja y violeta los tejados, mientras las sombras se alargaban.' },
+      { nombre: 'Textura y materialidad', definicion: 'Descripción de la superficie, consistencia y cualidades táctiles.', ejemplo: 'La piedra era rugosa y fría, como si guardara la humedad de los siglos.' },
+      { nombre: 'Dimensión y escala', definicion: 'Indicación del tamaño, proporción y relación con el entorno.', ejemplo: 'La catedral empequeñecía a las personas, sus torres se perdían entre las nubes.' }
+    ];
+    bloqueI.forEach((t, i) => TECNICAS.push({ id: i+1, bloque: 'I', ...t }));
+
+    // BLOQUE II: Tipos según el objeto (10)
+    const bloqueII = [
+      { nombre: 'Prosopografía', definicion: 'Descripción física de una persona (rasgos, vestimenta, gestos).', ejemplo: 'Era alto, de hombros anchos, y su barba gris contrastaba con sus ojos azules.' },
+      { nombre: 'Etopeya', definicion: 'Descripción del carácter, costumbres y cualidades morales.', ejemplo: 'Era un hombre de palabra, generoso hasta la ruina, pero de mal genio.' },
+      { nombre: 'Retrato', definicion: 'Combinación de prosopografía y etopeya: imagen completa de una persona.', ejemplo: 'Flaco, desgarbado, con una risa fácil que ocultaba una tristeza profunda.' },
+      { nombre: 'Topografía', definicion: 'Descripción detallada de un lugar o paisaje.', ejemplo: 'El valle se extendía verde y salpicado de casas blancas, con un río serpenteante.' },
+      { nombre: 'Zoografía', definicion: 'Descripción de animales: aspecto, comportamiento, hábitat.', ejemplo: 'El gato, de pelaje atigrado, se movía con sigilo, sus ojos brillaban en la oscuridad.' },
+      { nombre: 'Cronografía', definicion: 'Descripción de una época o período histórico.', ejemplo: 'Los años veinte bullían de jazz y optimismo, las faldas subían y el humo de los cigarros llenaba los cafés.' },
+      { nombre: 'Cerografía', definicion: 'Descripción de objetos inanimados, herramientas o utensilios.', ejemplo: 'La vieja máquina de escribir, con sus teclas redondas y el carro metálico, parecía un artefacto de otro siglo.' },
+      { nombre: 'Hidrografía', definicion: 'Descripción de masas de agua, ríos, mares y sus movimientos.', ejemplo: 'El mar estaba encrespado, sus olas rompían contra los acantilados con furia.' },
+      { nombre: 'Ficografía', definicion: 'Descripción de seres imaginarios o fantásticos.', ejemplo: 'El dragón tenía escamas de obsidiana y su aliento desprendía un calor abrasador.' },
+      { nombre: 'Pintura de costumbres', definicion: 'Descripción de escenas típicas, tradiciones y modos de vida.', ejemplo: 'La verbena popular llenaba la plaza de farolillos y el olor a churros.' }
+    ];
+    bloqueII.forEach((t, i) => TECNICAS.push({ id: 10+i+1, bloque: 'II', ...t }));
+
+    // BLOQUE III: Tipos según su función (10)
+    const bloqueIII = [
+      { nombre: 'Técnica', definicion: 'Descripción precisa y objetiva, usada en manuales o informes.', ejemplo: 'El motor tiene una potencia de 150 CV y un par de 200 Nm.' },
+      { nombre: 'Literaria', definicion: 'Estética y subjetiva, busca emocionar y sugerir imágenes poéticas.', ejemplo: 'El río era un susurro de plata entre los álamos.' },
+      { nombre: 'Publicitaria', definicion: 'Persuasiva, resalta cualidades atractivas para vender un producto.', ejemplo: 'Este champú te dejará un cabello sedoso y brillante.' },
+      { nombre: 'Costumbrista', definicion: 'Refleja usos, tradiciones y vida cotidiana con tono pintoresco.', ejemplo: 'Las abuelas tejían en la plaza mientras los niños jugaban a la rayuela.' },
+      { nombre: 'Periodística', definicion: 'Informativa y objetiva, usada en noticias y reportajes.', ejemplo: 'El incendio afectó a 50 hectáreas y obligó a desalojar a 200 personas.' },
+      { nombre: 'Jurídica', definicion: 'Exacta, formal, usada en leyes y documentos legales.', ejemplo: 'El contrato queda rescindido por incumplimiento de las cláusulas acordadas.' },
+      { nombre: 'Didáctica', definicion: 'Explicativa, orientada a la enseñanza y el aprendizaje.', ejemplo: 'El proceso de fotosíntesis se divide en dos fases: lumínica y oscura.' },
+      { nombre: 'Turística', definicion: 'Atractiva, resalta bellezas y servicios de un lugar.', ejemplo: 'La playa de arena blanca y aguas turquesas es el paraíso soñado.' },
+      { nombre: 'Histórica', definicion: 'Documentada, contextualizada en hechos pasados.', ejemplo: 'La batalla tuvo lugar en 1810 y cambió el rumbo de la independencia.' },
+      { nombre: 'Emocional', definicion: 'Cargada de sentimientos y estados de ánimo del narrador.', ejemplo: 'La casa vacía resonaba con ecos de una felicidad ya perdida.' }
+    ];
+    bloqueIII.forEach((t, i) => TECNICAS.push({ id: 20+i+1, bloque: 'III', ...t }));
+
+    // BLOQUE IV: Órdenes de organización espacial (10)
+    const bloqueIV = [
+      { nombre: 'Arriba-abajo', definicion: 'De lo más alto a lo más bajo (cielo-tierra, techo-suelo).', ejemplo: 'Las nubes, luego la cima del monte, el bosque y al final el río.' },
+      { nombre: 'Por planos', definicion: 'Primer plano, segundo plano, fondo (jerarquía de profundidad).', ejemplo: 'En primer plano la mesa, al fondo la chimenea, y entre ambas una alfombra desgastada.' },
+      { nombre: 'Panorámico', definicion: 'Visión de conjunto, barrido horizontal de izquierda a derecha.', ejemplo: 'El ojo recorría el horizonte: montañas, viñedos, el caserío y la iglesia.' },
+      { nombre: 'Cercanía-lejanía', definicion: 'Desde lo más próximo a lo más distante.', ejemplo: 'Junto al camino, una valla; más allá, un campo de trigo; al fondo, la sierra.' },
+      { nombre: 'Lejanía-cercanía', definicion: 'Desde el horizonte hacia el observador.', ejemplo: 'La cordillera se acercaba, primero azul, luego verde, hasta tocar mis pies.' },
+      { nombre: 'Circular', definicion: 'Movimiento alrededor del objeto, como un giro de 360°.', ejemplo: 'La plaza giraba a su alrededor: la fuente, el kiosco, los bancos y las farolas.' },
+      { nombre: 'Centrífugo', definicion: 'Desde el centro hacia los bordes o periferia.', ejemplo: 'Desde el corazón de la ciudad, las calles se extendían como radios de una rueda.' },
+      { nombre: 'Centrípeto', definicion: 'Desde los bordes hacia el centro o núcleo.', ejemplo: 'Los arrabales, las fábricas, el mercado, hasta llegar a la plaza mayor.' },
+      { nombre: 'Izquierda-derecha', definicion: 'Secuencia horizontal según la lectura occidental.', ejemplo: 'A la izquierda la panadería, al centro el quiosco, a la derecha la farmacia.' },
+      { nombre: 'Derecha-izquierda', definicion: 'Recorrido inverso, usado con intención estilística.', ejemplo: 'La biblioteca a la derecha, luego el archivo, y por último el despacho.' }
+    ];
+    bloqueIV.forEach((t, i) => TECNICAS.push({ id: 30+i+1, bloque: 'IV', ...t }));
+
+    // BLOQUE V: Recursos estilísticos (figuras retóricas) (10)
+    const bloqueV = [
+      { nombre: 'Epíteto', definicion: 'Adjetivo que resalta una cualidad inherente al sustantivo.', ejemplo: 'La blanca nieve cubría la pradera.' },
+      { nombre: 'Sinestesia', definicion: 'Mezcla de sensaciones de diferentes sentidos.', ejemplo: 'El sabor de la música llenaba la habitación.' },
+      { nombre: 'Gradación', definicion: 'Serie de elementos en orden creciente o decreciente de intensidad.', ejemplo: 'Suspiro, lloro, grito, maldigo.' },
+      { nombre: 'Hipérbole', definicion: 'Exageración deliberada para enfatizar.', ejemplo: 'Te he esperado un siglo.' },
+      { nombre: 'Metáfora', definicion: 'Identificación de un término real con otro imaginario.', ejemplo: 'Sus ojos eran dos luceros en la noche.' },
+      { nombre: 'Símil o comparación', definicion: 'Relación explícita con "como" o "cual".', ejemplo: 'Sus cabellos brillaban como el oro bajo la luz de la tarde.' },
+      { nombre: 'Personificación', definicion: 'Atribuir cualidades humanas a objetos o animales.', ejemplo: 'El viento susurraba secretos entre los árboles.' },
+      { nombre: 'Antítesis', definicion: 'Contraste de ideas opuestas en una misma estructura.', ejemplo: 'Eres todo para mí, pero nada para ti.' },
+      { nombre: 'Oxímoron', definicion: 'Unión de dos conceptos contradictorios en una misma expresión.', ejemplo: 'Silencio atronador, oscuridad cegadora.' },
+      { nombre: 'Aliteración', definicion: 'Repetición de sonidos consonánticos.', ejemplo: 'El susurro de las serpientes sisea.' }
+    ];
+    bloqueV.forEach((t, i) => TECNICAS.push({ id: 40+i+1, bloque: 'V', ...t }));
+
+    // BLOQUE VI: Construcción del párrafo (10)
+    const bloqueVI = [
+      { nombre: 'Oración temática', definicion: 'Frase que introduce y sintetiza la idea principal del párrafo.', ejemplo: 'La casa de la abuela era un mundo de aromas y recuerdos.' },
+      { nombre: 'Verbos de percepción', definicion: 'Uso de verbos como ver, oír, sentir, oler, gustar para anclar la descripción.', ejemplo: 'Oía el crujir de las tablas y sentía el olor a madera y a humo.' },
+      { nombre: 'Adjetivación precisa', definicion: 'Selección de adjetivos específicos que matizan y enriquecen.', ejemplo: 'El cielo, de un azul profundo y limpio, se reflejaba en las aguas cristalinas.' },
+      { nombre: 'Cierre conclusivo', definicion: 'Frase final que redondea o resume la impresión dominante.', ejemplo: 'Y todo aquello quedó grabado en su memoria como un sueño vivo.' },
+      { nombre: 'Variedad de conectores', definicion: 'Uso de nexos espaciales (junto a, frente a, al fondo) para cohesionar.', ejemplo: 'Junto al río, el molino; detrás, la arboleda; al frente, el camino de sirga.' },
+      { nombre: 'Uso de la anáfora', definicion: 'Repetición de una palabra al inicio de varias oraciones para dar énfasis.', ejemplo: 'Era el viento, era el polvo, era el murmullo de las hojas.' },
+      { nombre: 'Construcción en bloques', definicion: 'División del párrafo en segmentos temáticos (ej. exterior e interior).', ejemplo: 'Fuera, el jardín florecía; dentro, las cortinas guardaban la penumbra.' },
+      { nombre: 'Dosificación de información', definicion: 'Presentar detalles de manera gradual, sin saturar.', ejemplo: 'Primero, el color de la puerta; luego, el pomo de bronce; después, el chirrido al abrir.' },
+      { nombre: 'Contraste interno', definicion: 'Incluir opuestos dentro del párrafo para crear tensión.', ejemplo: 'La alegría de los niños contrastaba con la severidad del viejo edificio.' },
+      { nombre: 'Cierre abierto', definicion: 'Terminar con una sugerencia o pregunta que invite a la reflexión.', ejemplo: '¿Y si aquel silencio ocultaba más de lo que mostraba?' }
+    ];
+    bloqueVI.forEach((t, i) => TECNICAS.push({ id: 50+i+1, bloque: 'VI', ...t }));
+
+    // BLOQUE VII: Descripción y función narrativa (10)
+    const bloqueVII = [
+      { nombre: 'Pausa narrativa', definicion: 'Interrupción de la acción para describir, creando un respiro.', ejemplo: 'Se detuvo un momento para observar el paisaje antes de continuar su camino.' },
+      { nombre: 'Revela carácter', definicion: 'La descripción de un personaje anticipa sus acciones o motivaciones.', ejemplo: 'Su mirada distraída y su ropa desaliñada delataban al soñador.' },
+      { nombre: 'Ambientación', definicion: 'La descripción sitúa la historia en un espacio y tiempo concretos.', ejemplo: 'El callejón oscuro y húmedo era el escenario perfecto para el encuentro.' },
+      { nombre: 'Creación de atmósfera', definicion: 'Uso de descripciones para generar tensión, misterio o calma.', ejemplo: 'La niebla envolvía el bosque, y los pasos se perdían en el silencio.' },
+      { nombre: 'Avance de la trama', definicion: 'Los detalles descriptivos pueden contener pistas sobre el futuro.', ejemplo: 'El reloj de la torre marcaba las doce, y la puerta se abrió lentamente.' },
+      { nombre: 'Retrato psicológico', definicion: 'Descripción que revela el mundo interior del personaje.', ejemplo: 'Sus manos temblaban, pero su voz era firme, ocultando el miedo.' },
+      { nombre: 'Contraste narrativo', definicion: 'Descripciones que chocan con la acción para crear ironía.', ejemplo: 'La fiesta era alegre, pero su corazón estaba sumido en la tristeza.' },
+      { nombre: 'Ritmo y tempo', definicion: 'La extensión de la descripción controla la velocidad narrativa.', ejemplo: 'La descripción minuciosa de cada objeto ralentizaba la huida.' },
+      { nombre: 'Focalización', definicion: 'La descripción se limita a lo que percibe un personaje específico.', ejemplo: 'Desde su escondite, solo veía las sombras y oía los pasos.' },
+      { nombre: 'Descripción simbólica', definicion: 'Los elementos descritos adquieren un significado metafórico en la trama.', ejemplo: 'El espejo roto reflejaba la fragmentación de su alma.' }
+    ];
+    bloqueVII.forEach((t, i) => TECNICAS.push({ id: 60+i+1, bloque: 'VII', ...t }));
+
+    // BLOQUE VIII: Errores comunes (10)
+    const bloqueVIII = [
+      { nombre: 'Exceso de adjetivos', definicion: 'Acumulación de calificativos que empantana la lectura.', ejemplo: 'El enorme, gigantesco, inmenso y colosal edificio se alzaba.' },
+      { nombre: 'Falta de organización', definicion: 'Detalles dispersos sin un orden espacial o lógico.', ejemplo: 'Describía el techo, luego el suelo, luego la ventana sin conexión.' },
+      { nombre: 'Vaguedad y abstracción', definicion: 'Uso de términos genéricos que no crean imágenes concretas.', ejemplo: 'El lugar era bonito, agradable y acogedor.' },
+      { nombre: 'Mezcla de tiempos verbales', definicion: 'Cambios bruscos de presente a pasado sin justificación.', ejemplo: 'La calle está oscura y el viento soplaba con fuerza.' },
+      { nombre: 'Punto de vista inconsistente', definicion: 'Saltos de perspectiva sin aviso al lector.', ejemplo: 'Yo veía la casa, y tú sentías el frío, pero ella oía el ruido.' },
+      { nombre: 'Descripción estática', definicion: 'Falta de movimiento o acción que hace el texto monótono.', ejemplo: 'La silla era de madera, la mesa era de roble, el cuadro era antiguo.' },
+      { nombre: 'Saturación de datos', definicion: 'Demasiada información que abruma y no deja respirar.', ejemplo: 'La habitación tenía tres ventanas, dos puertas, cinco cuadros, nueve sillas, etc.' },
+      { nombre: 'Clichés y tópicos', definicion: 'Frases hechas que restan originalidad.', ejemplo: 'Sus ojos eran como dos estrellas brillantes en la noche.' },
+      { nombre: 'Falta de sinestesia', definicion: 'Apelar solo a lo visual y descuidar otros sentidos.', ejemplo: 'Solo describió colores, sin mencionar olores ni sonidos.' },
+      { nombre: 'Desconexión con la trama', definicion: 'Descripciones que no aportan ni a la historia ni al personaje.', ejemplo: 'Describió la textura de la alfombra sin relación alguna con la escena.' }
+    ];
+    bloqueVIII.forEach((t, i) => TECNICAS.push({ id: 70+i+1, bloque: 'VIII', ...t }));
+
+    // BLOQUE IX: Técnicas bilingües español-inglés (10)
+    const bloqueIX = [
+      { nombre: 'Impresión dominante / Dominant impression', definicion: 'Sensación global que guía la descripción.', ejemplo: 'The room smelled of old mystery.' },
+      { nombre: 'Foco / Focus', definicion: 'Punto central de atención.', ejemplo: 'Her gaze fixed on the foggy window.' },
+      { nombre: 'Distancia / Distance', definicion: 'Proximidad del observador.', ejemplo: 'From the hill, the village looked like a toy.' },
+      { nombre: 'Prosopografía / Prosopography', definicion: 'Descripción física de una persona.', ejemplo: 'He was tall, broad-shouldered, with a gray beard.' },
+      { nombre: 'Etopeya / Ethopoeia', definicion: 'Descripción del carácter.', ejemplo: 'He was a man of his word, generous but short-tempered.' },
+      { nombre: 'Metáfora / Metaphor', definicion: 'Identificación de dos términos.', ejemplo: 'Her eyes were two stars.' },
+      { nombre: 'Símil / Simile', definicion: 'Comparación con "como".', ejemplo: 'Her hair shone like gold.' },
+      { nombre: 'Hipérbole / Hyperbole', definicion: 'Exageración para enfatizar.', ejemplo: 'I have waited a century.' },
+      { nombre: 'Sinestesia / Synesthesia', definicion: 'Mezcla de sensaciones.', ejemplo: 'The music tasted sweet.' },
+      { nombre: 'Personificación / Personification', definicion: 'Atribuir cualidades humanas.', ejemplo: 'The wind whispered secrets.' }
+    ];
+    bloqueIX.forEach((t, i) => TECNICAS.push({ id: 80+i+1, bloque: 'IX', ...t }));
+
+    // Añadimos 10 técnicas extra para llegar a 100 (figuras retóricas adicionales)
+    const bloqueExtra = [
+      { nombre: 'Paralelismo', definicion: 'Repetición de estructuras sintácticas similares.', ejemplo: 'Ni el mar, ni el viento, ni el fuego pudieron detenerlo.' },
+      { nombre: 'Asíndeton', definicion: 'Omisión de conjunciones para dar velocidad.', ejemplo: 'Vine, vi, vencí.' },
+      { nombre: 'Polisíndeton', definicion: 'Repetición de conjunciones para dar lentitud o énfasis.', ejemplo: 'Y el sol, y la luna, y las estrellas, y el mar.' },
+      { nombre: 'Elipsis', definicion: 'Supresión de un elemento que se sobrentiende.', ejemplo: 'Cada uno a su casa, y la fiesta a la plaza.' },
+      { nombre: 'Hipérbaton', definicion: 'Alteración del orden lógico de la oración.', ejemplo: 'De la montaña bajó el pastor.' },
+      { nombre: 'Perífrasis', definicion: 'Expresión de una idea con más palabras de las necesarias.', ejemplo: 'La ciudad de la luz (París).' },
+      { nombre: 'Ironía', definicion: 'Expresión que dice lo contrario de lo que se piensa.', ejemplo: '¡Qué bonito día para quedarse en casa!' },
+      { nombre: 'Interrogación retórica', definicion: 'Pregunta que no espera respuesta.', ejemplo: '¿Quién no ha soñado con volar?' },
+      { nombre: 'Exclamación', definicion: 'Expresión enfática de emoción o sorpresa.', ejemplo: '¡Qué maravillosa es la vida!' },
+      { nombre: 'Anáfora', definicion: 'Repetición de una palabra al inicio de varios versos.', ejemplo: 'Temprano, temprano, temprano, me despierto.' }
+    ];
+    bloqueExtra.forEach((t, i) => TECNICAS.push({ id: 90+i+1, bloque: 'IX', ...t }));
+
+    // Ahora son exactamente 100
+
+    // ----------------------------------------------------------------
+    // 2. ESTADO Y ALMACENAMIENTO
+    // ----------------------------------------------------------------
+    const STORAGE_KEY = 'cuadernoDescriptivo100_tecnicas';
+    let progreso = {};
+    let modoActual = 'explorar';
+    let bloqueFiltro = 'todos';
+    let voiceEnabled = false;
+    let speechSynth = window.speechSynthesis;
+    let utterance = null;
+    let fuenteActual = 'caveat';
+    let flashIndex = 0;
+    let flashList = [];
+
+    function cargarProgreso() {
+      try {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) progreso = JSON.parse(data);
+        else progreso = {};
+      } catch (e) { progreso = {}; }
+    }
+
+    function guardarProgreso() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(progreso));
+      actualizarContador();
+    }
+
+    function toggleAprendida(id) {
+      if (progreso[id]) delete progreso[id];
+      else progreso[id] = true;
+      guardarProgreso();
+      renderizar();
+      if (modoActual === 'flashcards') mostrarFlashcard(flashIndex);
+    }
+
+    function actualizarContador() {
+      const total = TECNICAS.length;
+      const aprendidas = Object.keys(progreso).filter(k => progreso[k]).length;
+      document.getElementById('contadorAprendidas').textContent = `${aprendidas}/${total}`;
+    }
+
+    function getTecnicasFiltradas() {
+      let lista = TECNICAS;
+      if (bloqueFiltro !== 'todos') lista = lista.filter(t => t.bloque === bloqueFiltro);
+      return lista;
+    }
+
+    function leerTexto(texto) {
+      if (!voiceEnabled) return;
+      if (speechSynth.speaking) speechSynth.cancel();
+      utterance = new SpeechSynthesisUtterance(texto);
+      utterance.lang = 'es-ES';
+      utterance.rate = 0.9;
+      utterance.pitch = 1;
+      speechSynth.speak(utterance);
+    }
+
+    function getClaseFuente() {
+      switch(fuenteActual) {
+        case 'tangerine': return 'fuente-tangerine';
+        case 'cookie': return 'fuente-cookie';
+        default: return 'fuente-caveat';
+      }
+    }
+
+    // ----------------------------------------------------------------
+    // 3. FLASHCARDS
+    // ----------------------------------------------------------------
+    function mostrarFlashcard(index) {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) {
+        document.getElementById('flashcardContainer').style.display = 'none';
+        return;
+      }
+      flashList = lista;
+      if (index >= lista.length) index = 0;
+      if (index < 0) index = lista.length - 1;
+      flashIndex = index;
+
+      const t = lista[index];
+      const aprendida = progreso[t.id] || false;
+
+      document.getElementById('flashBloque').textContent = t.bloque;
+      document.getElementById('flashNombre').textContent = t.nombre;
+      document.getElementById('flashBloqueBack').textContent = t.bloque;
+      document.getElementById('flashNombreBack').textContent = t.nombre;
+      document.getElementById('flashDefinicion').textContent = t.definicion;
+      const ej = document.getElementById('flashEjemplo');
+      ej.textContent = t.ejemplo;
+      ej.className = `ejemplo-cursiva ejemplo ${getClaseFuente()}`;
+
+      document.getElementById('flashContador').textContent = `${index+1} / ${lista.length}`;
+
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.remove('revelada');
+      document.getElementById('flashRevelar').innerHTML = '<i class="bi bi-eye"></i> Revelar';
+
+      const firmarBtn = document.getElementById('flashFirmar');
+      if (aprendida) {
+        firmarBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Firmada';
+        firmarBtn.className = 'btn btn-success';
+      } else {
+        firmarBtn.innerHTML = '<i class="bi bi-pen"></i> Firmar';
+        firmarBtn.className = 'btn btn-outline-warning';
+      }
+      actualizarContador();
+    }
+
+    function flashRevelar() {
+      const flashcard = document.getElementById('flashcard');
+      flashcard.classList.toggle('revelada');
+      const btn = document.getElementById('flashRevelar');
+      btn.innerHTML = flashcard.classList.contains('revelada') ? '<i class="bi bi-eye-slash"></i> Ocultar' : '<i class="bi bi-eye"></i> Revelar';
+    }
+
+    function flashNext() { mostrarFlashcard(flashIndex + 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashRevelar').innerHTML = '<i class="bi bi-eye"></i> Revelar'; }
+    function flashPrev() { mostrarFlashcard(flashIndex - 1); document.getElementById('flashcard').classList.remove('revelada'); document.getElementById('flashRevelar').innerHTML = '<i class="bi bi-eye"></i> Revelar'; }
+    function flashFirmar() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      toggleAprendida(lista[flashIndex].id);
+      mostrarFlashcard(flashIndex);
+    }
+    function flashVoice() {
+      const lista = getTecnicasFiltradas();
+      if (lista.length === 0) return;
+      const t = lista[flashIndex];
+      leerTexto(`${t.nombre}: ${t.definicion}. Ejemplo: ${t.ejemplo}`);
+    }
+
+    // ----------------------------------------------------------------
+    // 4. RENDER PRINCIPAL
+    // ----------------------------------------------------------------
+    function renderizar() {
+      const grid = document.getElementById('gridTecnicas');
+      const flashContainer = document.getElementById('flashcardContainer');
+      const lista = getTecnicasFiltradas();
+      document.getElementById('resultCount').textContent = `${lista.length} técnicas`;
+
+      if (modoActual === 'flashcards') {
+        grid.style.display = 'none';
+        flashContainer.style.display = 'block';
+        if (lista.length > 0) mostrarFlashcard(0);
+        else flashContainer.innerHTML = `<div class="alert alert-warning">No hay técnicas en este bloque.</div>`;
+        return;
+      } else {
+        grid.style.display = 'flex';
+        flashContainer.style.display = 'none';
+      }
+
+      const claseFuente = getClaseFuente();
+
+      if (modoActual === 'explorar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card card-descriptivo p-3">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓ Aprendida' : 'Pendiente'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="card-text definicion small">${t.definicion}</p>
+                <p class="card-text ejemplo-cursiva small ${claseFuente}"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between align-items-center mt-2">
+                  <button class="btn btn-outline-teal btn-sm btn-voice" data-id="${t.id}" title="Escuchar"><i class="bi bi-volume-up"></i></button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-teal'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i> Firmar' : '<i class="bi bi-pen"></i> Firmar'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'practicar') {
+        grid.innerHTML = lista.map(t => {
+          const aprendida = progreso[t.id] || false;
+          return `
+            <div class="col-12 col-md-6 col-lg-4">
+              <div class="card card-descriptivo p-3" data-practica-id="${t.id}">
+                <div class="d-flex justify-content-between align-items-start">
+                  <span class="badge-bloque">${t.bloque}</span>
+                  <span class="badge bg-${aprendida ? 'success' : 'secondary'} rounded-pill">${aprendida ? '✓' : '?'}</span>
+                </div>
+                <h6 class="card-title mt-2">${t.nombre}</h6>
+                <p class="card-text definicion small" style="filter:blur(4px);user-select:none;">${t.definicion}</p>
+                <p class="card-text ejemplo-cursiva small ${claseFuente}" style="filter:blur(4px);user-select:none;"><i class="bi bi-quote"></i> ${t.ejemplo}</p>
+                <div class="d-flex justify-content-between mt-2">
+                  <button class="btn btn-outline-teal btn-sm btn-revelar-practica" data-id="${t.id}"><i class="bi bi-eye"></i> Revelar</button>
+                  <button class="btn btn-sm btn-outline-info btn-detalle" data-id="${t.id}"><i class="bi bi-info-circle"></i> Detalle</button>
+                  <button class="btn btn-sm ${aprendida ? 'btn-outline-warning' : 'btn-teal'} btn-firmar" data-id="${t.id}">${aprendida ? '<i class="bi bi-check2-circle"></i>' : '<i class="bi bi-pen"></i>'}</button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } else if (modoActual === 'progreso') {
+        const aprendidas = TECNICAS.filter(t => progreso[t.id]);
+        const pendientes = TECNICAS.filter(t => !progreso[t.id]);
+        const pct = Math.round((aprendidas.length / TECNICAS.length) * 100);
+        grid.innerHTML = `
+          <div class="col-12">
+            <div class="card p-4" style="background-color:var(--yellow-card); border-left:6px solid var(--teal);">
+              <h5><i class="bi bi-bar-chart-fill me-2" style="color:var(--teal);"></i>Tu progreso</h5>
+              <div class="progreso-bar mt-2"><div class="progress-fill" style="width:${pct}%;"></div></div>
+              <p class="mt-2"><strong>${aprendidas.length}</strong> de ${TECNICAS.length} técnicas aprendidas (${pct}%)</p>
+              <div class="row mt-3">
+                <div class="col-md-6">
+                  <h6 class="text-success"><i class="bi bi-check-circle"></i> Aprendidas</h6>
+                  ${aprendidas.length ? aprendidas.map(t => `<span class="badge bg-success me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">Aún no has firmado ninguna.</p>'}
+                </div>
+                <div class="col-md-6">
+                  <h6 class="text-secondary"><i class="bi bi-hourglass-split"></i> Pendientes</h6>
+                  ${pendientes.length ? pendientes.map(t => `<span class="badge bg-secondary me-1 mb-1">${t.nombre}</span>`).join('') : '<p class="text-muted small">¡Todo aprendido!</p>'}
+                </div>
+              </div>
+              <div class="firma-cursiva mt-3 text-end ${claseFuente}">— Tu cuaderno descriptivo</div>
+            </div>
+          </div>
+        `;
+      }
+
+      // Reasignar eventos después de generar el HTML
+      asignarEventos();
+      actualizarContador();
+    }
+
+    // ----------------------------------------------------------------
+    // 5. ASIGNACIÓN DE EVENTOS
+    // ----------------------------------------------------------------
+    function asignarEventos() {
+      document.querySelectorAll('.btn-firmar').forEach(btn => {
+        btn.removeEventListener('click', handleFirmar);
+        btn.addEventListener('click', handleFirmar);
+      });
+
+      document.querySelectorAll('.btn-voice').forEach(btn => {
+        btn.removeEventListener('click', handleVoice);
+        btn.addEventListener('click', handleVoice);
+      });
+
+      document.querySelectorAll('.btn-revelar-practica').forEach(btn => {
+        btn.removeEventListener('click', handleRevelarPractica);
+        btn.addEventListener('click', handleRevelarPractica);
+      });
+
+      document.querySelectorAll('.btn-detalle').forEach(btn => {
+        btn.removeEventListener('click', handleDetalle);
+        btn.addEventListener('click', handleDetalle);
+      });
+
+      document.querySelectorAll('.card-descriptivo[data-practica-id]').forEach(card => {
+        card.removeEventListener('click', handleCardClick);
+        card.addEventListener('click', handleCardClick);
+      });
+    }
+
+    function handleFirmar(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      toggleAprendida(id);
+    }
+
+    function handleVoice(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+    }
+
+    function handleRevelarPractica(e) {
+      e.stopPropagation();
+      const card = this.closest('.card-descriptivo');
+      if (card) {
+        card.classList.toggle('revelado');
+        this.textContent = card.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+      }
+    }
+
+    function handleDetalle(e) {
+      e.stopPropagation();
+      const id = parseInt(this.dataset.id);
+      const tec = TECNICAS.find(t => t.id === id);
+      if (!tec) return;
+      const modal = new bootstrap.Modal(document.getElementById('modalPractica'));
+      document.getElementById('modalPracticaBody').innerHTML = `
+        <h5>${tec.nombre}</h5>
+        <p><span class="badge-bloque">${tec.bloque}</span></p>
+        <p><strong>Definición:</strong> ${tec.definicion}</p>
+        <p class="${getClaseFuente()}"><strong>Ejemplo:</strong> "${tec.ejemplo}"</p>
+      `;
+      document.getElementById('btnVoiceModal').dataset.id = tec.id;
+      modal.show();
+    }
+
+    function handleCardClick(e) {
+      if (e.target.closest('button')) return;
+      this.classList.toggle('revelado');
+      const btn = this.querySelector('.btn-revelar-practica');
+      if (btn) btn.textContent = this.classList.contains('revelado') ? '✓ Visible' : 'Revelar';
+    }
+
+    // ----------------------------------------------------------------
+    // 6. NAVEGACIÓN, FILTROS, FUENTES Y VOZ
+    // ----------------------------------------------------------------
+    function setModo(modo) {
+      modoActual = modo;
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => el.classList.remove('active'));
+      const activeLink = document.querySelector(`.navbar-custom .nav-link[data-modo="${modo}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      renderizar();
+    }
+
+    function setBloque(bloque) {
+      bloqueFiltro = bloque;
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => el.classList.remove('active'));
+      const activeBtn = document.querySelector(`.filtro-bloque .btn[data-bloque="${bloque}"]`);
+      if (activeBtn) activeBtn.classList.add('active');
+      renderizar();
+    }
+
+    function toggleVoice() {
+      voiceEnabled = !voiceEnabled;
+      const status = document.getElementById('voiceStatus');
+      const btn = document.getElementById('btnVoiceToggle');
+      if (voiceEnabled) {
+        status.classList.remove('d-none');
+        btn.classList.add('btn-teal');
+        btn.classList.remove('btn-outline-teal');
+      } else {
+        status.classList.add('d-none');
+        btn.classList.remove('btn-teal');
+        btn.classList.add('btn-outline-teal');
+        if (speechSynth.speaking) speechSynth.cancel();
+      }
+    }
+
+    function cambiarFuente(valor) {
+      fuenteActual = valor;
+      renderizar();
+    }
+
+    // ----------------------------------------------------------------
+    // 7. INICIALIZACIÓN
+    // ----------------------------------------------------------------
+    function init() {
+      cargarProgreso();
+
+      // Menú de navegación
+      document.querySelectorAll('.navbar-custom .nav-link').forEach(el => {
+        el.addEventListener('click', function(e) {
+          e.preventDefault();
+          setModo(this.dataset.modo);
+        });
+      });
+
+      // Filtros de bloque
+      document.querySelectorAll('.filtro-bloque .btn').forEach(el => {
+        el.addEventListener('click', function() {
+          setBloque(this.dataset.bloque);
+        });
+      });
+
+      // Voice toggle
+      document.getElementById('btnVoiceToggle').addEventListener('click', toggleVoice);
+
+      // Selector de fuente
+      document.getElementById('fuenteCursiva').addEventListener('change', function(e) {
+        cambiarFuente(this.value);
+      });
+
+      // Flashcard eventos fijos
+      document.getElementById('flashRevelar').addEventListener('click', flashRevelar);
+      document.getElementById('flashNext').addEventListener('click', flashNext);
+      document.getElementById('flashPrev').addEventListener('click', flashPrev);
+      document.getElementById('flashFirmar').addEventListener('click', flashFirmar);
+      document.getElementById('flashVoice').addEventListener('click', flashVoice);
+      document.getElementById('flashcard').addEventListener('click', function(e) {
+        if (e.target.closest('button')) return;
+        flashRevelar();
+      });
+
+      // Modal voice
+      document.getElementById('btnVoiceModal').addEventListener('click', function() {
+        const id = parseInt(this.dataset.id);
+        const tec = TECNICAS.find(t => t.id === id);
+        if (tec) leerTexto(`${tec.nombre}: ${tec.definicion}. Ejemplo: ${tec.ejemplo}`);
+      });
+
+      // Iniciar en explorar
+      setModo('explorar');
+      setBloque('todos');
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+</script>
+</body>
+</html>

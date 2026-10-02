@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .page-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #f1c40f;
+        margin-bottom: 0.5rem;
+    }
+    .page-sub { color: #8b949e; margin-bottom: 2rem; }
+    .chip-tipo {
+        display: inline-block;
+        padding: 0.45rem 1rem;
+        border-radius: 20px;
+        background: #21262d;
+        color: #c9d1d9;
+        text-decoration: none;
+        font-size: 0.85rem;
+        border: 1px solid #30363d;
+        transition: all 0.2s;
+    }
+    .chip-tipo:hover {
+        background: #f1c40f; color: #0d1117; border-color: #f1c40f;
+    }
+    .chip-tipo.active {
+        background: #f1c40f; color: #0d1117; border-color: #f1c40f; font-weight: 600;
+    }
+    .card-recurso {
+        background: #161b22;
+        border: 1px solid #30363d;
+        border-radius: 10px;
+        padding: 1.1rem;
+        height: 100%;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        transition: all 0.2s ease;
+    }
+    .card-recurso:hover {
+        border-color: #f1c40f;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(241, 196, 15, 0.15);
+    }
+    .tipo-tag {
+        display: inline-block;
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        background: #21262d;
+        color: #58a6ff;
+        margin-bottom: 0.6rem;
+        text-transform: uppercase;
+    }
+    .card-title-custom {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #e6edf3;
+        line-height: 1.35;
+    }
+</style>
+
+<div class="page-title">📚 Recursos Interactivos</div>
+<p class="page-sub">{{ total }} aplicaciones HTML interactivas para aprender lengua castellana.</p>
+
+<div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem;">
+    <a href="?tipo=" class="chip-tipo {% if not tipo_actual %}active{% endif %}">
+        Todo ({{ total }})
+    </a>
+    {% for codigo, etiqueta in tipos %}
+        <a href="?tipo={{ codigo }}"
+           class="chip-tipo {% if tipo_actual == codigo %}active{% endif %}">
+            {{ etiqueta }}
+            {% if conteos|default_if_none:'' %}{% endif %}
+        </a>
+    {% endfor %}
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem;">
+    {% for r in recursos %}
+        <a href="{% url 'courses:recurso_detalle' r.slug %}" class="card-recurso">
+            <span class="tipo-tag">{{ r.get_tipo_display }}</span>
+            <div class="card-title-custom">{{ r.titulo }}</div>
+        </a>
+    {% empty %}
+        <p style="color:#8b949e;">No hay recursos con ese filtro.</p>
+    {% endfor %}
+</div>
+{% endblock %}

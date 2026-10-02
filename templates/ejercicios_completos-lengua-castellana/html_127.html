@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>100 técnicas de oraciones simples y compuestas en español</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body { background: #f5f3ef; font-family: 'Segoe UI', system-ui, sans-serif; }
+        .hero { background: linear-gradient(135deg, #1e2a3a 0%, #0f1a24 100%); color: white; padding: 2rem 0; margin-bottom: 2rem; border-radius: 0 0 1rem 1rem; }
+        .card-flash { border: none; border-radius: 1.2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .card-flash:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.1); }
+        .btn-sound { background: #2c3e50; color: white; border-radius: 40px; padding: 0.25rem 0.9rem; font-size: 0.75rem; }
+        .btn-sound:hover { background: #d4af37; color: #1e2a3a; }
+        .footer { background: #1e2a3a; color: #cddde9; margin-top: 3rem; padding: 1.5rem 0; text-align: center; }
+        .float-voice-btn { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: #2c3e50; color: white; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; transition: 0.3s; }
+        .float-voice-btn:hover { background: #d4af37; color: #1e2a3a; transform: scale(1.1); }
+        .voice-controls { position: fixed; bottom: 100px; right: 30px; background: white; border-radius: 15px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 999; display: none; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="container text-center">
+        <h1 class="display-5 fw-bold"><i class="fas fa-sitemap me-3"></i>Oraciones simples y compuestas en español</h1>
+        <p class="lead">100 técnicas: clasificación por actitud del hablante, estructura simple y compuesta (coordinadas y subordinadas).</p>
+        <div class="mt-3">
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-comment"></i> Actitud del hablante</span>
+            <span class="badge bg-light text-dark me-2"><i class="fas fa-stream"></i> Estructura simple</span>
+            <span class="badge bg-light text-dark"><i class="fas fa-code-branch"></i> Estructura compuesta</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="alert alert-info rounded-pill text-center mb-4">
+        <i class="fas fa-microphone-alt"></i> Activa el lector de voz (botón flotante) para escuchar cada técnica. <strong>100 conceptos con ejemplos y ejercicios</strong>
+    </div>
+    <div class="row g-4" id="cardsContainer"></div>
+</div>
+
+<footer class="footer">
+    <div class="container"><small><i class="fas fa-sitemap"></i> 100 técnicas de oraciones simples y compuestas · basado en la gramática de la RAE y las clasificaciones tradicionales</small></div>
+</footer>
+
+<button class="float-voice-btn" id="floatVoiceBtn" onclick="toggleVoiceControls()"><i class="fas fa-head-side-vr fa-2x"></i></button>
+<div class="voice-controls" id="voiceControls">
+    <div class="d-flex flex-column gap-2">
+        <button class="btn btn-sm btn-primary" onclick="readPageContent()"><i class="fas fa-play"></i> Leer página</button>
+        <button class="btn btn-sm btn-secondary" onclick="stopSpeech()"><i class="fas fa-stop"></i> Detener</button>
+        <select id="voiceSelect" class="form-select form-select-sm" onchange="setVoice()"></select>
+        <input type="range" id="rateControl" min="0.5" max="2" step="0.1" value="0.9" onchange="setRate()">
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const tecnicas = [
+        { id:1, name:"Oración simple", category:"Estructura simple", teoria:"Oración con un solo verbo conjugado (o una perífrasis verbal) y un solo predicado.", ejemplo:"El niño juega en el parque.", ejercicio:"Identifica si 'Corrió y saltó' es simple o compuesta.", suggestedAnswer:"Es compuesta porque tiene dos verbos conjugados." },
+        { id:2, name:"Oración compuesta", category:"Estructura compuesta", teoria:"Oración con más de un verbo conjugado y, por tanto, más de un predicado.", ejemplo:"Llegó tarde porque perdió el autobús.", ejercicio:"Escribe una oración compuesta con dos verbos.", suggestedAnswer:"Estudié toda la noche, pero no aprobé el examen." },
+        { id:3, name:"Oración enunciativa (declarativa)", category:"Actitud del hablante", teoria:"Expresa un hecho o una idea de manera objetiva, afirmando o negando.", ejemplo:"Hoy hace sol. No tengo hambre.", ejercicio:"Convierte 'El libro es interesante' a enunciativa negativa.", suggestedAnswer:"El libro no es interesante." },
+        { id:4, name:"Oración interrogativa", category:"Actitud del hablante", teoria:"Formula una pregunta. Puede ser total (sí/no) o parcial (con pronombre interrogativo).", ejemplo:"¿Vienes a la fiesta? ¿Qué hora es?", ejercicio:"Transforma 'Ella llegará mañana' en interrogativa parcial.", suggestedAnswer:"¿Cuándo llegará ella?" },
+        { id:5, name:"Oración exclamativa", category:"Actitud del hablante", teoria:"Expresa emoción, sorpresa, alegría, ira. Usa signos de exclamación.", ejemplo:"¡Qué bonito es este lugar!", ejercicio:"Escribe una oración exclamativa de alegría.", suggestedAnswer:"¡Qué feliz me siento hoy!" },
+        { id:6, name:"Oración desiderativa (optativa)", category:"Actitud del hablante", teoria:"Expresa un deseo o esperanza. Usa palabras como 'ojalá', 'quisiera'.", ejemplo:"Ojalá apruebe el examen.", ejercicio:"Escribe una oración desiderativa con 'ojalá'.", suggestedAnswer:"Ojalá todo salga bien en la entrevista." },
+        { id:7, name:"Oración dubitativa", category:"Actitud del hablante", teoria:"Expresa duda o probabilidad. Usa 'quizá', 'tal vez', 'puede que'.", ejemplo:"Quizá venga mañana.", ejercicio:"Escribe una oración dubitativa con 'puede que'.", suggestedAnswer:"Puede que llegue tarde por el tráfico." },
+        { id:8, name:"Oración exhortativa (imperativa)", category:"Actitud del hablante", teoria:"Expresa mandato, ruego o consejo. El verbo suele estar en imperativo o subjuntivo.", ejemplo:"Cierra la puerta. No fumes aquí.", ejercicio:"Escribe una oración exhortativa de ruego.", suggestedAnswer:"Por favor, préstame tu coche un momento." },
+        { id:9, name:"Oración atributiva (copulativa)", category:"Estructura simple", teoria:"Núcleo es un verbo copulativo (ser, estar, parecer) y tiene atributo.", ejemplo:"María es inteligente. La casa está limpia.", ejercicio:"Identifica el atributo en 'El pastel está delicioso'.", suggestedAnswer:"delicioso." },
+        { id:10, name:"Oración predicativa", category:"Estructura simple", teoria:"Núcleo es un verbo predicativo (no copulativo). El predicado expresa una acción.", ejemplo:"El perro ladra. Juan compró un libro.", ejercicio:"Clasifica 'Está nevando' como atributiva o predicativa.", suggestedAnswer:"Predicativa (el verbo 'nevar' es predicativo)." },
+        { id:11, name:"Oración transitiva", category:"Estructura simple", teoria:"Verbo predicativo que requiere un complemento directo (CD).", ejemplo:"María lee un libro.", ejercicio:"Señala el CD en 'Pedro escribió una carta'.", suggestedAnswer:"una carta." },
+        { id:12, name:"Oración intransitiva", category:"Estructura simple", teoria:"Verbo predicativo que no necesita complemento directo.", ejemplo:"El niño duerme. Llueve mucho.", ejercicio:"¿'Caminamos por el parque' es transitiva o intransitiva?", suggestedAnswer:"Intransitiva (el verbo 'caminar' no lleva CD)." },
+        { id:13, name:"Oración reflexiva", category:"Estructura simple", teoria:"La acción recae sobre el mismo sujeto. Pronombre reflexivo (me, te, se).", ejemplo:"Yo me lavo. Ella se peina.", ejercicio:"Escribe una oración reflexiva con el verbo 'mirar'.", suggestedAnswer:"Él se mira en el espejo." },
+        { id:14, name:"Oración recíproca", category:"Estructura simple", teoria:"Dos o más sujetos realizan una acción mutua. Pronombre recíproco (nos, os, se).", ejemplo:"Ellos se escriben cartas.", ejercicio:"Escribe una oración recíproca con 'abrazar'.", suggestedAnswer:"Los dos amigos se abrazaron al reencontrarse." },
+        { id:15, name:"Oración impersonal", category:"Estructura simple", teoria:"No tiene sujeto léxico ni gramatical. Fenómenos meteorológicos, 'haber', 'hacer', 'se' impersonal.", ejemplo:"Llueve mucho. Hay mucha gente. Se trabaja bien aquí.", ejercicio:"Identifica la impersonal en 'Nieva en la montaña'.", suggestedAnswer:"Impersonal de fenómeno meteorológico." },
+        { id:16, name:"Oración activa", category:"Voz verbal", teoria:"El sujeto realiza la acción del verbo (agente).", ejemplo:"El viento derribó la puerta.", ejercicio:"Transforma a activa 'La carta fue escrita por Ana'.", suggestedAnswer:"Ana escribió la carta." },
+        { id:17, name:"Oración pasiva", category:"Voz verbal", teoria:"El sujeto padece la acción (paciente). Se forma con 'ser' + participio.", ejemplo:"La puerta fue derribada por el viento.", ejercicio:"Convierte 'El chef preparó la cena' a pasiva.", suggestedAnswer:"La cena fue preparada por el chef." },
+        { id:18, name:"Oración pasiva refleja", category:"Voz verbal", teoria:"Forma con 'se' + verbo en tercera persona, sin complemento agente.", ejemplo:"Se venden casas.", ejercicio:"Convierte 'Se busca camarero' a activa.", suggestedAnswer:"Alguien busca a un camarero." },
+        { id:19, name:"Oración coordinada copulativa", category:"Coordinación", teoria:"Une oraciones con conjunciones copulativas (y, e, ni). Indica suma.", ejemplo:"Estudio y trabajo.", ejercicio:"Une 'Canta bien' y 'Baila bien' con conjunción copulativa.", suggestedAnswer:"Canta bien y baila bien." },
+        { id:20, name:"Oración coordinada disyuntiva", category:"Coordinación", teoria:"Presenta opciones excluyentes con 'o', 'u', 'o bien'.", ejemplo:"¿Vienes o te quedas?", ejercicio:"Escribe una oración disyuntiva con 'o'.", suggestedAnswer:"Estudias o suspenderás." },
+        { id:21, name:"Oración coordinada adversativa", category:"Coordinación", teoria:"Expresa oposición con 'pero', 'sino', 'aunque', 'sin embargo'.", ejemplo:"Es tarde, pero iré.", ejercicio:"Une 'Hace calor' y 'Voy a salir' con 'pero'.", suggestedAnswer:"Hace calor, pero voy a salir." },
+        { id:22, name:"Oración coordinada distributiva", category:"Coordinación", teoria:"Alterna acciones con correlaciones: bien... bien, ya... ya, ora... ora.", ejemplo:"Bien ríe, bien llora.", ejercicio:"Completa: 'Ora come, ___ duerme'.", suggestedAnswer:"ora." },
+        { id:23, name:"Oración coordinada explicativa", category:"Coordinación", teoria:"Una oración explica a la anterior, introducida por 'es decir', 'o sea'.", ejemplo:"Mañana es festivo, es decir, no trabajamos.", ejercicio:"Añade una explicación a 'El coche está averiado' con 'o sea'.", suggestedAnswer:"El coche está averiado, o sea, no podemos viajar." },
+        { id:24, name:"Oración yuxtapuesta", category:"Sin nexo", teoria:"Oraciones unidas por signos de puntuación (coma, punto y coma), sin conjunción.", ejemplo:"Llegó, vio, venció.", ejercicio:"Une 'Llovió' y 'No salimos' mediante yuxtaposición con coma.", suggestedAnswer:"Llovió, no salimos." },
+        { id:25, name:"Oración subordinada sustantiva", category:"Subordinación", teoria:"Proposición que funciona como sustantivo: sujeto, CD, CI, etc. Introduce 'que', 'si', interrogativos.", ejemplo:"Espero que vengas. (CD).", ejercicio:"Señala la función de 'que vengas' en 'Necesito que vengas'.", suggestedAnswer:"Complemento directo." },
+        { id:26, name:"Subordinada sustantiva de sujeto", category:"Subordinación sustantiva", teoria:"La subordinada realiza la función de sujeto.", ejemplo:"Me alegra que hayas venido.", ejercicio:"Identifica el sujeto en 'Conviene que llegues temprano'.", suggestedAnswer:"que llegues temprano." },
+        { id:27, name:"Subordinada sustantiva de complemento directo", category:"Subordinación sustantiva", teoria:"La subordinada funciona como CD.", ejemplo:"Deseo que apruebes.", ejercicio:"Transforma 'Quiero eso' en oración con subordinada sustantiva.", suggestedAnswer:"Quiero que me escuches." },
+        { id:28, name:"Subordinada sustantiva de complemento de régimen", category:"Subordinación sustantiva", teoria:"La subordinada va precedida de preposición exigida por el verbo.", ejemplo:"Me acuerdo de que te gusta el cine.", ejercicio:"Completa 'Insisto ___ que me escuches'.", suggestedAnswer:"en." },
+        { id:29, name:"Subordinada adjetiva (de relativo)", category:"Subordinación adjetiva", teoria:"Proposición que equivale a un adjetivo y modifica a un sustantivo antecedente.", ejemplo:"El libro que leí es bueno.", ejercicio:"Señala el antecedente en 'La niña cuyo padre es médico estudia mucho'.", suggestedAnswer:"La niña." },
+        { id:30, name:"Oración de relativo especificativa", category:"Subordinación adjetiva", teoria:"Restringe el significado del antecedente. No va entre comas.", ejemplo:"Los estudiantes que estudian aprobarán.", ejercicio:"Escribe una oración de relativo especificativa con 'que'.", suggestedAnswer:"El coche que compré es rojo." },
+        { id:31, name:"Oración de relativo explicativa", category:"Subordinación adjetiva", teoria:"Aporta información adicional sobre el antecedente. Va entre comas.", ejemplo:"Los estudiantes, que estudian mucho, aprobarán.", ejercicio:"Escribe una oración de relativo explicativa con 'el cual'.", suggestedAnswer:"Mi abuelo, el cual tiene 90 años, todavía camina sin bastón." },
+        { id:32, name:"Subordinada adverbial", category:"Subordinación adverbial", teoria:"Proposición que equivale a un adverbio y expresa circunstancia.", ejemplo:"Salgo cuando tú llegas. (tiempo).", ejercicio:"Clasifica 'Estudia para que apruebes'.", suggestedAnswer:"Subordinada adverbial final." },
+        { id:33, name:"Subordinada adverbial de tiempo", category:"Subordinación adverbial", teoria:"Expresa cuándo ocurre la acción principal. Introduce 'cuando', 'mientras', 'antes de que'.", ejemplo:"Llegaré cuando termine el trabajo.", ejercicio:"Completa '____ llegues, llámame'.", suggestedAnswer:"Cuando." },
+        { id:34, name:"Subordinada adverbial de lugar", category:"Subordinación adverbial", teoria:"Expresa dónde ocurre la acción. Introduce 'donde', 'adonde'.", ejemplo:"Vivo donde nací.", ejercicio:"Escribe una oración con 'donde' subordinada de lugar.", suggestedAnswer:"Este es el café donde nos conocimos." },
+        { id:35, name:"Subordinada adverbial de modo", category:"Subordinación adverbial", teoria:"Expresa cómo se realiza la acción. Introduce 'como', 'según'.", ejemplo:"Hazlo como te enseñé.", ejercicio:"Completa 'No lo hagas ___ quieras'.", suggestedAnswer:"como." },
+        { id:36, name:"Subordinada adverbial causal", category:"Subordinación adverbial", teoria:"Expresa la causa. Introduce 'porque', 'ya que', 'puesto que'.", ejemplo:"No salí porque llovía.", ejercicio:"Escribe una oración causal con 'puesto que'.", suggestedAnswer:"Puesto que no hay pan, compraré galletas." },
+        { id:37, name:"Subordinada adverbial condicional", category:"Subordinación adverbial", teoria:"Expresa la condición. Introduce 'si', 'con tal de que', 'en caso de que'.", ejemplo:"Si estudias, apruebas.", ejercicio:"Reescribe 'Aprobarás estudiando' como condicional con 'si'.", suggestedAnswer:"Si estudias, aprobarás." },
+        { id:38, name:"Subordinada adverbial concesiva", category:"Subordinación adverbial", teoria:"Expresa un obstáculo que no impide la acción. Introduce 'aunque', 'a pesar de que'.", ejemplo:"Aunque llueva, saldré.", ejercicio:"Completa '___ estés cansado, debes terminar'.", suggestedAnswer:"Aunque." },
+        { id:39, name:"Subordinada adverbial final", category:"Subordinación adverbial", teoria:"Expresa la finalidad. Introduce 'para que', 'a fin de que'.", ejemplo:"Estudio para que apruebe.", ejercicio:"Escribe una oración final con 'para que'.", suggestedAnswer:"Te lo digo para que lo sepas." },
+        { id:40, name:"Subordinada adverbial consecutiva", category:"Subordinación adverbial", teoria:"Expresa la consecuencia. Introduce 'así que', 'por lo tanto', 'tan... que'.", ejemplo:"Estudió mucho, así que aprobó.", ejercicio:"Construye una oración consecutiva con 'tan... que'.", suggestedAnswer:"El libro era tan aburrido que lo dejé a la mitad." },
+        { id:41, name:"Subordinada adverbial comparativa", category:"Subordinación adverbial", teoria:"Compara acciones. Introduce 'como', 'como si', 'más que', 'tan... como'.", ejemplo:"Corre más rápido que su hermano.", ejercicio:"Completa 'Estudia tanto ___ su compañera'.", suggestedAnswer:"como." },
+        { id:42, name:"Oración compuesta por subordinación adverbial consecutiva ilativa", category:"Subordinación adverbial", teoria:"Expresa consecuencia lógica con 'por consiguiente', 'en consecuencia'.", ejemplo:"No has estudiado; por consiguiente, suspenderás.", ejercicio:"Usa 'por lo tanto' en una oración.", suggestedAnswer:"No llovió, por lo tanto, no necesitamos paraguas." },
+        { id:43, name:"Oración impersonal refleja", category:"Impersonales", teoria:"Se forma con 'se' + verbo en tercera persona singular, sin sujeto.", ejemplo:"Se vive bien en esta ciudad.", ejercicio:"Escribe una oración impersonal refleja con 'comer'.", suggestedAnswer:"Se come muy bien en ese restaurante." },
+        { id:44, name:"Oración impersonal con 'haber', 'hacer', 'ser'", category:"Impersonales", teoria:"Verbos como 'haber' (hay), 'hacer' (hace frío) en tercera persona singular.", ejemplo:"Hay muchos niños. Hace viento.", ejercicio:"Corrige 'Habían muchas personas'.", suggestedAnswer:"Había muchas personas." },
+        { id:45, name:"Oración pasiva perifrástica", category:"Voz verbal", teoria:"Pasiva con verbo ser + participio, con o sin complemento agente.", ejemplo:"El poema fue escrito por un adolescente.", ejercicio:"Pasa a pasiva 'El público aplaudió a los actores'.", suggestedAnswer:"Los actores fueron aplaudidos por el público." },
+        { id:46, name:"Oración pasiva con 'estar' (resultativa)", category:"Voz verbal", teoria:"Pasiva que indica el estado resultante de una acción, con 'estar' + participio.", ejemplo:"La puerta está cerrada.", ejercicio:"Diferencia 'El libro fue leído' de 'El libro está leído'.", suggestedAnswer:"La primera enfatiza la acción; la segunda, el estado resultante." },
+        { id:47, name:"Oración enfática (construcción hendida)", category:"Estructuras enfáticas", teoria:"Destaca un elemento con 'Ser + foco + que/el que'.", ejemplo:"Fue Juan quien rompió el vaso.", ejercicio:"Hendea 'María limpió la casa' para destacar 'María'.", suggestedAnswer:"Fue María quien limpió la casa." },
+        { id:48, name:"Oración pseudohendida", category:"Estructuras enfáticas", teoria:"Estructura 'Lo que + verbo + es + foco'.", ejemplo:"Lo que quiero es paz.", ejercicio:"Reescribe 'Necesitas estudiar' como pseudohendida.", suggestedAnswer:"Lo que necesitas es estudiar." },
+        { id:49, name:"Oración dislocada a la izquierda (topicalización)", category:"Estructuras enfáticas", teoria:"Anteponer un elemento al inicio, a menudo con pronombre resuntivo.", ejemplo:"A Juan, lo vi ayer.", ejercicio:"Aplica dislocación a 'Comí una manzana'.", suggestedAnswer:"La manzana, la comí." },
+        { id:50, name:"Oración dislocada a la derecha", category:"Estructuras enfáticas", teoria:"Posponer un elemento al final, con pronombre resuntivo al inicio.", ejemplo:"Lo vi ayer, a Juan.", ejercicio:"Disloca a la derecha 'Lo vi en el cine' (con 'a María').", suggestedAnswer:"La vi en el cine, a María." },
+        { id:51, name:"Oración negativa con doble negación", category:"Negación", teoria:"Dos negativos refuerzan la negación o equivalen a afirmativa.", ejemplo:"No vino nadie. (Equivalente a 'Nadie vino').", ejercicio:"Reescribe 'Nadie lo sabe' con 'no'.", suggestedAnswer:"No lo sabe nadie." },
+        { id:52, name:"Oración exclamativa indirecta", category:"Actitud del hablante", teoria:"Expresa sorpresa dentro de una subordinada, con verbos de sentimiento.", ejemplo:"Me sorprende lo bien que canta.", ejercicio:"Transforma '¡Qué bonito es!' en exclamativa indirecta con 'Me alegra'.", suggestedAnswer:"Me alegra lo bonito que es." },
+        { id:53, name:"Oración interrogativa indirecta", category:"Actitud del hablante", teoria:"La pregunta está integrada en una subordinada, sin signos de interrogación.", ejemplo:"Pregúntale si vendrá.", ejercicio:"Escribe una interrogativa indirecta con 'dónde'.", suggestedAnswer:"No recuerdo dónde dejé las llaves." },
+        { id:54, name:"Oración dubitativa con futuro de probabilidad", category:"Actitud del hablante", teoria:"El futuro de indicativo puede expresar conjetura en el presente.", ejemplo:"Serán las tres.", ejercicio:"Reescribe 'Probablemente tiene hambre' con futuro de probabilidad.", suggestedAnswer:"Tendrá hambre." },
+        { id:55, name:"Oración desiderativa con que + subjuntivo", category:"Actitud del hablante", teoria:"Expresa deseo con 'que + subjuntivo'.", ejemplo:"¡Que te diviertas!", ejercicio:"Escribe un deseo con 'que' para un amigo que viaja.", suggestedAnswer:"¡Que tengas un buen viaje!" },
+        { id:56, name:"Oración compuesta con gerundio", category:"No conjugadas", teoria:"El gerundio forma subordinada adverbial de tiempo, modo, causa, sin nexo.", ejemplo:"Llegó corriendo. (modo)", ejercicio:"Une 'Esperó' y 'se impacientó' con un gerundio.", suggestedAnswer:"Esperó impacientándose." },
+        { id:57, name:"Oración compuesta con infinitivo", category:"No conjugadas", teoria:"El infinitivo funciona como subordinada sustantiva o adverbial.", ejemplo:"Quiero viajar. (sustantiva CD)", ejercicio:"Reescribe 'Cuando llegues, avísame' con infinitivo.", suggestedAnswer:"Al llegar, avísame." },
+        { id:58, name:"Oración compuesta con participio", category:"No conjugadas", teoria:"El participio forma subordinada de tiempo o causa (absolutas).", ejemplo:"Terminada la reunión, se fueron.", ejercicio:"Reescribe 'Cuando se acabó el dinero, volvimos' con participio.", suggestedAnswer:"Acabado el dinero, volvimos." },
+        { id:59, name:"Construcción absoluta (ablativo absoluto)", category:"Estructuras no oracionales", teoria:"Frase con participio o gerundio que indica circunstancia.", ejemplo:"Dicho esto, se marchó.", ejercicio:"Escribe una construcción absoluta con 'llegar'.", suggestedAnswer:"Llegado el momento, actuará." },
+        { id:60, name:"Oración condicional irreal", category:"Subordinación adverbial", teoria:"Condición imposible o hipotética. Subjuntivo + condicional.", ejemplo:"Si tuviera dinero, viajaría.", ejercicio:"Completa 'Si fuera rico, ____'.", suggestedAnswer:"compraría una mansión." },
+        { id:61, name:"Oración concesiva con valor adversativo", category:"Subordinación adverbial", teoria:"Indica una dificultad que no impide la acción.", ejemplo:"Aunque estudió, suspendió. = Estudió, pero suspendió.", ejercicio:"Transforma 'Llegó tarde, pero no le regañaron' en concesiva.", suggestedAnswer:"Aunque llegó tarde, no le regañaron." },
+        { id:62, name:"Oración consecutiva con 'de modo que'", category:"Subordinación adverbial", teoria:"Expresa consecuencia lógica.", ejemplo:"Hablé muy claro, de modo que todos entendieron.", ejercicio:"Construye una oración con 'de modo que'.", suggestedAnswer:"No estudió nada, de modo que suspendió." },
+        { id:63, name:"Oración final con 'a que' (infinitivo)", category:"Subordinación adverbial", teoria:"Final con preposición 'a' + infinitivo (después de verbos de movimiento).", ejemplo:"Vino a despedirse.", ejercicio:"Transforma 'Vino para despedirse' a esta estructura.", suggestedAnswer:"Vino a despedirse." },
+        { id:64, name:"Oración temporal con 'apenas'", category:"Subordinación adverbial", teoria:"'Apenas' significa 'en cuanto' o 'tan pronto como'.", ejemplo:"Apenas llegó, se fue.", ejercicio:"Escribe una oración con 'apenas' de tiempo.", suggestedAnswer:"Apenas salió el sol, empezaron a cantar los pájaros." },
+        { id:65, name:"Oración relativa sin antecedente (relativa libre)", category:"Subordinación adjetiva", teoria:"No tiene antecedente explícito; el relativo lo incluye.", ejemplo:"Quien calla otorga.", ejercicio:"Escribe una relativa libre con 'quien'.", suggestedAnswer:"Quien no arriesga no gana." },
+        { id:66, name:"Oración relativa con 'cuyo'", category:"Subordinación adjetiva", teoria:"El relativo 'cuyo' expresa posesión y concuerda con el objeto poseído.", ejemplo:"El autor cuyo libro leí es famoso.", ejercicio:"Completa 'La niña ___ madre trabaja'.", suggestedAnswer:"cuya." },
+        { id:67, name:"Oración sustantiva de complemento indirecto", category:"Subordinación sustantiva", teoria:"La subordinada realiza función de CI. Introduce 'a que'.", ejemplo:"Atribuyo el éxito a que trabajamos en equipo.", ejercicio:"Transforma 'Se lo agradezco' añadiendo 'a que me ayudaron'.", suggestedAnswer:"Se lo agradezco a que me ayudaron." },
+        { id:68, name:"Oración sustantiva de complemento de un nombre", category:"Subordinación sustantiva", teoria:"La subordinada complementa a un sustantivo (temor, esperanza).", ejemplo:"Tengo la esperanza de que mejore el tiempo.", ejercicio:"Completa 'Me alegra la noticia de ___'.", suggestedAnswer:"que hayas aprobado." },
+        { id:69, name:"Oración sustantiva de complemento de un adjetivo", category:"Subordinación sustantiva", teoria:"La subordinada complementa a un adjetivo (seguro de, contento de).", ejemplo:"Estoy seguro de que vendrá.", ejercicio:"Escribe una oración con 'contento de que'.", suggestedAnswer:"Estoy contento de que hayas venido." },
+        { id:70, name:"Oración compuesta con 'no solo... sino también'", category:"Estructuras correlativas", teoria:"Expresa adición enfática.", ejemplo:"No solo estudia, sino que también trabaja.", ejercicio:"Escribe una oración con 'no solo... sino también'.", suggestedAnswer:"No solo es inteligente, sino también muy simpático." },
+        { id:71, name:"Oración compuesta con 'tanto... como'", category:"Estructuras correlativas", teoria:"Expresa igualdad entre dos elementos.", ejemplo:"Tanto Pedro como Juan son médicos.", ejercicio:"Construye una oración con 'tanto... como'.", suggestedAnswer:"Tanto el padre como la madre asistieron a la reunión." },
+        { id:72, name:"Oración compuesta con 'así... como'", category:"Estructuras correlativas", teoria:"Similar a 'tanto... como', indica equiparación.", ejemplo:"Así los grandes como los pequeños participaron.", ejercicio:"Usa 'así... como' en una frase.", suggestedAnswer:"Así en la salud como en la enfermedad, te acompañaré." },
+        { id:73, name:"Oración compuesta con 'bien... bien' (distributiva)", category:"Coordinación distributiva", teoria:"Alterna opciones no excluyentes.", ejemplo:"Bien en el coche, bien en el tren, llegaremos.", ejercicio:"Escribe una oración con 'bien... bien'.", suggestedAnswer:"Bien comiendo, bien bebiendo, disfrutaron toda la noche." },
+        { id:74, name:"Oración compuesta con 'ya... ya' (distributiva)", category:"Coordinación distributiva", teoria:"Alterna opciones temporales o de situación.", ejemplo:"Ya de día, ya de noche, siempre trabajaba.", ejercicio:"Completa 'Ya lo quieras, ya no, ____'.", suggestedAnswer:"tienes que estudiar." },
+        { id:75, name:"Oración compuesta con 'sea... sea' (distributiva)", category:"Coordinación distributiva", teoria:"Alterna posibilidades irrelevantes.", ejemplo:"Sea por suerte, sea por mérito, consiguió el premio.", ejercicio:"Escribe una oración con 'sea... sea'.", suggestedAnswer:"Sea como fuere, no cambiaré de opinión." },
+        { id:76, name:"Oración concesiva con 'por más que'", category:"Subordinación adverbial", teoria:"Concesiva intensificada.", ejemplo:"Por más que estudió, no aprobó.", ejercicio:"Reescribe 'Aunque intentó convencerme, no lo logró' con 'por más que'.", suggestedAnswer:"Por más que intentó convencerme, no lo logró." },
+        { id:77, name:"Oración condicional con 'con tal de que'", category:"Subordinación adverbial", teoria:"Condición necesaria, a menudo con matiz de finalidad.", ejemplo:"Te ayudaré con tal de que me prometas estudiar.", ejercicio:"Escribe una oración con 'con tal de que'.", suggestedAnswer:"Iré a la fiesta con tal de que me invites." },
+        { id:78, name:"Oración condicional con 'en caso de que'", category:"Subordinación adverbial", teoria:"Condición eventual, normalmente con subjuntivo.", ejemplo:"En caso de que llueva, llevaremos paraguas.", ejercicio:"Reescribe 'Si llueve, nos mojamos' con 'en caso de que'.", suggestedAnswer:"En caso de que llueva, nos mojamos." },
+        { id:79, name:"Oración temporal con 'antes de que'", category:"Subordinación adverbial", teoria:"Indica anterioridad. Rige subjuntivo.", ejemplo:"Antes de que salga el sol, ya estoy despierto.", ejercicio:"Completa 'Lávate las manos ___ de que comas'.", suggestedAnswer:"antes." },
+        { id:80, name:"Oración temporal con 'después de que'", category:"Subordinación adverbial", teoria:"Indica posterioridad.", ejemplo:"Después de que llegó, empezaron a comer.", ejercicio:"Escribe una oración con 'después de que'.", suggestedAnswer:"Después de que termine el trabajo, iré al cine." },
+        { id:81, name:"Oración temporal con 'hasta que'", category:"Subordinación adverbial", teoria:"Indica el límite temporal de la acción principal.", ejemplo:"No me iré hasta que vuelvas.", ejercicio:"Completa 'Esperaré ___ llegues'.", suggestedAnswer:"hasta que." },
+        { id:82, name:"Oración temporal con 'en cuanto'", category:"Subordinación adverbial", teoria:"Equivalente a 'tan pronto como'.", ejemplo:"En cuanto llegue, te aviso.", ejercicio:"Reescribe 'Cuando llegue, te aviso' con 'en cuanto'.", suggestedAnswer:"En cuanto llegue, te aviso." },
+        { id:83, name:"Oración causal con 'puesto que'", category:"Subordinación adverbial", teoria:"Causal formal, equivalente a 'ya que'.", ejemplo:"Puesto que no hay excusas, trabajaremos.", ejercicio:"Escribe una oración causal con 'puesto que'.", suggestedAnswer:"Puesto que no llegó, empezamos sin él." },
+        { id:84, name:"Oración causal con 'dado que'", category:"Subordinación adverbial", teoria:"Causal formal, similar a 'puesto que'.", ejemplo:"Dado que es tarde, me retiro.", ejercicio:"Reescribe 'Como es tarde, me voy' con 'dado que'.", suggestedAnswer:"Dado que es tarde, me voy." },
+        { id:85, name:"Oración causal con 'visto que'", category:"Subordinación adverbial", teoria:"Equivalente a 'dado que'.", ejemplo:"Visto que no hay acuerdo, suspendo la reunión.", ejercicio:"Escribe una oración con 'visto que'.", suggestedAnswer:"Visto que no te interesa, no insisto." },
+        { id:86, name:"Oración concesiva con 'si bien'", category:"Subordinación adverbial", teoria:"Concesiva más culta, equivalente a 'aunque'.", ejemplo:"Si bien es tarde, aún podemos llegar.", ejercicio:"Reescribe 'Aunque llueve, saldré' con 'si bien'.", suggestedAnswer:"Si bien llueve, saldré." },
+        { id:87, name:"Oración concesiva con 'a pesar de que'", category:"Subordinación adverbial", teoria:"Concesiva que indica obstáculo real.", ejemplo:"A pesar de que llovía, salió.", ejercicio:"Escribe una oración con 'a pesar de que'.", suggestedAnswer:"A pesar de que estudió mucho, suspendió." },
+        { id:88, name:"Oración concesiva con 'pese a que'", category:"Subordinación adverbial", teoria:"Equivalente a 'a pesar de que'.", ejemplo:"Pese a que no quería, se quedó.", ejercicio:"Reescribe 'Aunque no le gusta, lo hará' con 'pese a que'.", suggestedAnswer:"Pese a que no le gusta, lo hará." },
+        { id:89, name:"Oración final con 'a fin de que'", category:"Subordinación adverbial", teoria:"Final formal.", ejemplo:"A fin de que nos oigan, hablaremos alto.", ejercicio:"Escribe una oración final con 'a fin de que'.", suggestedAnswer:"A fin de que te mejores, debes descansar." },
+        { id:90, name:"Oración consecutiva con 'conque'", category:"Subordinación adverbial", teoria:"Consecutiva coloquial, equivalente a 'así que'.", ejemplo:"No me escuchaste, conque no te quejes.", ejercicio:"Escribe una oración con 'conque'.", suggestedAnswer:"Has llegado tarde, conque prepárate para la reprimenda." },
+        { id:91, name:"Oración comparativa de igualdad con 'tanto... como'", category:"Comparativas", teoria:"Compara en igualdad de cantidad o grado.", ejemplo:"Tiene tanta paciencia como su hermana.", ejercicio:"Completa 'Estudia ___ horas ___ su compañero'.", suggestedAnswer:"tantas, como." },
+        { id:92, name:"Oración comparativa de superioridad con 'más... que'", category:"Comparativas", teoria:"Indica que un elemento supera a otro.", ejemplo:"Corre más rápido que su amigo.", ejercicio:"Construye una comparativa de superioridad con 'alto'.", suggestedAnswer:"Él es más alto que su padre." },
+        { id:93, name:"Oración comparativa de inferioridad con 'menos... que'", category:"Comparativas", teoria:"Indica que un elemento es inferior a otro.", ejemplo:"Estudia menos que su hermana.", ejercicio:"Escribe una comparativa de inferioridad con 'caro'.", suggestedAnswer:"Este coche es menos caro que el otro." },
+        { id:94, name:"Oración comparativa con 'como si'", category:"Comparativas", teoria:"Comparación hipotética o irreal, seguida de subjuntivo.", ejemplo:"Se comporta como si fuera el dueño.", ejercicio:"Completa 'Actúa ___ no le importara'.", suggestedAnswer:"como si." },
+        { id:95, name:"Oración exclamativa con 'cuánto'", category:"Exclamativas", teoria:"Exclamación de cantidad.", ejemplo:"¡Cuánto tiempo sin verte!", ejercicio:"Escribe una exclamativa con 'cuánto'.", suggestedAnswer:"¡Cuánto has crecido!" },
+        { id:96, name:"Oración exclamativa con 'qué'", category:"Exclamativas", teoria:"Exclamación de cualidad o intensidad.", ejemplo:"¡Qué bonito!", ejercicio:"Construye una exclamativa con 'qué' para expresar sorpresa.", suggestedAnswer:"¡Qué susto me has dado!" },
+        { id:97, name:"Oración interrogativa retórica", category:"Interrogativas", teoria:"Pregunta que no espera respuesta, sino que afirma o niega enfáticamente.", ejemplo:"¿Acaso no te lo dije? (equivale a 'te lo dije').", ejercicio:"Escribe una interrogativa retórica que afirme 'debemos ayudar'.", suggestedAnswer:"¿No es nuestro deber ayudar?" },
+        { id:98, name:"Oración impersonal ocasional (con verbos en 3ª persona plural)", category:"Impersonales", teoria:"Verbo en 3ª persona plural sin sujeto explícito.", ejemplo:"Llaman a la puerta.", ejercicio:"Reconoce la impersonal en 'Anuncian lluvias para mañana'.", suggestedAnswer:"Impersonal ocasional (sin sujeto, se sobreentiende 'los meteorólogos')." },
+        { id:99, name:"Oración compuesta por yuxtaposición con dos puntos", category:"Yuxtaposición", teoria:"Los dos puntos indican relación de explicación, causa o consecuencia.", ejemplo:"No pudo venir: estaba enfermo. (causa).", ejercicio:"Une 'No estudió' y 'suspendió' con dos puntos.", suggestedAnswer:"No estudió: suspendió." },
+        { id:100, name:"Oración compuesta con 'por un lado... por otro lado'", category:"Estructuras correlativas", teoria:"Presenta dos perspectivas o argumentos opuestos o complementarios.", ejemplo:"Por un lado, el proyecto es innovador; por otro lado, requiere mucha inversión.", ejercicio:"Escribe una oración con 'por un lado... por otro lado'.", suggestedAnswer:"Por un lado, me gusta la ciudad; por otro lado, el campo es más tranquilo." }
+    ];
+
+    const container = document.getElementById('cardsContainer');
+    tecnicas.forEach(t => {
+        const col = document.createElement('div');
+        col.className = 'col-md-6 col-lg-4';
+        col.innerHTML = `
+            <div class="card card-flash h-100">
+                <div class="card-header bg-transparent border-0 pt-3">
+                    <div class="d-flex justify-content-between">
+                        <div><h5 class="fw-bold">${t.name}</h5><span class="badge bg-secondary">${t.category}</span></div>
+                        <button class="btn btn-sound btn-sm" onclick="speakText('${t.name}. ${t.teoria} Ejemplo: ${t.ejemplo}')"><i class="fas fa-volume-up"></i> Leer</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bg-light p-2 rounded mb-2"><strong>Teoría:</strong> ${t.teoria}</div>
+                    <div class="bg-warning bg-opacity-10 p-2 rounded mb-3"><strong>Ejemplo:</strong> “${t.ejemplo}”</div>
+                    <div class="exercise-area">
+                        <label class="fw-semibold">✍️ ${t.ejercicio}</label>
+                        <textarea class="form-control mt-2" id="answer-${t.id}" rows="2" placeholder="Escribe tu respuesta..."></textarea>
+                        <button class="btn btn-outline-success btn-sm mt-2" onclick="showSuggestion(${t.id}, '${t.suggestedAnswer.replace(/'/g, "\\'")}')">Ver sugerencia</button>
+                        <div id="feedback-${t.id}" class="small mt-2" style="display:none;"></div>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(col);
+    });
+
+    let currentUtterance = null, availableVoices = [];
+    function toggleVoiceControls() { let c = document.getElementById('voiceControls'); c.style.display = c.style.display === 'none' ? 'block' : 'none'; if (!availableVoices.length) loadVoices(); }
+    function loadVoices() { availableVoices = window.speechSynthesis.getVoices(); let sel = document.getElementById('voiceSelect'); let es = availableVoices.filter(v=>v.lang.startsWith('es')); let list = es.length ? es : availableVoices; sel.innerHTML = '<option value="">Voz por defecto</option>' + list.map(v=>`<option value="${v.name}">${v.name} (${v.lang})</option>`).join(''); }
+    if(window.speechSynthesis) window.speechSynthesis.onvoiceschanged = loadVoices;
+    function setVoice() { if(!currentUtterance) return; let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); }
+    function setRate() { if(currentUtterance) currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); }
+    function speakText(t) { if(!window.speechSynthesis) return; if(currentUtterance) window.speechSynthesis.cancel(); currentUtterance = new SpeechSynthesisUtterance(t); currentUtterance.lang = 'es-ES'; currentUtterance.rate = parseFloat(document.getElementById('rateControl').value); let name = document.getElementById('voiceSelect').value; if(name) currentUtterance.voice = availableVoices.find(v=>v.name===name); window.speechSynthesis.speak(currentUtterance); }
+    function stopSpeech() { if(window.speechSynthesis) window.speechSynthesis.cancel(); currentUtterance=null; }
+    function readPageContent() { let txt = ''; document.querySelectorAll('main h1, main h2, main h3, main p, main li, .card-text, .alert').forEach(el=>{ if(el.innerText) txt+=el.innerText+'. '; }); if(txt) speakText(txt.substring(0,3000)); else speakText('No hay contenido'); }
+    function showSuggestion(id, suggested) {
+        const userAnswer = document.getElementById(`answer-${id}`).value;
+        const fb = document.getElementById(`feedback-${id}`);
+        fb.innerHTML = `<strong>Tu respuesta:</strong> "${userAnswer || '(vacío)'}"<br><strong>Sugerencia:</strong> ${suggested}`;
+        fb.style.display = 'block';
+    }
+</script>
+</body>
+</html>
