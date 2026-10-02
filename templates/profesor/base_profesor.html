@@ -1,0 +1,122 @@
+﻿{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .prof-wrapper { max-width: 1300px; margin: 0 auto; padding: 1.5rem 1rem; }
+    .prof-header {
+        background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border: 2px solid #f1c40f; border-radius: 14px;
+        padding: 1.75rem 2rem; margin-bottom: 2rem;
+    }
+    .prof-header h1 { color: #f1c40f; margin: 0 0 0.4rem; font-size: 1.9rem; }
+    .prof-header p { color: #8b949e; margin: 0; }
+    .prof-header .acciones {
+        display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.25rem;
+    }
+    .btn {
+        display: inline-block; padding: 0.6rem 1.2rem;
+        border-radius: 8px; text-decoration: none; font-size: 0.9rem;
+        font-weight: 600; transition: all 0.2s; border: none; cursor: pointer;
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0d1117;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(241,196,15,0.3); }
+    .btn-secondary { background: #21262d; color: #c9d1d9; border: 1px solid #30363d; }
+    .btn-secondary:hover { background: #30363d; }
+    .btn-danger { background: #3d1f1f; color: #ff9999; border: 1px solid #ff6b6b; }
+    .btn-danger:hover { background: #ff6b6b; color: white; }
+
+    .tabs {
+        display: flex; gap: 0.4rem; border-bottom: 2px solid #30363d;
+        margin-bottom: 1.5rem; overflow-x: auto;
+    }
+    .tab {
+        padding: 0.75rem 1.4rem; text-decoration: none;
+        color: #8b949e; font-weight: 600; font-size: 0.95rem;
+        border-bottom: 3px solid transparent; margin-bottom: -2px;
+        white-space: nowrap; transition: all 0.2s;
+    }
+    .tab:hover { color: #f1c40f; }
+    .tab.active { color: #f1c40f; border-bottom-color: #f1c40f; }
+    .tab .count {
+        display: inline-block; padding: 0.1rem 0.5rem; margin-left: 0.4rem;
+        background: #21262d; border-radius: 10px; font-size: 0.75rem; color: #8b949e;
+    }
+    .tab.active .count { background: rgba(241,196,15,0.2); color: #f1c40f; }
+
+    .stats-grid {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem; margin-bottom: 2rem;
+    }
+    .stat-card {
+        background: #161b22; border: 1px solid #30363d;
+        border-radius: 10px; padding: 1.15rem; text-align: center;
+    }
+    .stat-num {
+        font-size: 1.8rem; font-weight: 800;
+        color: #f1c40f; line-height: 1;
+    }
+    .stat-label {
+        font-size: 0.7rem; color: #8b949e;
+        text-transform: uppercase; letter-spacing: 1px; margin-top: 0.4rem;
+    }
+
+    .card {
+        background: #161b22; border: 1px solid #30363d;
+        border-radius: 12px; padding: 1.25rem 1.5rem; margin-bottom: 1rem;
+    }
+    .card-header {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;
+    }
+    .card-header h3 { color: #e6edf3; margin: 0; font-size: 1.15rem; }
+
+    .tabla { width: 100%; border-collapse: collapse; }
+    .tabla th {
+        text-align: left; padding: 0.7rem 0.9rem; color: #8b949e;
+        font-size: 0.75rem; text-transform: uppercase;
+        border-bottom: 2px solid #30363d; letter-spacing: 0.5px;
+    }
+    .tabla td {
+        padding: 0.85rem 0.9rem; border-bottom: 1px solid #21262d;
+        color: #c9d1d9; vertical-align: middle;
+    }
+    .tabla tr:last-child td { border-bottom: none; }
+    .tabla tr:hover td { background: #1a2332; }
+
+    .badge {
+        display: inline-block; padding: 0.25rem 0.7rem;
+        border-radius: 10px; font-size: 0.75rem; font-weight: 600;
+    }
+    .badge-ok { background: #1f3d1f; color: #4ade80; }
+    .badge-pend { background: #3d3520; color: #ffd966; }
+    .badge-vacio { background: #21262d; color: #8b949e; }
+    .badge-info { background: #1f2f3d; color: #58a6ff; }
+
+    .avatar-mini {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 34px; height: 34px; border-radius: 50%;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 800; font-size: 0.85rem;
+        margin-right: 0.6rem; vertical-align: middle;
+    }
+
+    .barra { height: 8px; background: #21262d; border-radius: 4px; overflow: hidden; }
+    .barra-fill { height: 100%; background: linear-gradient(90deg, #f1c40f, #e67e22); }
+    .barra-ok { background: linear-gradient(90deg, #4ade80, #22c55e); }
+
+    .empty {
+        background: #161b22; border: 1px dashed #30363d;
+        border-radius: 10px; padding: 3rem 2rem; text-align: center;
+        color: #8b949e;
+    }
+    .empty .icon { font-size: 3rem; margin-bottom: 0.75rem; opacity: 0.6; }
+    .empty h3 { color: #e6edf3; margin: 0.5rem 0; }
+</style>
+
+<div class="prof-wrapper">
+    {% block prof_content %}{% endblock %}
+</div>
+{% endblock %}

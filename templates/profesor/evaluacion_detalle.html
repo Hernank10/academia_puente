@@ -1,0 +1,150 @@
+﻿{% extends "profesor/base_profesor.html" %}
+{% load i18n %}
+
+{% block prof_content %}
+
+<div class="prof-header">
+    <a href="{% url 'users:profesor_curso_detalle' curso.id %}?tab=evaluaciones" class="btn btn-secondary" style="margin-bottom: 1rem;">
+        ← Volver al curso
+    </a>
+    <h1>📝 {{ evaluacion.titulo }}</h1>
+    <p>{{ curso.titulo }} · {{ evaluacion.get_estado_display }} · {{ evaluacion.total_preguntas }} preguntas</p>
+    <div class="acciones">
+        <a href="/admin/courses/evaluacion/{{ evaluacion.id }}/change/" class="btn btn-primary">
+            ✏️ Editar evaluación
+        </a>
+        <a href="/admin/courses/preguntaevaluacion/add/?evaluacion={{ evaluacion.id }}" class="btn btn-primary">
+            ➕ Añadir pregunta
+        </a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-num">{{ evaluacion.total_preguntas }}</div>
+        <div class="stat-label">📋 Preguntas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_intentos }}</div>
+        <div class="stat-label">📊 Intentos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#4ade80;">{{ stats.promedio|floatformat:1|default:"—" }}</div>
+        <div class="stat-label">📈 Promedio</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#58a6ff;">{{ stats.maximo|default:"—" }}</div>
+        <div class="stat-label">🏆 Máximo</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#ff9999;">{{ stats.minimo|default:"—" }}</div>
+        <div class="stat-label">📉 Mínimo</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:{% if tasa_aprobacion >= 70 %}#4ade80{% elif tasa_aprobacion >= 40 %}#ffd966{% else %}#ff9999{% endif %};">
+            {{ tasa_aprobacion }}%
+        </div>
+        <div class="stat-label">✅ Aprobación</div>
+    </div>
+</div>
+
+<!-- PREGUNTAS -->
+<div class="card">
+    <div class="card-header">
+        <h3>📋 Preguntas ({{ preguntas|length }})</h3>
+        <a href="/admin/courses/preguntaevaluacion/add/?evaluacion={{ evaluacion.id }}" class="btn btn-primary">
+            ➕ Añadir pregunta
+        </a>
+    </div>
+    {% if preguntas %}
+        {% for p in preguntas %}
+        <div style="border: 1px solid #30363d; border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.75rem;">
+                <div style="flex: 1;">
+                    <div style="color: #8b949e; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px;">
+                        Pregunta {{ p.orden }} · {{ p.puntaje }} puntos
+                    </div>
+                    <div style="color: #e6edf3; font-size: 1.05rem; margin-top: 0.4rem; font-weight: 600;">
+                        {{ p.texto }}
+                    </div>
+                </div>
+                <a href="/admin/courses/preguntaevaluacion/{{ p.id }}/change/" class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                    ✏️
+                </a>
+            </div>
+            <div style="display: grid; gap: 0.4rem; margin-top: 0.75rem;">
+                {% for op in p.opciones.all %}
+                <div style="padding: 0.6rem 0.9rem; border-radius: 6px; background: {% if op.es_correcta %}#1f3d1f{% else %}#0d1117{% endif %}; border: 1px solid {% if op.es_correcta %}#4ade80{% else %}#30363d{% endif %}; color: {% if op.es_correcta %}#99ff99{% else %}#c9d1d9{% endif %}; font-size: 0.9rem;">
+                    {% if op.es_correcta %}✓{% else %}○{% endif %} {{ op.texto }}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty">
+            <div class="icon">📋</div>
+            <h3>Sin preguntas</h3>
+            <p>Esta evaluación no tiene preguntas aún.</p>
+            <a href="/admin/courses/preguntaevaluacion/add/?evaluacion={{ evaluacion.id }}" class="btn btn-primary" style="margin-top:1rem;">
+                ➕ Añadir primera pregunta
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- INTENTOS DE ESTUDIANTES -->
+<div class="card">
+    <div class="card-header">
+        <h3>👥 Intentos de estudiantes ({{ total_intentos }})</h3>
+    </div>
+    {% if intentos %}
+        <table class="tabla">
+            <thead>
+                <tr>
+                    <th>Estudiante</th>
+                    <th>Puntaje</th>
+                    <th>Estado</th>
+                    <th>Fecha</th>
+                    <th>Duración</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in intentos %}
+                <tr>
+                    <td>
+                        <span class="avatar-mini">{{ i.estudiante.username|slice:":2"|upper }}</span>
+                        <strong>{{ i.estudiante.username }}</strong>
+                    </td>
+                    <td>
+                        <strong style="color:{% if i.aprobado %}#4ade80{% else %}#ff9999{% endif %}; font-size: 1.1rem;">
+                            {{ i.puntaje }}
+                        </strong>
+                    </td>
+                    <td>
+                        {% if i.aprobado %}
+                            <span class="badge badge-ok">✓ Aprobado</span>
+                        {% elif i.completado %}
+                            <span class="badge badge-pend">✗ Reprobado</span>
+                        {% else %}
+                            <span class="badge badge-vacio">En curso</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ i.fecha_inicio|date:"d M Y H:i" }}</td>
+                    <td style="color:#8b949e; font-size:0.85rem;">
+                        {% if i.duracion_segundos %}{{ i.duracion_segundos|floatformat:0 }}s{% else %}—{% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="empty">
+            <div class="icon">📊</div>
+            <h3>Sin intentos aún</h3>
+            <p>Ningún estudiante ha realizado esta evaluación todavía.</p>
+        </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -449,62 +449,93 @@ from django.db.models import Avg, Max
 @login_required
 @profesor_required
 def profesor_curso_detalle(request, curso_id):
-    """Detalle de un curso: estudiantes, progreso, tareas y entregas."""
-    curso = get_object_or_404(Curso, id=curso_id, profesor=request.user)
+    """Vista del curso con pestanas: estudiantes, lecciones, evaluaciones, tareas."""
+    curso = get_object_or_404(Curso, id=curso_id)
 
-    # Lista de estudiantes inscritos con su progreso
+    # Verificar que el curso pertenece al profesor
+    if not request.user.is_superuser and curso.profesor != request.user:
+        messages.error(request, "No tienes permiso para ver este curso.")
+        return redirect('users:dashboard_profesor')
+
+    # Pestana activa
+    tab_activa = request.GET.get('tab', 'estudiantes')
+
+    # Inscripciones y estudiantes
     inscripciones = Inscripcion.objects.filter(
         curso=curso, activa=True
     ).select_related('estudiante')
 
     total_lecciones = curso.lecciones.count()
 
+    # Info por estudiante
     estudiantes_info = []
     for ins in inscripciones:
         estudiante = ins.estudiante
         completadas = ProgresoEstudiante.objects.filter(
             estudiante=estudiante, leccion__curso=curso, completada=True
         ).count()
-        progreso_pct = int(completadas * 100 / total_lecciones) if total_lecciones else 0
+        progreso_pct = round((completadas / total_lecciones * 100)) if total_lecciones else 0
 
         # Entregas del estudiante en este curso
         entregas = Entrega.objects.filter(
-            estudiante=estudiante,
-            tarea__curso=curso
+            estudiante=estudiante, tarea__curso=curso
         )
         entregas_pendientes = entregas.filter(estado='entregada', calificacion__isnull=True).count()
         entregas_calificadas = entregas.filter(estado='calificada').count()
 
         # Promedio de calificaciones
-        promedio = entregas.filter(calificacion__isnull=False).aggregate(
-            avg=Avg('calificacion')
-        )['avg'] or 0
+        from django.db.models import Avg
+        promedio = entregas.filter(calificacion__isnull=False).aggregate(avg=Avg('calificacion'))['avg']
+        promedio = round(promedio, 1) if promedio else 0
 
         estudiantes_info.append({
             'estudiante': estudiante,
-            'perfil': getattr(estudiante, 'perfil', None),
             'completadas': completadas,
             'total': total_lecciones,
             'progreso_pct': progreso_pct,
             'entregas_pendientes': entregas_pendientes,
             'entregas_calificadas': entregas_calificadas,
-            'promedio': round(promedio, 1),
+            'promedio': promedio,
         })
 
-    # Ordenar por progreso descendente
-    estudiantes_info.sort(key=lambda x: x['progreso_pct'], reverse=True)
+    # Ordenar por progreso desc
+    estudiantes_info.sort(key=lambda x: -x['progreso_pct'])
 
-    # Tareas del curso
-    tareas = curso.tareas.all()
+    # Lecciones
+    lecciones = curso.lecciones.all().order_by('orden')
 
-    return render(request, 'users/profesor_curso_detalle.html', {
+    # Evaluaciones
+    evaluaciones = curso.evaluaciones.all().order_by('-creada')
+
+    # Tareas
+    tareas = curso.tareas.all().order_by('orden', '-creada')
+
+    # Certificados emitidos en este curso
+    certificados_curso = Certificado.objects.filter(
+        curso=curso, estado='emitido'
+    ).count()
+
+    # Progreso promedio del curso
+    if estudiantes_info:
+        progreso_promedio = round(sum(e['progreso_pct'] for e in estudiantes_info) / len(estudiantes_info))
+    else:
+        progreso_promedio = 0
+
+    context = {
         'curso': curso,
+        'tab_activa': tab_activa,
+        'inscripciones': inscripciones,
         'estudiantes_info': estudiantes_info,
-        'total_estudiantes': len(estudiantes_info),
+        'total_estudiantes': inscripciones.count(),
         'total_lecciones': total_lecciones,
+        'total_evaluaciones': evaluaciones.count(),
+        'lecciones': lecciones,
+        'evaluaciones': evaluaciones,
         'tareas': tareas,
-    })
-
+        'certificados_curso': certificados_curso,
+        'progreso_promedio': progreso_promedio,
+    }
+    return render(request, 'users/profesor_curso_detalle.html', context)
 
 @login_required
 @profesor_required
@@ -618,3 +649,45 @@ def profesor_calificar(request, entrega_id):
     return render(request, 'users/profesor_calificar.html', {
         'entrega': entrega,
     })
+
+
+@login_required
+@profesor_required
+def profesor_evaluacion_detalle(request, curso_id, evaluacion_id):
+    """Vista detallada de una evaluacion con estadisticas."""
+    curso = get_object_or_404(Curso, id=curso_id)
+    evaluacion = get_object_or_404(Evaluacion, id=evaluacion_id, curso=curso)
+
+    if not request.user.is_superuser and curso.profesor != request.user:
+        messages.error(request, "No tienes permiso.")
+        return redirect('users:dashboard_profesor')
+
+    # Preguntas con opciones
+    preguntas = evaluacion.preguntas.all().prefetch_related('opciones').order_by('orden')
+
+    # Intentos
+    intentos = evaluacion.intentos.select_related('estudiante').order_by('-fecha_inicio')
+
+    # Estadisticas
+    from django.db.models import Avg, Max, Min
+    stats = intentos.filter(completado=True).aggregate(
+        promedio=Avg('puntaje'),
+        maximo=Max('puntaje'),
+        minimo=Min('puntaje'),
+    )
+
+    total_intentos = intentos.filter(completado=True).count()
+    aprobados = intentos.filter(completado=True, aprobado=True).count()
+    tasa = int(aprobados * 100 / total_intentos) if total_intentos else 0
+
+    context = {
+        'curso': curso,
+        'evaluacion': evaluacion,
+        'preguntas': preguntas,
+        'intentos': intentos,
+        'stats': stats,
+        'total_intentos': total_intentos,
+        'aprobados': aprobados,
+        'tasa_aprobacion': tasa,
+    }
+    return render(request, 'profesor/evaluacion_detalle.html', context)

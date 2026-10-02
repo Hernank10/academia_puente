@@ -1,251 +1,328 @@
-{% extends "base.html" %}
+﻿{% extends "profesor/base_profesor.html" %}
+{% load i18n %}
 
-{% block content %}
-<style>
-    .header-curso {
-        background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
-        border: 2px solid #f1c40f; border-radius: 12px;
-        padding: 1.5rem; margin-bottom: 2rem;
-    }
-    .header-curso h1 { color: #f1c40f; margin: 0 0 0.5rem; font-size: 1.8rem; }
-    .header-curso p { color: #8b949e; margin: 0.25rem 0; }
-    .stats-mini {
-        display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-        gap: 0.75rem; margin-top: 1.25rem;
-    }
-    .stat-mini {
-        background: rgba(13,17,23,0.5); border: 1px solid #30363d;
-        border-radius: 8px; padding: 0.75rem; text-align: center;
-    }
-    .stat-mini .num {
-        font-size: 1.5rem; font-weight: 800; color: #f1c40f; line-height: 1;
-    }
-    .stat-mini .lbl {
-        font-size: 0.7rem; color: #8b949e; text-transform: uppercase;
-        letter-spacing: 1px; margin-top: 0.3rem;
-    }
+{% block prof_content %}
 
-    .section-h2 {
-        font-size: 1.3rem; color: #e6edf3; margin: 2rem 0 1rem;
-        border-bottom: 1px solid #30363d; padding-bottom: 0.5rem;
-        display: flex; justify-content: space-between; align-items: center;
-    }
-
-    .tabla {
-        width: 100%; border-collapse: collapse; background: #161b22;
-        border: 1px solid #30363d; border-radius: 10px; overflow: hidden;
-    }
-    .tabla th {
-        text-align: left; padding: 0.75rem 1rem; color: #8b949e;
-        font-size: 0.8rem; text-transform: uppercase;
-        border-bottom: 2px solid #30363d; background: #0d1117;
-    }
-    .tabla td {
-        padding: 0.9rem 1rem; border-bottom: 1px solid #21262d;
-        color: #c9d1d9; vertical-align: middle;
-    }
-    .tabla tr:last-child td { border-bottom: none; }
-    .tabla tr:hover td { background: #1a2332; }
-
-    .avatar-mini {
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 32px; height: 32px; border-radius: 50%;
-        background: linear-gradient(135deg, #f1c40f, #e67e22);
-        color: #0d1117; font-weight: 800; font-size: 0.8rem;
-        margin-right: 0.5rem; vertical-align: middle;
-    }
-
-    .barra-mini {
-        height: 6px; background: #21262d; border-radius: 3px;
-        overflow: hidden; min-width: 80px;
-    }
-    .barra-fill {
-        height: 100%; background: linear-gradient(90deg, #f1c40f, #e67e22);
-    }
-
-    .badge {
-        display: inline-block; padding: 0.2rem 0.6rem; border-radius: 10px;
-        font-size: 0.75rem; font-weight: 600;
-    }
-    .badge-pend { background: #3d3520; color: #ffd966; }
-    .badge-ok { background: #1f3d1f; color: #4ade80; }
-    .badge-vacio { background: #21262d; color: #8b949e; }
-
-    .btn-accion {
-        display: inline-block; padding: 0.4rem 0.9rem;
-        background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
-        border-radius: 6px; text-decoration: none; font-size: 0.85rem;
-        transition: all 0.2s;
-    }
-    .btn-accion:hover { background: #f1c40f; color: #0d1117; border-color: #f1c40f; }
-    .btn-primario {
-        display: inline-block; padding: 0.5rem 1.1rem;
-        background: linear-gradient(135deg, #f1c40f, #e67e22);
-        color: #0d1117; font-weight: 700; border-radius: 8px;
-        text-decoration: none; font-size: 0.85rem;
-    }
-    .btn-primario:hover { color: #0d1117; transform: scale(1.02); }
-</style>
-
-<div class="header-curso">
-    <a href="{% url 'users:dashboard_profesor' %}" class="btn-accion"
-       style="margin-bottom: 1rem; display: inline-block;">
+<!-- HEADER DEL CURSO -->
+<div class="prof-header">
+    <a href="{% url 'users:dashboard_profesor' %}" class="btn btn-secondary" style="margin-bottom: 1rem;">
         ← Volver al panel
     </a>
     <h1>{{ curso.titulo }}</h1>
     <p>{{ curso.materia.nombre }} · {{ curso.get_idioma_display }} · Nivel {{ curso.nivel }}</p>
 
-    <div class="stats-mini">
-        <div class="stat-mini">
-            <div class="num">{{ total_estudiantes }}</div>
-            <div class="lbl">👥 Estudiantes</div>
-        </div>
-        <div class="stat-mini">
-            <div class="num">{{ total_lecciones }}</div>
-            <div class="lbl">📖 Lecciones</div>
-        </div>
-        <div class="stat-mini">
-            <div class="num">{{ tareas|length }}</div>
-            <div class="lbl">📝 Tareas</div>
-        </div>
+    <div class="acciones">
+        <a href="/admin/courses/curso/{{ curso.id }}/change/" class="btn btn-primary">
+            ⚙️ Editar curso
+        </a>
+        <a href="/admin/courses/leccion/add/?curso={{ curso.id }}" class="btn btn-primary">
+            ➕ Crear lección
+        </a>
+        <a href="/admin/courses/evaluacion/add/?curso={{ curso.id }}" class="btn btn-primary">
+            📝 Crear evaluación
+        </a>
+        <a href="/admin/courses/tarea/add/?curso={{ curso.id }}" class="btn btn-secondary">
+            📋 Crear tarea
+        </a>
     </div>
 </div>
 
-<!-- ═══ ESTUDIANTES ═══ -->
-<h2 class="section-h2">
-    <span>👥 Estudiantes ({{ total_estudiantes }})</span>
-    <a href="{% url 'users:profesor_entregas' curso.id %}" class="btn-primario">
-        📥 Ver todas las entregas
-    </a>
-</h2>
-
-{% if estudiantes_info %}
-    <table class="tabla">
-        <thead>
-            <tr>
-                <th>Estudiante</th>
-                <th>Progreso</th>
-                <th>Entregas</th>
-                <th>Promedio</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for info in estudiantes_info %}
-                <tr>
-                    <td>
-                        <span class="avatar-mini">{{ info.estudiante.username|slice:":2"|upper }}</span>
-                        <strong>{{ info.estudiante.username }}</strong>
-                        {% if info.estudiante.get_full_name %}
-                            <br>
-                            <small style="color:#8b949e; margin-left: 40px;">
-                                {{ info.estudiante.get_full_name }}
-                            </small>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <div style="display: flex; align-items: center; gap: 0.75rem;">
-                            <div class="barra-mini" style="flex: 1;">
-                                <div class="barra-fill" style="width: {{ info.progreso_pct }}%;"></div>
-                            </div>
-                            <span style="font-size: 0.85rem; min-width: 60px;">
-                                {{ info.completadas }}/{{ info.total }}
-                                <strong style="color:#f1c40f;">({{ info.progreso_pct }}%)</strong>
-                            </span>
-                        </div>
-                    </td>
-                    <td>
-                        {% if info.entregas_pendientes > 0 %}
-                            <span class="badge badge-pend">
-                                ⏳ {{ info.entregas_pendientes }} pendientes
-                            </span>
-                        {% elif info.entregas_calificadas > 0 %}
-                            <span class="badge badge-ok">
-                                ✅ {{ info.entregas_calificadas }} calificadas
-                            </span>
-                        {% else %}
-                            <span class="badge badge-vacio">— Sin entregas</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if info.promedio > 0 %}
-                            <strong style="color:#4ade80;">{{ info.promedio }}</strong>
-                        {% else %}
-                            <span style="color:#8b949e;">—</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'users:profesor_estudiante_detalle' curso.id info.estudiante.id %}"
-                           class="btn-accion">
-                            Ver detalle →
-                        </a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% else %}
-    <div style="background: #161b22; border: 1px dashed #30363d;
-                border-radius: 10px; padding: 2rem; text-align: center; color: #8b949e;">
-        <p>📭 Aún no hay estudiantes inscritos en este curso.</p>
+<!-- STATS DEL CURSO -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_estudiantes }}</div>
+        <div class="stat-label">👥 Estudiantes</div>
     </div>
-{% endif %}
+    <div class="stat-card">
+        <div class="stat-num">{{ total_lecciones }}</div>
+        <div class="stat-label">📖 Lecciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_evaluaciones }}</div>
+        <div class="stat-label">📝 Evaluaciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ tareas|length }}</div>
+        <div class="stat-label">📋 Tareas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ certificados_curso }}</div>
+        <div class="stat-label">🎓 Certificados</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ progreso_promedio }}%</div>
+        <div class="stat-label">📊 Progreso</div>
+    </div>
+</div>
 
-<!-- ═══ TAREAS ═══ -->
-<h2 class="section-h2">
-    <span>📝 Tareas ({{ tareas|length }})</span>
-    <a href="/admin/courses/tarea/add/?curso={{ curso.id }}" class="btn-primario">
-        ➕ Crear tarea
+<!-- PESTAÑAS -->
+<div class="tabs">
+    <a href="?tab=estudiantes" class="tab {% if tab_activa == 'estudiantes' or not tab_activa %}active{% endif %}">
+        👥 Estudiantes <span class="count">{{ total_estudiantes }}</span>
     </a>
-</h2>
+    <a href="?tab=lecciones" class="tab {% if tab_activa == 'lecciones' %}active{% endif %}">
+        📖 Lecciones <span class="count">{{ total_lecciones }}</span>
+    </a>
+    <a href="?tab=evaluaciones" class="tab {% if tab_activa == 'evaluaciones' %}active{% endif %}">
+        📝 Evaluaciones <span class="count">{{ total_evaluaciones }}</span>
+    </a>
+    <a href="?tab=tareas" class="tab {% if tab_activa == 'tareas' %}active{% endif %}">
+        📋 Tareas <span class="count">{{ tareas|length }}</span>
+    </a>
+</div>
 
-{% if tareas %}
-    <table class="tabla">
-        <thead>
-            <tr>
-                <th>Título</th>
-                <th>Tipo</th>
-                <th>Estado</th>
-                <th>Entregas</th>
-                <th>Fecha límite</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for t in tareas %}
-                <tr>
-                    <td><strong>{{ t.titulo }}</strong></td>
-                    <td>{{ t.get_tipo_display }}</td>
-                    <td>{{ t.get_estado_display }}</td>
-                    <td>
-                        <span class="badge {% if t.entregas_pendientes > 0 %}badge-pend{% else %}badge-ok{% endif %}">
-                            {{ t.total_entregas }} entregas
-                        </span>
-                        {% if t.entregas_pendientes > 0 %}
-                            <br><small style="color:#ffd966;">
-                                {{ t.entregas_pendientes }} sin calificar
-                            </small>
-                        {% endif %}
-                    </td>
-                    <td style="color:#8b949e; font-size:0.85rem;">
-                        {% if t.fecha_limite %}
-                            {{ t.fecha_limite|date:"d M Y, H:i" }}
-                        {% else %}
-                            —
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'users:profesor_entregas' curso.id %}?tarea={{ t.id }}"
-                           class="btn-accion">Ver →</a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<!-- CONTENIDO SEGÚN PESTAÑA -->
+
+{% if tab_activa == 'lecciones' or tab_activa == 'leccion' %}
+    <!-- ══════ PESTAÑA LECCIONES ══════ -->
+    <div class="card">
+        <div class="card-header">
+            <h3>📖 Lecciones del curso ({{ lecciones|length }})</h3>
+            <a href="/admin/courses/leccion/add/?curso={{ curso.id }}" class="btn btn-primary">➕ Nueva lección</a>
+        </div>
+        {% if lecciones %}
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Título</th>
+                        <th>País</th>
+                        <th>Fecha</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for l in lecciones %}
+                    <tr>
+                        <td><strong style="color:#f1c40f;">{{ l.orden }}</strong></td>
+                        <td>{{ l.titulo }}</td>
+                        <td><span class="badge badge-info">{{ l.pais_origen }}</span></td>
+                        <td style="color:#8b949e; font-size:0.85rem;">{{ l.fecha_publicacion|date:"d M Y" }}</td>
+                        <td>
+                            <a href="/admin/courses/leccion/{{ l.id }}/change/" class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                                ✏️ Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                <div class="icon">📖</div>
+                <h3>No hay lecciones aún</h3>
+                <p>Crea la primera lección de este curso.</p>
+                <a href="/admin/courses/leccion/add/?curso={{ curso.id }}" class="btn btn-primary" style="margin-top:1rem;">
+                    ➕ Crear lección
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+{% elif tab_activa == 'evaluaciones' or tab_activa == 'evaluacion' %}
+    <!-- ══════ PESTAÑA EVALUACIONES ══════ -->
+    <div class="card">
+        <div class="card-header">
+            <h3>📝 Evaluaciones del curso ({{ evaluaciones|length }})</h3>
+            <a href="/admin/courses/evaluacion/add/?curso={{ curso.id }}" class="btn btn-primary">➕ Nueva evaluación</a>
+        </div>
+        {% if evaluaciones %}
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Estado</th>
+                        <th>Preguntas</th>
+                        <th>Intentos</th>
+                        <th>Promedio</th>
+                        <th>Aprobación</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ev in evaluaciones %}
+                    <tr>
+                        <td><strong>{{ ev.titulo }}</strong></td>
+                        <td>
+                            {% if ev.estado == 'publicada' %}
+                                <span class="badge badge-ok">Publicada</span>
+                            {% elif ev.estado == 'borrador' %}
+                                <span class="badge badge-pend">Borrador</span>
+                            {% else %}
+                                <span class="badge badge-vacio">Cerrada</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ ev.total_preguntas }}</td>
+                        <td>{{ ev.total_intentos }}</td>
+                        <td><strong style="color:#f1c40f;">{{ ev.promedio_puntaje }}</strong></td>
+                        <td>
+                            <strong style="color:{% if ev.tasa_aprobacion >= 70 %}#4ade80{% elif ev.tasa_aprobacion >= 40 %}#ffd966{% else %}#ff9999{% endif %};">
+                                {{ ev.tasa_aprobacion }}%
+                            </strong>
+                        </td>
+                        <td>
+                            <a href="{% url 'users:profesor_evaluacion_detalle' curso.id ev.id %}" class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                                📊 Ver resultados
+                            </a>
+                            <a href="/admin/courses/evaluacion/{{ ev.id }}/change/" class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                                ✏️ Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                <div class="icon">📝</div>
+                <h3>No hay evaluaciones</h3>
+                <p>Crea la primera evaluación del curso.</p>
+                <a href="/admin/courses/evaluacion/add/?curso={{ curso.id }}" class="btn btn-primary" style="margin-top:1rem;">
+                    ➕ Crear evaluación
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
+{% elif tab_activa == 'tareas' or tab_activa == 'tarea' %}
+    <!-- ══════ PESTAÑA TAREAS ══════ -->
+    <div class="card">
+        <div class="card-header">
+            <h3>📋 Tareas del curso ({{ tareas|length }})</h3>
+            <a href="/admin/courses/tarea/add/?curso={{ curso.id }}" class="btn btn-primary">➕ Nueva tarea</a>
+        </div>
+        {% if tareas %}
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Entregas</th>
+                        <th>Pendientes</th>
+                        <th>Fecha límite</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tareas %}
+                    <tr>
+                        <td><strong>{{ t.titulo }}</strong></td>
+                        <td><span class="badge badge-info">{{ t.get_tipo_display }}</span></td>
+                        <td>
+                            {% if t.estado == 'publicada' %}
+                                <span class="badge badge-ok">Publicada</span>
+                            {% elif t.estado == 'borrador' %}
+                                <span class="badge badge-pend">Borrador</span>
+                            {% else %}
+                                <span class="badge badge-vacio">Cerrada</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ t.total_entregas }}</td>
+                        <td>
+                            {% if t.entregas_pendientes > 0 %}
+                                <span class="badge badge-pend">{{ t.entregas_pendientes }} por calificar</span>
+                            {% else %}
+                                <span class="badge badge-ok">Todo calificado</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:#8b949e; font-size:0.85rem;">{{ t.fecha_limite|date:"d M Y"|default:"—" }}</td>
+                        <td>
+                            <a href="/admin/courses/tarea/{{ t.id }}/change/" class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                                ✏️ Editar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                <div class="icon">📋</div>
+                <h3>No hay tareas</h3>
+                <p>Crea la primera tarea del curso.</p>
+                <a href="/admin/courses/tarea/add/?curso={{ curso.id }}" class="btn btn-primary" style="margin-top:1rem;">
+                    ➕ Crear tarea
+                </a>
+            </div>
+        {% endif %}
+    </div>
+
 {% else %}
-    <div style="background: #161b22; border: 1px dashed #30363d;
-                border-radius: 10px; padding: 2rem; text-align: center; color: #8b949e;">
-        <p>📝 Aún no has creado tareas para este curso.</p>
+    <!-- ══════ PESTAÑA ESTUDIANTES (por defecto) ══════ -->
+    <div class="card">
+        <div class="card-header">
+            <h3>👥 Estudiantes ({{ total_estudiantes }})</h3>
+            <a href="{% url 'users:profesor_entregas' curso.id %}" class="btn btn-primary">
+                📥 Ver todas las entregas
+            </a>
+        </div>
+        {% if estudiantes_info %}
+            <table class="tabla">
+                <thead>
+                    <tr>
+                        <th>Estudiante</th>
+                        <th>Progreso</th>
+                        <th>Entregas</th>
+                        <th>Promedio</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for info in estudiantes_info %}
+                    <tr>
+                        <td>
+                            <span class="avatar-mini">{{ info.estudiante.username|slice:":2"|upper }}</span>
+                            <strong>{{ info.estudiante.username }}</strong>
+                            {% if info.estudiante.get_full_name %}
+                                <br><small style="color:#8b949e; margin-left: 40px;">{{ info.estudiante.get_full_name }}</small>
+                            {% endif %}
+                        </td>
+                        <td style="min-width:180px;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <div class="barra" style="flex:1;">
+                                    <div class="barra-fill {% if info.progreso_pct >= 100 %}barra-ok{% endif %}"
+                                         style="width: {{ info.progreso_pct }}%;"></div>
+                                </div>
+                                <span style="font-size:0.85rem; min-width:70px;">
+                                    {{ info.completadas }}/{{ info.total }}
+                                    <strong style="color:#f1c40f;">({{ info.progreso_pct }}%)</strong>
+                                </span>
+                            </div>
+                        </td>
+                        <td>
+                            {% if info.entregas_pendientes > 0 %}
+                                <span class="badge badge-pend">⏳ {{ info.entregas_pendientes }}</span>
+                            {% elif info.entregas_calificadas > 0 %}
+                                <span class="badge badge-ok">✅ {{ info.entregas_calificadas }}</span>
+                            {% else %}
+                                <span class="badge badge-vacio">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if info.promedio > 0 %}
+                                <strong style="color:#4ade80;">{{ info.promedio }}</strong>
+                            {% else %}
+                                <span style="color:#8b949e;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'users:profesor_estudiante_detalle' curso.id info.estudiante.id %}"
+                               class="btn btn-secondary" style="padding:0.35rem 0.8rem; font-size:0.8rem;">
+                                👁️ Ver
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="empty">
+                <div class="icon">👥</div>
+                <h3>No hay estudiantes inscritos</h3>
+                <p>Cuando los estudiantes se inscriban aparecerán aquí.</p>
+            </div>
+        {% endif %}
     </div>
 {% endif %}
 

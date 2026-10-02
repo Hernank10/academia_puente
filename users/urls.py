@@ -22,6 +22,8 @@ urlpatterns = [
          views.profesor_curso_detalle, name='profesor_curso_detalle'),
     path('profesor/curso/<int:curso_id>/estudiante/<int:estudiante_id>/',
          views.profesor_estudiante_detalle, name='profesor_estudiante_detalle'),
+    path('profesor/curso/<int:curso_id>/evaluacion/<int:evaluacion_id>/',
+         views.profesor_evaluacion_detalle, name='profesor_evaluacion_detalle'),
     path('profesor/curso/<int:curso_id>/entregas/',
          views.profesor_entregas, name='profesor_entregas'),
     path('profesor/entrega/<int:entrega_id>/calificar/',
