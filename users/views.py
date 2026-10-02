@@ -205,6 +205,79 @@ def dashboard(request):
         estudiante=request.user, completada=True
     ).count()
 
+    # ============================================================
+    # ESTADISTICAS AVANZADAS
+    # ============================================================
+    from datetime import timedelta
+
+    # 1. RACHA: dias consecutivos con actividad
+    fechas_progreso = ProgresoEstudiante.objects.filter(
+        estudiante=request.user,
+        completada=True,
+        fecha_completado__isnull=False
+    ).values_list('fecha_completado__date', flat=True).distinct().order_by('-fecha_completado__date')
+
+    fechas_unicas = list(set(fechas_progreso))
+    fechas_unicas.sort(reverse=True)
+
+    racha_actual = 0
+    if fechas_unicas:
+        hoy = timezone.now().date()
+        ayer = hoy - timedelta(days=1)
+        # La racha empieza si hay actividad hoy o ayer
+        if fechas_unicas[0] in (hoy, ayer):
+            racha_actual = 1
+            fecha_esperada = fechas_unicas[0] - timedelta(days=1)
+            for f in fechas_unicas[1:]:
+                if f == fecha_esperada:
+                    racha_actual += 1
+                    fecha_esperada -= timedelta(days=1)
+                else:
+                    break
+
+    # 2. MEJOR CURSO: % mas alto completado
+    mejor_curso = None
+    mejor_pct = 0
+    for ins in inscripciones:
+        pct = getattr(ins, 'progreso_pct', 0) or 0
+        if pct > mejor_pct:
+            mejor_pct = pct
+            mejor_curso = {
+                'curso': ins.curso,
+                'pct': pct,
+            }
+
+    # 3. CURSOS AL 100%
+    cursos_completados = [ins for ins in inscripciones if (getattr(ins, 'progreso_pct', 0) or 0) >= 100]
+
+    # 4. ACTIVIDAD RECIENTE (ultimas 5 lecciones)
+    actividad_reciente = ProgresoEstudiante.objects.filter(
+        estudiante=request.user, completada=True
+    ).select_related('leccion', 'leccion__curso').order_by('-fecha_completado')[:5]
+
+    # 5. PROMEDIO DE LA PLATAFORMA
+    from django.db.models import Avg
+    promedio_plataforma = ProgresoEstudiante.objects.filter(
+        completada=True
+    ).count()
+    total_usuarios = User.objects.filter(is_active=True).count()
+    promedio_lecciones_usuario = round(promedio_plataforma / total_usuarios, 1) if total_usuarios else 0
+
+    # Comparativa
+    comparativa = 'arriba' if total_lecciones_completadas > promedio_lecciones_usuario else 'abajo'
+    diferencia_promedio = abs(total_lecciones_completadas - promedio_lecciones_usuario)
+
+    # 6. DISTRIBUCION POR NIVEL
+    niveles = {'principiante': 0, 'intermedio': 0, 'avanzado': 0}
+    for ins in inscripciones:
+        nivel = getattr(ins.curso, 'nivel', 'principiante')
+        if nivel in niveles:
+            niveles[nivel] += 1
+
+    # ============================================================
+    # FIN ESTADISTICAS
+    # ============================================================
+
     cursos_inscritos_ids = [i.curso_id for i in inscripciones]
     cursos_disponibles = Curso.objects.exclude(id__in=cursos_inscritos_ids)[:6]
 
@@ -239,6 +312,16 @@ def dashboard(request):
         'logros_disponibles': Logro.objects.filter(activo=True).count(),
         'certificados': certificados,
         'total_certificados': certificados.count(),
+        # Nuevas stats
+        'racha_actual': racha_actual,
+        'mejor_curso': mejor_curso,
+        'cursos_completados': cursos_completados,
+        'total_cursos_completados': len(cursos_completados),
+        'actividad_reciente': actividad_reciente,
+        'promedio_lecciones_usuario': promedio_lecciones_usuario,
+        'comparativa': comparativa,
+        'diferencia_promedio': diferencia_promedio,
+        'niveles': niveles,
     })
 
 
