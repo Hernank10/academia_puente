@@ -1,3 +1,4 @@
+# Parcheado: es_staff_o_super puede ver el admin
 # -*- coding: utf-8 -*-
 """admin.py - Admin personalizado: profesor solo ve SUS cursos."""
 from django.contrib import admin
@@ -42,6 +43,17 @@ class ProfesorFilterMixin:
 
     def has_delete_permission(self, request, obj=None):
         return self.has_change_permission(request, obj)
+
+    def has_module_permission(self, request):
+        # is_staff y superuser pueden ver el modulo
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        return False
 
     def _es_del_profesor(self, obj, user):
         """Comprueba si el objeto pertenece a un curso del profesor."""
@@ -129,6 +141,16 @@ class CursoAdmin(admin.ModelAdmin):
     list_filter = ('nivel', 'idioma', 'materia')
     search_fields = ('titulo',)
     autocomplete_fields = ('profesor',)
+
+    def has_module_permission(self, request):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        return False
+
+    def has_view_permission(self, request, obj=None):
+        if request.user.is_superuser or request.user.is_staff:
+            return True
+        return False
 
     def get_queryset(self, request):
         qs = super().get_queryset(request)
