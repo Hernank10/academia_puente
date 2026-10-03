@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .notif-wrap { max-width: 780px; margin: 1.5rem auto; padding: 0 1rem; }
+    .notif-head { display: flex; justify-content: space-between;
+        align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem; }
+    .notif-head h1 { color: #f1c40f; margin: 0; font-size: 1.6rem; }
+
+    .btn { display: inline-block; padding: 0.5rem 1rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22); color: #0d1117;
+        font-weight: 700; border-radius: 8px; text-decoration: none; font-size: 0.85rem; }
+    .btn-sec { display: inline-block; padding: 0.4rem 0.85rem;
+        background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+        border-radius: 6px; text-decoration: none; font-size: 0.8rem; }
+    .btn-sec:hover { color: #f1c40f; border-color: #f1c40f; }
+
+    .notif { display: flex; gap: 0.85rem; padding: 1rem 1.25rem;
+        background: #161b22; border: 1px solid #30363d;
+        border-radius: 10px; margin-bottom: 0.6rem; transition: all 0.15s; }
+    .notif:hover { background: #1a2332; }
+    .notif.no-leida { border-left: 4px solid #f1c40f; background: #1a2332; }
+    .notif-icono { font-size: 1.5rem; flex-shrink: 0; }
+    .notif-body { flex: 1; min-width: 0; }
+    .notif-titulo { color: #e6edf3; font-weight: 600; margin-bottom: 0.25rem; }
+    .notif-mensaje { color: #8b949e; font-size: 0.9rem; margin-bottom: 0.35rem; }
+    .notif-fecha { color: #6e7681; font-size: 0.75rem; }
+    .notif-acciones { display: flex; gap: 0.35rem; flex-shrink: 0; }
+
+    .empty-state { background: #161b22; border: 1px dashed #30363d;
+        border-radius: 10px; padding: 2rem; text-align: center; color: #8b949e; }
+    .filtros { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+</style>
+
+<div class="notif-wrap">
+    <div class="notif-head">
+        <h1>🔔 Notificaciones</h1>
+        <div>
+            {% if total_no_leidas > 0 %}
+                <a href="{% url 'users:notificaciones_marcar_todas' %}" class="btn-sec">
+                    ✅ Marcar todas como leídas
+                </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="filtros">
+        <a href="{% url 'users:notificaciones_lista' %}"
+           class="btn-sec {% if not solo_no_leidas %}btn{% endif %}">
+            Todas
+        </a>
+        <a href="?no_leidas=1"
+           class="btn-sec {% if solo_no_leidas %}btn{% endif %}">
+            No leídas ({{ total_no_leidas }})
+        </a>
+    </div>
+
+    {% if notificaciones %}
+        {% for n in notificaciones %}
+            <div class="notif {% if not n.leida %}no-leida{% endif %}">
+                <div class="notif-icono">{{ n.icono }}</div>
+                <div class="notif-body">
+                    <div class="notif-titulo">{{ n.titulo }}</div>
+                    {% if n.mensaje %}
+                        <div class="notif-mensaje">{{ n.mensaje }}</div>
+                    {% endif %}
+                    <div class="notif-fecha">{{ n.creada|date:"d M Y, H:i" }}</div>
+                </div>
+                <div class="notif-acciones">
+                    {% if n.url %}
+                        <a href="{% url 'users:notificacion_leer' n.id %}" class="btn-sec">Ver</a>
+                    {% else %}
+                        <a href="{% url 'users:notificacion_leer' n.id %}" class="btn-sec">✓</a>
+                    {% endif %}
+                    <a href="{% url 'users:notificacion_borrar' n.id %}" class="btn-sec">🗑</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            {% if solo_no_leidas %}
+                No tienes notificaciones sin leer. 🎉
+            {% else %}
+                Aún no tienes notificaciones.
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

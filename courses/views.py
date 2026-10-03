@@ -279,6 +279,38 @@ def marcar_leccion_completada(request, curso_id, leccion_id):
         perfil.puntos += 5
         perfil.save()
 
+    # --- NOTIFICACIONES ---
+    try:
+        from users.notifications import crear_notificacion
+        from courses.models import Certificado as _Cert
+        total = curso.lecciones.count()
+        if total > 0:
+            completadas = ProgresoEstudiante.objects.filter(
+                estudiante=request.user, leccion__curso=curso, completada=True
+            ).count()
+            if completadas >= total:
+                cert, creado = _Cert.objects.get_or_create(
+                    estudiante=request.user, curso=curso,
+                    defaults={'puntos_obtenidos': total * 10,
+                              'calificacion': 'Sobresaliente'}
+                )
+                if creado:
+                    crear_notificacion(
+                        request.user, 'curso_completado',
+                        '¡Completaste {}!'.format(curso.titulo),
+                        'Has completado el 100% del curso. ¡Felicidades!',
+                        '/es/cuenta/mi-panel/certificados/'
+                    )
+                    crear_notificacion(
+                        curso.profesor, 'curso_completado',
+                        '{} completó {}'.format(request.user.username, curso.titulo),
+                        'El estudiante ha completado el 100% del curso.',
+                        '/es/cuenta/panel/certificados/'
+                    )
+    except Exception:
+        pass
+    # --- FIN NOTIFICACIONES ---
+
     return redirect('courses:curso_detalle', curso_id=curso.id)
 
 
@@ -371,6 +403,26 @@ def resultado_evaluacion(request, intento_id):
         IntentoEvaluacion, id=intento_id, estudiante=request.user
     )
     respuestas = intento.respuestas.select_related('pregunta', 'opcion_elegida').all()
+
+    # --- NOTIFICACIONES ---
+    try:
+        from users.notifications import crear_notificacion
+        if intento.completado:
+            if intento.aprobado:
+                titulo = 'Aprobaste {}'.format(intento.evaluacion.titulo)
+                msg = 'Puntaje: {}/{}'.format(intento.puntaje, intento.evaluacion.puntaje_maximo)
+            else:
+                titulo = 'Resultado de {}'.format(intento.evaluacion.titulo)
+                msg = 'Obtuviste {}/{}. ¡Sigue intentando!'.format(
+                    intento.puntaje, intento.evaluacion.puntaje_maximo)
+            crear_notificacion(
+                intento.estudiante, 'evaluacion',
+                titulo, msg,
+                '/es/evaluacion/resultado/{}/'.format(intento.id)
+            )
+    except Exception:
+        pass
+    # --- FIN NOTIFICACIONES ---
 
     return render(request, 'courses/resultado_evaluacion.html', {
         'intento': intento,

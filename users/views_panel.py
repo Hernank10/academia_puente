@@ -354,3 +354,24 @@ def panel_certificado_revocar(request, cert_id):
         'seccion': 'certificados',
         'cert': cert,
     })
+
+
+# ==================== RANKING ====================
+@login_required
+@profesor_required
+def panel_curso_ranking(request, curso_id):
+    """Ranking de estudiantes de un curso (vista del profesor)."""
+    curso = get_object_or_404(Curso, id=curso_id)
+    if not request.user.is_superuser and curso.profesor != request.user:
+        messages.error(request, "Sin permiso.")
+        return redirect('users:panel_home')
+
+    from .ranking_utils import calcular_ranking
+    ranking = calcular_ranking(curso, request.user)
+
+    return render(request, 'users/panel/ranking.html', {
+        'seccion': 'cursos',
+        'curso': curso,
+        'ranking': ranking,
+        'total': len(ranking),
+    })

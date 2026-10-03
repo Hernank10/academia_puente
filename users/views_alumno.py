@@ -199,3 +199,35 @@ def certificado_publico(request, codigo):
         'es_dueno': es_dueno,
         'es_profesor': es_profesor,
     })
+
+
+# ==================== RANKING (alumno) ====================
+@login_required
+def alumno_curso_ranking(request, curso_id):
+    """Ranking de estudiantes de un curso (vista del alumno)."""
+    curso = get_object_or_404(Curso, id=curso_id)
+
+    # Verificar que el alumno esta inscrito
+    if not Inscripcion.objects.filter(
+        estudiante=request.user, curso=curso, activa=True
+    ).exists():
+        messages.error(request, "No estas inscrito en este curso.")
+        return redirect('users:alumno_cursos')
+
+    from .ranking_utils import calcular_ranking
+    ranking = calcular_ranking(curso, request.user)
+
+    # Mi posicion
+    mi_pos = None
+    for r in ranking:
+        if r['es_yo']:
+            mi_pos = r
+            break
+
+    return render(request, 'users/alumno/ranking.html', {
+        'seccion': 'cursos',
+        'curso': curso,
+        'ranking': ranking,
+        'total': len(ranking),
+        'mi_pos': mi_pos,
+    })

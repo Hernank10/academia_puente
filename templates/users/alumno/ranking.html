@@ -1,0 +1,101 @@
+{% extends "users/alumno/base_alumno.html" %}
+{% block alumno_content %}
+<div class="alumno-header">
+    <a href="{% url 'users:alumno_cursos' %}" class="btn-sec" style="margin-bottom:0.75rem;">← Mis cursos</a>
+    <h1>🏆 Ranking: {{ curso.titulo }}</h1>
+    <p>{{ total }} estudiantes compitiendo</p>
+</div>
+
+{% if mi_pos %}
+    <div style="background:linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border:2px solid #f1c40f; border-radius:12px; padding:1.25rem; margin-bottom:1.5rem;
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <div style="color:#8b949e; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">
+                Tu posición
+            </div>
+            <div style="color:#f1c40f; font-size:2rem; font-weight:800;">
+                #{{ mi_pos.posicion }} <span style="font-size:1rem; color:#8b949e;">de {{ total }}</span>
+            </div>
+        </div>
+        <div style="text-align:right;">
+            <div style="color:#f1c40f; font-size:1.5rem; font-weight:800;">
+                {{ mi_pos.pct }}%
+            </div>
+            <div style="color:#8b949e; font-size:0.85rem;">
+                {{ mi_pos.completadas }}/{{ mi_pos.total }} lecciones
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% if ranking %}
+    {% if ranking|length >= 3 %}
+        <div style="display:flex; gap:1rem; justify-content:center;
+                    align-items:flex-end; margin-bottom:2rem; flex-wrap:wrap;">
+            {% for r in ranking|slice:":3" %}
+                <div style="text-align:center; padding:1rem;
+                    background:linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+                    border-radius:12px; min-width:140px;
+                    border:2px solid {% if r.posicion == 1 %}#f1c40f{% elif r.posicion == 2 %}#c0c0c0{% else %}#cd7f32{% endif %};
+                    {% if r.es_yo %}box-shadow:0 0 20px rgba(241,196,15,0.4);{% endif %};">
+                    <div style="font-size:2rem;">
+                        {% if r.posicion == 1 %}🥇{% elif r.posicion == 2 %}🥈{% else %}🥉{% endif %}
+                    </div>
+                    <div style="color:{% if r.es_yo %}#f1c40f{% else %}#e6edf3{% endif %};
+                                font-weight:700; margin-top:0.5rem;">
+                        {% if r.es_yo %}Tú{% else %}{{ r.estudiante.username|truncatechars:14 }}{% endif %}
+                    </div>
+                    <div style="color:#f1c40f; font-size:1.5rem; font-weight:800;">
+                        {{ r.pct }}%
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Estudiante</th>
+                <th>Progreso</th>
+                <th>Prom. Evals</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for r in ranking %}
+                <tr {% if r.es_yo %}style="background:#1a2332; border-left:3px solid #f1c40f;"{% endif %}>
+                    <td><strong style="color:#f1c40f;">{{ r.posicion }}</strong></td>
+                    <td>
+                        {% if r.es_yo %}
+                            <strong style="color:#f1c40f;">Tú</strong>
+                        {% else %}
+                            {{ r.estudiante.username }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <div style="display:flex; align-items:center; gap:0.5rem;">
+                            <div class="barra-mini" style="flex:1; max-width:120px;">
+                                <div class="barra-fill" style="width:{{ r.pct }}%;"></div>
+                            </div>
+                            <span style="color:#f1c40f; font-weight:700; font-size:0.85rem;">
+                                {{ r.pct }}%
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        {% if r.promedio_eval %}
+                            <strong style="color:#4ade80;">{{ r.promedio_eval }}</strong>
+                        {% else %}—{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">
+        <p>No hay estudiantes en este curso.</p>
+    </div>
+{% endif %}
+{% endblock %}

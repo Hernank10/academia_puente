@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from . import views_profesor
 from . import views_panel
+from . import views_notificaciones
 from . import views_alumno
 
 app_name = 'users'
@@ -112,5 +113,27 @@ urlpatterns = [
     # Certificado publico mejorado
     path('certificado-publico/<str:codigo>/',
          views_alumno.certificado_publico, name='certificado_publico'),
+
+
+    # ============================================================
+    # NOTIFICACIONES
+    # ============================================================
+    path('notificaciones/', views_notificaciones.notificaciones_lista,
+         name='notificaciones_lista'),
+    path('notificaciones/<int:notif_id>/leer/',
+         views_notificaciones.notificacion_leer, name='notificacion_leer'),
+    path('notificaciones/marcar-todas/',
+         views_notificaciones.notificaciones_marcar_todas,
+         name='notificaciones_marcar_todas'),
+    path('notificaciones/<int:notif_id>/borrar/',
+         views_notificaciones.notificacion_borrar, name='notificacion_borrar'),
+
+    # ============================================================
+    # RANKING
+    # ============================================================
+    path('panel/curso/<int:curso_id>/ranking/',
+         views_panel.panel_curso_ranking, name='panel_curso_ranking'),
+    path('mi-panel/curso/<int:curso_id>/ranking/',
+         views_alumno.alumno_curso_ranking, name='alumno_curso_ranking'),
 
 ]

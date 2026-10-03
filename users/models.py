@@ -204,3 +204,47 @@ def verificar_logros(usuario):
         if condicion and otorgar_logro(usuario, codigo):
             nuevos.append(codigo)
     return nuevos
+
+
+# ============================================================
+# NOTIFICACIONES
+# ============================================================
+class Notificacion(models.Model):
+    """Notificacion para un usuario."""
+    TIPOS = [
+        ('curso_completado', 'Curso completado'),
+        ('evaluacion', 'Evaluacion calificada'),
+        ('entrega', 'Entrega calificada'),
+        ('logro', 'Logro desbloqueado'),
+        ('certificado', 'Certificado emitido'),
+        ('sistema', 'Sistema'),
+    ]
+
+    usuario = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notificaciones'
+    )
+    tipo = models.CharField(max_length=30, choices=TIPOS, default='sistema')
+    titulo = models.CharField(max_length=200)
+    mensaje = models.TextField(blank=True)
+    url = models.CharField(max_length=300, blank=True)
+    leida = models.BooleanField(default=False)
+    creada = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-creada']
+        verbose_name = "Notificacion"
+        verbose_name_plural = "Notificaciones"
+
+    def __str__(self):
+        return "{} - {}".format(self.usuario.username, self.titulo)
+
+    @property
+    def icono(self):
+        return {
+            'curso_completado': '\U0001F389',
+            'evaluacion': '\U0001F4DD',
+            'entrega': '\u270F\uFE0F',
+            'logro': '\U0001F3C6',
+            'certificado': '\U0001F393',
+            'sistema': '\U0001F514',
+        }.get(self.tipo, '\U0001F514')
