@@ -71,10 +71,33 @@ def recursos_lista(request):
 
 @login_required
 def recurso_detalle(request, slug):
-    """Detalle de un recurso con iframe embebido."""
+    """Visor tipo presentacion con navegacion anterior/siguiente."""
     recurso = get_object_or_404(RecursoInteractivo, slug=slug, activo=True)
+
+    # Lista completa ordenada para navegacion
+    todos = list(RecursoInteractivo.objects.filter(activo=True).order_by('tipo', 'orden', 'titulo'))
+    total = len(todos)
+
+    # Posicion actual
+    try:
+        posicion = todos.index(recurso) + 1
+    except ValueError:
+        posicion = 0
+
+    # Anterior y siguiente (circular)
+    recurso_anterior = None
+    recurso_siguiente = None
+    if total > 1 and posicion > 0:
+        idx = posicion - 1
+        recurso_anterior = todos[(idx - 1) % total]
+        recurso_siguiente = todos[(idx + 1) % total]
+
     return render(request, 'courses/recurso_detalle.html', {
         'recurso': recurso,
+        'recurso_anterior': recurso_anterior,
+        'recurso_siguiente': recurso_siguiente,
+        'posicion': posicion,
+        'total_recursos': total,
     })
 
 

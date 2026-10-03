@@ -185,3 +185,6 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = '/cuenta/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
+
+# Permite embeber el propio sitio en iframes (visor de recursos)
+X_FRAME_OPTIONS = 'SAMEORIGIN'
