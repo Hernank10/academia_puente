@@ -346,6 +346,7 @@ def pregunta_crear(request, evaluacion_id):
             p = form.save(commit=False)
             p.evaluacion = ev
             p.save()
+            _autocrear_opciones(p)
             messages.success(request, "Pregunta creada.")
             return redirect(reverse("users:profesor_evaluacion_detalle",
                                     args=[ev.curso.id, ev.id]))
@@ -360,6 +361,20 @@ def pregunta_crear(request, evaluacion_id):
     })
 
 
+def _autocrear_opciones(pregunta):
+    """Crea automaticamente las opciones para tipos que las necesitan."""
+    if pregunta.tipo == "vf":
+        if pregunta.opciones.count() == 0:
+            OpcionRespuesta.objects.create(pregunta=pregunta, texto="Verdadero",
+                                           es_correcta=True, orden=1)
+            OpcionRespuesta.objects.create(pregunta=pregunta, texto="Falso",
+                                           es_correcta=False, orden=2)
+    elif pregunta.tipo in ("unica", "multiple"):
+        # No crear opciones automaticas; el profesor las crea manualmente
+        pass
+
+
+
 @login_required
 @profesor_required
 def pregunta_editar(request, pregunta_id):
@@ -371,7 +386,8 @@ def pregunta_editar(request, pregunta_id):
     if request.method == "POST":
         form = PreguntaForm(request.POST, instance=p)
         if form.is_valid():
-            form.save()
+            p = form.save()
+            _autocrear_opciones(p)
             messages.success(request, "Pregunta actualizada.")
             return redirect(reverse("users:profesor_evaluacion_detalle",
                                     args=[ev.curso.id, ev.id]))
@@ -384,6 +400,7 @@ def pregunta_editar(request, pregunta_id):
         "url_cancelar": reverse("users:profesor_evaluacion_detalle",
                                 args=[ev.curso.id, ev.id]),
     })
+
 
 
 @login_required

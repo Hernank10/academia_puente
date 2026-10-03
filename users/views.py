@@ -10,6 +10,10 @@ from courses.models import (
     Curso, Inscripcion, ProgresoEstudiante,
     Certificado, emitir_certificado,
     Tarea, Entrega,
+    Evaluacion,
+    PreguntaEvaluacion,
+    OpcionRespuesta,
+    IntentoEvaluacion,
 )
 from .models import (
     Perfil, Logro, LogroUsuario,

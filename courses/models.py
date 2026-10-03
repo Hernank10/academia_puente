@@ -416,12 +416,31 @@ class Evaluacion(models.Model):
 
 
 class PreguntaEvaluacion(models.Model):
-    """Una pregunta dentro de una evaluación."""
+    """Una pregunta dentro de una evaluacion. Soporta 5 tipos."""
+    TIPOS = [
+        ('unica',     'Opcion unica'),
+        ('multiple',  'Opcion multiple'),
+        ('vf',        'Verdadero / Falso'),
+        ('corta',     'Respuesta corta'),
+        ('emparejar', 'Emparejamiento'),
+    ]
+
     evaluacion = models.ForeignKey(Evaluacion, on_delete=models.CASCADE, related_name='preguntas')
     texto = models.TextField(help_text="Enunciado de la pregunta")
-    explicacion = models.TextField(blank=True, help_text="Explicación de la respuesta correcta")
+    explicacion = models.TextField(blank=True, help_text="Explicacion de la respuesta correcta")
     puntaje = models.IntegerField(default=10, help_text="Puntos que vale esta pregunta")
     orden = models.IntegerField(default=0)
+    tipo = models.CharField(max_length=20, choices=TIPOS, default='unica')
+
+    respuesta_corta = models.CharField(
+        max_length=300, blank=True,
+        help_text="Respuestas validas separadas por | (ej: haber|a ver)"
+    )
+
+    pares_json = models.JSONField(
+        default=list, blank=True,
+        help_text='Lista de pares: [{"izq": "...", "der": "..."}, ...]'
+    )
 
     class Meta:
         ordering = ['evaluacion', 'orden']
@@ -435,6 +454,9 @@ class PreguntaEvaluacion(models.Model):
     def opcion_correcta(self):
         return self.opciones.filter(es_correcta=True).first()
 
+    @property
+    def total_correctas(self):
+        return self.opciones.filter(es_correcta=True).count()
 
 class OpcionRespuesta(models.Model):
     """Una opción de respuesta para una pregunta."""

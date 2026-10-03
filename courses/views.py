@@ -10,6 +10,82 @@ from .models import Curso, Leccion, RecursoInteractivo
 # HOME / CURSOS
 # ═══════════════════════════════════════════════════════════
 
+def _normalizar(s):
+    """Normaliza para comparar respuestas cortas."""
+    import unicodedata
+    if not s:
+        return ""
+    s = s.lower().strip()
+    s = unicodedata.normalize("NFKD", s)
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return s
+
+
+def _calificar_pregunta(pregunta, datos):
+    """Devuelve (es_correcta, puntaje_obtenido, detalle)."""
+    tipo = getattr(pregunta, "tipo", "unica")
+    puntaje = pregunta.puntaje or 10
+
+    if tipo == "unica":
+        opcion_id = datos.get("opcion_" + str(pregunta.id))
+        if not opcion_id:
+            return (False, 0, "Sin responder")
+        try:
+            op = OpcionRespuesta.objects.get(id=opcion_id)
+            correcto = op.es_correcta
+            return (correcto, puntaje if correcto else 0, op.texto)
+        except OpcionRespuesta.DoesNotExist:
+            return (False, 0, "Opcion invalida")
+
+    if tipo == "multiple":
+        ids = datos.getlist("opciones_" + str(pregunta.id))
+        if not ids:
+            return (False, 0, "Sin responder")
+        ids = set(int(i) for i in ids if i.isdigit())
+        correctas = set(pregunta.opciones.filter(es_correcta=True).values_list("id", flat=True))
+        acierto = (ids == correctas)
+        return (acierto, puntaje if acierto else 0,
+                "Marcadas: {}".format(", ".join(str(i) for i in sorted(ids))))
+
+    if tipo == "vf":
+        resp = datos.get("vf_" + str(pregunta.id))
+        if not resp:
+            return (False, 0, "Sin responder")
+        primera = pregunta.opciones.order_by("orden").first()
+        correcta_txt = "V" if (primera and primera.es_correcta) else "F"
+        acierto = (resp == correcta_txt)
+        return (acierto, puntaje if acierto else 0, resp)
+
+    if tipo == "corta":
+        resp = datos.get("corta_" + str(pregunta.id), "")
+        if not resp.strip():
+            return (False, 0, "Sin responder")
+        norm = _normalizar(resp)
+        validas = [_normalizar(x) for x in (pregunta.respuesta_corta or "").split("|")]
+        validas = [v for v in validas if v]
+        acierto = norm in validas
+        return (acierto, puntaje if acierto else 0, resp)
+
+    if tipo == "emparejar":
+        pares = pregunta.pares_json or []
+        if not pares:
+            return (False, 0, "Sin pares definidos")
+        aciertos = 0
+        detalle = []
+        for i, par in enumerate(pares):
+            r = datos.get("par_{}_{}".format(pregunta.id, i), "")
+            esperado = par.get("der", "")
+            ok = (_normalizar(r) == _normalizar(esperado))
+            if ok:
+                aciertos += 1
+            detalle.append("{}:{}".format(par.get("izq", ""), r or "—"))
+        correcto = (aciertos == len(pares))
+        pts = int(puntaje * aciertos / len(pares)) if len(pares) else 0
+        return (correcto, pts, " | ".join(detalle))
+
+    return (False, 0, "Tipo desconocido")
+
+
 def index(request):
     """Vista principal: cursos agrupados por materia + recursos."""
     # Cursos con conteo de lecciones

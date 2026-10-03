@@ -59,12 +59,31 @@ class EvaluacionForm(forms.ModelForm):
 class PreguntaForm(forms.ModelForm):
     class Meta:
         model = PreguntaEvaluacion
-        fields = ["texto", "explicacion", "puntaje", "orden"]
+        fields = ["texto", "explicacion", "puntaje", "orden", "tipo",
+                  "respuesta_corta", "pares_json"]
         widgets = {
             "texto": forms.Textarea(attrs={"rows": 3}),
             "explicacion": forms.Textarea(attrs={"rows": 2}),
+            "respuesta_corta": forms.TextInput(
+                attrs={"placeholder": "respuesta1|respuesta2|respuesta3"}
+            ),
+            "pares_json": forms.Textarea(attrs={
+                "rows": 5,
+                "placeholder": '[{"izq": "A", "der": "1"}, {"izq": "B", "der": "2"}]'
+            }),
         }
 
+    def clean_pares_json(self):
+        data = self.cleaned_data.get("pares_json") or []
+        if isinstance(data, str):
+            import json
+            try:
+                data = json.loads(data)
+            except Exception:
+                raise forms.ValidationError("JSON invalido")
+        if data and not isinstance(data, list):
+            raise forms.ValidationError("Debe ser una lista de pares")
+        return data
 
 class OpcionForm(forms.ModelForm):
     class Meta:

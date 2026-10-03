@@ -1,96 +1,152 @@
 {% extends "base.html" %}
-
 {% block content %}
 <style>
-    .eval-header {
-        background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
-        border: 2px solid #f1c40f; border-radius: 12px;
-        padding: 1.5rem; margin-bottom: 2rem;
-    }
-    .eval-header h1 { color: #f1c40f; margin: 0 0 0.5rem; }
-    .eval-header p { color: #8b949e; margin: 0.25rem 0; }
-    .pregunta-card {
-        background: #161b22; border: 1px solid #30363d;
-        border-radius: 10px; padding: 1.5rem; margin-bottom: 1.25rem;
-    }
-    .pregunta-num {
-        display: inline-block; padding: 0.2rem 0.6rem;
-        background: #21262d; color: #58a6ff;
-        border-radius: 4px; font-size: 0.8rem; font-weight: 700;
-        margin-bottom: 0.75rem;
-    }
-    .pregunta-texto {
-        color: #e6edf3; font-size: 1rem; margin-bottom: 1rem;
-        line-height: 1.5;
-    }
-    .opcion {
-        display: block; padding: 0.75rem 1rem;
-        background: #0d1117; border: 2px solid #30363d;
-        border-radius: 8px; margin-bottom: 0.5rem;
-        cursor: pointer; transition: all 0.2s;
-    }
-    .opcion:hover { border-color: #f1c40f; background: #1a2332; }
-    .opcion input { display: none; }
-    .opcion input:checked + span { color: #f1c40f; font-weight: 700; }
-    .opcion input:checked ~ .opcion-marca {
-        background: #f1c40f; color: #0d1117;
-    }
-    .opcion-contenido { display: flex; align-items: center; gap: 0.75rem; }
-    .opcion-marca {
-        width: 22px; height: 22px; border-radius: 50%;
-        background: #21262d; border: 1px solid #30363d;
-        display: flex; align-items: center; justify-content: center;
-        flex-shrink: 0; font-size: 0.75rem; font-weight: 700;
-    }
-    .opcion span.texto { color: #c9d1d9; }
-    .btn-enviar {
-        width: 100%; padding: 1rem;
+    .eval-wrap { max-width: 780px; margin: 1.5rem auto 3rem; padding: 0 1rem; }
+    .eval-head { background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border: 2px solid #f1c40f; border-radius: 12px; padding: 1.5rem;
+        margin-bottom: 1.5rem; }
+    .eval-head h1 { color: #f1c40f; margin: 0 0 0.5rem; font-size: 1.5rem; }
+    .eval-head p { color: #8b949e; margin: 0.25rem 0; }
+
+    .pregunta { background: #161b22; border: 1px solid #30363d;
+        border-radius: 10px; padding: 1.25rem; margin-bottom: 1rem; }
+    .pregunta-num { color: #58a6ff; font-size: 0.75rem;
+        text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.35rem;
+        font-weight: 700; }
+    .pregunta-texto { color: #e6edf3; font-weight: 600;
+        margin-bottom: 1rem; font-size: 1.05rem; }
+    .pregunta-puntaje { float: right; color: #8b949e; font-size: 0.8rem; }
+
+    .opcion-label { display: flex; align-items: center; gap: 0.6rem;
+        padding: 0.6rem 0.75rem; background: #0d1117;
+        border: 1px solid #30363d; border-radius: 8px;
+        margin-bottom: 0.5rem; cursor: pointer; transition: all 0.15s; }
+    .opcion-label:hover { background: #1a2332; border-color: #f1c40f; }
+    .opcion-label input { width: auto; margin: 0; }
+    .opcion-label span { color: #c9d1d9; }
+
+    .input-corta { width: 100%; padding: 0.75rem 1rem;
+        background: #0d1117; color: #c9d1d9;
+        border: 1px solid #30363d; border-radius: 8px;
+        font-size: 1rem; font-family: inherit; }
+    .input-corta:focus { outline: none; border-color: #f1c40f; }
+
+    .pares-tabla { display: grid; grid-template-columns: 1fr 1fr;
+        gap: 0.75rem; }
+    .pares-col { display: flex; flex-direction: column; gap: 0.5rem; }
+    .par-izq { padding: 0.6rem 0.8rem; background: #0d1117;
+        border: 1px solid #30363d; border-radius: 6px; color: #c9d1d9; }
+    .par-select { padding: 0.6rem 0.8rem; background: #0d1117;
+        color: #c9d1d9; border: 1px solid #30363d; border-radius: 6px;
+        font-family: inherit; font-size: 0.95rem; }
+    .par-select:focus { outline: none; border-color: #f1c40f; }
+
+    .btn-enviar { display: block; width: 100%; padding: 1rem;
         background: linear-gradient(135deg, #f1c40f, #e67e22);
-        color: #0d1117; font-weight: 700; border: none;
-        border-radius: 10px; font-size: 1.1rem; cursor: pointer;
-        margin-top: 1rem;
-    }
-    .btn-enviar:hover { transform: scale(1.02); }
+        color: #0d1117; font-weight: 800; font-size: 1.1rem;
+        border: none; border-radius: 10px; cursor: pointer;
+        margin-top: 1.5rem; }
+    .btn-enviar:hover { transform: scale(1.01); }
+
+    .info-box { background: #1a2332; border-left: 3px solid #58a6ff;
+        padding: 0.75rem 1rem; border-radius: 6px; color: #8b949e;
+        font-size: 0.9rem; margin-bottom: 1rem; }
 </style>
 
-<div class="eval-header">
-    <a href="{% url 'courses:curso_detalle' evaluacion.curso.id %}"
-       style="color: #8b949e; text-decoration: none; font-size: 0.9rem;">
-        ← Volver al curso
-    </a>
-    <h1>{{ evaluacion.titulo }}</h1>
-    <p>{{ evaluacion.descripcion|safe }}</p>
-    <p>
-        📋 {{ evaluacion.total_preguntas }} preguntas ·
-        ⏱️ {{ evaluacion.tiempo_limite_minutos }} min ·
-        🎯 Aprobación con {{ evaluacion.puntaje_aprobacion }}/{{ evaluacion.puntaje_maximo }} pts
-    </p>
-</div>
+<div class="eval-wrap">
+    <div class="eval-head">
+        <h1>{{ evaluacion.titulo }}</h1>
+        <p>{{ evaluacion.descripcion|default:"" }}</p>
+        <p>
+            <strong>{{ preguntas|length }}</strong> preguntas ·
+            <strong>{{ evaluacion.puntaje_maximo }}</strong> puntos maximos ·
+            Aprobacion con <strong>{{ evaluacion.puntaje_aprobacion }}</strong>
+        </p>
+    </div>
 
-<form method="post">
-    {% csrf_token %}
-    <input type="hidden" name="intento_id" value="{{ intento.id }}">
-
-    {% for pregunta in preguntas %}
-        <div class="pregunta-card">
-            <div class="pregunta-num">Pregunta {{ forloop.counter }} · {{ pregunta.puntaje }} pts</div>
-            <div class="pregunta-texto">{{ pregunta.texto }}</div>
-
-            {% for opcion in pregunta.opciones.all %}
-                <label class="opcion">
-                    <input type="radio" name="pregunta_{{ pregunta.id }}" value="{{ opcion.id }}">
-                    <div class="opcion-contenido">
-                        <div class="opcion-marca">{{ forloop.counter|stringformat:"A"|slice:":1" }}</div>
-                        <span class="texto">{{ opcion.texto }}</span>
-                    </div>
-                </label>
-            {% endfor %}
+    {% if intentos_restantes is not None %}
+        <div class="info-box">
+            Intentos restantes: <strong>{{ intentos_restantes }}</strong>
         </div>
-    {% endfor %}
+    {% endif %}
 
-    <button type="submit" class="btn-enviar">
-        ✅ Enviar evaluación
-    </button>
-</form>
+    <form method="post">
+        {% csrf_token %}
 
+        {% for p in preguntas %}
+            <div class="pregunta">
+                <div class="pregunta-num">
+                    Pregunta {{ forloop.counter }}
+                    <span class="pregunta-puntaje">{{ p.puntaje }} pts</span>
+                </div>
+                <div class="pregunta-texto">{{ p.texto }}</div>
+
+                {# ===== TIPO: unica ===== #}
+                {% if p.tipo == 'unica' %}
+                    {% for op in p.opciones.all %}
+                        <label class="opcion-label">
+                            <input type="radio" name="opcion_{{ p.id }}" value="{{ op.id }}">
+                            <span>{{ op.texto }}</span>
+                        </label>
+                    {% endfor %}
+
+                {# ===== TIPO: multiple ===== #}
+                {% elif p.tipo == 'multiple' %}
+                    <div class="info-box" style="margin-bottom:0.5rem;">
+                        Selecciona TODAS las correctas
+                    </div>
+                    {% for op in p.opciones.all %}
+                        <label class="opcion-label">
+                            <input type="checkbox" name="opciones_{{ p.id }}" value="{{ op.id }}">
+                            <span>{{ op.texto }}</span>
+                        </label>
+                    {% endfor %}
+
+                {# ===== TIPO: vf ===== #}
+                {% elif p.tipo == 'vf' %}
+                    <label class="opcion-label">
+                        <input type="radio" name="vf_{{ p.id }}" value="V">
+                        <span>✅ Verdadero</span>
+                    </label>
+                    <label class="opcion-label">
+                        <input type="radio" name="vf_{{ p.id }}" value="F">
+                        <span>❌ Falso</span>
+                    </label>
+
+                {# ===== TIPO: corta ===== #}
+                {% elif p.tipo == 'corta' %}
+                    <input type="text" name="corta_{{ p.id }}"
+                           class="input-corta"
+                           placeholder="Escribe tu respuesta..."
+                           autocomplete="off">
+
+                {# ===== TIPO: emparejar ===== #}
+                {% elif p.tipo == 'emparejar' %}
+                    <div class="pares-tabla">
+                        <div class="pares-col">
+                            {% for par in p.pares_json %}
+                                <div class="par-izq">{{ par.izq }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="pares-col">
+                            {% for par in p.pares_json %}
+                                <select name="par_{{ p.id }}_{{ forloop.counter0 }}"
+                                        class="par-select">
+                                    <option value="">— Elegir —</option>
+                                    {% for op in p.pares_json %}
+                                        <option value="{{ op.der }}">{{ op.der }}</option>
+                                    {% endfor %}
+                                </select>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn-enviar">
+            ✅ Enviar respuestas
+        </button>
+    </form>
+</div>
 {% endblock %}
