@@ -43,7 +43,11 @@ INSTALLED_APPS = [
 # Tus aplicaciones añadidas aquí:
     'users',
     'courses',
-    'contents'
+    'contents',
+    "rest_framework",
+    "rest_framework.authtoken",
+    "drf_spectacular",
+    "api",
 ]
 
 MIDDLEWARE = [
@@ -56,6 +60,7 @@ MIDDLEWARE = [
     'users.middleware.IdiomaPerfilMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "api.middleware.ApiCorsMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -189,3 +194,32 @@ LOGOUT_REDIRECT_URL = '/'
 
 # Permite embeber el propio sitio en iframes (visor de recursos)
 X_FRAME_OPTIONS = 'SAMEORIGIN'
+
+
+# ============================================================
+# REST FRAMEWORK
+# ============================================================
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.StandardPagination",
+    "PAGE_SIZE": 20,
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Academia Puente - API",
+    "DESCRIPTION": "API REST para la app movil de Academia Puente Digital",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "COMPONENT_SPLIT_REQUEST": True,
+}
