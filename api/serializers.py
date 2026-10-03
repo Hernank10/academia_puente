@@ -299,3 +299,8 @@ class RankingItemSerializer(serializers.Serializer):
     promedio_eval = serializers.FloatField()
     promedio_entregas = serializers.FloatField()
     es_yo = serializers.BooleanField()
+
+# ==================== LOGIN ====================
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(style={"input_type": "password"})

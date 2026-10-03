@@ -26,6 +26,7 @@ from users.models import Perfil, Logro, LogroUsuario, Notificacion
 from users.notifications import crear_notificacion
 
 from .serializers import (
+    LoginSerializer,
     UserBasicSerializer, PerfilSerializer, RegisterSerializer,
     MateriaSerializer, CursoListSerializer, CursoDetailSerializer,
     LeccionSerializer, InscripcionSerializer, CertificadoSerializer,
@@ -40,7 +41,7 @@ from .pagination import StandardPagination
 
 # ==================== AUTH ====================
 @extend_schema(
-    request=None,
+    request=LoginSerializer,
     responses={200: OpenApiResponse(description="Token + usuario + perfil")},
     tags=["Auth"],
 )
