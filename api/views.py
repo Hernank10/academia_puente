@@ -226,6 +226,16 @@ class LeccionViewSet(viewsets.ReadOnlyModelViewSet):
                     "Has completado el 100% del curso.",
                     "/es/cuenta/mi-panel/certificados/"
                 )
+                # Notificar al profesor
+                try:
+                    crear_notificacion(
+                        curso.profesor, "curso_completado",
+                        "{} completo {}".format(request.user.username, curso.titulo),
+                        "El estudiante ha completado el 100% del curso.",
+                        "/es/cuenta/panel/certificados/"
+                    )
+                except Exception:
+                    pass
 
         return Response({
             "ok": True,
