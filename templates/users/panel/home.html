@@ -1,0 +1,94 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>🏠 Panel del Profesor</h1>
+    <p>Bienvenido, <strong>{{ user.get_full_name|default:user.username }}</strong></p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_cursos }}</div>
+        <div class="stat-label">📚 Cursos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_estudiantes }}</div>
+        <div class="stat-label">👥 Estudiantes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ lecciones_completadas }}</div>
+        <div class="stat-label">✅ Lecciones completadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_evaluaciones }}</div>
+        <div class="stat-label">📝 Evaluaciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_certificados }}</div>
+        <div class="stat-label">🎓 Certificados</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color: #ff9999;">{{ entregas_pendientes }}</div>
+        <div class="stat-label">⏳ Entregas pendientes</div>
+    </div>
+</div>
+
+<h2 style="color:#e6edf3; font-size:1.3rem; margin: 0 0 1rem;">📚 Mis cursos</h2>
+
+{% if cursos_info %}
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:2rem;">
+        {% for info in cursos_info %}
+            <div class="card">
+                <h3>{{ info.curso.titulo|truncatechars:50 }}</h3>
+                <p style="color:#8b949e; font-size:0.85rem; margin:0.25rem 0 0.75rem;">
+                    {{ info.curso.get_idioma_display }} · Nivel {{ info.curso.nivel }}
+                </p>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                    <span class="badge badge-info">📖 {{ info.lecciones }} lecciones</span>
+                    <span class="badge badge-info">👥 {{ info.inscritos }} inscritos</span>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                    <div class="barra-mini" style="flex:1;">
+                        <div class="barra-fill" style="width:{{ info.pct }}%;"></div>
+                    </div>
+                    <span style="color:#f1c40f; font-weight:700; font-size:0.9rem;">{{ info.pct }}%</span>
+                </div>
+                <a href="{% url 'users:profesor_curso_detalle' info.curso.id %}"
+                   class="btn" style="margin-top:0.75rem;">
+                    Gestionar curso →
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>Aún no tienes cursos.</p>
+        <a href="{% url 'users:profesor_curso_crear' %}" class="btn" style="margin-top:1rem;">🎯 Crear curso</a>
+    </div>
+{% endif %}
+
+<h2 style="color:#e6edf3; font-size:1.3rem; margin: 2rem 0 1rem;">🕒 Actividad reciente</h2>
+{% if actividad %}
+    <table class="tabla">
+        <thead>
+            <tr><th>Estudiante</th><th>Curso</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+            {% for ins in actividad %}
+                <tr>
+                    <td>
+                        <a href="{% url 'users:panel_estudiante_detalle' ins.estudiante.id %}"
+                           style="color:#58a6ff; text-decoration:none;">
+                            {{ ins.estudiante.username }}
+                        </a>
+                    </td>
+                    <td>{{ ins.curso.titulo|truncatechars:50 }}</td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ ins.fecha_inscripcion|date:"d M Y, H:i" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">Sin actividad reciente.</div>
+{% endif %}
+{% endblock %}

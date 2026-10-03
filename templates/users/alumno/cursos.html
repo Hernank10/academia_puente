@@ -1,0 +1,88 @@
+{% extends "users/alumno/base_alumno.html" %}
+
+{% block alumno_content %}
+<div class="alumno-header">
+    <h1>📚 Mis cursos</h1>
+    <p>{{ total }} cursos activos</p>
+</div>
+
+{% if cursos_info %}
+    {% for info in cursos_info %}
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+                <div style="flex:1; min-width:250px;">
+                    <h3>{{ info.curso.titulo }}</h3>
+                    <p style="color:#8b949e; font-size:0.85rem; margin:0.25rem 0 0.75rem;">
+                        {{ info.curso.materia.nombre }} · {{ info.curso.get_idioma_display }} · Nivel {{ info.curso.nivel }}
+                    </p>
+                    <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                        <div class="barra-mini" style="flex:1; max-width:300px;">
+                            <div class="barra-fill" style="width:{{ info.pct }}%;"></div>
+                        </div>
+                        <span style="color:#f1c40f; font-weight:700;">{{ info.completadas }}/{{ info.total }} ({{ info.pct }}%)</span>
+                    </div>
+                    {% if info.certificado %}
+                        <span class="badge badge-ok">🎓 Certificado obtenido</span>
+                    {% endif %}
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.5rem; justify-content:center;">
+                    <a href="{% url 'courses:curso_detalle' info.curso.id %}" class="btn">
+                        {% if info.pct >= 100 %}Ver curso{% else %}Continuar →{% endif %}
+                    </a>
+                    {% if info.certificado %}
+                        <a href="{% url 'courses:certificado_detalle' info.certificado.codigo %}"
+                           class="btn-sec" target="_blank">Ver certificado</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if info.entregas or info.intentos %}
+                <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid #21262d;
+                            display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem;">
+
+                    {% if info.entregas %}
+                        <div>
+                            <div style="color:#58a6ff; font-weight:700; font-size:0.85rem; margin-bottom:0.5rem;">
+                                ✏️ Tareas ({{ info.entregas|length }})
+                            </div>
+                            {% for e in info.entregas|slice:":5" %}
+                                <div style="display:flex; justify-content:space-between; align-items:center;
+                                            padding:0.4rem 0; border-bottom:1px solid #21262d; font-size:0.85rem;">
+                                    <span style="color:#c9d1d9;">{{ e.tarea.titulo|truncatechars:35 }}</span>
+                                    {% if e.calificacion is not None %}
+                                        <span class="badge badge-ok">{{ e.calificacion }}/{{ e.tarea.puntaje_maximo }}</span>
+                                    {% else %}
+                                        <span class="badge badge-pend">Pendiente</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    {% if info.intentos %}
+                        <div>
+                            <div style="color:#a855f7; font-weight:700; font-size:0.85rem; margin-bottom:0.5rem;">
+                                📝 Evaluaciones ({{ info.intentos|length }})
+                            </div>
+                            {% for i in info.intentos|slice:":5" %}
+                                <div style="display:flex; justify-content:space-between; align-items:center;
+                                            padding:0.4rem 0; border-bottom:1px solid #21262d; font-size:0.85rem;">
+                                    <span style="color:#c9d1d9;">{{ i.evaluacion.titulo|truncatechars:30 }}</span>
+                                    <span class="badge {% if i.aprobado %}badge-ok{% else %}badge-vacio{% endif %}">
+                                        {{ i.puntaje }}/{{ i.evaluacion.puntaje_maximo }}
+                                    </span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+{% else %}
+    <div class="empty-state">
+        <p>Aún no estás inscrito en ningún curso.</p>
+        <a href="{% url 'courses:index' %}" class="btn" style="margin-top:1rem;">Explorar cursos</a>
+    </div>
+{% endif %}
+{% endblock %}

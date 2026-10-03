@@ -1,0 +1,60 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>📝 Evaluaciones</h1>
+    <p>{{ total }} evaluaciones en tus cursos</p>
+</div>
+
+{% if evs_info %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Evaluación</th>
+                <th>Curso</th>
+                <th>Estado</th>
+                <th>Preguntas</th>
+                <th>Intentos</th>
+                <th>Promedio</th>
+                <th>% Aprobación</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in evs_info %}
+                <tr>
+                    <td><strong>{{ item.ev.titulo|truncatechars:40 }}</strong></td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ item.ev.curso.titulo|truncatechars:25 }}</td>
+                    <td>
+                        {% if item.ev.estado == 'publicada' %}
+                            <span class="badge badge-ok">Publicada</span>
+                        {% else %}
+                            <span class="badge badge-vacio">{{ item.ev.get_estado_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.total_preguntas }}</td>
+                    <td>{{ item.total_intentos }}</td>
+                    <td>
+                        {% if item.promedio %}
+                            <strong style="color:#4ade80;">{{ item.promedio }}</strong>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        {% if item.total_intentos %}
+                            <span class="badge {% if item.tasa >= 60 %}badge-ok{% else %}badge-pend{% endif %}">
+                                {{ item.tasa }}%
+                            </span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'users:profesor_evaluacion_detalle' item.ev.curso.id item.ev.id %}"
+                           class="btn-sec">Ver detalle</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">Aún no tienes evaluaciones.</div>
+{% endif %}
+{% endblock %}

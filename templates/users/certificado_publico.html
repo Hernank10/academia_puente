@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    .cert-wrap { max-width: 900px; margin: 2rem auto; padding: 0 1rem; }
+    .cert { background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border: 3px double #f1c40f; border-radius: 16px;
+        padding: 3rem 2rem; text-align: center; position: relative;
+        box-shadow: 0 20px 60px rgba(241,196,15,0.15); }
+    .cert::before { content: ""; position: absolute; inset: 12px;
+        border: 1px solid #f1c40f; border-radius: 10px; pointer-events: none; opacity: 0.4; }
+    .cert-logo { font-size: 3rem; margin-bottom: 0.5rem; }
+    .cert-tipo { color: #f1c40f; font-size: 0.85rem; text-transform: uppercase;
+        letter-spacing: 4px; font-weight: 700; margin-bottom: 0.5rem; }
+    .cert-titulo { color: #e6edf3; font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0; }
+    .cert-sub { color: #8b949e; font-size: 0.95rem; margin-bottom: 2rem; }
+    .cert-nombre { color: #f1c40f; font-size: 2.5rem; font-weight: 800;
+        margin: 1.5rem 0 0.5rem; line-height: 1.1; }
+    .cert-linea { height: 2px; width: 200px; background: #f1c40f; margin: 1rem auto; opacity: 0.5; }
+    .cert-curso { color: #e6edf3; font-size: 1.2rem; font-weight: 700; margin: 1.5rem 0 0.25rem; }
+    .cert-detalle { color: #8b949e; font-size: 0.9rem; margin-bottom: 2rem; }
+    .cert-footer { display: flex; justify-content: space-around; align-items: center;
+        flex-wrap: wrap; gap: 1rem; margin-top: 2rem; padding-top: 2rem;
+        border-top: 1px solid #30363d; }
+    .cert-codigo { color: #58a6ff; font-family: monospace; font-size: 1rem; font-weight: 700;
+        background: #0d1117; padding: 0.5rem 1rem; border-radius: 6px;
+        border: 1px solid #30363d; }
+    .cert-fecha { color: #8b949e; font-size: 0.85rem; }
+    .cert-estado { display: inline-block; padding: 0.35rem 1rem; border-radius: 12px;
+        font-weight: 700; font-size: 0.85rem; }
+    .cert-estado.ok { background: #1f3d1f; color: #4ade80; }
+    .cert-estado.rev { background: #3d1a1a; color: #ff9999; }
+    .acciones { display: flex; gap: 0.5rem; justify-content: center;
+        flex-wrap: wrap; margin-top: 2rem; }
+    .btn-imprimir { padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border-radius: 10px;
+        text-decoration: none; border: none; cursor: pointer; font-size: 1rem; }
+    .btn-sec { padding: 0.75rem 1.5rem; background: #21262d; color: #c9d1d9;
+        border: 1px solid #30363d; border-radius: 10px; text-decoration: none; font-size: 1rem; }
+    @media print {
+        body { background: #fff !important; }
+        .no-print { display: none !important; }
+        .cert { box-shadow: none; background: #fff; color: #000; border-color: #333; }
+        .cert::before { border-color: #333; }
+        .cert-titulo, .cert-curso, .cert-nombre, .cert-linea { color: #000 !important; }
+        .cert-tipo, .cert-sub, .cert-detalle, .cert-fecha { color: #333 !important; }
+        .cert-codigo { background: #f0f0f0 !important; color: #000 !important; border-color: #999 !important; }
+    }
+</style>
+
+<div class="cert-wrap">
+    <div class="cert">
+        <div class="cert-logo">🏛️</div>
+        <div class="cert-tipo">Academia Puente Digital</div>
+        <div class="cert-titulo">Certificado de Finalización</div>
+        <div class="cert-sub">Formación en Lengua Castellana y Soberanía Digital</div>
+
+        <div class="cert-nombre">{{ cert.estudiante.get_full_name|default:cert.estudiante.username }}</div>
+        <div class="cert-linea"></div>
+
+        <div class="cert-curso">{{ cert.curso.titulo }}</div>
+        <div class="cert-detalle">
+            {{ cert.curso.materia.nombre }} · {{ cert.curso.get_idioma_display }} · Nivel {{ cert.curso.nivel }}
+        </div>
+
+        <div style="margin-top:1rem;">
+            <span class="cert-estado {% if cert.estado == 'emitido' %}ok{% else %}rev{% endif %}">
+                {% if cert.estado == 'emitido' %}✅ Válido{% else %}❌ Revocado{% endif %}
+            </span>
+        </div>
+
+        <div class="cert-footer">
+            <div>
+                <div class="cert-fecha">Código de verificación</div>
+                <div class="cert-codigo">{{ cert.codigo }}</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="cert-fecha">Fecha de emisión</div>
+                <div style="color:#e6edf3; font-weight:700;">{{ cert.fecha_emision|date:"d \d\e F \d\e Y" }}</div>
+            </div>
+            <div style="text-align:center;">
+                <div class="cert-fecha">Calificación</div>
+                <div style="color:#4ade80; font-weight:700;">{{ cert.calificacion }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="acciones no-print">
+        <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+        <a href="{% url 'users:certificado_verificar' %}?codigo={{ cert.codigo }}"
+           class="btn-sec">🔍 Verificar autenticidad</a>
+        {% if es_dueno %}
+            <a href="{% url 'users:alumno_certificados' %}" class="btn-sec">← Mis certificados</a>
+        {% elif es_profesor %}
+            <a href="{% url 'users:panel_certificados' %}" class="btn-sec">← Panel profesor</a>
+        {% else %}
+            <a href="{% url 'courses:index' %}" class="btn-sec">← Inicio</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

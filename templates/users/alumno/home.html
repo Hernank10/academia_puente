@@ -1,0 +1,114 @@
+{% extends "users/alumno/base_alumno.html" %}
+
+{% block alumno_content %}
+<div class="alumno-header">
+    <h1>🏠 Mi Panel</h1>
+    <p>
+        Hola, <strong>{{ user.get_full_name|default:user.username }}</strong>
+        · {{ rango_nombre }}
+    </p>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_cursos }}</div>
+        <div class="stat-label">📚 Cursos activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_lecciones_ok }}</div>
+        <div class="stat-label">✅ Lecciones completadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ puntos }}</div>
+        <div class="stat-label">⭐ Puntos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#ff6b35;">{{ racha }}</div>
+        <div class="stat-label">🔥 Racha (dias)</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#4ade80;">{{ cursos_completos }}</div>
+        <div class="stat-label">🎯 Cursos al 100%</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#58a6ff;">{{ total_certs }}</div>
+        <div class="stat-label">🎓 Certificados</div>
+    </div>
+</div>
+
+{% if sig_umbral %}
+<div class="card" style="background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+        <div>
+            <div style="color:#8b949e; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">
+                Progreso al siguiente rango
+            </div>
+            <div style="color:#f1c40f; font-size:1.1rem; font-weight:800; margin-top:0.25rem;">
+                {{ puntos }} / {{ sig_umbral }} puntos
+            </div>
+            <div style="color:#8b949e; font-size:0.85rem;">
+                Te faltan {{ faltan }} puntos para subir de rango
+            </div>
+        </div>
+        <div style="font-size:2.5rem;">⭐</div>
+    </div>
+    <div class="barra-mini" style="margin-top:0.75rem; height:10px;">
+        <div class="barra-fill" style="width:{{ pct_sig }}%;"></div>
+    </div>
+</div>
+{% endif %}
+
+<h2 style="color:#e6edf3; font-size:1.2rem; margin: 1.5rem 0 1rem;">📚 Mis cursos</h2>
+
+{% if cursos_info %}
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:1rem; margin-bottom:2rem;">
+        {% for info in cursos_info %}
+            <div class="card">
+                <h3>{{ info.curso.titulo|truncatechars:45 }}</h3>
+                <p style="color:#8b949e; font-size:0.85rem; margin:0.25rem 0 0.75rem;">
+                    {{ info.curso.materia.nombre }} · Nivel {{ info.curso.nivel }}
+                </p>
+                <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.75rem;">
+                    <div class="barra-mini" style="flex:1;">
+                        <div class="barra-fill" style="width:{{ info.pct }}%;"></div>
+                    </div>
+                    <span style="color:#f1c40f; font-weight:700; font-size:0.85rem;">{{ info.pct }}%</span>
+                </div>
+                <p style="color:#8b949e; font-size:0.8rem;">
+                    {{ info.completadas }} / {{ info.total }} lecciones
+                    {% if info.certificado %} · <span style="color:#4ade80;">🎓 Certificado</span>{% endif %}
+                </p>
+                <a href="{% url 'courses:curso_detalle' info.curso.id %}" class="btn"
+                   style="margin-top:0.5rem;">
+                    {% if info.pct >= 100 %}Ver curso{% else %}Continuar →{% endif %}
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>Aún no estás inscrito en ningún curso.</p>
+        <a href="{% url 'courses:index' %}" class="btn" style="margin-top:1rem;">Explorar cursos</a>
+    </div>
+{% endif %}
+
+<h2 style="color:#e6edf3; font-size:1.2rem; margin: 2rem 0 1rem;">📅 Actividad reciente</h2>
+{% if actividad %}
+    <table class="tabla">
+        <thead>
+            <tr><th>Lección</th><th>Curso</th><th>Fecha</th></tr>
+        </thead>
+        <tbody>
+            {% for a in actividad %}
+                <tr>
+                    <td>{{ a.leccion.titulo|truncatechars:50 }}</td>
+                    <td style="color:#8b949e;">{{ a.leccion.curso.titulo|truncatechars:30 }}</td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ a.fecha_completado|date:"d M Y, H:i" }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">Sin actividad reciente. ¡Empieza una lección!</div>
+{% endif %}
+{% endblock %}

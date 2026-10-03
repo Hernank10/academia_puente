@@ -1,0 +1,69 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>🎓 Certificados</h1>
+    <p>{{ total }} certificados emitidos</p>
+</div>
+
+<div style="margin-bottom:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+    <a href="{% url 'users:panel_certificado_emitir' %}" class="btn">➕ Emitir certificado</a>
+</div>
+
+<form method="get" class="filtros">
+    <select name="curso" onchange="this.form.submit()">
+        <option value="">Todos los cursos</option>
+        {% for c in cursos %}
+            <option value="{{ c.id }}" {% if curso_id == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.titulo|truncatechars:40 }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+
+{% if certificados %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Estudiante</th>
+                <th>Curso</th>
+                <th>Estado</th>
+                <th>Fecha</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in certificados %}
+                <tr>
+                    <td><strong style="color:#f1c40f;">{{ c.codigo }}</strong></td>
+                    <td>
+                        <a href="{% url 'users:panel_estudiante_detalle' c.estudiante.id %}"
+                           style="color:#58a6ff; text-decoration:none;">
+                            {{ c.estudiante.username }}
+                        </a>
+                    </td>
+                    <td>{{ c.curso.titulo|truncatechars:35 }}</td>
+                    <td>
+                        {% if c.estado == 'emitido' %}
+                            <span class="badge badge-ok">Emitido</span>
+                        {% else %}
+                            <span class="badge badge-vacio">Revocado</span>
+                        {% endif %}
+                    </td>
+                    <td style="color:#8b949e; font-size:0.8rem;">{{ c.fecha_emision|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{{ c.url_publica }}" target="_blank" class="btn-sec">Ver</a>
+                        {% if c.estado == 'emitido' %}
+                            <a href="{% url 'users:panel_certificado_revocar' c.id %}"
+                               class="btn-danger">Revocar</a>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">Aún no hay certificados emitidos.</div>
+{% endif %}
+{% endblock %}

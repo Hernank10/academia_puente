@@ -1,0 +1,75 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>✅ Entregas</h1>
+    <p>{{ total }} entregas</p>
+</div>
+
+<form method="get" class="filtros">
+    <select name="estado" onchange="this.form.submit()">
+        <option value="pendientes" {% if estado == 'pendientes' %}selected{% endif %}>⏳ Pendientes</option>
+        <option value="calificadas" {% if estado == 'calificadas' %}selected{% endif %}>✅ Calificadas</option>
+        <option value="todas" {% if estado == 'todas' %}selected{% endif %}>Todas</option>
+    </select>
+    <select name="curso" onchange="this.form.submit()">
+        <option value="">Todos los cursos</option>
+        {% for c in cursos %}
+            <option value="{{ c.id }}" {% if curso_id == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.titulo|truncatechars:40 }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn">Filtrar</button>
+</form>
+
+{% if entregas %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Estudiante</th>
+                <th>Tarea</th>
+                <th>Curso</th>
+                <th>Estado</th>
+                <th>Nota</th>
+                <th>Fecha</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in entregas %}
+                <tr>
+                    <td>
+                        <a href="{% url 'users:panel_estudiante_detalle' e.estudiante.id %}"
+                           style="color:#58a6ff; text-decoration:none;">
+                            {{ e.estudiante.username }}
+                        </a>
+                    </td>
+                    <td>{{ e.tarea.titulo|truncatechars:35 }}</td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ e.tarea.curso.titulo|truncatechars:25 }}</td>
+                    <td>
+                        {% if e.estado == 'calificada' %}
+                            <span class="badge badge-ok">{{ e.get_estado_display }}</span>
+                        {% else %}
+                            <span class="badge badge-pend">{{ e.get_estado_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if e.calificacion is not None %}
+                            <strong style="color:#4ade80;">{{ e.calificacion }}/{{ e.tarea.puntaje_maximo }}</strong>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td style="color:#8b949e; font-size:0.8rem;">{{ e.fecha_entrega|date:"d M Y" }}</td>
+                    <td>
+                        <a href="{% url 'users:profesor_entrega_calificar' e.id %}" class="btn-sec">
+                            {% if e.calificacion is not None %}Revisar{% else %}Calificar{% endif %}
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">No hay entregas con esos filtros.</div>
+{% endif %}
+{% endblock %}

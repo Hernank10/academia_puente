@@ -1,0 +1,43 @@
+{% extends "users/alumno/base_alumno.html" %}
+
+{% block alumno_content %}
+<div class="alumno-header">
+    <h1>🎓 Mis certificados</h1>
+    <p>{{ total }} certificados emitidos</p>
+</div>
+
+{% if certificados %}
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1rem;">
+        {% for c in certificados %}
+            <div class="card" style="background: linear-gradient(135deg, #1f2f1f 0%, #161b22 100%);
+                                     border: 2px solid #f1c40f;">
+                <div style="font-size:2.5rem; text-align:center; margin-bottom:0.5rem;">🎓</div>
+                <h3 style="text-align:center;">{{ c.curso.titulo|truncatechars:45 }}</h3>
+                <p style="text-align:center; color:#8b949e; font-size:0.85rem;">
+                    {{ c.curso.get_idioma_display }} · Nivel {{ c.curso.nivel }}
+                </p>
+                <div style="text-align:center; margin:0.75rem 0;">
+                    <span class="badge badge-gold" style="font-size:0.85rem; padding:0.35rem 0.9rem;">
+                        {{ c.codigo }}
+                    </span>
+                </div>
+                <p style="text-align:center; color:#8b949e; font-size:0.8rem;">
+                    Emitido: {{ c.fecha_emision|date:"d M Y" }}<br>
+                    Calificación: <strong>{{ c.calificacion }}</strong>
+                </p>
+                <div style="display:flex; gap:0.5rem; margin-top:0.75rem;">
+                    <a href="{% url 'courses:certificado_detalle' c.codigo %}"
+                       class="btn" style="flex:1; text-align:center;" target="_blank">
+                        Ver / Imprimir
+                    </a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">
+        <p>Aún no tienes certificados. Completa un curso al 100% para obtener uno.</p>
+        <a href="{% url 'users:alumno_cursos' %}" class="btn" style="margin-top:1rem;">Ver mis cursos</a>
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block content %}
+<style>
+    .header-est {
+        background: linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+        border: 2px solid #f1c40f; border-radius: 12px;
+        padding: 1.5rem; margin: 1rem auto 2rem; max-width: 1200px;
+    }
+    .header-est h1 { color: #f1c40f; margin: 0 0 0.5rem; font-size: 1.8rem; }
+    .header-est p { color: #8b949e; margin: 0.25rem 0; }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
+    .section-h2 {
+        font-size: 1.3rem; color: #e6edf3; margin: 2rem 0 1rem;
+        border-bottom: 1px solid #30363d; padding-bottom: 0.5rem;
+    }
+
+    .tabla { width: 100%; border-collapse: collapse; background: #161b22;
+        border: 1px solid #30363d; border-radius: 10px; overflow: hidden; }
+    .tabla th { text-align: left; padding: 0.75rem 1rem; color: #8b949e;
+        font-size: 0.8rem; text-transform: uppercase;
+        border-bottom: 2px solid #30363d; background: #0d1117; }
+    .tabla td { padding: 0.9rem 1rem; border-bottom: 1px solid #21262d;
+        color: #c9d1d9; vertical-align: middle; }
+    .tabla tr:last-child td { border-bottom: none; }
+    .tabla tr:hover td { background: #1a2332; }
+
+    .stats-mini {
+        display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem; margin-top: 1.25rem;
+    }
+    .stat-mini {
+        background: rgba(13,17,23,0.5); border: 1px solid #30363d;
+        border-radius: 8px; padding: 0.75rem; text-align: center;
+    }
+    .stat-mini .num { font-size: 1.6rem; font-weight: 800;
+        color: #f1c40f; line-height: 1; }
+    .stat-mini .lbl { font-size: 0.7rem; color: #8b949e;
+        text-transform: uppercase; letter-spacing: 1px; margin-top: 0.3rem; }
+
+    .barra-mini { height: 8px; background: #21262d; border-radius: 4px;
+        overflow: hidden; }
+    .barra-fill { height: 100%;
+        background: linear-gradient(90deg, #f1c40f, #e67e22); }
+
+    .badge { display: inline-block; padding: 0.2rem 0.6rem; border-radius: 10px;
+        font-size: 0.72rem; font-weight: 600; }
+    .badge-ok { background: #1f3d1f; color: #4ade80; }
+    .badge-pend { background: #3d3520; color: #ffd966; }
+    .badge-vacio { background: #21262d; color: #8b949e; }
+
+    .btn-accion { display: inline-block; padding: 0.4rem 0.9rem;
+        background: #21262d; color: #c9d1d9; border: 1px solid #30363d;
+        border-radius: 6px; text-decoration: none; font-size: 0.85rem; }
+    .btn-accion:hover { background: #f1c40f; color: #0d1117; border-color: #f1c40f; }
+    .btn-primario { display: inline-block; padding: 0.5rem 1.1rem;
+        background: linear-gradient(135deg, #f1c40f, #e67e22);
+        color: #0d1117; font-weight: 700; border-radius: 8px;
+        text-decoration: none; font-size: 0.85rem; }
+</style>
+
+<div class="header-est">
+    <a href="{% url 'users:profesor_curso_detalle' curso.id %}" class="btn-accion"
+       style="margin-bottom: 1rem; display: inline-block;">← Volver al curso</a>
+    <h1>👤 {{ estudiante.username }}</h1>
+    <p>
+        {% if estudiante.get_full_name %}{{ estudiante.get_full_name }} · {% endif %}
+        {{ estudiante.email|default:"sin email" }}
+        {% if perfil %} · {{ perfil.get_rol_principal_display }}{% endif %}
+    </p>
+    <p style="font-size:0.85rem;">Curso: <strong>{{ curso.titulo }}</strong></p>
+</div>
+
+<div class="wrap">
+
+    {% if perfil %}
+        <div class="stats-mini">
+            <div class="stat-mini">
+                <div class="num">{{ perfil.puntos }}</div>
+                <div class="lbl">Puntos</div>
+            </div>
+            <div class="stat-mini">
+                <div class="num" style="font-size:1rem; color:#58a6ff;">{{ perfil.rango_academico }}</div>
+                <div class="lbl">Rango</div>
+            </div>
+            <div class="stat-mini">
+                <div class="num" style="font-size:1rem;">{{ perfil.get_estado_academico_display }}</div>
+                <div class="lbl">Estado</div>
+            </div>
+        </div>
+    {% endif %}
+
+    <h2 class="section-h2">📊 Progreso en {{ curso.titulo }}</h2>
+    <div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem;">
+        <div class="barra-mini" style="flex:1;">
+            <div class="barra-fill" style="width:{{ progreso_pct|default:0 }}%;"></div>
+        </div>
+        <span style="color:#f1c40f; font-weight:700;">
+            {{ completadas|default:0 }}/{{ total|default:0 }} ({{ progreso_pct|default:0 }}%)
+        </span>
+    </div>
+
+    <h2 class="section-h2">📖 Lecciones</h2>
+    {% if lecciones_info %}
+        <table class="tabla">
+            <thead>
+                <tr><th>#</th><th>Lección</th><th>Estado</th><th>Fecha</th></tr>
+            </thead>
+            <tbody>
+                {% for item in lecciones_info %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.leccion.titulo|truncatechars:60 }}</td>
+                        <td>
+                            {% if item.completada %}
+                                <span class="badge badge-ok">✅ Completada</span>
+                            {% else %}
+                                <span class="badge badge-vacio">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:#8b949e; font-size:0.85rem;">
+                            {% if item.fecha %}{{ item.fecha|date:"d M Y" }}{% else %}—{% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div style="background:#161b22; border:1px dashed #30363d; border-radius:10px;
+                    padding:2rem; text-align:center; color:#8b949e;">
+            Este curso no tiene lecciones registradas.
+        </div>
+    {% endif %}
+
+    {% if entregas %}
+        <h2 class="section-h2">✏️ Entregas</h2>
+        <table class="tabla">
+            <thead>
+                <tr><th>Tarea</th><th>Estado</th><th>Nota</th><th>Fecha</th><th></th></tr>
+            </thead>
+            <tbody>
+                {% for e in entregas %}
+                    <tr>
+                        <td>{{ e.tarea.titulo|truncatechars:40 }}</td>
+                        <td>
+                            {% if e.calificacion is not None %}
+                                <span class="badge badge-ok">{{ e.get_estado_display }}</span>
+                            {% else %}
+                                <span class="badge badge-pend">{{ e.get_estado_display }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if e.calificacion is not None %}
+                                <strong style="color:#4ade80;">{{ e.calificacion }}/{{ e.tarea.puntaje_maximo }}</strong>
+                            {% else %}—{% endif %}
+                        </td>
+                        <td style="color:#8b949e; font-size:0.85rem;">{{ e.fecha_entrega|date:"d M Y" }}</td>
+                        <td>
+                            <a href="{% url 'users:profesor_entrega_calificar' e.id %}"
+                               class="btn-accion">Calificar</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if intentos %}
+        <h2 class="section-h2">📝 Evaluaciones</h2>
+        <table class="tabla">
+            <thead>
+                <tr><th>Evaluación</th><th>Puntaje</th><th>Aprobado</th><th>Fecha</th></tr>
+            </thead>
+            <tbody>
+                {% for i in intentos %}
+                    <tr>
+                        <td>{{ i.evaluacion.titulo|truncatechars:40 }}</td>
+                        <td>{{ i.puntaje }}/{{ i.evaluacion.puntaje_maximo }}</td>
+                        <td>
+                            {% if i.aprobado %}
+                                <span class="badge badge-ok">Aprobado</span>
+                            {% else %}
+                                <span class="badge badge-vacio">No aprobado</span>
+                            {% endif %}
+                        </td>
+                        <td style="color:#8b949e; font-size:0.85rem;">{{ i.fecha_inicio|date:"d M Y" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if certificado %}
+        <h2 class="section-h2">🎓 Certificado</h2>
+        <div style="background: linear-gradient(135deg, #1f2f1f 0%, #161b22 100%);
+                    border: 2px solid #4ade80; border-radius: 12px; padding: 1.5rem;">
+            <div style="color:#4ade80; font-size:0.9rem; text-transform:uppercase;
+                        letter-spacing:1px; margin-bottom:0.5rem;">Certificado emitido</div>
+            <div style="color:#f1c40f; font-size:1.3rem; font-weight:800;
+                        font-family:monospace;">{{ certificado.codigo }}</div>
+            <div style="color:#8b949e; font-size:0.85rem; margin-top:0.5rem;">
+                {{ certificado.fecha_emision|date:"d M Y" }} · {{ certificado.calificacion }}
+            </div>
+            <a href="{{ certificado.url_publica }}" target="_blank" class="btn-primario"
+               style="margin-top:0.75rem;">Ver certificado</a>
+        </div>
+    {% endif %}
+
+    <div style="margin: 2rem 0;">
+        <a href="{% url 'users:profesor_curso_detalle' curso.id %}" class="btn-accion">
+            ← Volver al curso
+        </a>
+    </div>
+</div>
+{% endblock %}

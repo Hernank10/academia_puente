@@ -1,0 +1,73 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>👥 Estudiantes</h1>
+    <p>{{ total }} estudiantes en tus cursos</p>
+</div>
+
+<form method="get" class="filtros">
+    <input type="text" name="q" value="{{ q }}" placeholder="🔍 Buscar por nombre o email...">
+    <select name="curso">
+        <option value="">Todos los cursos</option>
+        {% for c in cursos %}
+            <option value="{{ c.id }}" {% if curso_id == c.id|stringformat:"s" %}selected{% endif %}>
+                {{ c.titulo|truncatechars:40 }}
+            </option>
+        {% endfor %}
+    </select>
+    <button type="submit" class="btn">Buscar</button>
+    <a href="{% url 'users:panel_estudiantes' %}" class="btn-sec">Limpiar</a>
+</form>
+
+{% if estudiantes %}
+    <table class="tabla">
+        <thead>
+            <tr>
+                <th>Estudiante</th>
+                <th>Email</th>
+                <th>Cursos</th>
+                <th>Rango</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in estudiantes %}
+                <tr>
+                    <td>
+                        <strong>{{ item.estudiante.username }}</strong>
+                        {% if item.estudiante.get_full_name %}
+                            <br><small style="color:#8b949e;">{{ item.estudiante.get_full_name }}</small>
+                        {% endif %}
+                    </td>
+                    <td style="color:#8b949e; font-size:0.85rem;">{{ item.estudiante.email|default:"—" }}</td>
+                    <td>
+                        {% for c in item.cursos %}
+                            <span class="badge badge-info" style="margin:0.15rem;">
+                                {{ c.titulo|truncatechars:25 }}
+                            </span>
+                        {% endfor %}
+                    </td>
+                    <td>
+                        {% if item.perfil %}
+                            <span class="badge badge-ok">{{ item.perfil.puntos }} pts</span>
+                        {% else %}—{% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'users:panel_estudiante_detalle' item.estudiante.id %}"
+                           class="btn-sec">Ver ficha</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <div class="empty-state">
+        {% if q or curso_id %}
+            No se encontraron estudiantes con esos filtros.
+        {% else %}
+            Aún no tienes estudiantes inscritos.
+        {% endif %}
+    </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "users/panel/base_panel.html" %}
+
+{% block panel_content %}
+<div class="panel-header">
+    <h1>📚 Mis cursos</h1>
+    <p>{{ cursos|length }} cursos en total</p>
+</div>
+
+<div style="margin-bottom:1rem;">
+    <a href="{% url 'users:profesor_curso_crear' %}" class="btn">🎯 Crear nuevo curso</a>
+</div>
+
+{% if cursos %}
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:1rem;">
+        {% for c in cursos %}
+            <div class="card">
+                <h3>{{ c.titulo }}</h3>
+                <p style="color:#8b949e; font-size:0.85rem; margin:0.25rem 0 0.75rem;">
+                    {{ c.materia.nombre }} · {{ c.get_idioma_display }} · Nivel {{ c.nivel }}
+                </p>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+                    <span class="badge badge-info">📖 {{ c.n_lecciones }}</span>
+                    <span class="badge badge-info">👥 {{ c.n_inscritos }}</span>
+                    <span class="badge badge-info">📝 {{ c.n_evaluaciones }}</span>
+                    <span class="badge badge-info">✏️ {{ c.n_tareas }}</span>
+                </div>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                    <a href="{% url 'users:profesor_curso_detalle' c.id %}" class="btn">Gestionar</a>
+                    <a href="{% url 'users:profesor_curso_editar' c.id %}" class="btn-sec">Editar</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="empty-state">Aún no tienes cursos.</div>
+{% endif %}
+{% endblock %}
