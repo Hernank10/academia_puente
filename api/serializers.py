@@ -206,13 +206,19 @@ class LogroUsuarioSerializer(serializers.ModelSerializer):
 class RecursoSerializer(serializers.ModelSerializer):
     tipo_display = serializers.CharField(source="get_tipo_display", read_only=True)
     url = serializers.CharField(source="get_url", read_only=True)
-    tags_lista = serializers.ListField(read_only=True)
+    tags_lista = serializers.SerializerMethodField()
 
     class Meta:
         model = RecursoInteractivo
         fields = ["id", "titulo", "subtitulo", "slug", "descripcion",
                   "tipo", "tipo_display", "num_tecnicas", "color",
                   "url", "tags_lista", "activo"]
+
+    def get_tags_lista(self, obj):
+        try:
+            return obj.tags_lista
+        except Exception:
+            return []
 
 
 # ==================== EVALUACIONES ====================
@@ -292,7 +298,7 @@ class EntregaSerializer(serializers.ModelSerializer):
 # ==================== RANKING ====================
 class RankingItemSerializer(serializers.Serializer):
     posicion = serializers.IntegerField()
-    usuario = UserBasicSerializer()
+    usuario = UserBasicSerializer(read_only=True)
     completadas = serializers.IntegerField()
     total = serializers.IntegerField()
     pct = serializers.IntegerField()
