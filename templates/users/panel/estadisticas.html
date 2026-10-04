@@ -1,0 +1,356 @@
+{% extends "users/panel/base_panel.html" %}
+{% block panel_content %}
+<div class="panel-header">
+    <h1>📊 Estadísticas</h1>
+    <p>Resumen visual de tus cursos, estudiantes y evaluaciones</p>
+</div>
+
+<!-- Stats cards -->
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_cursos }}</div>
+        <div class="stat-label">📚 Cursos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_estudiantes }}</div>
+        <div class="stat-label">👥 Estudiantes</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_completadas }}</div>
+        <div class="stat-label">✅ Lecciones completadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num">{{ total_evaluaciones }}</div>
+        <div class="stat-label">📝 Evaluaciones</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#4ade80;">{{ tasa_aprobacion }}%</div>
+        <div class="stat-label">🎯 Aprobación global</div>
+    </div>
+</div>
+
+<!-- Charts grid -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+
+    <!-- 1. Top cursos por inscritos -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📚 Cursos con más inscritos</h3>
+        <div style="height:320px; position:relative;">
+            <canvas id="chartCursosInscritos"></canvas>
+        </div>
+    </div>
+
+    <!-- 2. Progreso por curso -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📈 Progreso por curso (%)</h3>
+        <div style="height:320px; position:relative;">
+            <canvas id="chartCursosProgreso"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Actividad (full width) -->
+<div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:1rem;">📅 Actividad (últimos 30 días)</h3>
+    <div style="height:280px; position:relative;">
+        <canvas id="chartActividad"></canvas>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:1.5rem;">
+
+    <!-- 3. Distribución por nivel -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">🎓 Estudiantes por nivel</h3>
+        <div style="height:300px; position:relative;">
+            <canvas id="chartNiveles"></canvas>
+        </div>
+    </div>
+
+    <!-- 4. Evaluaciones -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📝 Evaluaciones: aprobados vs reprobados</h3>
+        <div style="height:300px; position:relative;">
+            <canvas id="chartEval"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Top estudiantes (full width) -->
+<div class="card" style="margin-top:1.5rem;">
+    <h3 style="margin-bottom:1rem;">🏆 Top 10 estudiantes por puntos</h3>
+    <div style="height:400px; position:relative;">
+        <canvas id="chartTop"></canvas>
+    </div>
+</div>
+
+<!-- Chart.js + configuracion -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    // Configuracion global del tema oscuro
+    Chart.defaults.color = '#c9d1d9';
+    Chart.defaults.borderColor = '#30363d';
+    Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+    Chart.defaults.font.size = 12;
+
+    var COLORES = {
+        amarillo: '#f1c40f',
+        naranja:  '#e67e22',
+        verde:    '#4ade80',
+        azul:     '#58a6ff',
+        rojo:     '#ff9999',
+        morado:   '#a855f7',
+        cian:     '#22d3ee',
+        rosa:     '#f472b6',
+    };
+
+    var PALETA = [
+        '#f1c40f', '#4ade80', '#58a6ff', '#a855f7', '#e67e22',
+        '#22d3ee', '#f472b6', '#ff9999', '#84cc16', '#fb923c',
+    ];
+
+    // ------------------------------------------------------------
+    // 1. Cursos con mas inscritos (barras horizontales)
+    // ------------------------------------------------------------
+    var dataCursos = {{ cursos_inscritos_json|safe }};
+    new Chart(document.getElementById('chartCursosInscritos'), {
+        type: 'bar',
+        data: {
+            labels: dataCursos.map(function (c) { return c.titulo; }),
+            datasets: [{
+                label: 'Inscritos',
+                data: dataCursos.map(function (c) { return c.inscritos; }),
+                backgroundColor: COLORES.azul + '99',
+                borderColor: COLORES.azul,
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                }
+            },
+            scales: {
+                x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e' } },
+                y: { grid: { display: false }, ticks: { color: '#c9d1d9', font: { size: 10 } } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 2. Progreso por curso (barras verticales)
+    // ------------------------------------------------------------
+    var dataProg = {{ cursos_progreso_json|safe }};
+    new Chart(document.getElementById('chartCursosProgreso'), {
+        type: 'bar',
+        data: {
+            labels: dataProg.map(function (c) { return c.titulo; }),
+            datasets: [{
+                label: '% completado',
+                data: dataProg.map(function (c) { return c.pct; }),
+                backgroundColor: COLORES.verde + '99',
+                borderColor: COLORES.verde,
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                    callbacks: {
+                        label: function (ctx) { return ctx.parsed.y + '%'; }
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#c9d1d9', font: { size: 10 }, maxRotation: 45 } },
+                y: { beginAtZero: true, max: 100, grid: { color: '#21262d' }, ticks: { color: '#8b949e', callback: function (v) { return v + '%'; } } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 3. Actividad 30 dias (linea con area)
+    // ------------------------------------------------------------
+    var actLabels = {{ actividad_labels_json|safe }};
+    var actValores = {{ actividad_valores_json|safe }};
+    new Chart(document.getElementById('chartActividad'), {
+        type: 'line',
+        data: {
+            labels: actLabels.map(function (d) { return d.slice(5); }),
+            datasets: [{
+                label: 'Lecciones completadas',
+                data: actValores,
+                borderColor: COLORES.amarillo,
+                backgroundColor: COLORES.amarillo + '33',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: COLORES.amarillo,
+                pointBorderColor: '#0d1117',
+                pointRadius: 3,
+                pointHoverRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                }
+            },
+            scales: {
+                x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', font: { size: 10 } } },
+                y: { beginAtZero: true, grid: { color: '#21262d' }, ticks: { color: '#8b949e' } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 4. Distribucion por nivel (dona)
+    // ------------------------------------------------------------
+    var nivLabels = {{ niveles_labels_json|safe }};
+    var nivValores = {{ niveles_valores_json|safe }};
+    new Chart(document.getElementById('chartNiveles'), {
+        type: 'doughnut',
+        data: {
+            labels: nivLabels,
+            datasets: [{
+                data: nivValores,
+                backgroundColor: PALETA.slice(0, nivLabels.length),
+                borderColor: '#0d1117',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { color: '#c9d1d9', padding: 15, font: { size: 12 } }
+                },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 5. Evaluaciones: aprobados vs reprobados (tarta)
+    // ------------------------------------------------------------
+    new Chart(document.getElementById('chartEval'), {
+        type: 'pie',
+        data: {
+            labels: ['Aprobados', 'Reprobados'],
+            datasets: [{
+                data: [{{ eval_aprobados }}, {{ eval_reprobados }}],
+                backgroundColor: [COLORES.verde + 'cc', COLORES.rojo + 'cc'],
+                borderColor: '#0d1117',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#c9d1d9', padding: 15, font: { size: 13 } }
+                },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function (ctx) {
+                            var total = ctx.dataset.data.reduce(function (a, b) { return a + b; }, 0);
+                            var pct = total ? Math.round(ctx.parsed / total * 100) : 0;
+                            return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 6. Top 10 estudiantes (barras horizontales)
+    // ------------------------------------------------------------
+    var topLabels = {{ top_labels_json|safe }};
+    var topValores = {{ top_valores_json|safe }};
+    new Chart(document.getElementById('chartTop'), {
+        type: 'bar',
+        data: {
+            labels: topLabels,
+            datasets: [{
+                label: 'Puntos',
+                data: topValores,
+                backgroundColor: topLabels.map(function (_, i) {
+                    if (i === 0) return COLORES.amarillo + 'cc';
+                    if (i === 1) return '#c0c0c0cc';
+                    if (i === 2) return '#cd7f32cc';
+                    return COLORES.azul + '99';
+                }),
+                borderColor: topLabels.map(function (_, i) {
+                    if (i === 0) return COLORES.amarillo;
+                    if (i === 1) return '#c0c0c0';
+                    if (i === 2) return '#cd7f32';
+                    return COLORES.azul;
+                }),
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                }
+            },
+            scales: {
+                x: { beginAtZero: true, grid: { color: '#21262d' }, ticks: { color: '#8b949e' } },
+                y: { grid: { display: false }, ticks: { color: '#c9d1d9', font: { size: 11 } } }
+            }
+        }
+    });
+
+})();
+</script>
+{% endblock %}

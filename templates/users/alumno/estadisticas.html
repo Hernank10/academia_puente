@@ -1,0 +1,369 @@
+{% extends "users/alumno/base_alumno.html" %}
+{% block alumno_content %}
+<div class="alumno-header">
+    <h1>📊 Mis Estadísticas</h1>
+    <p>Resumen visual de tu progreso y logros</p>
+</div>
+
+<!-- Stats cards -->
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card">
+        <div class="stat-num">{{ total_cursos }}</div>
+        <div class="stat-label">📚 Cursos activos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#4ade80;">{{ total_completadas }}</div>
+        <div class="stat-label">✅ Lecciones completadas</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#f1c40f;">{{ puntos }}</div>
+        <div class="stat-label">⭐ Puntos</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-num" style="color:#58a6ff;">{{ total_intentos }}</div>
+        <div class="stat-label">📝 Evaluaciones rendidas</div>
+    </div>
+</div>
+
+<!-- Rango -->
+<div style="background:linear-gradient(135deg, #1a2332 0%, #161b22 100%);
+    border:2px solid #f1c40f; border-radius:12px; padding:1.5rem; margin-bottom:2rem;">
+    <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem; margin-bottom:1rem;">
+        <div>
+            <div style="color:#8b949e; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">
+                Rango actual
+            </div>
+            <div style="color:#f1c40f; font-size:1.6rem; font-weight:800;">
+                🏆 {{ rango_actual }}
+            </div>
+        </div>
+        {% if sig_umbral %}
+            <div style="text-align:right;">
+                <div style="color:#8b949e; font-size:0.85rem;">
+                    Siguiente rango a los {{ sig_umbral }} puntos
+                </div>
+                <div style="color:#4ade80; font-size:1.3rem; font-weight:700;">
+                    {{ puntos }} / {{ sig_umbral }}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+    <div style="background:#21262d; height:14px; border-radius:7px; overflow:hidden;">
+        <div style="height:100%; width:{{ pct_sig }}%; background:linear-gradient(90deg, #f1c40f, #e67e22);
+                    transition: width 0.5s ease;"></div>
+    </div>
+    <div style="color:#8b949e; font-size:0.85rem; margin-top:0.5rem;">
+        {{ pct_sig }}% completado
+    </div>
+</div>
+
+<!-- Charts grid -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:1.5rem; margin-bottom:1.5rem;">
+
+    <!-- Progreso por curso -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📚 Mi progreso por curso</h3>
+        <div style="height:320px; position:relative;">
+            <canvas id="chartProgresoCursos"></canvas>
+        </div>
+    </div>
+
+    <!-- Lecciones globales -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📖 Lecciones: completadas vs pendientes</h3>
+        <div style="height:320px; position:relative;">
+            <canvas id="chartLecciones"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Actividad (full width) -->
+<div class="card" style="margin-bottom:1.5rem;">
+    <h3 style="margin-bottom:1rem;">📅 Mi actividad (últimos 30 días)</h3>
+    <div style="height:280px; position:relative;">
+        <canvas id="chartActividad"></canvas>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(400px, 1fr)); gap:1.5rem;">
+
+    <!-- Evolucion de puntos -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">⭐ Evolución de puntos (6 meses)</h3>
+        <div style="height:300px; position:relative;">
+            <canvas id="chartPuntos"></canvas>
+        </div>
+    </div>
+
+    <!-- Resultados de evaluaciones -->
+    <div class="card">
+        <h3 style="margin-bottom:1rem;">📝 Últimas evaluaciones (%)</h3>
+        <div style="height:300px; position:relative;">
+            <canvas id="chartEvaluaciones"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+    "use strict";
+
+    Chart.defaults.color = '#c9d1d9';
+    Chart.defaults.borderColor = '#30363d';
+    Chart.defaults.font.family = 'system-ui, -apple-system, sans-serif';
+    Chart.defaults.font.size = 12;
+
+    var COLORES = {
+        amarillo: '#f1c40f',
+        verde: '#4ade80',
+        azul: '#58a6ff',
+        rojo: '#ff9999',
+        morado: '#a855f7',
+        naranja: '#e67e22',
+    };
+
+    // ------------------------------------------------------------
+    // 1. Progreso por curso
+    // ------------------------------------------------------------
+    var dataCursos = {{ progreso_cursos_json|safe }};
+
+    new Chart(document.getElementById('chartProgresoCursos'), {
+        type: 'bar',
+        data: {
+            labels: dataCursos.map(function (c) { return c.titulo; }),
+            datasets: [{
+                label: '% completado',
+                data: dataCursos.map(function (c) { return c.pct; }),
+                backgroundColor: dataCursos.map(function (c) {
+                    if (c.pct >= 100) return COLORES.verde + 'cc';
+                    if (c.pct >= 50) return COLORES.amarillo + 'cc';
+                    return COLORES.azul + '99';
+                }),
+                borderColor: dataCursos.map(function (c) {
+                    if (c.pct >= 100) return COLORES.verde;
+                    if (c.pct >= 50) return COLORES.amarillo;
+                    return COLORES.azul;
+                }),
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                    callbacks: {
+                        label: function (ctx) {
+                            var c = dataCursos[ctx.dataIndex];
+                            return c.completadas + '/' + c.total + ' lecciones (' + c.pct + '%)';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: '#21262d' },
+                    ticks: { color: '#8b949e', callback: function (v) { return v + '%'; } }
+                },
+                y: { grid: { display: false }, ticks: { color: '#c9d1d9', font: { size: 10 } } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 2. Lecciones globales (dona)
+    // ------------------------------------------------------------
+    new Chart(document.getElementById('chartLecciones'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Completadas', 'Pendientes'],
+            datasets: [{
+                data: [{{ total_completadas }}, {{ lecciones_pendientes }}],
+                backgroundColor: [COLORES.verde + 'cc', '#30363dcc'],
+                borderColor: '#0d1117',
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '65%',
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: { color: '#c9d1d9', padding: 15, font: { size: 13 } }
+                },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    callbacks: {
+                        label: function (ctx) {
+                            var total = {{ total_lecciones }};
+                            var pct = total ? Math.round(ctx.parsed / total * 100) : 0;
+                            return ctx.label + ': ' + ctx.parsed + ' (' + pct + '%)';
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 3. Actividad 30 dias
+    // ------------------------------------------------------------
+    var actLabels = {{ actividad_labels_json|safe }};
+    var actValores = {{ actividad_valores_json|safe }};
+
+    new Chart(document.getElementById('chartActividad'), {
+        type: 'line',
+        data: {
+            labels: actLabels.map(function (d) { return d.slice(5); }),
+            datasets: [{
+                label: 'Lecciones completadas',
+                data: actValores,
+                borderColor: COLORES.amarillo,
+                backgroundColor: COLORES.amarillo + '33',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: COLORES.amarillo,
+                pointBorderColor: '#0d1117',
+                pointRadius: 3,
+                pointHoverRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                }
+            },
+            scales: {
+                x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e', font: { size: 10 } } },
+                y: { beginAtZero: true, grid: { color: '#21262d' }, ticks: { color: '#8b949e', stepSize: 1 } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 4. Evolucion de puntos
+    // ------------------------------------------------------------
+    var puntosLabels = {{ puntos_labels_json|safe }};
+    var puntosValores = {{ puntos_valores_json|safe }};
+
+    new Chart(document.getElementById('chartPuntos'), {
+        type: 'line',
+        data: {
+            labels: puntosLabels,
+            datasets: [{
+                label: 'Puntos acumulados',
+                data: puntosValores,
+                borderColor: COLORES.morado,
+                backgroundColor: COLORES.morado + '33',
+                borderWidth: 3,
+                fill: true,
+                tension: 0.3,
+                pointBackgroundColor: COLORES.morado,
+                pointBorderColor: '#0d1117',
+                pointRadius: 5,
+                pointHoverRadius: 8,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                    callbacks: {
+                        label: function (ctx) { return ctx.parsed.y + ' puntos'; }
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { color: '#21262d' }, ticks: { color: '#8b949e' } },
+                y: { beginAtZero: true, grid: { color: '#21262d' }, ticks: { color: '#8b949e' } }
+            }
+        }
+    });
+
+    // ------------------------------------------------------------
+    // 5. Resultados de evaluaciones
+    // ------------------------------------------------------------
+    var evalLabels = {{ eval_labels_json|safe }};
+    var evalPcts = {{ eval_pcts_json|safe }};
+    var evalAprobados = {{ eval_aprobados_json|safe }};
+
+    new Chart(document.getElementById('chartEvaluaciones'), {
+        type: 'bar',
+        data: {
+            labels: evalLabels,
+            datasets: [{
+                label: '% obtenido',
+                data: evalPcts,
+                backgroundColor: evalAprobados.map(function (a) {
+                    return a ? COLORES.verde + 'cc' : COLORES.rojo + 'cc';
+                }),
+                borderColor: evalAprobados.map(function (a) {
+                    return a ? COLORES.verde : COLORES.rojo;
+                }),
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#161b22',
+                    borderColor: '#30363d',
+                    borderWidth: 1,
+                    titleColor: '#f1c40f',
+                    callbacks: {
+                        afterLabel: function (ctx) {
+                            return ctx.parsed.y >= 60 ? '✅ Aprobado' : '❌ Reprobado';
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: { grid: { display: false }, ticks: { color: '#c9d1d9', font: { size: 9 }, maxRotation: 60 } },
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: '#21262d' },
+                    ticks: { color: '#8b949e', callback: function (v) { return v + '%'; } }
+                }
+            }
+        }
+    });
+
+})();
+</script>
+{% endblock %}

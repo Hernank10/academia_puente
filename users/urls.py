@@ -90,6 +90,7 @@ urlpatterns = [
     # ============================================================
     path('panel/', views_panel.panel_home, name='panel_home'),
     path('panel/cursos/', views_panel.panel_cursos, name='panel_cursos'),
+    path('panel/estadisticas/', views_panel.panel_estadisticas, name='panel_estadisticas'),
     path('panel/estudiantes/', views_panel.panel_estudiantes, name='panel_estudiantes'),
     path('panel/estudiante/<int:estudiante_id>/',
          views_panel.panel_estudiante_detalle, name='panel_estudiante_detalle'),
@@ -109,6 +110,7 @@ urlpatterns = [
     path('mi-panel/cursos/', views_alumno.alumno_cursos, name='alumno_cursos'),
     path('mi-panel/certificados/', views_alumno.alumno_certificados, name='alumno_certificados'),
     path('mi-panel/logros/', views_alumno.alumno_logros, name='alumno_logros'),
+    path('mi-panel/estadisticas/', views_alumno.alumno_estadisticas, name='alumno_estadisticas'),
 
     # Certificado publico mejorado
     path('certificado-publico/<str:codigo>/',

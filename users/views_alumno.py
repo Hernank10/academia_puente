@@ -231,3 +231,188 @@ def alumno_curso_ranking(request, curso_id):
         'total': len(ranking),
         'mi_pos': mi_pos,
     })
+
+
+# ==================== ESTADISTICAS (alumno) ====================
+@login_required
+def alumno_estadisticas(request):
+    """Panel de estadisticas personales con graficos Chart.js."""
+    import json
+    from datetime import timedelta
+    from django.db.models import Count, Avg
+    from django.utils import timezone
+    from courses.models import IntentoEvaluacion
+
+    perfil = _perfil(request.user)
+
+    # Cursos inscritos
+    inscripciones = Inscripcion.objects.filter(
+        estudiante=request.user, activa=True
+    ).select_related('curso')
+
+    # ============================================================
+    # 1. Progreso por curso
+    # ============================================================
+    progreso_cursos = []
+    total_lecciones = 0
+    total_completadas = 0
+    for ins in inscripciones:
+        curso = ins.curso
+        n_lec = curso.lecciones.count()
+        comp = ProgresoEstudiante.objects.filter(
+            estudiante=request.user, leccion__curso=curso, completada=True
+        ).count()
+        pct = int(comp * 100 / n_lec) if n_lec else 0
+
+        progreso_cursos.append({
+            'titulo': curso.titulo[:30],
+            'pct': pct,
+            'completadas': comp,
+            'total': n_lec,
+        })
+
+        total_lecciones += n_lec
+        total_completadas += comp
+
+    # Ordenar por pct descendente
+    progreso_cursos.sort(key=lambda x: -x['pct'])
+
+    # ============================================================
+    # 2. Actividad ultimos 30 dias
+    # ============================================================
+    hoy = timezone.now().date()
+    hace_30 = hoy - timedelta(days=29)
+
+    actividad_map = {}
+    for i in range(30):
+        d = hace_30 + timedelta(days=i)
+        actividad_map[d.isoformat()] = 0
+
+    qs_act = ProgresoEstudiante.objects.filter(
+        estudiante=request.user,
+        completada=True,
+        fecha_completado__date__gte=hace_30,
+    ).values('fecha_completado__date').annotate(n=Count('id'))
+
+    for r in qs_act:
+        f = r['fecha_completado__date']
+        if f:
+            actividad_map[f.isoformat()] = r['n']
+
+    actividad_labels = list(actividad_map.keys())
+    actividad_valores = list(actividad_map.values())
+
+    # ============================================================
+    # 3. Lecciones: completadas vs pendientes (global)
+    # ============================================================
+    pendientes = max(0, total_lecciones - total_completadas)
+
+    # ============================================================
+    # 4. Evolucion de puntos por mes (ultimos 6 meses)
+    # ============================================================
+    puntos_labels = []
+    puntos_valores = []
+
+    for i in range(5, -1, -1):
+        # Primer dia del mes hace i meses
+        if hoy.month - i <= 0:
+            año = hoy.year - 1
+            mes = hoy.month - i + 12
+        else:
+            año = hoy.year
+            mes = hoy.month - i
+
+        # Puntos acumulados hasta el final de ese mes
+        fecha_fin = None
+        try:
+            if mes == 12:
+                fecha_fin = timezone.datetime(año + 1, 1, 1).date()
+            else:
+                fecha_fin = timezone.datetime(año, mes + 1, 1).date()
+        except Exception:
+            fecha_fin = hoy + timedelta(days=1)
+
+        puntos_acumulados = ProgresoEstudiante.objects.filter(
+            estudiante=request.user,
+            completada=True,
+            fecha_completado__date__lt=fecha_fin,
+        ).count() * 5
+
+        # Bonus por certificados
+        certs = Certificado.objects.filter(
+            estudiante=request.user,
+            estado='emitido',
+            fecha_emision__date__lt=fecha_fin,
+        ).count()
+        puntos_acumulados += certs * 20
+
+        puntos_labels.append("{}/{}".format(mes, str(año)[-2:]))
+        puntos_valores.append(puntos_acumulados)
+
+    # ============================================================
+    # 5. Ultimos 10 intentos de evaluaciones
+    # ============================================================
+    intentos = IntentoEvaluacion.objects.filter(
+        estudiante=request.user, completado=True
+    ).select_related('evaluacion').order_by('-fecha_inicio')[:10]
+
+    intentos_ordenados = list(reversed(intentos))
+    eval_labels = [i.evaluacion.titulo[:20] for i in intentos_ordenados]
+    eval_puntajes = [i.puntaje for i in intentos_ordenados]
+    eval_maximos = [i.evaluacion.puntaje_maximo for i in intentos_ordenados]
+    eval_aprobados = [i.aprobado for i in intentos_ordenados]
+
+    # Convertir a porcentaje
+    eval_pcts = []
+    for i, p in enumerate(intentos_ordenados):
+        mx = eval_maximos[i] if eval_maximos[i] else 100
+        eval_pcts.append(int(p * 100 / mx))
+
+    # ============================================================
+    # 6. Progreso hacia el siguiente rango
+    # ============================================================
+    puntos = perfil.puntos
+    if puntos < 100:
+        rango_actual = "Aprendiz de Idiomas"
+        sig_umbral = 100
+    elif puntos < 500:
+        rango_actual = "Interprete Cultural"
+        sig_umbral = 500
+    else:
+        rango_actual = "Sabio Licenciado"
+        sig_umbral = None
+
+    if sig_umbral:
+        pct_sig = min(100, int(puntos * 100 / sig_umbral))
+    else:
+        pct_sig = 100
+
+    # ============================================================
+    # Context
+    # ============================================================
+    context = {
+        'seccion': 'estadisticas',
+        'perfil': perfil,
+        'total_lecciones': total_lecciones,
+        'total_completadas': total_completadas,
+        'lecciones_pendientes': pendientes,
+        'total_cursos': inscripciones.count(),
+        'total_intentos': len(intentos_ordenados),
+        'puntos': puntos,
+        'rango_actual': rango_actual,
+        'sig_umbral': sig_umbral,
+        'pct_sig': pct_sig,
+        # JSON para Chart.js
+        'progreso_cursos_json': json.dumps(progreso_cursos),
+        'actividad_labels_json': json.dumps(actividad_labels),
+        'actividad_valores_json': json.dumps(actividad_valores),
+        'puntos_labels_json': json.dumps(puntos_labels),
+        'puntos_valores_json': json.dumps(puntos_valores),
+        'eval_labels_json': json.dumps(eval_labels),
+        'eval_pcts_json': json.dumps(eval_pcts),
+        'eval_aprobados_json': json.dumps(eval_aprobados),
+        'eval_puntajes_json': json.dumps(eval_puntajes),
+        'eval_maximos_json': json.dumps(eval_maximos),
+    }
+
+    return render(request, 'users/alumno/estadisticas.html', context)

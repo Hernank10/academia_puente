@@ -375,3 +375,140 @@ def panel_curso_ranking(request, curso_id):
         'ranking': ranking,
         'total': len(ranking),
     })
+
+
+# ==================== ESTADISTICAS ====================
+@login_required
+@profesor_required
+def panel_estadisticas(request):
+    """Panel de estadisticas con graficos Chart.js."""
+    import json
+    from datetime import timedelta
+    from django.db.models import Count, Avg
+    from django.utils import timezone
+
+    cursos_ids = _mis_cursos_ids(request)
+    cursos = Curso.objects.filter(id__in=cursos_ids)
+
+    # Totales generales
+    total_cursos = cursos.count()
+    total_estudiantes = _mis_estudiantes_ids(request).count()
+    total_lecciones = Leccion.objects.filter(curso_id__in=cursos_ids).count()
+    total_completadas = ProgresoEstudiante.objects.filter(
+        leccion__curso_id__in=cursos_ids, completada=True
+    ).count()
+    total_evaluaciones = Evaluacion.objects.filter(curso_id__in=cursos_ids).count()
+
+    intentos_todos = IntentoEvaluacion.objects.filter(
+        evaluacion__curso_id__in=cursos_ids, completado=True
+    )
+    total_intentos = intentos_todos.count()
+    aprobados = intentos_todos.filter(aprobado=True).count()
+    tasa_aprobacion = int(aprobados * 100 / total_intentos) if total_intentos else 0
+
+    # ============================================================
+    # 1. Top cursos con mas inscritos
+    # ============================================================
+    cursos_inscritos = []
+    for c in cursos:
+        n = c.inscritos.filter(activa=True).count()
+        cursos_inscritos.append({'titulo': c.titulo[:30], 'inscritos': n})
+    cursos_inscritos.sort(key=lambda x: -x['inscritos'])
+    cursos_inscritos = cursos_inscritos[:10]
+
+    # ============================================================
+    # 2. Progreso promedio por curso
+    # ============================================================
+    cursos_progreso = []
+    for c in cursos:
+        n_lec = c.lecciones.count()
+        n_ins = c.inscritos.filter(activa=True).count()
+        total_posible = n_lec * n_ins
+        completadas = ProgresoEstudiante.objects.filter(
+            leccion__curso=c, completada=True
+        ).count()
+        pct = int(completadas * 100 / total_posible) if total_posible else 0
+        cursos_progreso.append({
+            'titulo': c.titulo[:30],
+            'pct': min(pct, 100),
+        })
+    cursos_progreso.sort(key=lambda x: -x['pct'])
+    cursos_progreso = cursos_progreso[:10]
+
+    # ============================================================
+    # 3. Actividad ultimos 30 dias
+    # ============================================================
+    hoy = timezone.now().date()
+    hace_30 = hoy - timedelta(days=29)
+
+    actividad_map = {}
+    for i in range(30):
+        d = hace_30 + timedelta(days=i)
+        actividad_map[d.isoformat()] = 0
+
+    qs_act = ProgresoEstudiante.objects.filter(
+        leccion__curso_id__in=cursos_ids,
+        completada=True,
+        fecha_completado__date__gte=hace_30,
+    ).values('fecha_completado__date').annotate(n=Count('id'))
+
+    for r in qs_act:
+        f = r['fecha_completado__date']
+        if f:
+            actividad_map[f.isoformat()] = r['n']
+
+    actividad_labels = list(actividad_map.keys())
+    actividad_valores = list(actividad_map.values())
+
+    # ============================================================
+    # 4. Distribucion por nivel
+    # ============================================================
+    niveles_map = {}
+    for c in cursos:
+        n = c.inscritos.filter(activa=True).count()
+        nivel = c.nivel or 'Sin nivel'
+        niveles_map[nivel] = niveles_map.get(nivel, 0) + n
+    # Ordenar por nivel
+    orden_niveles = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Sin nivel']
+    niveles_labels = [n for n in orden_niveles if n in niveles_map]
+    niveles_valores = [niveles_map[n] for n in niveles_labels]
+
+    # ============================================================
+    # 5. Top 10 estudiantes por puntos
+    # ============================================================
+    estudiantes_ids = _mis_estudiantes_ids(request)
+    top_perfiles = Perfil.objects.filter(
+        usuario_id__in=estudiantes_ids
+    ).select_related('usuario').order_by('-puntos')[:10]
+
+    top_labels = [p.usuario.username[:15] for p in top_perfiles]
+    top_valores = [p.puntos for p in top_perfiles]
+
+    # ============================================================
+    # 6. Evaluaciones: aprobados vs reprobados
+    # ============================================================
+    reprobados = total_intentos - aprobados
+
+    context = {
+        'seccion': 'estadisticas',
+        'total_cursos': total_cursos,
+        'total_estudiantes': total_estudiantes,
+        'total_lecciones': total_lecciones,
+        'total_completadas': total_completadas,
+        'total_evaluaciones': total_evaluaciones,
+        'total_intentos': total_intentos,
+        'tasa_aprobacion': tasa_aprobacion,
+        # JSON para Chart.js
+        'cursos_inscritos_json': json.dumps(cursos_inscritos),
+        'cursos_progreso_json': json.dumps(cursos_progreso),
+        'actividad_labels_json': json.dumps(actividad_labels),
+        'actividad_valores_json': json.dumps(actividad_valores),
+        'niveles_labels_json': json.dumps(niveles_labels),
+        'niveles_valores_json': json.dumps(niveles_valores),
+        'top_labels_json': json.dumps(top_labels),
+        'top_valores_json': json.dumps(top_valores),
+        'eval_aprobados': aprobados,
+        'eval_reprobados': reprobados,
+    }
+
+    return render(request, 'users/panel/estadisticas.html', context)
