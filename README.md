@@ -1,5 +1,8 @@
 # 🏛️ Academia Puente Digital - Hub Multicultural
 
+![Tests](https://github.com/Hernank10/academia_puente/actions/workflows/tests.yml/badge.svg)
+
+
 Sistema de gestión de aprendizaje (LMS) especializado en la enseñanza del español con un enfoque multicultural y pedagógico.
 
 ## 🌟 Implementación Actual
