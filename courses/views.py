@@ -248,9 +248,13 @@ def curso_detalle(request, curso_id):
             'intentos_restantes': max(0, ev.intentos_maximos - intentos_hechos),
         })
 
+    # Recursos complementarios del curso
+    recursos_relacionados = curso.recursos_relacionados.filter(activo=True)[:12]
+
     return render(request, 'courses/curso_detalle.html', {
         'curso': curso,
         'inscripcion': inscripcion,
+        'recursos_relacionados': recursos_relacionados,
         'lecciones_info': lecciones_info,
         'evaluaciones_info': evaluaciones_info,
         'total_lecciones': total_lecciones,
@@ -342,7 +346,12 @@ def rendir_evaluacion(request, evaluacion_id):
         if evaluacion.aleatorizar_preguntas:
             preguntas = preguntas.order_by('?')
 
-        return render(request, 'courses/rendir_evaluacion.html', {
+        # Recursos complementarios de la evaluacion + del curso
+    recursos_ev = list(evaluacion.recursos_complementarios.filter(activo=True)[:6])
+    recursos_curso = list(evaluacion.curso.recursos_relacionados.filter(activo=True)[:4])
+    recursos_todos = recursos_ev + [r for r in recursos_curso if r not in recursos_ev]
+
+    return render(request, 'courses/rendir_evaluacion.html', {
             'evaluacion': evaluacion,
             'intento': intento,
             'preguntas': preguntas,

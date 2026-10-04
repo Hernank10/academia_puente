@@ -24,6 +24,12 @@ class Curso(models.Model):
     idioma = models.CharField(max_length=2, choices=IDIOMAS)
     nivel = models.CharField(max_length=2, choices=NIVELES)
     profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    recursos_relacionados = models.ManyToManyField(
+        "RecursoInteractivo",
+        blank=True,
+        related_name="cursos_relacionados",
+        help_text="Recursos interactivos complementarios para este curso",
+    )
 
     def __str__(self):
         return f"{self.titulo} - {self.get_idioma_display()} ({self.nivel})"
@@ -42,6 +48,13 @@ class Leccion(models.Model):
 
     orden = models.PositiveIntegerField(default=1, verbose_name="Orden de la lección")
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
+
+    recursos_complementarios = models.ManyToManyField(
+        "RecursoInteractivo",
+        blank=True,
+        related_name="lecciones_relacionadas",
+        help_text="Recursos interactivos para practicar esta leccion",
+    )
 
     class Meta:
         verbose_name_plural = "Lecciones"
@@ -383,6 +396,13 @@ class Evaluacion(models.Model):
     # Timestamps
     creada = models.DateTimeField(auto_now_add=True)
     actualizada = models.DateTimeField(auto_now=True)
+
+    recursos_complementarios = models.ManyToManyField(
+        "RecursoInteractivo",
+        blank=True,
+        related_name="evaluaciones_relacionadas",
+        help_text="Recursos interactivos para practicar esta evaluacion",
+    )
 
     class Meta:
         ordering = ['curso', 'titulo']
